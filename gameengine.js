@@ -13,9 +13,18 @@ class GameEngine {
         this.click = null;
         this.mouse = null;
         this.wheel = null;
-        this.keys = {};
 
-        
+        this.left = null;
+        this.right = null;
+        this.down = null;
+        this.up = null;
+        this.jump = null;
+        this.attack = null;
+        this.roll = null;
+
+        // this.keys = {};
+
+
         //height for debug
         this.surfaceWidth = null;
         this.surfaceHeight = null;
@@ -37,7 +46,7 @@ class GameEngine {
         this.ctx = ctx;
         this.surfaceWidth = this.ctx.canvas.width;
         this.surfaceHeight = this.ctx.canvas.height;
-    
+
         this.startInput();
         this.timer = new Timer();
     };
@@ -54,6 +63,7 @@ class GameEngine {
     };
 
     startInput() {
+        var that = this;
         const getXandY = e => ({
             x: e.clientX - this.ctx.canvas.getBoundingClientRect().left,
             y: e.clientY - this.ctx.canvas.getBoundingClientRect().top
@@ -93,8 +103,51 @@ class GameEngine {
             this.rightclick = getXandY(e);
         });
 
-        window.addEventListener("keydown", event => this.keys[event.key] = true);
-        window.addEventListener("keyup", event => this.keys[event.key] = false);
+        this.ctx.canvas.addEventListener("keydown", function (e) {
+            switch (e.key) {
+                case "d":
+                    that.right = true;
+                    break;
+                case "a":
+                    that.left = true;
+                    break;
+                case "s":
+                    that.down = true;
+                    break;
+                case "w":
+                    that.up = true;
+                    break;
+                case "p":
+                    that.attack = true;
+                    break;
+                case "Shift":
+                    that.roll = true;
+                    break;
+                case " ":
+                    that.jump = true;
+                    break;
+            }
+        }, false);
+
+        this.ctx.canvas.addEventListener("keyup", function (e) {
+            switch (e.key) {
+                case "d":
+                    that.right = false;
+                    break;
+                case "a":
+                    that.left = false;
+                    break;
+                case "s":
+                    that.down = false;
+                    break;
+                case "w":
+                    that.up = false;
+                    break;
+            }
+        }, false);
+
+        // window.addEventListener("keydown", event => this.keys[event.key] = true);
+        // window.addEventListener("keyup", event => this.keys[event.key] = false);
     };
 
     addEntity(entity) {
@@ -110,7 +163,7 @@ class GameEngine {
             this.entities[i].draw(this.ctx, this);
         }
 
-        
+
         //update the camera (scene manager)
         this.camera.draw(this.ctx);
     };
