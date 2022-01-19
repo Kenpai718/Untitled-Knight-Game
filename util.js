@@ -1,6 +1,7 @@
 /** Global Parameters Object */
 const PARAMS = {
-        DEBUG : false
+        DEBUG : false,
+        BLOCKWIDTH : 128
 };
 
 /**

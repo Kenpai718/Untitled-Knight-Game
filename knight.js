@@ -1,9 +1,11 @@
 class Knight {
-    constructor(game) {
+    //game = engine, (x, y) = spawn cords
+    constructor(game, x, y) {
         //setup spritesheets
+        Object.assign(this, { game, x, y});
         this.game = game;
-        this.spritesheetRight = ASSET_MANAGER.getAsset("./knight/knightRight.png");
-        this.spritesheetLeft = ASSET_MANAGER.getAsset("./knight/knightLeft.png");
+        this.spritesheetRight = ASSET_MANAGER.getAsset("./sprites/knight/knightRight.png");
+        this.spritesheetLeft = ASSET_MANAGER.getAsset("./sprites/knight/knightLeft.png");
 
         //states
         this.facing = 1; //0 = left, 1 = right
@@ -14,15 +16,16 @@ class Knight {
 
         //positioning
         this.scale = 3;
-        this.x = 75 * this.scale;
-        this.y = 655;
+        this.x = x * this.scale;
+        this.y = y;
         this.width = 120 * this.scale;
         this.height = 80 * this.scale;
 
         //physics
         this.speed = 150;
-
-        this.groundLevel = 655; //temporary until a real ground is implemented
+        this.velocity = {x:0, y:0};
+        this.fallAcc = 500;
+        this.groundLevel = y; //temporary until a real ground is implemented
 
         //animations
         this.animations = [];
@@ -160,12 +163,14 @@ class Knight {
 
         //TODO: Temporary solution! Delete once there is a moving camera
         //reset position if outside the canvas. 
-		if(this.x > 1920 || this.x < 0) {
+		if(this.x > this.game.surfaceWidth || this.x < 0) {
 			this.x = 0;
 			this.y = this.groundLevel;
 		}
 
-        //update bounding box if it moved
+        //update position and bounding box
+        this.x += this.velocity.x * TICK;
+        this.y += this.velocity.y * TICK;
         this.updateBB();
     };
 

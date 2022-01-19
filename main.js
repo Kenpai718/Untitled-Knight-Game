@@ -2,8 +2,13 @@ const gameEngine = new GameEngine();
 
 const ASSET_MANAGER = new AssetManager();
 
-ASSET_MANAGER.queueDownload("./knight/knightLeft.png");
-ASSET_MANAGER.queueDownload("./knight/knightRight.png");
+//queue downloads
+//main character
+ASSET_MANAGER.queueDownload("./sprites/knight/knightLeft.png");
+ASSET_MANAGER.queueDownload("./sprites/knight/knightRight.png");
+//environment
+ASSET_MANAGER.queueDownload("./sprites/environment/dark_castle_tileset.png");
+ASSET_MANAGER.queueDownload("./sprites/environment/moonlit_sky.png");
 
 ASSET_MANAGER.downloadAll(() => {
 	const canvas = document.getElementById("gameWorld");
