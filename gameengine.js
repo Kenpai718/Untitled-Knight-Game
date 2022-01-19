@@ -15,6 +15,11 @@ class GameEngine {
         this.wheel = null;
         this.keys = {};
 
+        
+        //height for debug
+        this.surfaceWidth = null;
+        this.surfaceHeight = null;
+
         // THE KILL SWITCH
         this.running = false;
 
@@ -30,6 +35,9 @@ class GameEngine {
 
     init(ctx) {
         this.ctx = ctx;
+        this.surfaceWidth = this.ctx.canvas.width;
+        this.surfaceHeight = this.ctx.canvas.height;
+    
         this.startInput();
         this.timer = new Timer();
     };
@@ -101,6 +109,10 @@ class GameEngine {
         for (let i = this.entities.length - 1; i >= 0; i--) {
             this.entities[i].draw(this.ctx, this);
         }
+
+        
+        //update the camera (scene manager)
+        this.camera.draw(this.ctx);
     };
 
     update() {
@@ -119,6 +131,9 @@ class GameEngine {
                 this.entities.splice(i, 1);
             }
         }
+
+        //update the camera (scene manager)
+        this.camera.update();
     };
 
     loop() {
