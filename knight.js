@@ -1,18 +1,43 @@
 class Knight {
     constructor(game) {
+        //setup spritesheets
         this.game = game;
         this.spritesheetRight = ASSET_MANAGER.getAsset("./knight/knightRight.png");
         this.spritesheetLeft = ASSET_MANAGER.getAsset("./knight/knightLeft.png");
-        this.facing = 1;
-        this.action = 0;
-        this.scale = 1.7;
-        this.x = 960 * this.scale;
-        this.y = 0;
+
+        //states
+        this.facing = 1; //0 = left, 1 = right
+        this.action = 0; //0 = idle, 1 = run, 2 = attack, 3 = crouch, 4 = crouch_atk
+                         //5 = roll, 6 = crouch walk, 7 = death, 8 = wall climb
+                         //9 = wall hang, 10 = wallslide, 11-13 = jump, 14 = turn around
+                         //15 = slide
+
+        //positioning
+        this.scale = 3;
+        this.x = 75 * this.scale;
+        this.y = 655;
         this.width = 120 * this.scale;
         this.height = 80 * this.scale;
+
+        //physics
+        this.speed = 150;
+
+        this.groundLevel = 655; //temporary until a real ground is implemented
+
+        //animations
         this.animations = [];
         this.loadAnimations();
         this.updateBB();
+
+        //controls (uses event.key)
+        this.left = "a";
+        this.right = "d";
+        this.down = "s";
+        this.up = "w";
+        this.jump = " "; //spacebar
+        this.attack = "p"; //TODO: change this to a left click later
+        this.roll = "Shift";
+        // this.shoot = ;
     };
 
     loadAnimations() {
@@ -78,12 +103,88 @@ class Knight {
     };
 
     update() {
+
+        const TICK = this.game.clockTick;
+
+        //currently using Chris Marriot's mario physics
+        const MIN_WALK = 4.453125;
+        const MAX_WALK = 93.75;
+        const MAX_RUN = 153.75;
+        const ACC_WALK = 133.59375;
+        const ACC_RUN = 200.390625;
+        const DEC_REL = 182.8125;
+        const DEC_SKID = 365.625;
+        const MIN_SKID = 33.75;
+
+        const STOP_FALL = 1575;
+        const WALK_FALL = 1800;
+        const RUN_FALL = 2025;
+        const STOP_FALL_A = 450;
+        const WALK_FALL_A = 421.875;
+        const RUN_FALL_A = 562.5;
+
+        const MAX_FALL = 270;
         
+
+        //choose animation based on keyboard input
+        //horizontal movement
+        if(this.game.keys[this.right]) { //run right
+            this.facing = 1;
+            this.action = 1;
+            this.x += this.speed*this.game.clockTick
+        }else if(this.game.keys[this.left]) { //run left
+            this.facing = 0;
+            this.action = 1;
+            this.x -= this.speed*this.game.clockTick
+        }else if(this.game.keys[this.down]) { //crouch
+            this.action = 3;
+            //TODO crouch left or right
+        } else { //idle 
+            this.action = 0;
+        }
+
+        //other movement (roll or jump)
+        //lumped together because you cannot roll and jump
+        if(this.game.keys[this.jump]) {
+            this.action = 11; //jump (11-13)
+        } else if(this.game.keys[this.roll]) {
+            this.action  = 5; //roll
+        }
+        
+
+        //attack
+        if(this.game.keys[this.attack]) {
+            this.action = 2;
+        }
+
+
+        //TODO: Temporary solution! Delete once there is a moving camera
+        //reset position if outside the canvas. 
+		if(this.x > 1920 || this.x < 0) {
+			this.x = 0;
+			this.y = this.groundLevel;
+		}
+
+        //update bounding box if it moved
+        this.updateBB();
     };
 
     draw(ctx) {
         this.animations[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x, this.y, this.scale);
+        //this.viewAllAnimations(ctx);
 
+        if(PARAMS.DEBUG) {
+            this.viewBoundingBox(ctx);
+        }
+        
+    };
+
+    viewBoundingBox(ctx) { //debug
+         ctx.strokeStyle = "Red";
+         ctx.strokeRect(this.BB.x, this.BB.y, this.BB.width, this.BB.height);
+    }
+
+    viewAllAnimations(ctx) { //for development purposes
         this.animations[0][0].drawFrame(this.game.clockTick, ctx, 0 * this.scale, 0 * this.scale, this.scale);
         this.animations[1][0].drawFrame(this.game.clockTick, ctx, 0 * this.scale, 80 * this.scale, this.scale);
 
@@ -131,8 +232,7 @@ class Knight {
 
         this.animations[0][15].drawFrame(this.game.clockTick, ctx, 840 * this.scale, 160 * this.scale, this.scale);
         this.animations[1][15].drawFrame(this.game.clockTick, ctx, 840 * this.scale, 240 * this.scale, this.scale);
-        //
-        // ctx.strokeStyle = 'Red';
-        // ctx.strokeRect(this.BB.x, this.BB.y, this.BB.width, this.BB.height);
-    };
+    }
+
+    
 }
