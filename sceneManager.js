@@ -86,6 +86,6 @@ class SceneManager {
         ctx.strokeStyle = this.game.attack  ? "Red" : "SpringGreen";
         ctx.fillStyle = ctx.strokeStyle;
         ctx.strokeRect(190, this.game.surfaceHeight -40, 30, 30);
-        ctx.fillText("P", 200, this.game.surfaceHeight - 20);
+        ctx.fillText("ATK", 195, this.game.surfaceHeight - 20);
 	}
 }

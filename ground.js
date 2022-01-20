@@ -14,7 +14,7 @@ class Ground {
 
         this.scale = PARAMS.BLOCKWIDTH;
 
-        this.BB = new BoundingBox(this.x, this.y, this.w, 1);
+        this.BB = new BoundingBox(this.x, this.y, this.w, this.h);
     };
 
     update() {

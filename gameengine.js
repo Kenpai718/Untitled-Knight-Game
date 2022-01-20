@@ -14,6 +14,7 @@ class GameEngine {
         this.mouse = null;
         this.wheel = null;
 
+        //controls
         this.left = null;
         this.right = null;
         this.down = null;
@@ -21,6 +22,9 @@ class GameEngine {
         this.jump = null;
         this.attack = null;
         this.roll = null;
+
+        //counter for an attack chain corresponding to attack presses
+        this.comboCounter = 0;
 
         // this.keys = {};
 
@@ -76,11 +80,56 @@ class GameEngine {
             this.mouse = getXandY(e);
         });
 
+
+        //mouse was clicked
         this.ctx.canvas.addEventListener("click", e => {
             if (this.options.debugging) {
                 console.log("CLICK", getXandY(e));
             }
+            
             this.click = getXandY(e);
+            
+            //set attack
+            switch (e.which) {
+                case 1:
+                    //alert('Left Mouse button pressed.');
+                    that.attack = true;
+                    that.comboCounter += 1;
+                    break;
+                case 2:
+                    //alert('Middle Mouse button pressed.');
+                    break;
+                case 3:
+                    //alert('Right Mouse button pressed.');
+                    break;
+
+            }
+
+        
+        });
+
+        //release mouse click
+        this.ctx.canvas.addEventListener("mouseup", e => {
+            if (this.options.debugging) {
+                console.log("CLICK", getXandY(e));
+            }
+            
+            this.click = getXandY(e);
+            
+            switch (e.which) {
+                case 1:
+                    //alert('Left Mouse button release.');
+                    break;
+                case 2:
+                    //alert('Middle Mouse button release.');
+                    break;
+                case 3:
+                    //alert('Right Mouse button release.');
+                    break;
+
+            }
+
+        
         });
 
         this.ctx.canvas.addEventListener("wheel", e => {
@@ -103,6 +152,7 @@ class GameEngine {
             this.rightclick = getXandY(e);
         });
 
+        //keyboard press control logic
         this.ctx.canvas.addEventListener("keydown", function (e) {
             switch (e.key) {
                 case "d":
@@ -116,6 +166,7 @@ class GameEngine {
                     break;
                 case "w":
                     that.up = true;
+                    that.jump = true;
                     break;
                 case "p":
                     that.attack = true;
@@ -129,6 +180,7 @@ class GameEngine {
             }
         }, false);
 
+        //keyboard release control logic
         this.ctx.canvas.addEventListener("keyup", function (e) {
             switch (e.key) {
                 case "d":
@@ -142,6 +194,13 @@ class GameEngine {
                     break;
                 case "w":
                     that.up = false;
+                    break;
+                case "p":
+                    //hacky solution to a combo system
+                    //combo counter only incremented when the key is released
+                    //reset this counter from player entity
+                    that.comboCounter += 1;
+                    //console.log(that.comboCounter);
                     break;
             }
         }, false);
