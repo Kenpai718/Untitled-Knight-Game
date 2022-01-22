@@ -9,6 +9,7 @@ ASSET_MANAGER.queueDownload("./sprites/knight/knightRight.png");
 
 //enemies
 ASSET_MANAGER.queueDownload("./sprites/enemy/wizard.png");
+ASSET_MANAGER.queueDownload("./sprites/enemy/flyingeye.png");
 
 //environment
 ASSET_MANAGER.queueDownload("./sprites/environment/dark_castle_tileset.png");
