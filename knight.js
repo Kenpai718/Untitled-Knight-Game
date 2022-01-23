@@ -138,39 +138,39 @@ class Knight {
     getOffsets() {
         switch(this.action) {
             // idle, running and jumping BB offsets
-            case 0:
-            case 1:
-            case 9:
-            case 10:
-            case 11:
+            case this.states.idle:
+            case this.states.run:
+            case this.states.jump:
+            case this.states.jump_to_fall:
+            case this.states.falling:
                 this.offsetxBB = this.facing == 1 ? 44 * this.scale : 55 * this.scale;
                 this.offsetyBB = 41 * this.scale;
                 this.width = 21 * this.scale;
                 this.height = 39 * this.scale;
                 break;
             // crouch and crouch walk BB offsets
-            case 2:
-            case 3:
+            case this.states.crouch:
+            case this.states.crouch_walk:
                 this.offsetxBB = this.facing == 1 ? 44 * this.scale : 55 * this.scale;
                 this.offsetyBB = 53 * this.scale;
                 this.height = 27 * this.scale;
                 break;
             // roll BB offsets
-            case 5:
+            case this.states.roll:
                 this.offsetxBB = this.facing == 1 ? 44 * this.scale : 35 * this.scale;
                 this.offsetyBB = 53 * this.scale;
                 this.height = 27 * this.scale;
                 this.width = 42 * this.scale;
                 break;
             // crouch attack HB offsets
-            case 4:
+            case this.states.crouch_atk:
                 this.offsetxHB = 20 * this.scale;
                 this.offsetyHB = 53 * this.scale;
                 this.heightHB = 27 * this.scale;
                 break;
             // attack combo HB offsets
-            case 14:
-            case 15:
+            case this.states.attack1:
+            case this.states.attack2:
                 this.offsetxHB = this.facing == 1 ? 26 * this.scale : 14 * this.scale;
                 this.offsetyHB = 35 * this.scale;
                 this.widthHB = 80 * this.scale;
