@@ -1,7 +1,7 @@
 class Wizard {
     constructor(game, x, y) {
         Object.assign(this, {game, x, y});
-        this.spritesheet = ASSET_MANAGER.getAsset("/sprites/enemy/wizard.png");
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/wizard.png");
         this.animations = [];
         this.loadAnimations();
         this.tick = 0;
