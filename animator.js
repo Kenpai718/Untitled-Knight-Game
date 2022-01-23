@@ -15,13 +15,20 @@ class Animator {
                 this.elapsedTime -= this.totalTime;
             } else {
                 if (!this.flipped) {
-                    ctx.drawImage(this.spritesheet,
-                        this.xStart + (this.frameCount - 1) * (this.width + this.framePadding), this.yStart,
-                        this.width, this.height,
-                        x, y,
-                        this.width * scale,
-                        this.height * scale);
-                    ctx.strokeStyle = "Black";
+                    if (this.reverse)
+                        ctx.drawImage(this.spritesheet,
+                            this.xStart, this.yStart,
+                            this.width, this.height,
+                            x, y,
+                            this.width * scale,
+                            this.height * scale);
+                    else
+                        ctx.drawImage(this.spritesheet,
+                            this.xStart + (this.frameCount - 1) * (this.width + this.framePadding), this.yStart,
+                            this.width, this.height,
+                            x, y,
+                            this.width * scale,
+                            this.height * scale);
                 } else {
                     ctx.save();
                     ctx.scale(-1, 1);

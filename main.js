@@ -12,6 +12,7 @@ ASSET_MANAGER.queueDownload("./sprites/enemy/wizard.png");
 ASSET_MANAGER.queueDownload("./sprites/enemy/skeleton.png");
 ASSET_MANAGER.queueDownload("./sprites/enemy/goblin.png");
 ASSET_MANAGER.queueDownload("./sprites/enemy/mushroom.png");
+ASSET_MANAGER.queueDownload("./sprites/enemy/flyingeye.png");
 
 //environment
 ASSET_MANAGER.queueDownload("./sprites/environment/dark_castle_tileset.png");

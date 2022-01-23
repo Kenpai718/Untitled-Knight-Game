@@ -12,7 +12,7 @@ class SceneManager {
         //this.game.addEntity(this.test);
 
         //main character
-        this.player = new Knight(this.game, 0, 777);
+        this.player = new Knight(this.game, 0, 500);
         this.game.addEntity(this.player);
 
         this.loadLevel1();
@@ -34,9 +34,11 @@ class SceneManager {
 
     loadLevel1() {
         let bg = new Background(this.game);
-        let platform = new Ground(this.game, 0, this.game.surfaceHeight - 64, this.game.surfaceWidth, PARAMS.BLOCKWIDTH);
+        let ground = new Ground(this.game, 0, this.game.surfaceHeight - 64, this.game.surfaceWidth, PARAMS.BLOCKWIDTH);
+        let platform = new Ground(this.game, 800, this.game.surfaceHeight - 300, 500, PARAMS.BLOCKWIDTH);
 
-        this.game.addEntity(platform);
+        this.game.addEntity(ground);
+        //this.game.addEntity(platform);
         this.game.addEntity(bg);
     }
 
