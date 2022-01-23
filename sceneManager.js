@@ -7,6 +7,10 @@ class SceneManager {
         this.title = false;
         this.gameOver = false;
 
+        //testing goblin animations
+        //this.test = new Skeleton(this.game, 400, 927)
+        //this.game.addEntity(this.test);
+
         //main character
         this.player = new Knight(this.game, 0, 500);
         this.game.addEntity(this.player);
