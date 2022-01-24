@@ -155,6 +155,7 @@ class GameEngine {
 
         //keyboard press control logic
         this.ctx.canvas.addEventListener("keydown", function (e) {
+            e.preventDefault(); //prevent scrolling from pressing a key
             switch (e.key) {
                 case "d":
                     that.right = true;
