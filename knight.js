@@ -136,7 +136,7 @@ class Knight {
 
     // MUST CALL THIS BEFORE CALLING UPDATEBB
     getOffsets() {
-        switch(this.action) {
+        switch (this.action) {
             // idle, running and jumping BB offsets
             case this.states.idle:
             case this.states.run:
@@ -215,7 +215,7 @@ class Knight {
         const WALK_FALL_A = 421.875;
         const RUN_FALL_A = 562.5;
         const JUMP_HEIGHT = 1500;
-        const DOUBLE_JUMP_HEIGHT = 500;
+        const DOUBLE_JUMP_HEIGHT = 550;
 
 
         const MAX_FALL = 270 * SCALER;
@@ -404,17 +404,20 @@ class Knight {
         this.updateBB();
 
 
-        let buffer = 110; //for collision placement
 
         //do collisions detection here
         let that = this;
         this.game.entities.forEach(function (entity) {
+
+            //buffers for collision placement
+            let groundBuffer = 110;
+            let bonkBuffer = 15;
             if (entity.BB && that.BB.collide(entity.BB)) {
                 if (that.velocity.y > 0) { // falling
-                    if ((entity instanceof Ground) // landing
+                    if ((entity instanceof Ground || entity instanceof Platform) // landing
                         && (that.lastBB.bottom) >= entity.BB.top) { // was above last tick
                         //console.log("touched grass");
-                        that.y = entity.BB.top - PARAMS.BLOCKWIDTH - buffer;
+                        that.y = entity.BB.top - PARAMS.BLOCKWIDTH - groundBuffer;
 
                         //touched ground so reset all jumping properties
                         that.inAir = false;
@@ -433,6 +436,20 @@ class Knight {
                     that.velocity.y === 0;
                     that.getOffsets();
                     that.updateBB();
+                }
+
+
+                //jumping
+                if(that.velocity.y < 0) {
+
+                    if((entity instanceof Ground || entity instanceof Platform)
+                    && (that.lastBB.top <= entity.BB.bottom)) { //hit from bottom
+                        that.velocity.y = 0;
+                        that.y = entity.BB.top + bonkBuffer;
+                        //console.log("bonk");
+                    }
+
+                    
                 }
             }
 

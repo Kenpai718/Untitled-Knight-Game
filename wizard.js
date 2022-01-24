@@ -1,23 +1,25 @@
 class Wizard {
     constructor(game, x, y) {
-        Object.assign(this, {game, x, y});
+        Object.assign(this, { game, x, y });
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/wizard.png");
         this.animations = [];
         this.loadAnimations();
         this.tick = 0;
-        this.states = {idle1: 0, idleto2: 1, idle2: 2, idleto1: 3, 
-            stoptofly: 4, fly: 5, flytostop:6, attack: 7, atoidle: 8, dead: 9};
+        this.states = {
+            idle1: 0, idleto2: 1, idle2: 2, idleto1: 3,
+            stoptofly: 4, fly: 5, flytostop: 6, attack: 7, atoidle: 8, dead: 9
+        };
         this.state = this.states.attack;
-        this.directions = {right: 0, left: 1};
+        this.directions = { right: 0, left: 1 };
         this.dir = this.directions.right;
-        this.scale = 4;
-        this.phase = Math.floor(Math.random()*4);
+        this.scale = 3;
+        this.phase = Math.floor(Math.random() * 4);
     }
 
     loadAnimations() {
         for (let i = 0; i < 10; i++) {
             this.animations.push([]);
-            for(let j = 0; j < 2; j++) {
+            for (let j = 0; j < 2; j++) {
                 this.animations.push({});
             }
         }
@@ -55,18 +57,19 @@ class Wizard {
     }
 
     draw(ctx) {
-        if (this.state != this.states.dead) {
-            switch (this.phase) {
-                case 0:
-                    this.state = this.states.idle1;
-                    break;
-                case 1:
-                    this.state = this.states.stoptofly;
-                    break;
-                case 2:
-                    this.state = this.states.attack;
-                    break;
-            }
+        switch (this.phase) {
+            case 0:
+                this.state = this.states.idle1;
+                break;
+            case 1:
+                this.state = this.states.stoptofly;
+                break;
+            case 2:
+                this.state = this.states.attack;
+                break;
+            case 3:
+                this.state= this.states.dead;
+                break;
         }
         this.phase = -1;
 
@@ -76,8 +79,13 @@ class Wizard {
             this.forward(ctx);
         else if (this.screen < this.states.dead)
             this.attack(ctx);
-        else
-            this.animations[9][this.dir].drawFrame(this.game.clockTick, ctx, this.x, this.y, this.scale);
+        else {
+            this.animations[this.state][this.dir].drawFrame(this.game.clockTick, ctx, this.x, this.y, this.scale);
+            if (this.animations[this.state][this.dir].isDone()) {
+                this.animations[this.state][this.dir].elapsedTime = 0;
+                this.phase = Math.floor(Math.random()*4);
+            }
+        }
     }
 
     // idle animation example
@@ -112,7 +120,7 @@ class Wizard {
             if (this.animations[3][this.dir].isDone()) {
                 this.state = this.states.idle1;
                 this.tick = 0;
-                this.phase = Math.floor(Math.random()*4);
+                this.phase = Math.floor(Math.random() * 4);
                 this.animations[3][this.dir].elapsedTime = 0;
             }
         }
@@ -143,7 +151,7 @@ class Wizard {
                 this.state = this.states.idle1;
                 this.tick = 0;
                 this.animations[6][this.dir].elapsedTime = 0;
-                this.phase = Math.floor(Math.random()*4);
+                this.phase = Math.floor(Math.random() * 4);
             }
         }
     }
@@ -160,7 +168,7 @@ class Wizard {
             this.animations[8][this.dir].drawFrame(this.game.clockTick, ctx, this.x, this.y, this.scale);
             if (this.animations[8][this.dir].isDone()) {
                 this.state = this.states.idle1;
-                this.phase = Math.floor(Math.random()*4);
+                this.phase = Math.floor(Math.random() * 4);
                 this.animations[8][this.dir].elapsedTime = 0;
             }
         }
