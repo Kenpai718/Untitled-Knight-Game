@@ -1,7 +1,7 @@
 // This game shell was happily modified from Googler Seth Ladd's "Bad Aliens" game and his Google IO talk in 2011
 
 class GameEngine {
-    
+
     constructor(options) {
         // What you will use to draw
         // Documentation: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
@@ -87,9 +87,9 @@ class GameEngine {
             if (this.options.debugging) {
                 console.log("CLICK", getXandY(e));
             }
-            
+
             this.click = getXandY(e);
-            
+
             //set attack
             switch (e.which) {
                 case 1:
@@ -106,7 +106,7 @@ class GameEngine {
 
             }
 
-        
+
         });
 
         //release mouse click
@@ -114,9 +114,9 @@ class GameEngine {
             if (this.options.debugging) {
                 console.log("CLICK", getXandY(e));
             }
-            
+
             this.click = getXandY(e);
-            
+
             switch (e.which) {
                 case 1:
                     //alert('Left Mouse button release.');
@@ -130,7 +130,7 @@ class GameEngine {
 
             }
 
-        
+
         });
 
         this.ctx.canvas.addEventListener("wheel", e => {
@@ -156,27 +156,27 @@ class GameEngine {
         //keyboard press control logic
         this.ctx.canvas.addEventListener("keydown", function (e) {
             e.preventDefault(); //prevent scrolling from pressing a key
-            switch (e.key) {
-                case "d":
+            switch (e.code) {
+                case "KeyD":
                     that.right = true;
                     break;
-                case "a":
+                case "KeyA":
                     that.left = true;
                     break;
-                case "s":
+                case "KeyS":
                     that.down = true;
                     break;
-                case "w":
+                case "KeyW":
                     that.up = true;
                     that.jump = true;
                     break;
-                case "p":
+                case "KeyP":
                     that.attack = true;
                     break;
-                case "Shift":
+                case "ShiftLeft":
                     that.roll = true;
                     break;
-                case " ":
+                case "Space":
                     that.jump = true;
                     break;
             }
@@ -184,20 +184,20 @@ class GameEngine {
 
         //keyboard release control logic
         this.ctx.canvas.addEventListener("keyup", function (e) {
-            switch (e.key) {
-                case "d":
+            switch (e.code) {
+                case "KeyD":
                     that.right = false;
                     break;
-                case "a":
+                case "KeyA":
                     that.left = false;
                     break;
-                case "s":
+                case "KeyS":
                     that.down = false;
                     break;
-                case "w":
+                case "KeyW":
                     that.up = false;
                     break;
-                case "p":
+                case "KeyP":
                     //hacky solution to a combo system
                     //combo counter only incremented when the key is released
                     //reset this counter from player entity
