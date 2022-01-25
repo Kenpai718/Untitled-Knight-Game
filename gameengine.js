@@ -156,32 +156,27 @@ class GameEngine {
         //keyboard press control logic
         this.ctx.canvas.addEventListener("keydown", function (e) {
             e.preventDefault(); //prevent scrolling from pressing a key
-            switch (e.key) {
-                case "d":
-                case "D":
+            switch (e.code) {
+                case "KeyD":
                     that.right = true;
                     break;
-                case "a":
-                case "A":
+                case "KeyA":
                     that.left = true;
                     break;
-                case "s":
-                case "S":
+                case "KeyS":
                     that.down = true;
                     break;
-                case "w":
-                case "W":
+                case "KeyW":
                     that.up = true;
                     that.jump = true;
                     break;
-                case "p":
-                case "P":
+                case "KeyP":
                     that.attack = true;
                     break;
-                case "Shift":
+                case "ShiftLeft":
                     that.roll = true;
                     break;
-                case " ":
+                case "Space":
                     that.jump = true;
                     break;
             }
@@ -189,25 +184,20 @@ class GameEngine {
 
         //keyboard release control logic
         this.ctx.canvas.addEventListener("keyup", function (e) {
-            switch (e.key) {
-                case "d":
-                case "D":
+            switch (e.code) {
+                case "KeyD":
                     that.right = false;
                     break;
-                case "a":
-                case "A":
+                case "KeyA":
                     that.left = false;
                     break;
-                case "s":
-                case "S":
+                case "KeyS":
                     that.down = false;
                     break;
-                case "w":
-                case "W":
+                case "KeyW":
                     that.up = false;
                     break;
-                case "p":
-                case "P":
+                case "KeyP":
                     //hacky solution to a combo system
                     //combo counter only incremented when the key is released
                     //reset this counter from player entity
