@@ -1,8 +1,14 @@
 /** Global Parameters Object */
 const PARAMS = {
         DEBUG : false,
-        BLOCKWIDTH : 128
+        BLOCKDIM : 81
 };
+
+/** Easy access to math functions */
+const {
+    pow, ceil, floor, round, log, log2: lg, max, min, random, sqrt, abs,
+    PI, E, sin, cos, tan, asin, acos, atan, atan2,
+} = Math
 
 /**
  * @param {Number} n

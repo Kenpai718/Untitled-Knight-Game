@@ -1,9 +1,9 @@
 class Knight {
     //game = engine, (x, y) = spawn cords
     constructor(game, x, y) {
-        //setup spritesheets
         Object.assign(this, { game, x, y });
-        this.game = game;
+
+        // get spritesheets
         this.spritesheetRight = ASSET_MANAGER.getAsset("./sprites/knight/knightRight.png");
         this.spritesheetLeft = ASSET_MANAGER.getAsset("./sprites/knight/knightLeft.png");
 
@@ -41,24 +41,20 @@ class Knight {
         this.doubleJump = true;
 
         //positioning
-        this.scale = 3;
-        this.x = x;
-        this.y = y;
+        this.scale = 3.12;
         this.width = 120 * this.scale;
         this.height = 80 * this.scale;
 
+        // bounding box (hitbox) used for attacks
         this.HB = null;
 
         //physics
-        //this.speed = 150; //temporary should be changed to only use velocity later
         this.velocity = { x: 0, y: 0 };
         this.fallAcc = 1500;
-        this.groundLevel = 777; //temporary until a real ground is implemented
 
         //animations
         this.animations = [];
         this.loadAnimations();
-        this.getOffsets();
         this.updateBB();
 
     };
@@ -66,13 +62,12 @@ class Knight {
     loadAnimations() {
         let numDir = 2;
         let numStates = 17;
-        for (var i = 0; i < numDir; i++) { //facing direction: left = 0, right = 1
+        for (var i = 0; i < numDir; i++) {
             this.animations.push([]);
-            for (var j = 0; j < numStates; j++) { //action
+            for (var j = 0; j < numStates; j++) {
                 this.animations[i].push([]);
             }
         }
-
 
         //states: 1-10
         // idle = 0
@@ -128,13 +123,11 @@ class Knight {
         this.animations[0][this.states.attack2] = new Animator(this.spritesheetLeft, 720, 0, 120, 80, 6, 0.1, 0, true, false, false);
         this.animations[1][this.states.attack2] = new Animator(this.spritesheetRight, 480, 0, 120, 80, 6, 0.1, 0, false, false, false);
 
-
         // death = 16 (special property so might be better to just have it called only when the player dies)
         this.animations[0][this.states.death] = new Animator(this.spritesheetLeft, 360, 400, 120, 80, 9, 0.1, 0, true, false, false);
         this.animations[1][this.states.death] = new Animator(this.spritesheetRight, 0, 400, 120, 80, 9, 0.1, 0, false, false, false);
     };
 
-    // MUST CALL THIS BEFORE CALLING UPDATEBB
     getOffsets() {
         switch (this.action) {
             // idle, running and jumping BB offsets
@@ -145,22 +138,22 @@ class Knight {
             case this.states.falling:
                 this.offsetxBB = this.facing == 1 ? 44 * this.scale : 55 * this.scale;
                 this.offsetyBB = 41 * this.scale;
-                this.width = 21 * this.scale;
-                this.height = 39 * this.scale;
+                this.widthBB = 21 * this.scale;
+                this.heightBB = 39 * this.scale;
                 break;
             // crouch and crouch walk BB offsets
             case this.states.crouch:
             case this.states.crouch_walk:
                 this.offsetxBB = this.facing == 1 ? 44 * this.scale : 55 * this.scale;
                 this.offsetyBB = 53 * this.scale;
-                this.height = 27 * this.scale;
+                this.heightBB = 27 * this.scale;
                 break;
             // roll BB offsets
             case this.states.roll:
                 this.offsetxBB = this.facing == 1 ? 44 * this.scale : 35 * this.scale;
                 this.offsetyBB = 53 * this.scale;
-                this.height = 27 * this.scale;
-                this.width = 42 * this.scale;
+                this.heightBB = 27 * this.scale;
+                this.widthBB = 42 * this.scale;
                 break;
             // crouch attack HB offsets
             case this.states.crouch_atk:
@@ -180,20 +173,20 @@ class Knight {
     };
 
     updateHB() {
+        this.getOffsets();
         this.lastHB = this.HB;
-        this.HB = new BoundingBox(this.x + this.offsetxHB, this.y + this.offsetyHB, this.widthHB, this.heightHB);
+        this.HB = new BoundingBox(this.x + this.offsetxHB - this.game.camera.x, this.y + this.offsetyHB, this.widthHB, this.heightHB);
     };
 
     updateBB() {
+        this.getOffsets();
         this.lastBB = this.BB;
-        this.BB = new BoundingBox(this.x + this.offsetxBB, this.y + this.offsetyBB, this.width, this.height);
+        this.BB = new BoundingBox(this.x + this.offsetxBB - this.game.camera.x, this.y + this.offsetyBB, this.widthBB, this.heightBB);
     };
 
     update() {
-
         const TICK = this.game.clockTick;
         const SCALER = 3;
-
         //currently using Chris Marriot's mario physics
         const MIN_WALK = 4.453125 * SCALER;
         const MAX_WALK = 93.75 * SCALER;
@@ -206,8 +199,6 @@ class Knight {
         const ROLL_SPD = 400 * SCALER;
         const CROUCH_SPD = 50 * SCALER;
         const DOUBLE_JUMP_X_BOOST = 10;
-
-
         const STOP_FALL = 1575;
         const WALK_FALL = 1800;
         const RUN_FALL = 2025;
@@ -216,10 +207,7 @@ class Knight {
         const RUN_FALL_A = 562.5;
         const JUMP_HEIGHT = 1500;
         const DOUBLE_JUMP_HEIGHT = 550;
-
-
         const MAX_FALL = 270 * SCALER;
-
 
         //choose animation based on keyboard input
         //this if statement is to make sure special states are not interrupted
@@ -229,33 +217,27 @@ class Knight {
                 this.velocity.x = 0;
                 if (this.game.down) { //crouch
                     this.action = this.states.crouch;
-
                     //crouch left or right (move at half speed)
                     if (this.game.right && !this.game.attack) { //run right
                         this.facing = this.dir.right;
                         this.action = this.states.crouch_walk; //crouch walk
-
                         this.velocity.x += CROUCH_SPD;
                     } else if (this.game.left && !this.game.attack) { //run left
                         this.facing = this.dir.left;
                         this.action = this.states.crouch_walk; //crouch walk
-
                         this.velocity.x -= CROUCH_SPD;
                     }
                 } else if (this.game.right && !this.game.attack) { //run right
                     this.facing = this.dir.right;
                     this.action = this.states.run;
-
                     this.velocity.x += MAX_RUN;
                 } else if (this.game.left && !this.game.attack) { //run left
                     this.facing = this.dir.left;
                     this.action = this.states.run;
-
                     this.velocity.x -= MAX_RUN;
                 } else { //idle
                     this.action = this.DEFAULT_ACTION;
                 }
-
                 //jump press
                 if (this.game.jump && !this.action.jump) {
                     this.action = this.states.jump; //jump (9-11)
@@ -263,16 +245,6 @@ class Knight {
                     this.velocity.y -= JUMP_HEIGHT;
                     this.game.jump = false;
                     this.inAir = true;
-
-                    // //logic to handle switching between jump animations
-                    // if (this.animations[this.facing][this.states.falling].isDone()) { //done falling
-                    //     //this.game.jump = false; //jump finished set to false
-                    // } else if (this.animations[this.facing][this.states.jump_to_fall].isDone()) { //falling in between finished transition to falling
-                    //     this.game.jump = false;
-                    //     this.action = this.states.falling; //set to falling
-                    // } else if (this.animations[this.facing][this.states.jump].isDone()) { //jump finished transition to falling
-                    //     this.action = this.states.jump_to_fall; //set to falling-in-between
-                    // }
                 }
             } else { //in the air
                 // horizontal physics
@@ -284,12 +256,9 @@ class Knight {
                     if (Math.abs(this.velocity.x) > MAX_WALK) {
                         this.velocity.x -= ACC_RUN * TICK;
                     } else this.velocity.x -= ACC_WALK * TICK;
-                } else {
-                    // do nothing
                 }
 
                 if (this.inAir) {
-
                     // //logic to handle switching between jump animations
                     // if (this.animations[this.facing][this.states.falling].isDone()) { //done falling
                     //     //this.game.jump = false; //jump finished set to false
@@ -329,7 +298,6 @@ class Knight {
                 this.combo = (this.game.comboCounter > 1 && this.animations[this.facing][this.states.attack1].isDone()) ? true : false;
                 this.action = (this.combo) ? this.states.attack2 : this.states.attack1; //if comboing switch to the second animation
             }
-            this.getOffsets();
             this.updateHB();
 
             let done = this.animations[this.facing][this.action].isDone();
@@ -389,18 +357,9 @@ class Knight {
         if (this.velocity.x >= MAX_RUN) this.velocity.x = MAX_RUN + doubleJumpBonus;
         if (this.velocity.x <= -MAX_RUN) this.velocity.x = -MAX_RUN - doubleJumpBonus;
 
-
-        //TODO: Temporary solution! Delete once there is a moving camera
-        //this reset position if outside the canvas.
-        if (this.x > this.game.surfaceWidth || this.x < 0) {
-            this.x = 0;
-            this.y = this.groundLevel;
-        }
-
         //update position and bounding box
         this.x += this.velocity.x * TICK;
         this.y += this.velocity.y * TICK;
-        this.getOffsets();
         this.updateBB();
 
 
@@ -408,57 +367,70 @@ class Knight {
         //do collisions detection here
         let that = this;
         this.game.entities.forEach(function (entity) {
-
-            //buffers for collision placement
-            let groundBuffer = 110;
-            let bonkBuffer = 15;
             if (entity.BB && that.BB.collide(entity.BB)) {
-                if (that.velocity.y > 0) { // falling
-                    if ((entity instanceof Ground || entity instanceof Platform) // landing
-                        && (that.lastBB.bottom) >= entity.BB.top) { // was above last tick
-                        //console.log("touched grass");
-                        that.y = entity.BB.top - PARAMS.BLOCKWIDTH - groundBuffer;
-
-                        //touched ground so reset all jumping properties
+                if (that.velocity.y > 0) {
+                    if ((entity instanceof Ground || entity instanceof Platform || entity instanceof Brick || entity instanceof Walls) && that.BB.collide(entity.topBB) && !that.BB.collide(entity.bottomBB)) {
+                        that.y = entity.BB.top - that.height;
+                        that.velocity.y = 0;
                         that.inAir = false;
                         that.doubleJump = true;
-                        if (that.action == that.states.jump || that.action == that.states.jump_to_fall || that.action == that.states.falling) {
-                            that.action = that.DEFAULT_ACTION// set state to idle
+                        if (that.action == that.states.jump || that.action == that.states.jump_to_fall || that.action == that.states.fall) {
+                            that.action = that.DEFAULT_ACTION;
                         }
-
-                        //reset jump timers
                         that.resetAnimationTimers(that.states.jump);
                         that.resetAnimationTimers(that.states.jump_to_fall);
                         that.resetAnimationTimers(that.states.falling);
+                        that.updateBB();
+                    }
+                }
+                if (that.velocity.y < 0) {
+                    if ((entity instanceof Ground || entity instanceof Platform || entity instanceof Brick || entity instanceof Walls) && (that.lastBB.top >= entity.BB.bottom)) {
+                        that.y -= that.velocity.y * TICK;
+                        that.velocity.y = 0;
+                        that.updateBB();
+                    }
+                }
+                if ((entity instanceof Platform || entity instanceof Brick || entity instanceof Ground || entity instanceof Walls) && that.BB.collide(entity.topBB) && that.BB.collide(entity.bottomBB)) {
+                    if (that.BB.top > entity.BB.top) { // only crawl under if the platform is above the character
+                        // logic to make character crawl under obstacles
+                        if (that.action == that.states.idle) {
+                            that.action = that.states.crouch;
+                        } else if (that.action == that.states.run) {
+                            that.action = that.states.crouch_walk;
+                            that.x -= that.velocity.x * TICK;
+                            that.x = that.facing == 0 ? that.x - CROUCH_SPD * TICK : that.x + CROUCH_SPD * TICK;
+                        }
+                    } else {
+                        // without this the character will auto crouch if there are two tiles stacked on each other
+                        if (that.action == that.states.crouch) {
+                            that.action = that.states.crouch;
+                        } else if (that.action == that.states.crouch_walk) {
+                            that.action = that.states.run;
+                            that.x -= that.velocity.x * TICK
+                        }
+                    }
+                    // if character is not under, dont let them walk through the platform
+                    if (!that.isCrouched()) {
+                        if (that.BB.collide(entity.leftBB)) {
+                            that.x = entity.BB.left - that.BB.width - that.offsetxBB + that.game.camera.x;
+                        } else if (that.BB.collide(entity.rightBB)) {
+                            that.x = entity.BB.right - that.offsetxBB + that.game.camera.x;
+                        }
 
                     }
-
-                    that.velocity.y === 0;
-                    that.getOffsets();
+                    that.velocity.x = 0;
                     that.updateBB();
                 }
-
-
-                //jumping
-                if(that.velocity.y < 0) {
-
-                    if((entity instanceof Ground || entity instanceof Platform)
-                    && (that.lastBB.top <= entity.BB.bottom)) { //hit from bottom
-                        that.velocity.y = 0;
-                        that.y = entity.BB.top + bonkBuffer;
-                        //console.log("bonk");
-                    }
-
-                    
-                }
             }
-
-
         });
     };
 
+    isCrouched() {
+        return this.action == this.states.crouch || this.action == this.states.crouch_walk || this.action == this.states.crouch_atk;
+    }
+
     draw(ctx) {
-        this.animations[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x, this.y, this.scale);
+        this.animations[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y, this.scale);
         //this.viewAllAnimations(ctx);
 
         if (PARAMS.DEBUG) {
