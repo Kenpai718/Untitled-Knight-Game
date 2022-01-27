@@ -3,25 +3,30 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Game Project Title Goes Here</title>
+    <title>Untitled Webgame</title>
 
-    <script type="text/javascript" src="./assetmanager.js"></script>
-    <script type="text/javascript" src="./timer.js"></script>
-    <script type="text/javascript" src="./gameengine.js"></script>
-    <script type="text/javascript" src="./util.js"></script>
-    <script type="text/javascript" src="./animator.js"></script>
-    <script type="text/javascript" src="./boundingbox.js"></script>
-    <script type="text/javascript" src="./knight.js"></script>
-    <script type="text/javascript" src="./wizard.js"></script>
-    <script type="text/javascript" src="./skeleton.js"></script>
-    <script type="text/javascript" src="./goblin.js"></script>
-    <script type="text/javascript" src="./mushroom.js"></script>
-    <script type="text/javascript" src="./flyingeye.js"></script>
-    <script type="text/javascript" src="./tiles.js"></script>
-    <script type="text/javascript" src="./background.js"></script>
-    <script type="text/javascript" src="./sceneManager.js"></script>
+    <!-- Engine files go here-->
+    <script type="text/javascript" src="./engine/assetmanager.js"></script>
+    <script type="text/javascript" src="./engine/timer.js"></script>
+    <script type="text/javascript" src="./engine/gameengine.js"></script>
+    <script type="text/javascript" src="./engine/animator.js"></script>
+    <script type="text/javascript" src="./engine/boundingbox.js"></script>
+    <script type="text/javascript" src="./engine/sceneManager.js"></script>
+
+    <!-- Entity files go here-->
+    <script type="text/javascript" src="./entity/player/knight.js"></script>
+    <script type="text/javascript" src="./entity/enemy/wizard.js"></script>
+    <script type="text/javascript" src="./entity/enemy/skeleton.js"></script>
+    <script type="text/javascript" src="./entity/enemy/goblin.js"></script>
+    <script type="text/javascript" src="./entity/enemy/mushroom.js"></script>
+    <script type="text/javascript" src="./entity/enemy/flyingeye.js"></script>
+    <script type="text/javascript" src="./entity/level/tiles.js"></script>
+    <script type="text/javascript" src="./entity/level/background.js"></script>
+    <script type="text/javascript" src="./entity/level/levels.js"></script>
+
+    <!-- Other files like driver or utility classes go here -->
     <script type="text/javascript" src="./main.js"></script>
-    <script type="text/javascript" src="./levels.js"></script>
+    <script type="text/javascript" src="./util.js"></script>
 </head>
 <body>
 
