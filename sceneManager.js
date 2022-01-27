@@ -2,46 +2,39 @@ class SceneManager {
     constructor(game) {
         this.game = game;
         this.game.camera = this; //add scene manager as an entity to game engine
-        
+        this.x = 0;
         //game status
         this.title = false;
         this.gameOver = false;
-
-        //testing goblin animations
-        //this.test = new Skeleton(this.game, 400, 927)
-        //this.game.addEntity(this.test);
 
         //main character
         this.player = new Knight(this.game, 0, 300);
         this.game.addEntity(this.player);
 
-        //this.loadLevel1();
-        this.loadPrototypeLevel();
-        
+        this.loadLevel1();
+        //this.loadPrototypeLevel();
+
     };
 
     update() {
-        //console.log("scene manager updated");
         PARAMS.DEBUG = document.getElementById("debug").checked;
+        if (this.x < this.player.x - this.game.surfaceWidth / 2) this.x = this.player.x - this.game.surfaceWidth / 2;
     };
 
     draw(ctx) {
-
         if(PARAMS.DEBUG) {
-            //console.log("debug");
             this.viewDebug(ctx);
         }
     };
-
 
     //demo of entities for prototshowcase
     loadPrototypeLevel() {
         //ground
         let bg = new Background(this.game);
-        let ground = new Ground(this.game, 0, this.game.surfaceHeight - 64, this.game.surfaceWidth, PARAMS.BLOCKWIDTH);
-        let plat = new Platform(this.game, 70, this.game.surfaceHeight - 340, 500, PARAMS.BLOCKWIDTH);
-        let plat2 = new Platform(this.game, this.game.surfaceWidth - 570, this.game.surfaceHeight - 340, 500, PARAMS.BLOCKWIDTH);
-        let plat3 = new Platform(this.game, this.game.surfaceWidth - 1150, this.game.surfaceHeight - 520, 375, PARAMS.BLOCKWIDTH);
+        let ground = new Ground(this.game, 0, 12 * PARAMS.BLOCKDIM, this.game.surfaceWidth, PARAMS.BLOCKDIM);
+        let plat = new Brick(this.game, 70, this.game.surfaceHeight - 340, PARAMS.BLOCKDIM * 4, PARAMS.BLOCKDIM);
+        let plat2 = new Platform(this.game, this.game.surfaceWidth - 570, this.game.surfaceHeight - 340, PARAMS.BLOCKDIM * 4, PARAMS.BLOCKDIM);
+        let plat3 = new Platform(this.game, this.game.surfaceWidth - 1150, 10 * PARAMS.BLOCKDIM, PARAMS.BLOCKDIM * 4, PARAMS.BLOCKDIM);
 
         //show animations
         let skel = new Skeleton(this.game, 190, 927);
@@ -49,7 +42,7 @@ class SceneManager {
         let mush = new Mushroom(this.game, 1505, 740 - 90);
         let wiz = new Wizard(this.game, 50, 75);
         let eye = new FlyingEye(this.game, 1570, 45);
-        
+
 
         //add entities
         this.game.addEntity(ground);
@@ -67,15 +60,32 @@ class SceneManager {
 
         //background always last
         this.game.addEntity(bg);
-    }
+    };
 
     loadLevel1() {
         let bg = new Background(this.game);
-        let ground = new Ground(this.game, 0, this.game.surfaceHeight - 64, this.game.surfaceWidth, PARAMS.BLOCKWIDTH);
-
-        this.game.addEntity(ground);
+        this.level = level1_1;
+        this.x = 0;
+        if (this.level.ground) {
+            for (var i = 0; i < this.level.ground.length; i++) {
+                let ground = this.level.ground[i];
+                this.game.addEntity(new Ground(this.game, ground.x * PARAMS.BLOCKDIM, ground.y * PARAMS.BLOCKDIM, ground.size * PARAMS.BLOCKDIM, PARAMS.BLOCKDIM, ground.type));
+            }
+        }
+        if (this.level.bricks) {
+            for (var i = 0; i < this.level.bricks.length; i++) {
+                let bricks = this.level.bricks[i];
+                this.game.addEntity(new Brick(this.game, bricks.x * PARAMS.BLOCKDIM, bricks.y * PARAMS.BLOCKDIM, bricks.size * PARAMS.BLOCKDIM, PARAMS.BLOCKDIM, bricks.type, bricks.random));
+            }
+        }
+        if (this.level.walls) {
+            for (var i = 0; i < this.level.walls.length; i++) {
+                let walls = this.level.walls[i];
+                this.game.addEntity(new Walls(this.game, walls.x * PARAMS.BLOCKDIM, walls.y * PARAMS.BLOCKDIM, walls.size * PARAMS.BLOCKDIM, PARAMS.BLOCKDIM, walls.type));
+            }
+        }
         this.game.addEntity(bg);
-    }
+    };
 
     //keyboard input
     viewDebug(ctx) {;
@@ -119,10 +129,10 @@ class SceneManager {
 		ctx.strokeStyle = this.game.roll ? "Red" : "SpringGreen";
 		ctx.fillStyle = ctx.strokeStyle;
 		ctx.strokeRect(130, this.game.surfaceHeight - 80, 50, 30);
-		ctx.fillText("LSHIFT", 140, this.game.surfaceHeight - 60);  
+		ctx.fillText("LSHIFT", 140, this.game.surfaceHeight - 60);
 
         // attack debug
-    
+
         ctx.lineWidth = 2;
         ctx.strokeStyle = this.game.attack  ? "Red" : "SpringGreen";
         ctx.fillStyle = ctx.strokeStyle;
