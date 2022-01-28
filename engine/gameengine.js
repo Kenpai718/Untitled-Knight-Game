@@ -1,7 +1,7 @@
 // This game shell was happily modified from Googler Seth Ladd's "Bad Aliens" game and his Google IO talk in 2011
 
 class GameEngine {
-    
+
     constructor(options) {
         // What you will use to draw
         // Documentation: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
@@ -16,13 +16,14 @@ class GameEngine {
         this.wheel = null;
 
         //controls
-        this.left = null;
-        this.right = null;
-        this.down = null;
-        this.up = null;
-        this.jump = null;
-        this.attack = null;
-        this.roll = null;
+        this.left = null; //A
+        this.right = null; //D
+        this.down = null; //S
+        this.up = null; //W
+        this.jump = null; //space
+        this.attack = null; //left click
+        this.roll = null; //left shift
+        this.shoot = null; //right click
 
         //counter for an attack chain corresponding to attack presses
         this.comboCounter = 0;
@@ -87,9 +88,9 @@ class GameEngine {
             if (this.options.debugging) {
                 console.log("CLICK", getXandY(e));
             }
-            
+
             this.click = getXandY(e);
-            
+
             //set attack
             switch (e.which) {
                 case 1:
@@ -106,7 +107,7 @@ class GameEngine {
 
             }
 
-        
+
         });
 
         //release mouse click
@@ -114,9 +115,9 @@ class GameEngine {
             if (this.options.debugging) {
                 console.log("CLICK", getXandY(e));
             }
-            
+
             this.click = getXandY(e);
-            
+
             switch (e.which) {
                 case 1:
                     //alert('Left Mouse button release.');
@@ -130,7 +131,7 @@ class GameEngine {
 
             }
 
-        
+
         });
 
         this.ctx.canvas.addEventListener("wheel", e => {
@@ -151,6 +152,7 @@ class GameEngine {
                 e.preventDefault(); // Prevent Context Menu
             }
             this.rightclick = getXandY(e);
+            this.shoot = true;
         });
 
         //keyboard press control logic
@@ -208,7 +210,11 @@ class GameEngine {
     addEntity(entity) {
         this.entities.push(entity);
     };
-    
+
+    addEntityToFront(entity) {
+        this.entities.unshift(entity);
+    };
+
     draw() {
         // Clear the whole canvas with transparent color (rgba(0, 0, 0, 0))
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);

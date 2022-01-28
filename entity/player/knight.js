@@ -39,6 +39,7 @@ class Knight {
         this.combo = false;
         this.inAir = false;
         this.doubleJump = true;
+        this.numArrows = 50;
 
         //positioning
         this.scale = 3.12;
@@ -47,6 +48,8 @@ class Knight {
 
         // bounding box (hitbox) used for attacks
         this.HB = null;
+        this.offsetxBB = 0;
+        this.offsetyBB = 0;
 
         //physics
         this.velocity = { x: 0, y: 0 };
@@ -320,12 +323,27 @@ class Knight {
 
             }
 
-        } else {
+        } else if (!this.game.attack && this.game.shoot) { //only shoot an arrow when not attacking
+
+            if (this.numArrows > 0) {
+                //try to position starting arrow at the waist of the knight
+                this.game.addEntityToFront(new Arrow(this.game, this.x + this.offsetxBB, (this.y + this.height / 2) + 40, this.game.mouse));
+                this.numArrows--;
+
+            }
+            this.game.shoot = false;
+            this.action = this.DEFAULT_ACTION;
+            //}
+
+
+        } else { //reset all attack animations
             //crouch attack
             this.resetAnimationTimers(this.states.crouch_atk);
             //slash 1 and 2
             this.resetAnimationTimers(this.states.attack1);
             this.resetAnimationTimers(this.states.attack2);
+
+            //reset shooting animation
         }
 
         //roll input
@@ -420,6 +438,13 @@ class Knight {
                     }
                     that.velocity.x = 0;
                     that.updateBB();
+                }
+
+                //player picks up arrow stuck on ground
+                if (entity instanceof Arrow && entity.stuck) {
+                    entity.removeFromWorld = true;
+                    that.numArrows++;
+
                 }
             }
         });
