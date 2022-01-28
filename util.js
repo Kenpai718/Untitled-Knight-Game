@@ -18,10 +18,10 @@ function getFacing(velocity) {
     if (-0.875 < angle && angle < -0.625) return 7;
 };
 
+//distance formula between two points (x, y)
 function distance(A, B) {
     return Math.sqrt((B.x - A.x) * (B.x - A.x) + (B.y - A.y)*(B.y - A.y));
 };
-
 
 /** Easy access to math functions */
 const {

@@ -39,7 +39,7 @@ class Knight {
         this.combo = false;
         this.inAir = false;
         this.doubleJump = true;
-        this.numArrows = 50;
+        this.numArrows = 30;
 
         //positioning
         this.scale = 3.12;
@@ -289,7 +289,7 @@ class Knight {
         }
 
 
-        //attack logic
+        //attack logic (melee/ranged)
         if (this.game.attack) {
 
             if (this.game.down) { //crouch attack
@@ -327,7 +327,8 @@ class Knight {
 
             if (this.numArrows > 0) {
                 //try to position starting arrow at the waist of the knight
-                this.game.addEntityToFront(new Arrow(this.game, this.x + this.offsetxBB, (this.y + this.height / 2) + 40, this.game.mouse));
+                const target = {x: this.game.mouse.x + this.game.camera.x, y: this.game.mouse.y};
+                this.game.addEntityToFront(new Arrow(this.game, this.x + this.offsetxBB, (this.y + this.height / 2) + 40, target));
                 this.numArrows--;
 
             }
