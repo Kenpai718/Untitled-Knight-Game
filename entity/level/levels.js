@@ -1,6 +1,7 @@
 var level1_1 = {
     //music:
     //label:
+    width: 120,
     ground: [
         { x : 0, y : 12, size: 15, type : 1},
         { x : 60, y : 12, size: 60, type : 1},
