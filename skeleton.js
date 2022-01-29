@@ -16,6 +16,14 @@ class Skeleton {
 
     };
 
+    viewBoundingBox(ctx) { //debug
+        ctx.strokeStyle = "Red";
+        ctx.strokeRect(this.x + 14 * this.scale, this.y-37, 21 * this.scale, 51 * this.scale);
+        // This is Bounding Box, leaving alone for now
+        ctx.strokeStyle = "Orange";
+        if (this.HB != null) ctx.strokeRect(this.x, this.y, this.width, this.height);
+    };
+
     loadAnimations() {
 
         let numDir = 2;
@@ -30,56 +38,72 @@ class Skeleton {
         // Animations  [state][direction]
         
         // Idle Animation
-        this.animations[0][0] = new Animator(this.spritesheet, 495, 50, 45, 51, 4, 0.7, -195, 0, 1, 0);
+        this.animations[0][0] = new Animator(this.spritesheet, 495, 50, 45, 51, 4, 0.7, -195, 0, 1, 0); // 0.7
         this.animations[0][1] = new Animator(this.spritesheet, 660, 50, 45, 51, 4, 0.7, 105, 0, 1, 0);
 
         // Damaged Animation
-        this.animations[1][0] = new Animator(this.spritesheet, 495, 348, 55, 53, 4, 0.1, -205, 0, 1, 0);
+        this.animations[1][0] = new Animator(this.spritesheet, 495, 348, 55, 53, 4, 0.1, -205, 0, 1, 0); //0.1
         this.animations[1][1] = new Animator(this.spritesheet, 650, 348, 55, 53, 4, 0.1, 95, 0, 1, 0);
 
         // Death Animation
-        this.animations[2][0] = new Animator(this.spritesheet, 492, 200, 56, 51, 4, 0.1, -206, 0, 0, 0);
-        this.animations[2][1] = new Animator(this.spritesheet, 652, 200, 56, 51, 4, 1, 94, 0, 0, 0);
+        this.animations[2][0] = new Animator(this.spritesheet, 492, 200, 56, 51, 4, 0.1, -206, 0, 0, 0); //0.1
+        this.animations[2][1] = new Animator(this.spritesheet, 652, 200, 56, 51, 4, 0.1, 94, 0, 0, 0);
 
         // Attack Animations
-        this.animations[3][0] = new Animator(this.spritesheet, 1052, 944, 95, 57, 8, 0.1, -245, 0, 1, 0);
+        this.animations[3][0] = new Animator(this.spritesheet, 1052, 944, 95, 57, 8, 0.1, -245, 0, 1, 0); // 0.1
         this.animations[3][1] = new Animator(this.spritesheet, 53, 794, 95, 57, 8, 0.1, 55, 0, 1, 0);
 
         // Move Animation
-        this.animations[4][0] = new Animator(this.spritesheet, 495, 650, 45, 51, 4, 1, -195, 0, 1, 0);
-        this.animations[4][1] = new Animator(this.spritesheet, 660, 650, 45, 51, 4, 1, 105, 0, 1, 0);
+        this.animations[4][0] = new Animator(this.spritesheet, 495, 650, 45, 51, 4, 0.3, -195, 0, 1, 0); // 0.3?
+        this.animations[4][1] = new Animator(this.spritesheet, 660, 650, 45, 51, 4, 0.3, 105, 0, 1, 0);
 
         // Block Animation 
-        this.animations[5][0] = new Animator(this.spritesheet, 491, 505, 40, 46, 4, 1, -190, 0, 1, 0);
-        this.animations[5][1] = new Animator(this.spritesheet, 669, 505, 40, 46, 4, 1, 110, 0, 1, 0);
+        this.animations[5][0] = new Animator(this.spritesheet, 491, 505, 40, 46, 4, 0.2, -190, 0, 1, 0); // 0.2
+        this.animations[5][1] = new Animator(this.spritesheet, 669, 505, 40, 46, 4, 0.2, 110, 0, 1, 0);
 
 
     };
 
     draw(ctx) {
 
-        this.state = 3;
-        this.direction = 1;
+        this.state = 4;
+        this.direction = 0;
         
         switch(this.state) {
             case 0: // Idle
-                this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x, this.y-37, this.scale);
+                if(this.direction == 1)
+                        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x+10, this.y-37, this.scale);
+                else    this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x, this.y-37, this.scale);
                 break;
             case 1: // Damaged
-                this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x, this.y-42, this.scale);
+                if(this.direction == 1)
+                        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x-15, this.y-42, this.scale);
+                else    this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x, this.y-42, this.scale);
                 break;
             case 2: // Death
-                this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x-10, this.y-37, this.scale);
+                if(this.direction == 1) 
+                        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x-10, this.y-37, this.scale);
+                else    this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x-10, this.y-37, this.scale);
                 break;
             case 3: // Attack
-                this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x, this.y-52, this.scale);
+                if(this.direction == 1)
+                        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x-7, this.y-52, this.scale);
+                else    this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x-108, this.y-52, this.scale);
                 break;
             case 4: // Move
-                this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x, this.y-37, this.scale);
+                if(this.direction == 1)
+                        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x + 10, this.y-37, this.scale);
+                else    this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x, this.y-37, this.scale);
                 break;
             case 5: // Block
-                this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x, this.y-24, this.scale);
+                if(this.direction == 1)
+                        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x + 7, this.y-24, this.scale);
+                else    this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x + 14, this.y-24, this.scale);
                 break;
+        }
+
+        if (PARAMS.DEBUG) {
+            this.viewBoundingBox(ctx);
         }
 
     };
