@@ -34,7 +34,7 @@ var level1_1 = {
         { x : 85, y : 7, size : 5, type : 0, random : true},
         { x : 85, y : 8, size : 5, type : 0, random : true},
         { x : 31, y : 9, size : 28, type : 0, random : true},
-        { x : 28, y : 10, size : 31, type : 0, random : true},
+        { x : 30, y : 10, size : 29, type : 0, random : true},
         { x : 21, y : 11, size : 4, type : 0, random : true},
         { x : 28, y : 11, size : 31, type : 0, randome : true},
         { x : 15, y : 12, size : 3, type : 0, random : true},
