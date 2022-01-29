@@ -19,7 +19,7 @@ class SceneManager {
     update() {
         PARAMS.DEBUG = document.getElementById("debug").checked;
         if (this.player.BB.left < 0) this.player.x -= this.player.BB.left;
-        else if (this.player.BB.right > this.game.surfaceWidth) this.player.x -= this.player.BB.right - this.game.surfaceWidth;
+        else if (this.player.BB.right > this.level.width*PARAMS.BLOCKDIM) this.player.x -= this.player.BB.right - this.level.width*PARAMS.BLOCKDIM;
         if (this.x < this.player.x - this.game.surfaceWidth * 9 / 16 && this.x + this.game.surfaceWidth < this.level.width * PARAMS.BLOCKDIM) this.x = this.player.x - this.game.surfaceWidth * 9 / 16;
         else if (this.x > this.player.x - this.game.surfaceWidth * 7 / 16 && this.x > 0) this.x = this.player.x - this.game.surfaceWidth * 7 / 16;
     };

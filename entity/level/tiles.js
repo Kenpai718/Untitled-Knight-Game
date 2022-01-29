@@ -34,15 +34,14 @@ class Ground {
     };
 
     updateBB() {
-        this.BB = new BoundingBox(this.x - this.game.camera.x, this.y, this.w, this.h);
-        this.leftBB = new BoundingBox(this.x - this.game.camera.x, this.y, this.w / 2, this.h);
-        this.rightBB = new BoundingBox(this.x + (this.w / 2) - this.game.camera.x, this.y, this.w / 2, this.h);
-        this.topBB = new BoundingBox(this.x - this.game.camera.x, this.y, this.w, this.h / 2);
-        this.bottomBB = new BoundingBox(this.x - this.game.camera.x, this.y + this.h / 2, this.w, this.h / 2);
+        this.BB = new BoundingBox(this.x, this.y, this.w, this.h);
+        this.leftBB = new BoundingBox(this.x, this.y, this.w / 2, this.h);
+        this.rightBB = new BoundingBox(this.x + (this.w / 2), this.y, this.w / 2, this.h);
+        this.topBB = new BoundingBox(this.x, this.y, this.w, this.h / 2);
+        this.bottomBB = new BoundingBox(this.x, this.y + this.h / 2, this.w, this.h / 2);
     };
 
     update() {
-        this.updateBB();
     };
 
     //draw the ground based on constructor values
@@ -54,7 +53,7 @@ class Ground {
 
         if (PARAMS.DEBUG) {
             ctx.strokeStyle = "Red";
-            ctx.strokeRect(this.BB.x, this.BB.y, this.BB.width, this.BB.height);
+            ctx.strokeRect(this.BB.x-this.game.camera.x, this.BB.y, this.BB.width, this.BB.height);
         }
     };
 };
@@ -103,15 +102,15 @@ class Walls {
     };
 
     updateBB() {
-        this.BB = new BoundingBox(this.x - this.game.camera.x, this.y, this.w, this.h);
-        this.leftBB = new BoundingBox(this.x - this.game.camera.x, this.y, this.w / 2, this.h);
-        this.rightBB = new BoundingBox(this.x + (this.w / 2) - this.game.camera.x, this.y, this.w / 2, this.h);
-        this.topBB = new BoundingBox(this.x - this.game.camera.x, this.y, this.w, this.h / 2);
-        this.bottomBB = new BoundingBox(this.x - this.game.camera.x, this.y + this.h / 2, this.w, this.h / 2);
+        this.BB = new BoundingBox(this.x, this.y, this.w, this.h);
+        this.leftBB = new BoundingBox(this.x, this.y, this.w / 2, this.h);
+        this.rightBB = new BoundingBox(this.x + (this.w / 2), this.y, this.w / 2, this.h);
+        this.topBB = new BoundingBox(this.x, this.y, this.w, this.h / 2);
+        this.bottomBB = new BoundingBox(this.x
+            , this.y + this.h / 2, this.w, this.h / 2);
     };
 
     update() {
-        this.updateBB();
     };
 
     //draw the ground based on constructor values
@@ -123,7 +122,7 @@ class Walls {
 
         if (PARAMS.DEBUG) {
             ctx.strokeStyle = "Red";
-            ctx.strokeRect(this.BB.x, this.BB.y, this.BB.width, this.BB.height);
+            ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y, this.BB.width, this.BB.height);
         }
     };
 }
@@ -164,15 +163,14 @@ class BackgroundWalls {
     };
 
     updateBB() {
-        this.BB = new BoundingBox(this.x - this.game.camera.x, this.y, this.w, this.h);
-        this.leftBB = new BoundingBox(this.x - this.game.camera.x, this.y, this.w / 2, this.h);
-        this.rightBB = new BoundingBox(this.x + (this.w / 2) - this.game.camera.x, this.y, this.w / 2, this.h);
-        this.topBB = new BoundingBox(this.x - this.game.camera.x, this.y, this.w, this.h / 2);
-        this.bottomBB = new BoundingBox(this.x - this.game.camera.x, this.y + this.h / 2, this.w, this.h / 2);
+        this.BB = new BoundingBox(this.x, this.y, this.w, this.h);
+        this.leftBB = new BoundingBox(this.x, this.y, this.w / 2, this.h);
+        this.rightBB = new BoundingBox(this.x + (this.w / 2), this.y, this.w / 2, this.h);
+        this.topBB = new BoundingBox(this.x, this.y, this.w, this.h / 2);
+        this.bottomBB = new BoundingBox(this.x, this.y + this.h / 2, this.w, this.h / 2);
     };
 
     update() {
-        this.updateBB();
     };
 
     //draw the ground based on constructor values
@@ -184,7 +182,7 @@ class BackgroundWalls {
 
         if (PARAMS.DEBUG) {
             ctx.strokeStyle = "Red";
-            ctx.strokeRect(this.BB.x, this.BB.y, this.BB.width, this.BB.height);
+            ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y, this.BB.width, this.BB.height);
         }
     };
 }
@@ -214,15 +212,14 @@ class Platform {
     };
 
     updateBB() {
-        this.BB = new BoundingBox(this.x - this.game.camera.x, this.y, this.w, this.h);
-        this.leftBB = new BoundingBox(this.x - this.game.camera.x, this.y, this.w / 2, this.h);
-        this.rightBB = new BoundingBox(this.x + (this.w / 2) - this.game.camera.x, this.y, this.w / 2, this.h);
-        this.topBB = new BoundingBox(this.x - this.game.camera.x, this.y, this.w, this.h / 2);
-        this.bottomBB = new BoundingBox(this.x - this.game.camera.x, this.y + this.h / 2, this.w, this.h / 2);
+        this.BB = new BoundingBox(this.x, this.y, this.w, this.h);
+        this.leftBB = new BoundingBox(this.x, this.y, this.w / 2, this.h);
+        this.rightBB = new BoundingBox(this.x + (this.w / 2), this.y, this.w / 2, this.h);
+        this.topBB = new BoundingBox(this.x, this.y, this.w, this.h / 2);
+        this.bottomBB = new BoundingBox(this.x, this.y + this.h / 2, this.w, this.h / 2);
     };
 
     update() {
-        this.updateBB();
     };
 
     //draw the ground based on constructor values
@@ -234,7 +231,7 @@ class Platform {
 
         if (PARAMS.DEBUG) {
             ctx.strokeStyle = "Red";
-            ctx.strokeRect(this.BB.x, this.BB.y, this.BB.width, this.BB.height);
+            ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y, this.BB.width, this.BB.height);
         }
     };
 
@@ -299,15 +296,14 @@ class Brick {
     };
 
     updateBB() {
-        this.BB = new BoundingBox(this.x - this.game.camera.x, this.y, this.w, this.h);
-        this.leftBB = new BoundingBox(this.x - this.game.camera.x, this.y, this.w / 2, this.h);
-        this.rightBB = new BoundingBox(this.x + (this.w / 2) - this.game.camera.x, this.y, this.w / 2, this.h);
-        this.topBB = new BoundingBox(this.x - this.game.camera.x, this.y, this.w, this.h / 2);
-        this.bottomBB = new BoundingBox(this.x - this.game.camera.x, this.y + this.h / 2, this.w, this.h / 2);
+        this.BB = new BoundingBox(this.x, this.y, this.w, this.h);
+        this.leftBB = new BoundingBox(this.x, this.y, this.w / 2, this.h);
+        this.rightBB = new BoundingBox(this.x + (this.w / 2), this.y, this.w / 2, this.h);
+        this.topBB = new BoundingBox(this.x, this.y, this.w, this.h / 2);
+        this.bottomBB = new BoundingBox(this.x, this.y + this.h / 2, this.w, this.h / 2);
     };
 
     update() {
-        this.updateBB();
     };
 
     //draw the ground based on constructor values
@@ -325,7 +321,7 @@ class Brick {
 
         if (PARAMS.DEBUG) {
             ctx.strokeStyle = "Red";
-            ctx.strokeRect(this.BB.x, this.BB.y, this.BB.width, this.BB.height);
+            ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y, this.BB.width, this.BB.height);
         }
     };
 };
