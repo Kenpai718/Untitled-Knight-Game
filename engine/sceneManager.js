@@ -25,7 +25,11 @@ class SceneManager {
     };
 
     draw(ctx) {
-        if(PARAMS.DEBUG) {
+        //gui
+        ctx.fillStyle = "White";
+        ctx.fillText("Num Arrows: " + this.player.numArrows, 0, 10);
+
+        if (PARAMS.DEBUG) {
             this.viewDebug(ctx);
         }
     };
@@ -110,7 +114,8 @@ class SceneManager {
     };
 
     //keyboard input
-    viewDebug(ctx) {;
+    viewDebug(ctx) {
+        
         // left debug
         ctx.lineWidth = 2;
         ctx.strokeStyle = this.game.left ? "Red" : "SpringGreen";
@@ -122,43 +127,43 @@ class SceneManager {
         ctx.lineWidth = 2;
         ctx.strokeStyle = this.game.down ? "Red" : "SpringGreen";
         ctx.fillStyle = ctx.strokeStyle;
-        ctx.strokeRect(50, this.game.surfaceHeight -40, 30, 30);
+        ctx.strokeRect(50, this.game.surfaceHeight - 40, 30, 30);
         ctx.fillText("S", 60, this.game.surfaceHeight - 20);
 
         // up debug
         ctx.lineWidth = 2;
         ctx.strokeStyle = this.game.up ? "Red" : "SpringGreen";
         ctx.fillStyle = ctx.strokeStyle;
-        ctx.strokeRect(50, this.game.surfaceHeight -80, 30, 30);
+        ctx.strokeRect(50, this.game.surfaceHeight - 80, 30, 30);
         ctx.fillText("W", 60, this.game.surfaceHeight - 60);
 
         // right debug
         ctx.lineWidth = 2;
-        ctx.strokeStyle = this.game.right  ? "Red" : "SpringGreen";
+        ctx.strokeStyle = this.game.right ? "Red" : "SpringGreen";
         ctx.fillStyle = ctx.strokeStyle;
-        ctx.strokeRect(90, this.game.surfaceHeight -40, 30, 30);
+        ctx.strokeRect(90, this.game.surfaceHeight - 40, 30, 30);
         ctx.fillText("D", 100, this.game.surfaceHeight - 20);
 
         // jump debug
         ctx.lineWidth = 2;
-        ctx.strokeStyle = this.game.jump  ? "Red" : "SpringGreen";
+        ctx.strokeStyle = this.game.jump ? "Red" : "SpringGreen";
         ctx.fillStyle = ctx.strokeStyle;
-        ctx.strokeRect(130, this.game.surfaceHeight -40, 50, 30);
+        ctx.strokeRect(130, this.game.surfaceHeight - 40, 50, 30);
         ctx.fillText("SPACE", 140, this.game.surfaceHeight - 20);
 
-		// roll debug
-		ctx.lineWidth = 2;
-		ctx.strokeStyle = this.game.roll ? "Red" : "SpringGreen";
-		ctx.fillStyle = ctx.strokeStyle;
-		ctx.strokeRect(130, this.game.surfaceHeight - 80, 50, 30);
-		ctx.fillText("LSHIFT", 140, this.game.surfaceHeight - 60);
+        // roll debug
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = this.game.roll ? "Red" : "SpringGreen";
+        ctx.fillStyle = ctx.strokeStyle;
+        ctx.strokeRect(130, this.game.surfaceHeight - 80, 50, 30);
+        ctx.fillText("LSHIFT", 140, this.game.surfaceHeight - 60);
 
         // attack debug
 
         ctx.lineWidth = 2;
-        ctx.strokeStyle = this.game.attack  ? "Red" : "SpringGreen";
+        ctx.strokeStyle = this.game.attack ? "Red" : "SpringGreen";
         ctx.fillStyle = ctx.strokeStyle;
-        ctx.strokeRect(190, this.game.surfaceHeight -40, 30, 30);
+        ctx.strokeRect(190, this.game.surfaceHeight - 40, 30, 30);
         ctx.fillText("ATK", 195, this.game.surfaceHeight - 20);
-	}
+    }
 }
