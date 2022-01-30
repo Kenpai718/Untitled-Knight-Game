@@ -155,6 +155,7 @@ class GameEngine {
 
         //keyboard press control logic
         this.ctx.canvas.addEventListener("keydown", function (e) {
+            e.preventDefault(); //prevent scrolling from pressing a key
             switch (e.key) {
                 case "d":
                     that.right = true;
@@ -167,7 +168,6 @@ class GameEngine {
                     break;
                 case "w":
                     that.up = true;
-                    that.jump = true;
                     break;
                 case "p":
                     that.attack = true;
@@ -196,12 +196,7 @@ class GameEngine {
                 case "w":
                     that.up = false;
                     break;
-                case "p":
-                    //hacky solution to a combo system
-                    //combo counter only incremented when the key is released
-                    //reset this counter from player entity
-                    that.comboCounter += 1;
-                    //console.log(that.comboCounter);
+                case " ":
                     break;
             }
         }, false);
@@ -213,7 +208,7 @@ class GameEngine {
     addEntity(entity) {
         this.entities.push(entity);
     };
-
+    
     draw() {
         // Clear the whole canvas with transparent color (rgba(0, 0, 0, 0))
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
