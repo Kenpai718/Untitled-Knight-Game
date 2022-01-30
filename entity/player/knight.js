@@ -389,7 +389,6 @@ class Knight {
         let that = this;
         this.game.entities.forEach(function (entity) {
             if (entity.BB && that.BB.collide(entity.BB)) {
-
                 //collides with something in the environment
                 if ((entity instanceof Ground || entity instanceof Walls || entity instanceof Brick || entity instanceof Platform)) {
                     // defines which sides are collided
@@ -468,7 +467,7 @@ class Knight {
         this.y += dist.y;
         this.updateBB();
 
-        // bottom collision       
+        // bottom collision
         if (this.collisions.bottom) {
             if (this.velocity.y > 0) {
                 this.velocity.y = 0;
