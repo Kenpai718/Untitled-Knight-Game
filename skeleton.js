@@ -7,12 +7,55 @@ class Skeleton {
         this.animations = []; // [state][direction] 
         this.tick = 0;
         this.scale = 2.5;
+        this.alert = false; // enemy is near or got hit
+
+
+        this.state = 0;
+        this.direction = 0;
+        this.seconds = 0;
+        this.doRandom = 0;
 
         // Mapping charater states for animations
         this.states = {idle: 0, damaged: 1, death: 2, attack: 3, move: 4, block: 5};
         this.directions = {left: 0, right: 1 };
 
         this.loadAnimations();
+
+    };
+
+    update() {
+
+        this.seconds += this.game.clockTick;
+        
+        //Do something random if 'not hit' and player isnt in sight 
+        if(!this.alert){
+            if(this.seconds >= this.doRandom){
+                
+                this.direction = Math.floor(Math.random() * 2);
+                this.action = Math.floor(Math.random() * 6);
+                if(this.action <= 1) {
+                    this.doRandom = this.seconds + Math.floor(Math.random() * 5);
+                    this.state = 4;
+                }
+                else {
+                    this.doRandom = this.seconds + 7;
+                    this.state = 0;
+                }
+            }
+        }
+        else if (this.alert) {
+            
+        }
+        
+
+        if(this.state == 4){
+            if(this.direction == 0)     this.x += -0.3;//-0.4
+            else                        this.x += 0.3;//0.4
+        }
+        if(this.state == 5){
+            if(this.direction == 0)     this.x += -2;//-2.5
+            else                        this.x += 2;//2.5
+        }
 
     };
 
@@ -65,9 +108,6 @@ class Skeleton {
     };
 
     draw(ctx) {
-
-        this.state = 4;
-        this.direction = 0;
         
         switch(this.state) {
             case 0: // Idle
@@ -108,8 +148,6 @@ class Skeleton {
 
     };
 
-    update() {
 
-    };
 
 };
