@@ -3,6 +3,7 @@ class Goblin {
         
         Object.assign(this, {game, x, y});
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/goblin.png");
+        this.count = 0;
         
         // Mob sizes
         this.scale = 2.5; // 2.5
@@ -15,6 +16,10 @@ class Goblin {
         this.doRandom = 0;
         this.alert = false; // enemy is near or got hit
 
+        this.velocity = { x: 0, y: 0 };
+        this.fallAcc = 1500;
+        this.collisions = {left: false, right: false, top: false, bottom: false};
+
         // Mapping animations and mob states
         this.states = {idle: 0, damaged: 1, death: 2, attack: 3, move: 4, run: 5};
         this.directions = {left: 0, right: 1 };
@@ -24,40 +29,41 @@ class Goblin {
         this.direction = 0;
 
         // Hit, Attack, and View boxes.
-        this.HB = null;
         this.AB = null;
         this.VB = null;
+        this.BB = null;
 
         // When Debug box is true, select mob box to display
-        this.displayHitbox = true;
+        this.displayBoundingbox = true;
         this.displayAttackbox = true;
         this.displayVisionbox = true;
 
         // Other
         this.loadAnimations();
+        this.updateBB();
+    };
+
+    updateBB() {
+        this.lastHitBox = this.BB;
+        this.BB = new BoundingBox(this.x + 4 * this.scale, this.y + 2 * this.scale, 19 * this.scale, 34 * this.scale + 1)
         this.updateAB();
-        this.updateHB();
         this.updateVB();
     };
 
-    updateHB() {
-        this.lastHitBox = this.HB;
-        this.HB = new BoundingBox(this.x + 4 * this.scale, this.y + 2 * this.scale, 19 * this.scale, 34 * this.scale + 1)
-    }
-
     updateAB() {
+        this.updateVB();
         this.lastAttackbox = this.AB;
         if (this.direction == 0)    this.AB = new BoundingBox(this.x-71, this.y-24, this.attackwidth, 46 * this.scale)
         else                        this.AB = new BoundingBox(this.x-84, this.y-24, this.attackwidth, 46 * this.scale)
-    }
+    };
 
     updateVB() {
         this.lastVisionbox = this.VB;
         this.VB = new BoundingBox(this.x + 32 - this.visionwidth/2, this.y, this.visionwidth, this.height + 1)
-    }
+    };
 
     viewBoundingBox(ctx) { 
-        if(this.displayHitbox) {        // This is the Hitbox, defines space where mob can be hit
+        if(this.displayBoundingbox) {        // This is the Bounding Box, defines space where mob can be hit
             ctx.strokeStyle = "Red";
             ctx.strokeRect(this.x + 4 * this.scale, this.y + 2 * this.scale, 19 * this.scale, 34 * this.scale + 1);
         }
@@ -78,37 +84,109 @@ class Goblin {
 
         this.seconds += this.game.clockTick;
 
-        // TODO: Detect if taken damaged or player in range
-        //if(this.VB.collide(player.BB))
-        
-        //Do something random if 'not hit' and player isnt in sight 
-        if(!this.alert){
+        // All this aint me vv
+        const TICK = this.game.clockTick;
+        const SCALER = 1;
+        //currently using Chris Marriot's mario physics
+        const MIN_WALK = 1 * SCALER;
+        const MAX_WALK = 93.75 * SCALER;
+        const MAX_RUN = 153.75 * SCALER;
+        const ACC_WALK = 133.59375 * SCALER;
+        const ACC_RUN = 200.390625 * SCALER;
+        const DEC_REL = 182.8125 * SCALER;
+        const DEC_SKID = 365.625 * SCALER;
+        const MIN_SKID = 33.75 * SCALER;
+        const ROLL_SPD = 400 * SCALER;
+        const CROUCH_SPD = 50 * SCALER;
+        const DOUBLE_JUMP_X_BOOST = 10;
+        const STOP_FALL = 1575;
+        const WALK_FALL = 1800;
+        const RUN_FALL = 2025;
+        const STOP_FALL_A = 450;
+        const WALK_FALL_A = 421.875;
+        const RUN_FALL_A = 562.5;
+        const JUMP_HEIGHT = 1500;
+        const DOUBLE_JUMP_HEIGHT = 550;
+        const MAX_FALL = 270 * SCALER;
+
+        this.velocity.y += this.fallAcc * TICK;
+
+        // max y velocity
+        if (this.velocity.y >= MAX_FALL) this.velocity.y = MAX_FALL;
+        if (this.velocity.y <= -MAX_FALL) this.velocity.y = -MAX_FALL;
+
+        //max x velocity
+        let doubleJumpBonus = 0;
+        if (!this.doubleJump) doubleJumpBonus = DOUBLE_JUMP_X_BOOST;
+        if (this.velocity.x >= MAX_RUN) this.velocity.x = MAX_RUN + doubleJumpBonus;
+        if (this.velocity.x <= -MAX_RUN) this.velocity.x = -MAX_RUN - doubleJumpBonus;
+
+        //update position and bounding box
+        this.x += this.velocity.x * TICK;
+        this.y += this.velocity.y * TICK;
+        this.updateBB();
+
+        // Collision variables
+        this.collisions = {left: false, right: false, top: false, bottom: false};
+        let dist = { x : 0, y : 0};
+        let hole = 0; // at most 15, floor/ceil = 8, adj floor/ceil = 4, low wall = 2, high wall = 1
+        let that = this;
+        let knightInSight = false;
+
+        // Collisions
+        this.game.entities.forEach(function (entity) {
+            if (entity.BB && that.BB.collide(entity.BB)) {
+                if (that.BB.top < entity.BB.top && that.BB.bottom > entity.BB.top) { 
+                    that.collisions.bottom = true;
+                    dist.y = entity.BB.top - that.BB.bottom;
+                }
+                that.updateBB();
+            }
+            if (entity.BB && that.VB.collide(entity.BB) && !that.AB.collide(entity.BB) && entity instanceof Knight) {
+                knightInSight = true;
+                that.state = that.states.move;
+                that.direction = entity.BB.right < that.BB.left ? that.directions.left : that.directions.right;
+            }
+            if (entity.BB && that.VB.collide(entity.BB) && that.AB.collide(entity.BB) && entity instanceof Knight) {
+                knightInSight = true;
+                that.state = that.states.attack;
+                that.direction = entity.BB.right < that.BB.left ? that.directions.left : that.directions.right;
+            }
+        });
+        this.y += dist.y;
+        this.updateBB();
+        if (this.collisions.bottom) {
+            if (this.velocity.y > 0) {
+                this.velocity.y = 0;
+            }
+        }
+        /*
+        //Do something random player isnt in sight 
+        if(!knightInSight){
             if(this.seconds >= this.doRandom){
                 this.doRandom = this.seconds + Math.floor(Math.random() * 3);
-                //this.direction = Math.floor(Math.random() * 2);
+                this.direction = Math.floor(Math.random() * 2);
                 this.action = Math.floor(Math.random() * 6);
                 if(this.action <= 1) {
                     this.doRandom = this.seconds + Math.floor(Math.random() * 3);
-                    this.state = 3;//4
+                    this.state = 4;
                 }
                 else {
-                    this.state = 3;//0
+                    this.state = 0;
                 }
             }
         }
-        else if (this.alert) {
-
-        }
         
 
-        if(this.state == 4){
-            if(this.direction == 0)     this.x += -1;//-1
-            else                        this.x += 1;//1
+
+        // update velocity
+
+        if(that.state = 4 && knightInSight) {
+            if (this.direction == 0)    that.velocity.x -= MIN_WALK;
+            else                        that.velocity.x += MIN_WALK;
         }
-        if(this.state == 5){
-            if(this.direction == 0)     this.x += -2.5;//-2.5
-            else                        this.x += 2.5;//2.5
-        }
+        */
+        
         
     };
 
@@ -185,7 +263,6 @@ class Goblin {
         if (PARAMS.DEBUG) {
             this.viewBoundingBox(ctx);
         }
-
     };
 
 };
