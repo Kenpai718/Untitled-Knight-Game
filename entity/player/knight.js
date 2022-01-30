@@ -39,6 +39,7 @@ class Knight {
         this.combo = false;
         this.inAir = false;
         this.doubleJump = true;
+        this.numArrows = 100;
 
         //positioning
         this.scale = 3.12;
@@ -47,11 +48,13 @@ class Knight {
 
         // bounding box (hitbox) used for attacks
         this.HB = null;
+        this.offsetxBB = 0;
+        this.offsetyBB = 0;
 
         //physics
         this.velocity = { x: 0, y: 0 };
         this.fallAcc = 1500;
-        this.collisions = {left: false, right: false, top: false, bottom: false};
+        this.collisions = { left: false, right: false, top: false, bottom: false };
 
         //animations
         this.animations = [];
@@ -287,7 +290,7 @@ class Knight {
         }
 
 
-        //attack logic
+        //attack logic (melee/ranged)
         if (this.game.attack) {
 
             if (this.game.down || this.collisions.top) { //crouch attack
@@ -321,12 +324,28 @@ class Knight {
 
             }
 
-        } else {
+        } else if (!this.game.attack && this.game.shoot) { //only shoot an arrow when not attacking
+
+            if (this.numArrows > 0) {
+                //try to position starting arrow at the waist of the knight
+                const target = { x: this.game.mouse.x + this.game.camera.x, y: this.game.mouse.y };
+                this.game.addEntityToFront(new Arrow(this.game, this.x + this.offsetxBB, (this.y + this.height / 2) + 40, target));
+                this.numArrows--;
+
+            }
+            this.game.shoot = false;
+            this.action = this.DEFAULT_ACTION;
+            //}
+
+
+        } else { //reset all attack animations
             //crouch attack
             this.resetAnimationTimers(this.states.crouch_atk);
             //slash 1 and 2
             this.resetAnimationTimers(this.states.attack1);
             this.resetAnimationTimers(this.states.attack2);
+
+            //reset shooting animation
         }
 
         //roll input
@@ -364,52 +383,63 @@ class Knight {
         this.updateBB();
 
         //do collisions detection here
-        this.collisions = {left: false, right: false, top: false, bottom: false};
-        let dist = {x:0, y:0};
+        this.collisions = { left: false, right: false, top: false, bottom: false };
+        let dist = { x: 0, y: 0 };
         let hole = 0; // at most 15, floor/ceil = 8, adj floor/ceil = 4, low wall = 2, high wall = 1
         let that = this;
         this.game.entities.forEach(function (entity) {
             if (entity.BB && that.BB.collide(entity.BB)) {
-                // defines which sides are collided
-                if (that.BB.top < entity.BB.top && that.BB.bottom > entity.BB.top) { // checks if mainly bottom, left, or right collison
-                    if (that.BB.left < entity.BB.left && Math.abs(that.BB.right - entity.BB.left) <= Math.abs(that.BB.bottom - entity.BB.top)) {
-                        that.collisions.right = true;
-                        dist.x = entity.BB.left - that.BB.right;
-                        hole += 2;
+
+                //collides with something in the environment
+                if ((entity instanceof Ground || entity instanceof Walls || entity instanceof Brick || entity instanceof Platform)) {
+                    // defines which sides are collided
+                    if (that.BB.top < entity.BB.top && that.BB.bottom > entity.BB.top) { // checks if mainly bottom, left, or right collison
+                        if (that.BB.left < entity.BB.left && Math.abs(that.BB.right - entity.BB.left) <= Math.abs(that.BB.bottom - entity.BB.top)) {
+                            that.collisions.right = true;
+                            dist.x = entity.BB.left - that.BB.right;
+                            hole += 2;
+                        }
+                        else if (that.BB.right > entity.BB.right && Math.abs(that.BB.left - entity.BB.right) <= Math.abs(that.BB.bottom - entity.BB.top)) {
+                            that.collisions.left = true;
+                            dist.x = entity.BB.right - that.BB.left;
+                            hole += 2;
+                        }
+                        else {
+                            that.collisions.bottom = true;
+                            if (Math.abs(entity.BB.top - that.BB.bottom) > Math.abs(dist.y) || dist.y > 0)
+                                dist.y = entity.BB.top - that.BB.bottom;
+                            if (that.BB.left <= entity.BB.left || that.BB.right >= entity.BB.right)
+                                hole += 4;
+                            else hole += 8;
+                        }
                     }
-                    else if (that.BB.right > entity.BB.right && Math.abs(that.BB.left - entity.BB.right) <= Math.abs(that.BB.bottom - entity.BB.top)) {
-                        that.collisions.left = true;
-                        dist.x = entity.BB.right - that.BB.left;
-                        hole += 2;
-                    }
-                    else {
-                        that.collisions.bottom = true;
-                        if (Math.abs(entity.BB.top - that.BB.bottom) > Math.abs(dist.y) || dist.y > 0)
-                        dist.y = entity.BB.top - that.BB.bottom;
-                        if (that.BB.left <= entity.BB.left || that.BB.right >= entity.BB.right)
-                            hole += 4;
-                        else hole += 8;
+                    else if (that.BB.bottom > entity.BB.bottom && that.BB.top < entity.BB.bottom) { // checks if mainly top, left, or right collison
+                        if (that.BB.left < entity.BB.left && Math.abs(that.BB.right - entity.BB.left) <= Math.abs(that.BB.top - entity.BB.bottom)) {
+                            that.collisions.right = true;
+                            dist.x = entity.BB.left - that.BB.right;
+                            hole += 1;
+                        }
+                        else if (that.BB.right > entity.BB.right && Math.abs(that.BB.left - entity.BB.right) <= Math.abs(that.BB.top - entity.BB.bottom)) {
+                            that.collisions.left = true;
+                            dist.x = entity.BB.right - that.BB.left;
+                            hole += 1;
+                        }
+                        else {
+                            that.collisions.top = true;
+                            if (Math.abs(entity.BB.bottom - that.BB.top && !that.collisions.bottom) > Math.abs(dist.y))
+                                dist.y = entity.BB.bottom - that.BB.top;
+                            if (that.BB.left <= entity.BB.left || that.BB.right >= entity.BB.right)
+                                hole += 4;
+                            else hole += 8;
+                        }
                     }
                 }
-                else if (that.BB.bottom > entity.BB.bottom && that.BB.top < entity.BB.bottom) { // checks if mainly top, left, or right collison
-                    if (that.BB.left < entity.BB.left && Math.abs(that.BB.right - entity.BB.left) <= Math.abs(that.BB.top - entity.BB.bottom)) {
-                        that.collisions.right = true;
-                        dist.x = entity.BB.left - that.BB.right;
-                        hole += 1;
-                    }
-                    else if (that.BB.right > entity.BB.right && Math.abs(that.BB.left - entity.BB.right) <= Math.abs(that.BB.top - entity.BB.bottom)) {
-                        that.collisions.left = true;
-                        dist.x = entity.BB.right - that.BB.left;
-                        hole += 1;
-                    }
-                    else {
-                        that.collisions.top = true;
-                        if (Math.abs(entity.BB.bottom - that.BB.top && !that.collisions.bottom) >Math.abs(dist.y))
-                            dist.y = entity.BB.bottom - that.BB.top;
-                        if (that.BB.left <= entity.BB.left || that.BB.right >= entity.BB.right)
-                            hole += 4;
-                        else hole += 8;
-                    }
+
+                //player picks up arrow stuck on ground
+                if (entity instanceof Arrow && entity.stuck) {
+                    entity.removeFromWorld = true;
+                    that.numArrows++;
+
                 }
                 that.updateBB();
             }
@@ -417,10 +447,10 @@ class Knight {
 
         // used to debug the number for collision as well as which side are collided
         //console.log(hole + " " + this.collisions.top + " " + this.collisions.right + " " + this.collisions.bottom + " " + this.collisions.left);
-        
+
         // instances where there are collisions along vertical, but need ignoring
         // all cases are when there's no definitive ceiling or floor (top/bottom collision as part of a wall)
-        if ((hole <= 7 && hole != 4) || (this.collisions.top && (hole == 8 && (this.collisions.left || this.collisions.right))) ) {
+        if ((hole <= 7 && hole != 4) || (this.collisions.top && (hole == 8 && (this.collisions.left || this.collisions.right)))) {
             dist.y = 0
             this.collisions.bottom = false;
             this.collisions.top = false;
@@ -432,7 +462,7 @@ class Knight {
             this.collisions.right = false;
             this.collisions.left = false;
         }
-        
+
         // update position as a result of collision
         this.x += dist.x;
         this.y += dist.y;
@@ -476,13 +506,13 @@ class Knight {
 
         // left collison
         if (this.collisions.left) {
-            if(this.velocity.x < 0)
+            if (this.velocity.x < 0)
                 this.velocity.x = 0;
         }
 
         // right collison
         if (this.collisions.right) {
-            if(this.velocity.x > 0)
+            if (this.velocity.x > 0)
                 this.velocity.x = 0;
         }
     };
