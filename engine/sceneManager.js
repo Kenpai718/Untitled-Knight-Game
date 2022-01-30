@@ -10,10 +10,10 @@ class SceneManager {
         //main character
         this.player = new Knight(this.game, 0, 300);
         this.game.addEntity(this.player);
-
+        //uncomment to test mushroom
+        //this.shroom = new Mushroom(this.game, 200, 500);
+        //this.game.addEntity(this.shroom);
         this.loadLevel1();
-        //this.loadPrototypeLevel();
-
     };
 
     update() {
@@ -72,19 +72,38 @@ class SceneManager {
         if (this.level.ground) {
             for (var i = 0; i < this.level.ground.length; i++) {
                 let ground = this.level.ground[i];
-                this.game.addEntity(new Ground(this.game, ground.x * PARAMS.BLOCKDIM, ground.y * PARAMS.BLOCKDIM, ground.size * PARAMS.BLOCKDIM, PARAMS.BLOCKDIM, ground.type));
+                this.game.addEntity(new Ground(this.game, ground.x * PARAMS.BLOCKDIM, ground.y * PARAMS.BLOCKDIM, ground.width * PARAMS.BLOCKDIM, PARAMS.BLOCKDIM, ground.type));
             }
         }
         if (this.level.bricks) {
             for (var i = 0; i < this.level.bricks.length; i++) {
                 let bricks = this.level.bricks[i];
-                this.game.addEntity(new Brick(this.game, bricks.x * PARAMS.BLOCKDIM, bricks.y * PARAMS.BLOCKDIM, bricks.size * PARAMS.BLOCKDIM, PARAMS.BLOCKDIM, bricks.type, bricks.random));
+                this.game.addEntity(new Brick(this.game, bricks.x * PARAMS.BLOCKDIM, bricks.y * PARAMS.BLOCKDIM, bricks.width * PARAMS.BLOCKDIM, PARAMS.BLOCKDIM, bricks.type, bricks.random));
             }
         }
         if (this.level.walls) {
             for (var i = 0; i < this.level.walls.length; i++) {
                 let walls = this.level.walls[i];
-                this.game.addEntity(new Walls(this.game, walls.x * PARAMS.BLOCKDIM, walls.y * PARAMS.BLOCKDIM, walls.size * PARAMS.BLOCKDIM, PARAMS.BLOCKDIM, walls.type));
+                this.game.addEntity(new Walls(this.game, walls.x * PARAMS.BLOCKDIM, walls.y * PARAMS.BLOCKDIM, walls.width * PARAMS.BLOCKDIM, walls.height * PARAMS.BLOCKDIM, walls.type));
+            }
+        }
+        if (this.level.shrooms) {
+            for (var i = 0; i < this.level.shrooms.length; i++) {
+                let shroom = this.level.shrooms[i];
+                this.game.addEntity(new Mushroom(this.game, shroom.x * PARAMS.BLOCKDIM, shroom.y * PARAMS.BLOCKDIM));
+            }
+        }
+        // The following must be last
+        if (this.level.torches) {
+            for (var i = 0; i < this.level.torches.length; i++) {
+                let torch = this.level.torches[i];
+                this.game.addEntity(new Torch(this.game, torch.x * PARAMS.BLOCKDIM, torch.y * PARAMS.BLOCKDIM));
+            }
+        }
+        if (this.level.backgroundWalls) {
+            for (var i = 0; i < this.level.backgroundWalls.length; i++) {
+                let bw = this.level.backgroundWalls[i];
+                this.game.addEntity(new BackgroundWalls(this.game, bw.x * PARAMS.BLOCKDIM, bw.y * PARAMS.BLOCKDIM, bw.width * PARAMS.BLOCKDIM, PARAMS.BLOCKDIM));
             }
         }
         this.game.addEntity(bg);

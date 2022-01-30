@@ -369,7 +369,7 @@ class Knight {
         let hole = 0; // at most 15, floor/ceil = 8, adj floor/ceil = 4, low wall = 2, high wall = 1
         let that = this;
         this.game.entities.forEach(function (entity) {
-            if (entity.BB && that.BB.collide(entity.BB)) {
+            if (entity.BB && that.BB.collide(entity.BB) && (entity instanceof Ground || entity instanceof Walls || entity instanceof Brick || entity instanceof Platform)) {
                 // defines which sides are collided
                 if (that.BB.top < entity.BB.top && that.BB.bottom > entity.BB.top) { // checks if mainly bottom, left, or right collison
                     if (that.BB.left < entity.BB.left && Math.abs(that.BB.right - entity.BB.left) <= Math.abs(that.BB.bottom - entity.BB.top)) {
@@ -417,7 +417,7 @@ class Knight {
 
         // used to debug the number for collision as well as which side are collided
         //console.log(hole + " " + this.collisions.top + " " + this.collisions.right + " " + this.collisions.bottom + " " + this.collisions.left);
-        
+
         // instances where there are collisions along vertical, but need ignoring
         // all cases are when there's no definitive ceiling or floor (top/bottom collision as part of a wall)
         if ((hole <= 7 && hole != 4) || (this.collisions.top && (hole == 8 && (this.collisions.left || this.collisions.right))) ) {
@@ -432,13 +432,13 @@ class Knight {
             this.collisions.right = false;
             this.collisions.left = false;
         }
-        
+
         // update position as a result of collision
         this.x += dist.x;
         this.y += dist.y;
         this.updateBB();
 
-        // bottom collision       
+        // bottom collision
         if (this.collisions.bottom) {
             if (this.velocity.y > 0) {
                 this.velocity.y = 0;
