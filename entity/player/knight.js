@@ -39,7 +39,7 @@ class Knight {
         this.combo = false;
         this.inAir = false;
         this.doubleJump = true;
-        this.numArrows = 30;
+        this.numArrows = 100;
 
         //positioning
         this.scale = 3.12;
@@ -54,6 +54,7 @@ class Knight {
         //physics
         this.velocity = { x: 0, y: 0 };
         this.fallAcc = 1500;
+        this.collisions = { left: false, right: false, top: false, bottom: false };
 
         //animations
         this.animations = [];
@@ -178,13 +179,13 @@ class Knight {
     updateHB() {
         this.getOffsets();
         this.lastHB = this.HB;
-        this.HB = new BoundingBox(this.x + this.offsetxHB - this.game.camera.x, this.y + this.offsetyHB, this.widthHB, this.heightHB);
+        this.HB = new BoundingBox(this.x + this.offsetxHB, this.y + this.offsetyHB, this.widthHB, this.heightHB);
     };
 
     updateBB() {
         this.getOffsets();
         this.lastBB = this.BB;
-        this.BB = new BoundingBox(this.x + this.offsetxBB - this.game.camera.x, this.y + this.offsetyBB, this.widthBB, this.heightBB);
+        this.BB = new BoundingBox(this.x + this.offsetxBB, this.y + this.offsetyBB, this.widthBB, this.heightBB);
     };
 
     update() {
@@ -242,7 +243,7 @@ class Knight {
                     this.action = this.DEFAULT_ACTION;
                 }
                 //jump press
-                if (this.game.jump && !this.action.jump) {
+                if (this.game.jump && !this.action.jump && !this.collisions.top) {
                     this.action = this.states.jump; //jump (9-11)
                     //set jump distance
                     this.velocity.y -= JUMP_HEIGHT;
@@ -292,7 +293,7 @@ class Knight {
         //attack logic (melee/ranged)
         if (this.game.attack) {
 
-            if (this.game.down) { //crouch attack
+            if (this.game.down || this.collisions.top) { //crouch attack
                 this.action = this.states.crouch_atk;
             } else { //standing or jumping attack
 
@@ -327,7 +328,7 @@ class Knight {
 
             if (this.numArrows > 0) {
                 //try to position starting arrow at the waist of the knight
-                const target = {x: this.game.mouse.x + this.game.camera.x, y: this.game.mouse.y};
+                const target = { x: this.game.mouse.x + this.game.camera.x, y: this.game.mouse.y };
                 this.game.addEntityToFront(new Arrow(this.game, this.x + this.offsetxBB, (this.y + this.height / 2) + 40, target));
                 this.numArrows--;
 
@@ -381,64 +382,57 @@ class Knight {
         this.y += this.velocity.y * TICK;
         this.updateBB();
 
-
-
         //do collisions detection here
+        this.collisions = { left: false, right: false, top: false, bottom: false };
+        let dist = { x: 0, y: 0 };
+        let hole = 0; // at most 15, floor/ceil = 8, adj floor/ceil = 4, low wall = 2, high wall = 1
         let that = this;
         this.game.entities.forEach(function (entity) {
             if (entity.BB && that.BB.collide(entity.BB)) {
-                if (that.velocity.y > 0) {
-                    if ((entity instanceof Ground || entity instanceof Platform || entity instanceof Brick || entity instanceof Walls) && that.BB.collide(entity.topBB) && !that.BB.collide(entity.bottomBB)) {
-                        that.y = entity.BB.top - that.height;
-                        that.velocity.y = 0;
-                        that.inAir = false;
-                        that.doubleJump = true;
-                        if (that.action == that.states.jump || that.action == that.states.jump_to_fall || that.action == that.states.fall) {
-                            that.action = that.DEFAULT_ACTION;
-                        }
-                        that.resetAnimationTimers(that.states.jump);
-                        that.resetAnimationTimers(that.states.jump_to_fall);
-                        that.resetAnimationTimers(that.states.falling);
-                        that.updateBB();
-                    }
-                }
-                if (that.velocity.y < 0) {
-                    if ((entity instanceof Ground || entity instanceof Platform || entity instanceof Brick || entity instanceof Walls) && (that.lastBB.top >= entity.BB.bottom)) {
-                        that.y -= that.velocity.y * TICK;
-                        that.velocity.y = 0;
-                        that.updateBB();
-                    }
-                }
-                if ((entity instanceof Platform || entity instanceof Brick || entity instanceof Ground || entity instanceof Walls) && that.BB.collide(entity.topBB) && that.BB.collide(entity.bottomBB)) {
-                    if (that.BB.top > entity.BB.top) { // only crawl under if the platform is above the character
-                        // logic to make character crawl under obstacles
-                        if (that.action == that.states.idle) {
-                            that.action = that.states.crouch;
-                        } else if (that.action == that.states.run) {
-                            that.action = that.states.crouch_walk;
-                            that.x -= that.velocity.x * TICK;
-                            that.x = that.facing == 0 ? that.x - CROUCH_SPD * TICK : that.x + CROUCH_SPD * TICK;
-                        }
-                    } else {
-                        // without this the character will auto crouch if there are two tiles stacked on each other
-                        if (that.action == that.states.crouch) {
-                            that.action = that.states.crouch;
-                        } else if (that.action == that.states.crouch_walk) {
-                            that.action = that.states.run;
-                            that.x -= that.velocity.x * TICK
-                        }
-                    }
-                    // if character is not under, dont let them walk through the platform
-                    if (!that.isCrouched()) {
-                        if (that.BB.collide(entity.leftBB)) {
-                            that.x = entity.BB.left - that.BB.width - that.offsetxBB + that.game.camera.x;
-                        } else if (that.BB.collide(entity.rightBB)) {
-                            that.x = entity.BB.right - that.offsetxBB + that.game.camera.x;
-                        }
 
+                //collides with something in the environment
+                if ((entity instanceof Ground || entity instanceof Walls || entity instanceof Brick || entity instanceof Platform)) {
+                    // defines which sides are collided
+                    if (that.BB.top < entity.BB.top && that.BB.bottom > entity.BB.top) { // checks if mainly bottom, left, or right collison
+                        if (that.BB.left < entity.BB.left && Math.abs(that.BB.right - entity.BB.left) <= Math.abs(that.BB.bottom - entity.BB.top)) {
+                            that.collisions.right = true;
+                            dist.x = entity.BB.left - that.BB.right;
+                            hole += 2;
+                        }
+                        else if (that.BB.right > entity.BB.right && Math.abs(that.BB.left - entity.BB.right) <= Math.abs(that.BB.bottom - entity.BB.top)) {
+                            that.collisions.left = true;
+                            dist.x = entity.BB.right - that.BB.left;
+                            hole += 2;
+                        }
+                        else {
+                            that.collisions.bottom = true;
+                            if (Math.abs(entity.BB.top - that.BB.bottom) > Math.abs(dist.y) || dist.y > 0)
+                                dist.y = entity.BB.top - that.BB.bottom;
+                            if (that.BB.left <= entity.BB.left || that.BB.right >= entity.BB.right)
+                                hole += 4;
+                            else hole += 8;
+                        }
                     }
-                    that.velocity.x = 0;
-                    that.updateBB();
+                    else if (that.BB.bottom > entity.BB.bottom && that.BB.top < entity.BB.bottom) { // checks if mainly top, left, or right collison
+                        if (that.BB.left < entity.BB.left && Math.abs(that.BB.right - entity.BB.left) <= Math.abs(that.BB.top - entity.BB.bottom)) {
+                            that.collisions.right = true;
+                            dist.x = entity.BB.left - that.BB.right;
+                            hole += 1;
+                        }
+                        else if (that.BB.right > entity.BB.right && Math.abs(that.BB.left - entity.BB.right) <= Math.abs(that.BB.top - entity.BB.bottom)) {
+                            that.collisions.left = true;
+                            dist.x = entity.BB.right - that.BB.left;
+                            hole += 1;
+                        }
+                        else {
+                            that.collisions.top = true;
+                            if (Math.abs(entity.BB.bottom - that.BB.top && !that.collisions.bottom) > Math.abs(dist.y))
+                                dist.y = entity.BB.bottom - that.BB.top;
+                            if (that.BB.left <= entity.BB.left || that.BB.right >= entity.BB.right)
+                                hole += 4;
+                            else hole += 8;
+                        }
+                    }
                 }
 
                 //player picks up arrow stuck on ground
@@ -447,8 +441,80 @@ class Knight {
                     that.numArrows++;
 
                 }
+                that.updateBB();
             }
         });
+
+        // used to debug the number for collision as well as which side are collided
+        //console.log(hole + " " + this.collisions.top + " " + this.collisions.right + " " + this.collisions.bottom + " " + this.collisions.left);
+
+        // instances where there are collisions along vertical, but need ignoring
+        // all cases are when there's no definitive ceiling or floor (top/bottom collision as part of a wall)
+        if ((hole <= 7 && hole != 4) || (this.collisions.top && (hole == 8 && (this.collisions.left || this.collisions.right)))) {
+            dist.y = 0
+            this.collisions.bottom = false;
+            this.collisions.top = false;
+        }
+        // instances where there are collisons along horizontal, but need ignoring
+        // currently only when there's a crawl space to allow auto-crawl
+        if (this.collisions.bottom && hole == 9) {
+            dist.x = 0;
+            this.collisions.right = false;
+            this.collisions.left = false;
+        }
+
+        // update position as a result of collision
+        this.x += dist.x;
+        this.y += dist.y;
+        this.updateBB();
+
+        // bottom collision       
+        if (this.collisions.bottom) {
+            if (this.velocity.y > 0) {
+                this.velocity.y = 0;
+                this.inAir = false;
+                this.doubleJump = true;
+                if (this.action == this.states.jump || this.action == this.states.jump_to_fall || this.action == this.states.fall) {
+                    this.action = this.DEFAULT_ACTION;
+                }
+                this.resetAnimationTimers(this.states.jump);
+                this.resetAnimationTimers(this.states.jump_to_fall);
+                this.resetAnimationTimers(this.states.falling);
+
+                if (this.collisions.top) {  // only crawl under if the platform is above the character
+                    // logic to make character crawl under obstacles
+                    if (that.action == that.states.idle) {
+                        that.action = that.states.crouch;
+                    } else if (that.action == that.states.run) {
+                        that.action = that.states.crouch_walk;
+                        that.x -= that.velocity.x * TICK;
+                        that.x = that.facing == 0 ? that.x - CROUCH_SPD * TICK : that.x + CROUCH_SPD * TICK;
+                    }
+                }
+                this.updateBB();
+            }
+        }
+
+        // top collison
+        if (this.collisions.top) {
+            if (this.velocity.y < 0) {
+                this.y -= that.velocity.y * TICK;
+                this.velocity.y = 0;
+            }
+            this.updateBB();
+        }
+
+        // left collison
+        if (this.collisions.left) {
+            if (this.velocity.x < 0)
+                this.velocity.x = 0;
+        }
+
+        // right collison
+        if (this.collisions.right) {
+            if (this.velocity.x > 0)
+                this.velocity.x = 0;
+        }
     };
 
     isCrouched() {
@@ -467,9 +533,9 @@ class Knight {
 
     viewBoundingBox(ctx) { //debug
         ctx.strokeStyle = "Red";
-        ctx.strokeRect(this.BB.x, this.BB.y, this.BB.width, this.BB.height);
+        ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y, this.BB.width, this.BB.height);
         ctx.strokeStyle = "Green";
-        if (this.HB != null) ctx.strokeRect(this.HB.x, this.HB.y, this.HB.width, this.HB.height);
+        if (this.HB != null) ctx.strokeRect(this.HB.x - this.game.camera.x, this.HB.y, this.HB.width, this.HB.height);
     }
 
     viewAllAnimations(ctx) { //for development purposes

@@ -1,5 +1,5 @@
 class Arrow {
-    constructor(game, x, y, target, towerTeam, heatSeeking) {
+    constructor(game, x, y, target, team) {
         Object.assign(this, { game, x, y, target });
         this.radius = 15;
         this.smooth = false;
@@ -84,7 +84,7 @@ class Arrow {
             if (entity.BB && self.BB.collide(entity.BB)) {
 
                 //if it hits something in environment stick to the ground
-                if (entity instanceof Ground || entity instanceof Platform || entity instanceof Brick || entity instanceof Walls) {
+                if ((entity instanceof Ground || entity instanceof Walls || entity instanceof Brick || entity instanceof Platform)) {
                     //stick to ground
                     self.velocity.x = 0;
                     self.velocity.y = 0;
@@ -103,8 +103,7 @@ class Arrow {
 
     updateBB() {
         //offset needed so the arrow doesnt move with the camera when it is
-        var camera_offset = this.game.camera.x;
-        this.BB = new BoundingBox(this.x - this.radius - camera_offset, this.y - this.radius, this.arrowHeight, this.arrowWidth);
+        this.BB = new BoundingBox(this.x - this.radius, this.y - this.radius, this.arrowHeight, this.arrowWidth);
 
     };
 
@@ -141,7 +140,7 @@ class Arrow {
 
             //bounding box
             ctx.strokeStyle = "Red";
-            ctx.strokeRect(this.BB.x, this.BB.y, this.BB.width, this.BB.height);
+            ctx.strokeRect(this.BB.x - camera_offset, this.BB.y, this.BB.width, this.BB.height);
         }
     };
 
