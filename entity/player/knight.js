@@ -39,6 +39,7 @@ class Knight {
         this.combo = false;
         this.inAir = false;
         this.doubleJump = true;
+        this.numArrows = 100;
 
         //positioning
         this.scale = 3.12;
@@ -47,6 +48,8 @@ class Knight {
 
         // bounding box (hitbox) used for attacks
         this.HB = null;
+        this.offsetxBB = 0;
+        this.offsetyBB = 0;
 
         //physics
         this.velocity = { x: 0, y: 0 };
@@ -349,8 +352,8 @@ class Knight {
             }
         }
 
-        
-        //attack logic
+
+        //attack logic (melee/ranged)
         if (this.game.attack) {
 
             if (this.game.down || this.touchHole()) { //crouch attack
@@ -384,12 +387,28 @@ class Knight {
 
             }
 
-        } else {
+        } else if (!this.game.attack && this.game.shoot) { //only shoot an arrow when not attacking
+
+            if (this.numArrows > 0) {
+                //try to position starting arrow at the waist of the knight
+                const target = { x: this.game.mouse.x + this.game.camera.x, y: this.game.mouse.y };
+                this.game.addEntityToFront(new Arrow(this.game, this.x + this.offsetxBB, (this.y + this.height / 2) + 40, target));
+                this.numArrows--;
+
+            }
+            this.game.shoot = false;
+            this.action = this.DEFAULT_ACTION;
+            //}
+
+
+        } else { //reset all attack animations
             //crouch attack
             this.resetAnimationTimers(this.states.crouch_atk);
             //slash 1 and 2
             this.resetAnimationTimers(this.states.attack1);
             this.resetAnimationTimers(this.states.attack2);
+
+            //reset shooting animation
         }
         
         //roll input
@@ -511,7 +530,7 @@ class Knight {
         
         // used to debug the number for collision as well as which side are collided
         //console.log(this.collisions.hi_left + " " + this.collisions.ceil_left + " " + this.collisions.ceil + " " + this.collisions.ceil_right + " " + this.collisions.hi_right);
-        console.log(this.diffy.hi + " " + this.diffy.lo)
+        //console.log(this.diffy.hi + " " + this.diffy.lo)
 
         // instances where there are collisions along vertical, but need ignoring
         // all cases are when there's no definitive ceiling or floor (top/bottom collision as part of a wall)
@@ -524,7 +543,7 @@ class Knight {
             dist.x = 0;
             this.collisions.ceil = true;
         }
-        
+
         // update position as a result of collision
         this.x += dist.x;
         this.y += dist.y;
