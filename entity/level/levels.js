@@ -59,7 +59,9 @@ var level1_1 = {
     walls: [
         { x : 20, y : 11, width : 1, height : 1, type : 0},
         { x : 30, y : 9, width : 1, height : 1, type : 0},
-        { x : 59, y : 9, width : 1, height : 3, type : 2},
+        { x : 59, y : 9, width : 1, height : 1, type : 2},
+        { x : 59, y : 10, width : 1, height : 1, type : 2},
+        { x : 59, y : 11, width : 1, height : 1, type : 2},
         { x : 94, y : 4, width : 1, height : 1, type : 0},
         { x : 94, y : 5, width : 1, height : 1, type : 0},
         { x : 94, y : 6, width : 1, height : 1, type : 0},
