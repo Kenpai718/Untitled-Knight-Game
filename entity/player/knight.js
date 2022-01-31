@@ -472,7 +472,7 @@ class Knight {
         //let hole = 0; // at most 15, floor/ceil = 8, adj floor/ceil = 4, low wall = 2, high wall = 1
         let that = this;
         this.game.entities.forEach(function (entity) {
-            if (entity.BB && that.BB.collide(entity.BB)) {
+            if (entity.BB && that.BB.collide(entity.BB) && (entity instanceof Ground || entity instanceof Walls || entity instanceof Platform || entity instanceof Brick)) {
                 // defines which sides are collided
                 if (that.BB.top < entity.BB.top && that.BB.bottom > entity.BB.top) { // checks if mainly bottom, left, or right collison
                     if (that.BB.left < entity.BB.left && Math.abs(that.BB.right - entity.BB.left) <= Math.abs(that.BB.bottom - entity.BB.top)) {
@@ -526,6 +526,13 @@ class Knight {
                 }
                 that.updateBB();
             }
+            else if (entity.BB && that.BB.collide(entity.BB)) {
+                //player picks up arrow stuck on ground
+                if (entity instanceof Arrow && entity.stuck) {
+                    entity.removeFromWorld = true;
+                    that.numArrows++;
+                }
+            } 
         });
         
         // used to debug the number for collision as well as which side are collided
