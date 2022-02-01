@@ -74,4 +74,8 @@ class Animator {
     isDone() {
         return (this.elapsedTime >= this.totalTime);
     };
+
+    isHalfwayDone() {
+        return (this.elapsedTime >= this.totalTime / 2);
+    }
 };
