@@ -158,23 +158,27 @@ class GameEngine {
         //keyboard press control logic
         this.ctx.canvas.addEventListener("keydown", function (e) {
             e.preventDefault(); //prevent scrolling from pressing a key
-            switch (e.key) {
-                case "d":
+            switch (e.code) {
+                case "KeyD":
+                case "ArrowRight":
                     that.right = true;
                     break;
-                case "a":
+                case "KeyA":
+                case "ArrowLeft":
                     that.left = true;
                     break;
-                case "s":
+                case "KeyS":
+                case "ArrowDown":
                     that.down = true;
                     break;
-                case "w":
+                case "KeyW":
+                case "ArrowUp":
                     that.up = true;
                     break;
-                case "p":
+                case "KeyP":
                     that.attack = true;
                     break;
-                case "Shift":
+                case "ShiftLeft":
                     that.roll = true;
                     break;
                 case " ":
@@ -185,17 +189,21 @@ class GameEngine {
 
         //keyboard release control logic
         this.ctx.canvas.addEventListener("keyup", function (e) {
-            switch (e.key) {
-                case "d":
+            switch (e.code) {
+                case "KeyD":
+                case "ArrowRight":
                     that.right = false;
                     break;
-                case "a":
+                case "KeyA":
+                case "ArrowLeft":
                     that.left = false;
                     break;
-                case "s":
+                case "KeyS":
+                case "ArrowDown":
                     that.down = false;
                     break;
-                case "w":
+                case "KeyW":
+                case "ArrowUp":
                     that.up = false;
                     break;
                 case " ":
