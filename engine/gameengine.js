@@ -181,7 +181,7 @@ class GameEngine {
                 case "ShiftLeft":
                     that.roll = true;
                     break;
-                case " ":
+                case "Space":
                     that.jump = true;
                     break;
             }
@@ -206,7 +206,7 @@ class GameEngine {
                 case "ArrowUp":
                     that.up = false;
                     break;
-                case " ":
+                case "Space":
                     break;
             }
         }, false);
