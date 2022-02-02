@@ -13,7 +13,7 @@ class Mushroom {
         this.direction = this.directions.left;
 
         this.canAttack = true;
-        this.canBeHit = true;
+        this.vulnerable = true;
         this.damagedCooldown = 0;
         this.runAway = false;
         this.attackCooldown = 0;
@@ -152,7 +152,7 @@ class Mushroom {
                 // knight attacked mushroom
                 if (entity.HB && that.BB.collide(entity.HB) && entity instanceof Knight && !that.HB) {
                     entity.doDamage(that);
-                    that.canBeHit = false;
+                    that.vulnerable = false;
                     that.state = that.states.damaged;
 
                 }
@@ -183,14 +183,14 @@ class Mushroom {
             }
 
             // handles the mushrooms being hit cooldown
-            if (!this.canBeHit) {
+            if (!this.vulnerable) {
                 this.damagedCooldown += TICK;
                 if (this.damagedCooldown >= PARAMS.DMG_COOLDOWN) {
                     this.resetAnimationTimers(this.states.damaged);
                     this.damagedCooldown = 0;
                     this.canAttack = true;
                     this.runAway = false;
-                    this.canBeHit = true;
+                    this.vulnerable = true;
                 }
             }
             // mushroom runs away after attacking
@@ -216,10 +216,6 @@ class Mushroom {
         this.healthbar.draw(ctx);
         if (PARAMS.DEBUG) {
             this.viewBoundingBox(ctx);
-            //view important information about it like hp and various fields
-            ctx.fillStyle = "white";
-            ctx.fillText("HP: " + this.hp + "/" + this.maxHP, (this.BB.x) - this.game.camera.x, this.BB.y - 40);
-            ctx.fillText("Can be hit = " + this.canBeHit, (this.BB.x) - this.game.camera.x, this.BB.y - 50);
         }
     };
 
@@ -238,7 +234,7 @@ class Mushroom {
     }
 
     canTakeDamage() {
-        return this.canBeHit;
+        return this.vulnerable;
     }
 
 };

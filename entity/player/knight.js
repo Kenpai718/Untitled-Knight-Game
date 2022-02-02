@@ -40,7 +40,6 @@ class Knight {
         this.combo = false;
         this.inAir = false;
         this.doubleJump = true;
-        this.numArrows = 100;
         this.attacking = false;
 
         //health values
@@ -48,6 +47,10 @@ class Knight {
         this.hp = this.maxHP;
         this.vulnerable = true;
         this.healthbar = new HealthBar(game, this);
+
+        //inventory
+        this.numArrows = 100;
+        this.numPotions = 0;
 
         //positioning
         this.scale = 3.12;
@@ -746,7 +749,7 @@ class Knight {
         }
     }
 
-    canBeHit() {
+    canTakeDamage() {
         return this.vulnerable;
     }
 

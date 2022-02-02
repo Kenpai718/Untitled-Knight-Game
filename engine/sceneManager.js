@@ -9,6 +9,7 @@ class SceneManager {
 
         //main character
         this.player = new Knight(this.game, 0, 300);
+        this.inventory = new Inventory(this.game, this.player);
         this.game.addEntity(this.player);
         //uncomment to test mushroom
         //this.shroom = new Mushroom(this.game, 200, 500);
@@ -27,7 +28,8 @@ class SceneManager {
     draw(ctx) {
         //gui
         ctx.fillStyle = "White";
-        ctx.fillText("Num Arrows: " + this.player.numArrows, 0, 10);
+        this.inventory.draw(ctx);
+        
 
         if (PARAMS.DEBUG) {
             this.viewDebug(ctx);
@@ -121,6 +123,8 @@ class SceneManager {
 
     //keyboard input
     viewDebug(ctx) {
+
+        ctx.font = PARAMS.DEFAULT_FONT;
 
         // left debug
         ctx.lineWidth = 2;

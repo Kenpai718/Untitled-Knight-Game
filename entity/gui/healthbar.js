@@ -21,7 +21,7 @@ class HealthBar {
         var height = 10;
         var offsetX = (width / (widthDivisor * widthRatio));
         var offsetY = 30;
-        if (this.agent.hp <= this.agent.maxHP) {
+        if (this.agent.hp < this.agent.maxHP) {
             var ratio = this.agent.hp / this.agent.maxHP;
             ctx.strokeStyle = "Black";
             ctx.fillStyle = ratio < 0.2 ? "Red" : ratio < 0.5 ? "Yellow" : "Green";
@@ -29,7 +29,11 @@ class HealthBar {
             ctx.strokeRect(x - offsetX, y - offsetY, width, height);
         }
 
-        if(PARAMS.DEBUG) {}
+        if(PARAMS.DEBUG) {
+            ctx.fillStyle = "white";
+            ctx.fillText("HP: " + this.agent.hp + "/" + this.agent.maxHP, x, y - 40);
+            ctx.fillText("Can be hit = " + this.agent.canTakeDamage(), x, y - 50);
+        }
     };
 };
 
