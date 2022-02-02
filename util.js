@@ -1,7 +1,10 @@
 /** Global Parameters Object */
 const PARAMS = {
-        DEBUG : false,
-        BLOCKDIM : 81
+        DEBUG : false, //for showing debug settings
+        BLOCKDIM : 81, //dimensions of blocks
+        DMG_COOLDOWN : .8, //how long the cooldown is for an entity to take damage
+        BIG_FONT : "30px Impact", //font used for big moments like damage numbers
+        DEFAULT_FONT : "12px Arial" //regular font
 };
 
 function getFacing(velocity) {
