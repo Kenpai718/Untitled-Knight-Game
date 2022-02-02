@@ -7,6 +7,31 @@ const PLAYER = {
     HEIGHT: 80
  };
 
+ //constants used for physics
+ const SCALER = 3;
+ //currently using Chris Marriot's mario physics
+ const MIN_WALK = 4.453125 * SCALER;
+ const MAX_WALK = 93.75 * SCALER;
+ const MAX_RUN = 153.75 * SCALER;
+ const ACC_WALK = 133.59375 * SCALER;
+ const ACC_RUN = 200.390625 * SCALER;
+ const DEC_REL = 182.8125 * SCALER;
+ const DEC_SKID = 365.625 * SCALER;
+ const MIN_SKID = 33.75 * SCALER;
+ const ROLL_SPD = 400 * SCALER;
+ const CROUCH_SPD = 50 * SCALER;
+ const DOUBLE_JUMP_X_BOOST = 10;
+ const STOP_FALL = 1575;
+ const WALK_FALL = 1800;
+ const RUN_FALL = 2025;
+ const STOP_FALL_A = 450;
+ const WALK_FALL_A = 421.875;
+ const RUN_FALL_A = 562.5;
+ const JUMP_HEIGHT = 1500;
+ const DOUBLE_JUMP_HEIGHT = 650;
+ const MAX_FALL = 270 * SCALER;
+ const MAX_SLIDE = 150 * SCALER;
+
 class Knight extends AbstractEntity {
     //game = engine, (x, y) = spawn cords
     constructor(game, x, y) {
@@ -51,6 +76,9 @@ class Knight extends AbstractEntity {
         this.doubleJump = true;
         this.attacking = false;
         this.vulnerable = true;
+        //these two audio variables control which sound effect is playing during the attack combo
+        this.playAttackSFX1 = true;
+        this.playAttackSFX2 = true;
 
         //inventory
         this.numArrows = 100;
@@ -71,7 +99,7 @@ class Knight extends AbstractEntity {
             floor: false, floor_left: false, floor_right: false
         };
         this.diffy = { hi: 0, lo: 0 };
-        
+
         //animations
         this.animations = [];
         this.loadAnimations();
@@ -207,29 +235,6 @@ class Knight extends AbstractEntity {
 
     update() {
         const TICK = this.game.clockTick;
-        const SCALER = 3;
-        //currently using Chris Marriot's mario physics
-        const MIN_WALK = 4.453125 * SCALER;
-        const MAX_WALK = 93.75 * SCALER;
-        const MAX_RUN = 153.75 * SCALER;
-        const ACC_WALK = 133.59375 * SCALER;
-        const ACC_RUN = 200.390625 * SCALER;
-        const DEC_REL = 182.8125 * SCALER;
-        const DEC_SKID = 365.625 * SCALER;
-        const MIN_SKID = 33.75 * SCALER;
-        const ROLL_SPD = 400 * SCALER;
-        const CROUCH_SPD = 50 * SCALER;
-        const DOUBLE_JUMP_X_BOOST = 10;
-        const STOP_FALL = 1575;
-        const WALK_FALL = 1800;
-        const RUN_FALL = 2025;
-        const STOP_FALL_A = 450;
-        const WALK_FALL_A = 421.875;
-        const RUN_FALL_A = 562.5;
-        const JUMP_HEIGHT = 1500;
-        const DOUBLE_JUMP_HEIGHT = 650;
-        const MAX_FALL = 270 * SCALER;
-        const MAX_SLIDE = 150 * SCALER;
 
         //choose animation based on keyboard input
         //this if statement is to make sure special states are not interrupted
@@ -262,6 +267,7 @@ class Knight extends AbstractEntity {
                 }
                 //jump press
                 if (this.game.jump && !this.action.jump && !this.touchCeiling()) {
+                    ASSET_MANAGER.playAsset(SFX.JUMP);
                     this.action = this.states.jump; //jump (9-11)
                     //set jump distance
                     this.velocity.y -= JUMP_HEIGHT;
@@ -318,7 +324,9 @@ class Knight extends AbstractEntity {
                 if (this.game.jump) {
                     // do a wall jump if touching a wall
                     if (!this.collisions.floor) {
+
                         if (this.collisions.lo_left && this.diffy.hi >= this.heightBB / 8 || this.collisions.hi_left && this.diffy.lo >= this.heightBB / 8) {
+                            ASSET_MANAGER.playAsset(SFX.WALLJUMP);
                             this.game.jump = false;
                             this.resetAnimationTimers(this.states.jump);
                             if (this.action == this.states.wall_slide || this.action == this.states.wall_hang)
@@ -330,6 +338,7 @@ class Knight extends AbstractEntity {
                             this.action = this.states.jump;
                         }
                         else if (this.collisions.lo_right && this.diffy.hi >= this.heightBB / 8 || this.collisions.hi_right && this.diffy.lo >= this.heightBB / 8) {
+                            ASSET_MANAGER.playAsset(SFX.WALLJUMP);
                             this.game.jump = false;
                             this.resetAnimationTimers(this.states.jump);
                             if (this.action == this.states.wall_slide || this.action == this.states.wall_hang)
@@ -344,6 +353,7 @@ class Knight extends AbstractEntity {
 
                     //do a double jump if the player is in the air and hasn't double jumped while in air
                     if (this.doubleJump && this.inAir && this.action >= this.states.jump && this.action <= this.states.falling) {
+                        ASSET_MANAGER.playAsset(SFX.DOUBLEJUMP);
                         this.doubleJump = false;
                         this.game.jump = false;
                         this.resetAnimationTimers(this.states.jump);
@@ -368,7 +378,6 @@ class Knight extends AbstractEntity {
 
         //attack logic (melee/ranged)
         if (this.game.attack) {
-            this.attacking = true;
 
             if (this.game.down || this.touchHole()) { //crouch attack
                 this.action = this.states.crouch_atk;
@@ -378,17 +387,28 @@ class Knight extends AbstractEntity {
                 //If attack button was pressed more than once change action to the second attack after the animation is complete
                 this.combo = (this.game.comboCounter > 1 && this.animations[this.facing][this.states.attack1].isDone()) ? true : false;
                 this.action = (this.combo) ? this.states.attack2 : this.states.attack1; //if comboing switch to the second animation
+
+                //play the second attack sound if the first sword swing is done
+                if(this.action == this.states.attack2 && this.combo && !this.playAttackSFX1 && this.playAttackSFX2) {
+                    this.playAttackSFX2 = false;
+                    ASSET_MANAGER.playAsset(SFX.SLASH2)
+                }
             }
             this.updateHB();
+
+            //play 
+            if(this.playAttackSFX1) {
+                this.playAttackSFX1 = false;
+                if(this.action == this.states.attack1 || this.action == this.states.crouch_atk) ASSET_MANAGER.playAsset(SFX.SLASH1);
+            }
 
             let done = this.animations[this.facing][this.action].isDone();
             //console.log(this.action + " " + this.game.comboCounter + " " + this.combo);
 
             if (done) {
-
-                //console.log(this.game.comboCounter);
                 if (this.combo && this.action == this.states.attack1) { //continue combo after first attack
                     this.action = this.states.attack2;
+
                 } else { //end attack
                     this.action = this.game.down || this.touchHole() ? this.states.crouch : this.DEFAULT_ACTION; //back to idle; added case for crouch attacks
                     this.HB = null;
@@ -398,7 +418,6 @@ class Knight extends AbstractEntity {
 
                 //to ensure the animation does not get stuck we reset the combo regardless
                 this.resetCombo();
-                this.attacking = false;
 
             }
 
@@ -409,11 +428,11 @@ class Knight extends AbstractEntity {
                 const target = { x: this.game.mouse.x + this.game.camera.x, y: this.game.mouse.y };
                 this.game.addEntityToFront(new Arrow(this.game, this.x + this.offsetxBB, (this.y + this.height / 2) + 40, target));
                 this.numArrows--;
+                ASSET_MANAGER.playAsset(SFX.BOW_SHOT);
 
             }
             this.game.shoot = false;
             this.action = this.DEFAULT_ACTION;
-            //}
 
 
         } else { //reset all attack animations
@@ -428,12 +447,18 @@ class Knight extends AbstractEntity {
 
         //roll input
         //this is placed last because the player should be able to cancel their animation to dodge
+        //cant be hit during a roll
         if (this.game.roll && !this.inAir) {
             this.action = this.states.roll; //roll
             this.velocity.x += (this.facing == this.dir.left) ? -1 * (ROLL_SPD) : (ROLL_SPD); //movement speed boost
+            if(this.vulnerable) {
+                ASSET_MANAGER.playAsset(SFX.DODGE);
+                this.vulnerable = false;
+            }
             if (this.animations[this.facing][this.states.roll].isDone()) {
                 this.action = this.states.idle;
                 this.game.roll = false;
+                this.vulnerable = true;
             }
         } else {
             //roll
@@ -548,6 +573,7 @@ class Knight extends AbstractEntity {
                 if (entity instanceof Arrow && entity.stuck) {
                     entity.removeFromWorld = true;
                     that.numArrows++;
+                    ASSET_MANAGER.playAsset(SFX.ITEM_PICKUP);
                 }
             }
 
@@ -648,6 +674,53 @@ class Knight extends AbstractEntity {
 
     };
 
+    //reset the animation timer in both direction
+    resetAnimationTimers(action) {
+        this.animations[0][action].elapsedTime = 0;
+        this.animations[1][action].elapsedTime = 0;
+    }
+
+
+    //reset the combocounter for an attack
+    resetCombo() {
+        this.combo = false;
+        this.game.comboCounter = 0; //set combo counter to 0
+        this.playAttackSFX1 = true;
+        this.playAttackSFX2 = true;
+    }
+
+    //choose how much damage the knight should do based on what action it is doing
+    getDamageValue() {
+        let dmg = 0;
+        if (this.action == this.states.attack1) {
+            dmg = this.damages.slash1;
+        } else if (this.action == this.states.attack2) {
+            dmg = this.damages.slash2;
+        } else if (this.action == this.states.crouch_atk) {
+            dmg = this.damages.crouch_atk;
+        }
+
+        return dmg;
+
+    }
+
+    //do damage to the entity based on knights attack action
+    doDamage(entity) {
+        //only do damage if the entity can be damaged
+        //make sure the entity has this
+        if (entity.canTakeDamage()) {
+            var dmg = this.getDamageValue();
+            if(dmg > 0) {
+                entity.hp -= dmg;
+                this.game.addEntityToFront(new DamageScore(this.game, entity, dmg));
+            }
+        }
+    }
+
+    canTakeDamage() {
+        return this.vulnerable;
+    }
+
     viewBoundingBox(ctx) { //debug
         ctx.strokeStyle = "Red";
         ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y, this.BB.width, this.BB.height);
@@ -708,49 +781,5 @@ class Knight extends AbstractEntity {
         this.animations[1][16].drawFrame(this.game.clockTick, ctx, 960 * this.scale, 240 * this.scale, this.scale);
     }
 
-    //reset the animation timer in both direction
-    resetAnimationTimers(action) {
-        this.animations[0][action].elapsedTime = 0;
-        this.animations[1][action].elapsedTime = 0;
-    }
-
-
-    //reset the combocounter for an attack
-    resetCombo() {
-        this.combo = false;
-        this.game.comboCounter = 0; //set combo counter to 0
-    }
-
-    //choose how much damage the knight should do based on what action it is doing
-    getDamageValue() {
-        let dmg = 0;
-        if (this.action == this.states.attack1) {
-            dmg = this.damages.slash1;
-        } else if (this.action == this.states.attack2) {
-            dmg = this.damages.slash2;
-        } else if (this.action == this.states.crouch_atk) {
-            dmg = this.damages.crouch_atk;
-        }
-
-        return dmg;
-
-    }
-
-    //do damage to the entity based on knights attack action
-    doDamage(entity) {
-        //only do damage if the entity can be damaged
-        //make sure the entity has this
-        if (entity.canTakeDamage()) {
-            var dmg = this.getDamageValue();
-            if(dmg > 0) {
-                entity.hp -= dmg;
-                this.game.addEntityToFront(new DamageScore(this.game, entity, dmg));
-            }
-        }
-    }
-
-    canTakeDamage() {
-        return this.vulnerable;
-    }
 
 }

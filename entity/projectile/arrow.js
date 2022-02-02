@@ -92,8 +92,9 @@ class Arrow {
                     self.stuck = true;
                 }
 
-                //damage value against an enemy
-                if(entity instanceof AbstractEnemy && self.hit == false) {
+                //damage value against an enemy that was hit by an arrow
+                if(entity instanceof AbstractEnemy && self.hit == false && self.stuck == false) {
+                    ASSET_MANAGER.playAsset(SFX.ARROW_HIT);
                     //console.log("hit mushroom with arrow");
                     self.removeFromWorld = true;
                     self.hit = true;

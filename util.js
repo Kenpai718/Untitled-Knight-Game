@@ -7,6 +7,21 @@ const PARAMS = {
         DEFAULT_FONT : "10px Arial" //regular font
 };
 
+/* Global sfx path object */
+const SFX =  {
+    ARROW_HIT: "./sound/sfx/arrow_hit.mp3",
+    BOW_SHOT: "./sound/sfx/bow_shoot.mp3",
+    ITEM_PICKUP: "./sound/sfx/item_pickup.mp3",
+    SLASH1: "./sound/sfx/slash1.wav",
+    SLASH2: "./sound/sfx/slash2.wav",
+    JUMP: "./sound/sfx/jump.wav",
+    DOUBLEJUMP: "./sound/sfx/double_jump.wav",
+    WALLJUMP: "./sound/sfx/walljump.wav",
+    CRITICAL: "./sound/sfx/critical_hit.wav",
+    DODGE: "./sound/sfx/dodge.wav"  
+
+};
+
 function getFacing(velocity) {
     if (velocity.x === 0 && velocity.y === 0) return 4;
     let angle = Math.atan2(velocity.y, velocity.x) / Math.PI;
