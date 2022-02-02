@@ -9,6 +9,7 @@ class SceneManager {
 
         //main character
         this.player = new Knight(this.game, 0, 300);
+        this.inventory = new Inventory(this.game, this.player);
         this.game.addEntity(this.player);
         //uncomment to test mushroom
         //this.shroom = new Mushroom(this.game, 200, 500);
@@ -18,16 +19,26 @@ class SceneManager {
 
     update() {
         PARAMS.DEBUG = document.getElementById("debug").checked;
+        this.updateAudio();
+
         if (this.player.BB.left < 0) this.player.x -= this.player.BB.left;
         else if (this.player.BB.right > this.level.width*PARAMS.BLOCKDIM) this.player.x -= this.player.BB.right - this.level.width*PARAMS.BLOCKDIM;
         if (this.x < this.player.x - this.game.surfaceWidth * 9 / 16 && this.x + this.game.surfaceWidth < this.level.width * PARAMS.BLOCKDIM) this.x = this.player.x - this.game.surfaceWidth * 9 / 16;
         else if (this.x > this.player.x - this.game.surfaceWidth * 7 / 16 && this.x > 0) this.x = this.player.x - this.game.surfaceWidth * 7 / 16;
     };
 
+    updateAudio() {
+        let mute = document.getElementById("mute").checked;
+        let volume = document.getElementById("volume").value;
+        ASSET_MANAGER.muteAudio(mute);
+        ASSET_MANAGER.adjustVolume(volume);
+    };
+
     draw(ctx) {
         //gui
         ctx.fillStyle = "White";
-        ctx.fillText("Num Arrows: " + this.player.numArrows, 0, 10);
+        this.inventory.draw(ctx);
+        
 
         if (PARAMS.DEBUG) {
             this.viewDebug(ctx);
@@ -121,6 +132,8 @@ class SceneManager {
 
     //keyboard input
     viewDebug(ctx) {
+
+        ctx.font = PARAMS.DEFAULT_FONT;
 
         // left debug
         ctx.lineWidth = 2;

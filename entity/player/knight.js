@@ -1,7 +1,41 @@
-class Knight {
+//Define constants to be passed to the superclass instantiation of an AbstractEntity
+const PLAYER = {
+    NAME: "Player (Knight)",
+    MAX_HP: 100,
+    SCALE: 3.12,
+    WIDTH: 120,
+    HEIGHT: 80
+ };
+
+ //constants used for physics
+ const SCALER = 3;
+ //currently using Chris Marriot's mario physics
+ const MIN_WALK = 4.453125 * SCALER;
+ const MAX_WALK = 93.75 * SCALER;
+ const MAX_RUN = 153.75 * SCALER;
+ const ACC_WALK = 133.59375 * SCALER;
+ const ACC_RUN = 200.390625 * SCALER;
+ const DEC_REL = 182.8125 * SCALER;
+ const DEC_SKID = 365.625 * SCALER;
+ const MIN_SKID = 33.75 * SCALER;
+ const ROLL_SPD = 400 * SCALER;
+ const CROUCH_SPD = 50 * SCALER;
+ const DOUBLE_JUMP_X_BOOST = 10;
+ const STOP_FALL = 1575;
+ const WALK_FALL = 1800;
+ const RUN_FALL = 2025;
+ const STOP_FALL_A = 450;
+ const WALK_FALL_A = 421.875;
+ const RUN_FALL_A = 562.5;
+ const JUMP_HEIGHT = 1500;
+ const DOUBLE_JUMP_HEIGHT = 650;
+ const MAX_FALL = 270 * SCALER;
+ const MAX_SLIDE = 150 * SCALER;
+
+class Knight extends AbstractEntity {
     //game = engine, (x, y) = spawn cords
     constructor(game, x, y) {
-        Object.assign(this, { game, x, y });
+        super(game, x, y, PLAYER.NAME, PLAYER.MAX_HP, PLAYER.WIDTH, PLAYER.HEIGHT, PLAYER.SCALE);
 
         // get spritesheets
         this.spritesheetRight = ASSET_MANAGER.getAsset("./sprites/knight/knightRight.png");
@@ -18,6 +52,7 @@ class Knight {
             attack1: 14, attack2: 15,
             death: 16
         };
+        this.damages = { slash1: 10, slash2: 20, crouch_atk: 8 };
 
         //default starting values
         this.DEFAULT_DIRECTION = this.dir.right;
@@ -39,12 +74,15 @@ class Knight {
         this.combo = false;
         this.inAir = false;
         this.doubleJump = true;
-        this.numArrows = 100;
+        this.attacking = false;
+        this.vulnerable = true;
+        //these two audio variables control which sound effect is playing during the attack combo
+        this.playAttackSFX1 = true;
+        this.playAttackSFX2 = true;
 
-        //positioning
-        this.scale = 3.12;
-        this.width = 120 * this.scale;
-        this.height = 80 * this.scale;
+        //inventory
+        this.numArrows = 100;
+        this.numPotions = 0;
 
         // bounding box (hitbox) used for attacks
         this.HB = null;
@@ -55,10 +93,13 @@ class Knight {
         this.velocity = { x: 0, y: 0 };
         this.fallAcc = 1500;
         this.slideAcc = 750;
-        this.collisions = {lo_left: false, hi_left: false, lo_right: false, hi_right: false, 
-                    ceil: false, ceil_left: false, ceil_right: false,
-                    floor: false, floor_left: false, floor_right: false};
-        this.diffy = {hi: 0, lo: 0};
+        this.collisions = {
+            lo_left: false, hi_left: false, lo_right: false, hi_right: false,
+            ceil: false, ceil_left: false, ceil_right: false,
+            floor: false, floor_left: false, floor_right: false
+        };
+        this.diffy = { hi: 0, lo: 0 };
+
         //animations
         this.animations = [];
         this.loadAnimations();
@@ -124,10 +165,10 @@ class Knight {
         //attack combo (on ground or in air)
         //Note: Slash 1 is a faster attack but less damage. Slash 2 is slower but more damage
         //slash 1 = 14
-        this.animations[0][this.states.attack1] = new Animator(this.spritesheetLeft, 240, 0, 120, 80, 6, 0.09, 0, true, false, false);
+        this.animations[0][this.states.attack1] = new Animator(this.spritesheetLeft, 720, 0, 120, 80, 6, 0.09, 0, true, false, false);
         this.animations[1][this.states.attack1] = new Animator(this.spritesheetRight, 0, 0, 120, 80, 6, 0.09, 0, false, false, false);
         //slash 2 = 15
-        this.animations[0][this.states.attack2] = new Animator(this.spritesheetLeft, 720, 0, 120, 80, 6, 0.1, 0, true, false, false);
+        this.animations[0][this.states.attack2] = new Animator(this.spritesheetLeft, 240, 0, 120, 80, 6, 0.1, 0, true, false, false);
         this.animations[1][this.states.attack2] = new Animator(this.spritesheetRight, 480, 0, 120, 80, 6, 0.1, 0, false, false, false);
 
         // death = 16 (special property so might be better to just have it called only when the player dies)
@@ -143,7 +184,7 @@ class Knight {
             case this.states.jump:
             case this.states.jump_to_fall:
             case this.states.falling:
-                case this.states.wall_slide:
+            case this.states.wall_slide:
                 this.offsetxBB = this.facing == 1 ? 44 * this.scale : 55 * this.scale;
                 this.offsetyBB = 41 * this.scale;
                 this.widthBB = 21 * this.scale;
@@ -194,30 +235,7 @@ class Knight {
 
     update() {
         const TICK = this.game.clockTick;
-        const SCALER = 3;
-        //currently using Chris Marriot's mario physics
-        const MIN_WALK = 4.453125 * SCALER;
-        const MAX_WALK = 93.75 * SCALER;
-        const MAX_RUN = 153.75 * SCALER;
-        const ACC_WALK = 133.59375 * SCALER;
-        const ACC_RUN = 200.390625 * SCALER;
-        const DEC_REL = 182.8125 * SCALER;
-        const DEC_SKID = 365.625 * SCALER;
-        const MIN_SKID = 33.75 * SCALER;
-        const ROLL_SPD = 400 * SCALER;
-        const CROUCH_SPD = 50 * SCALER;
-        const DOUBLE_JUMP_X_BOOST = 10;
-        const STOP_FALL = 1575;
-        const WALK_FALL = 1800;
-        const RUN_FALL = 2025;
-        const STOP_FALL_A = 450;
-        const WALK_FALL_A = 421.875;
-        const RUN_FALL_A = 562.5;
-        const JUMP_HEIGHT = 1500;
-        const DOUBLE_JUMP_HEIGHT = 650;
-        const MAX_FALL = 270 * SCALER;
-        const MAX_SLIDE = 150 * SCALER;
-        
+
         //choose animation based on keyboard input
         //this if statement is to make sure special states are not interrupted
         if (this.action != this.states.attack1 || this.action != this.states.attack2 || this.action != this.states.roll) {
@@ -249,6 +267,7 @@ class Knight {
                 }
                 //jump press
                 if (this.game.jump && !this.action.jump && !this.touchCeiling()) {
+                    ASSET_MANAGER.playAsset(SFX.JUMP);
                     this.action = this.states.jump; //jump (9-11)
                     //set jump distance
                     this.velocity.y -= JUMP_HEIGHT;
@@ -305,7 +324,9 @@ class Knight {
                 if (this.game.jump) {
                     // do a wall jump if touching a wall
                     if (!this.collisions.floor) {
+
                         if (this.collisions.lo_left && this.diffy.hi >= this.heightBB / 8 || this.collisions.hi_left && this.diffy.lo >= this.heightBB / 8) {
+                            ASSET_MANAGER.playAsset(SFX.WALLJUMP);
                             this.game.jump = false;
                             this.resetAnimationTimers(this.states.jump);
                             if (this.action == this.states.wall_slide || this.action == this.states.wall_hang)
@@ -317,20 +338,22 @@ class Knight {
                             this.action = this.states.jump;
                         }
                         else if (this.collisions.lo_right && this.diffy.hi >= this.heightBB / 8 || this.collisions.hi_right && this.diffy.lo >= this.heightBB / 8) {
+                            ASSET_MANAGER.playAsset(SFX.WALLJUMP);
                             this.game.jump = false;
                             this.resetAnimationTimers(this.states.jump);
                             if (this.action == this.states.wall_slide || this.action == this.states.wall_hang)
                                 this.velocity.y -= JUMP_HEIGHT;
                             else
-                                this.velocity.y -= DOUBLE_JUMP_HEIGHT;  
+                                this.velocity.y -= DOUBLE_JUMP_HEIGHT;
                             this.velocity.x -= MAX_WALK;
                             this.facing = this.dir.left;
                             this.action = this.states.jump;
                         }
                     }
-                    
+
                     //do a double jump if the player is in the air and hasn't double jumped while in air
                     if (this.doubleJump && this.inAir && this.action >= this.states.jump && this.action <= this.states.falling) {
+                        ASSET_MANAGER.playAsset(SFX.DOUBLEJUMP);
                         this.doubleJump = false;
                         this.game.jump = false;
                         this.resetAnimationTimers(this.states.jump);
@@ -339,7 +362,7 @@ class Knight {
                             this.velocity.y -= DOUBLE_JUMP_HEIGHT;
                         }
                         else {
-                            this.velocity.y = -JUMP_HEIGHT/2;
+                            this.velocity.y = -JUMP_HEIGHT / 2;
                         }
                         this.action = this.states.jump;
                         if (this.facing == this.states.right) this.velocity += DOUBLE_JUMP_X_BOOST;
@@ -347,7 +370,7 @@ class Knight {
                     }
                 }
 
-                
+
 
             }
         }
@@ -364,17 +387,28 @@ class Knight {
                 //If attack button was pressed more than once change action to the second attack after the animation is complete
                 this.combo = (this.game.comboCounter > 1 && this.animations[this.facing][this.states.attack1].isDone()) ? true : false;
                 this.action = (this.combo) ? this.states.attack2 : this.states.attack1; //if comboing switch to the second animation
+
+                //play the second attack sound if the first sword swing is done
+                if(this.action == this.states.attack2 && this.combo && !this.playAttackSFX1 && this.playAttackSFX2) {
+                    this.playAttackSFX2 = false;
+                    ASSET_MANAGER.playAsset(SFX.SLASH2)
+                }
             }
             this.updateHB();
+
+            //play 
+            if(this.playAttackSFX1) {
+                this.playAttackSFX1 = false;
+                if(this.action == this.states.attack1 || this.action == this.states.crouch_atk) ASSET_MANAGER.playAsset(SFX.SLASH1);
+            }
 
             let done = this.animations[this.facing][this.action].isDone();
             //console.log(this.action + " " + this.game.comboCounter + " " + this.combo);
 
             if (done) {
-
-                //console.log(this.game.comboCounter);
                 if (this.combo && this.action == this.states.attack1) { //continue combo after first attack
                     this.action = this.states.attack2;
+
                 } else { //end attack
                     this.action = this.game.down || this.touchHole() ? this.states.crouch : this.DEFAULT_ACTION; //back to idle; added case for crouch attacks
                     this.HB = null;
@@ -394,11 +428,11 @@ class Knight {
                 const target = { x: this.game.mouse.x + this.game.camera.x, y: this.game.mouse.y };
                 this.game.addEntityToFront(new Arrow(this.game, this.x + this.offsetxBB, (this.y + this.height / 2) + 40, target));
                 this.numArrows--;
+                ASSET_MANAGER.playAsset(SFX.BOW_SHOT);
 
             }
             this.game.shoot = false;
             this.action = this.DEFAULT_ACTION;
-            //}
 
 
         } else { //reset all attack animations
@@ -410,22 +444,28 @@ class Knight {
 
             //reset shooting animation
         }
-        
+
         //roll input
         //this is placed last because the player should be able to cancel their animation to dodge
+        //cant be hit during a roll
         if (this.game.roll && !this.inAir) {
             this.action = this.states.roll; //roll
             this.velocity.x += (this.facing == this.dir.left) ? -1 * (ROLL_SPD) : (ROLL_SPD); //movement speed boost
+            if(this.vulnerable) {
+                ASSET_MANAGER.playAsset(SFX.DODGE);
+                this.vulnerable = false;
+            }
             if (this.animations[this.facing][this.states.roll].isDone()) {
                 this.action = this.states.idle;
                 this.game.roll = false;
+                this.vulnerable = true;
             }
         } else {
             //roll
             this.resetAnimationTimers(this.states.roll);
         }
 
-        
+
         //constant falling velocity
         if (this.action == this.states.wall_slide) {
             this.velocity.y += this.slideAcc * TICK;
@@ -438,8 +478,8 @@ class Knight {
         // max y velocity
         if (this.velocity.y >= MAX_FALL) this.velocity.y = MAX_FALL;
         if (this.velocity.y <= -MAX_FALL) this.velocity.y = -MAX_FALL;
-        if (this.action == this.states.wall_slide){
-            if (this.velocity.y >= MAX_SLIDE)  this.velocity.y = MAX_SLIDE;
+        if (this.action == this.states.wall_slide) {
+            if (this.velocity.y >= MAX_SLIDE) this.velocity.y = MAX_SLIDE;
         }
 
         //max x velocity
@@ -455,20 +495,22 @@ class Knight {
         this.updateBB();
 
         if (!this.touchFloor() && (this.action < this.states.jump || this.action > this.states.falling)) {
-            if ((this.action != this.states.wall_slide && this.action != this.states.roll && this.action != this.states.wall_hang) || 
-                (this.action == this.states.wall_slide && 
+            if ((this.action != this.states.wall_slide && this.action != this.states.roll && this.action != this.states.wall_hang) ||
+                (this.action == this.states.wall_slide &&
                     !(this.collisions.lo_left || this.collisions.hi_left) && !(this.collisions.lo_right || this.collisions.hi_right))) {
                 this.action = this.states.falling;
                 this.inAir = true;
             }
         }
-        
+
         //do collisions detection here
-        this.collisions = {lo_left: false, hi_left: false, lo_right: false, hi_right: false, 
+        this.collisions = {
+            lo_left: false, hi_left: false, lo_right: false, hi_right: false,
             ceil: false, ceil_left: false, ceil_right: false,
-            floor: false, floor_left: false, floor_right: false};
-        let dist = {x:0, y:0};
-        this.diffy = {hi: 0, lo: 0};
+            floor: false, floor_left: false, floor_right: false
+        };
+        let dist = { x: 0, y: 0 };
+        this.diffy = { hi: 0, lo: 0 };
         //let hole = 0; // at most 15, floor/ceil = 8, adj floor/ceil = 4, low wall = 2, high wall = 1
         let that = this;
         this.game.entities.forEach(function (entity) {
@@ -531,10 +573,13 @@ class Knight {
                 if (entity instanceof Arrow && entity.stuck) {
                     entity.removeFromWorld = true;
                     that.numArrows++;
+                    ASSET_MANAGER.playAsset(SFX.ITEM_PICKUP);
                 }
-            } 
+            }
+
+
         });
-        
+
         // used to debug the number for collision as well as which side are collided
         //console.log(this.collisions.hi_left + " " + this.collisions.ceil_left + " " + this.collisions.ceil + " " + this.collisions.ceil_right + " " + this.collisions.hi_right);
         //console.log(this.diffy.hi + " " + this.diffy.lo)
@@ -555,7 +600,7 @@ class Knight {
         this.x += dist.x;
         this.y += dist.y;
         this.updateBB();
-        
+
         // bottom collision       
         if (this.touchFloor()) {
             if (this.velocity.y > 0) {
@@ -569,7 +614,7 @@ class Knight {
                 this.resetAnimationTimers(this.states.jump_to_fall);
                 this.resetAnimationTimers(this.states.falling);
 
-                
+
             }
         }
 
@@ -584,16 +629,16 @@ class Knight {
 
         // left collison
         if (this.collisions.hi_left || this.collisions.lo_left) {
-            if(this.velocity.x < 0)
+            if (this.velocity.x < 0)
                 this.velocity.x = 0;
         }
 
         // right collison
         if (this.collisions.hi_right || this.collisions.lo_right) {
-            if(this.velocity.x > 0)
+            if (this.velocity.x > 0)
                 this.velocity.x = 0;
         }
-        
+
     }
 
     touchFloor() {
@@ -621,12 +666,60 @@ class Knight {
     draw(ctx) {
         this.animations[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y, this.scale);
         //this.viewAllAnimations(ctx);
+        this.healthbar.draw(ctx);
 
         if (PARAMS.DEBUG) {
             this.viewBoundingBox(ctx);
         }
 
     };
+
+    //reset the animation timer in both direction
+    resetAnimationTimers(action) {
+        this.animations[0][action].elapsedTime = 0;
+        this.animations[1][action].elapsedTime = 0;
+    }
+
+
+    //reset the combocounter for an attack
+    resetCombo() {
+        this.combo = false;
+        this.game.comboCounter = 0; //set combo counter to 0
+        this.playAttackSFX1 = true;
+        this.playAttackSFX2 = true;
+    }
+
+    //choose how much damage the knight should do based on what action it is doing
+    getDamageValue() {
+        let dmg = 0;
+        if (this.action == this.states.attack1) {
+            dmg = this.damages.slash1;
+        } else if (this.action == this.states.attack2) {
+            dmg = this.damages.slash2;
+        } else if (this.action == this.states.crouch_atk) {
+            dmg = this.damages.crouch_atk;
+        }
+
+        return dmg;
+
+    }
+
+    //do damage to the entity based on knights attack action
+    doDamage(entity) {
+        //only do damage if the entity can be damaged
+        //make sure the entity has this
+        if (entity.canTakeDamage()) {
+            var dmg = this.getDamageValue();
+            if(dmg > 0) {
+                entity.hp -= dmg;
+                this.game.addEntityToFront(new DamageScore(this.game, entity, dmg));
+            }
+        }
+    }
+
+    canTakeDamage() {
+        return this.vulnerable;
+    }
 
     viewBoundingBox(ctx) { //debug
         ctx.strokeStyle = "Red";
@@ -688,17 +781,5 @@ class Knight {
         this.animations[1][16].drawFrame(this.game.clockTick, ctx, 960 * this.scale, 240 * this.scale, this.scale);
     }
 
-    //reset the animation timer in both direction
-    resetAnimationTimers(action) {
-        this.animations[0][action].elapsedTime = 0;
-        this.animations[1][action].elapsedTime = 0;
-    }
-
-
-    //reset the combocounter for an attack
-    resetCombo() {
-        this.combo = false;
-        this.game.comboCounter = 0; //set combo counter to 0
-    }
 
 }

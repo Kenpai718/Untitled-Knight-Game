@@ -31,7 +31,8 @@ class Arrow {
 
         //specific game values
         this.stuck = false; //stuck = true, hit something like ground and cannot move. Can be picked up by player.
-        this.damage = 5; //how much hp this arrow will take away if it hits something
+        this.hit = false; //false = not hit an enemy, true = hit enemy. This is needed so an arrow doesn't multi hit during collision.
+        this.damage = 10; //how much hp this arrow will take away if it hits something
 
         this.updateBB();
     };
@@ -89,6 +90,16 @@ class Arrow {
                     self.velocity.x = 0;
                     self.velocity.y = 0;
                     self.stuck = true;
+                }
+
+                //damage value against an enemy that was hit by an arrow
+                if(entity instanceof AbstractEnemy && self.hit == false && self.stuck == false) {
+                    ASSET_MANAGER.playAsset(SFX.ARROW_HIT);
+                    //console.log("hit mushroom with arrow");
+                    self.removeFromWorld = true;
+                    self.hit = true;
+                    entity.hp -= self.damage;
+                    self.game.addEntityToFront(new DamageScore(self.game, entity, self.damage));
                 }
 
 
