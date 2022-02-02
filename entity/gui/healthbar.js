@@ -21,8 +21,8 @@ class HealthBar {
         var height = 10;
         var offsetX = (width / (widthDivisor * widthRatio));
         var offsetY = 30;
-        if (this.agent.hp < this.agent.maxHP) {
-            var ratio = this.agent.hp / this.agent.maxHP;
+        if (this.agent.hp < this.agent.max_hp) {
+            var ratio = this.agent.hp / this.agent.max_hp;
             ctx.strokeStyle = "Black";
             ctx.fillStyle = ratio < 0.2 ? "Red" : ratio < 0.5 ? "Yellow" : "Green";
             ctx.fillRect(x - offsetX, y - offsetY, width * ratio, height);
@@ -31,8 +31,8 @@ class HealthBar {
 
         if(PARAMS.DEBUG) {
             ctx.fillStyle = "white";
-            ctx.fillText("HP: " + this.agent.hp + "/" + this.agent.maxHP, x, y - 40);
-            ctx.fillText("Can be hit = " + this.agent.canTakeDamage(), x, y - 50);
+            ctx.fillText("HP: " + this.agent.hp + "/" + this.agent.max_hp, x, y - 40);
+            ctx.fillText("Vulnerable = " + this.agent.canTakeDamage(), x, y - 50);
         }
     };
 };

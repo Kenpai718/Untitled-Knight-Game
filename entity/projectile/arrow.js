@@ -93,7 +93,7 @@ class Arrow {
                 }
 
                 //damage value against an enemy
-                if(entity instanceof Mushroom && self.hit == false) {
+                if(entity instanceof AbstractEnemy && self.hit == false) {
                     //console.log("hit mushroom with arrow");
                     self.removeFromWorld = true;
                     self.hit = true;

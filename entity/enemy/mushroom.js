@@ -1,29 +1,32 @@
-class Mushroom {
-    constructor(game, x, y) {
-        Object.assign(this, { game, x, y });
-        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/mushroom.png");
-        this.scale = 3.5;
-        this.width = 150 * this.scale;
-        this.height = 150 * this.scale;
+//Define constants to be passed to the superclass instantiation of an AbstractEnemy
+const SHROOM = {
+    NAME: "Mushroom",
+    MAX_HP: 100,
+    SCALE: 3.5,
+    WIDTH: 150,
+    HEIGHT: 150
+ };
 
+class Mushroom extends AbstractEnemy {
+    constructor(game, x, y) {
+        super(game, x, y, SHROOM.NAME, SHROOM.MAX_HP, SHROOM.WIDTH, SHROOM.HEIGHT, SHROOM.SCALE);
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/mushroom.png");
+
+        //seting up animation states
         this.animations = []; // [state][direction]
         this.states = { idle: 0, death: 1, damaged: 2, attack: 3, move: 4 };
         this.directions = { left: 0, right: 1 };
         this.state = this.states.idle;
         this.direction = this.directions.left;
 
+        //variables to control behavior
         this.canAttack = true;
         this.vulnerable = true;
         this.damagedCooldown = 0;
         this.runAway = false;
         this.attackCooldown = 0;
-        this.wasHit = false;
 
-        //health variables
-        this.maxHP = 50;
-        this.hp = this.maxHP;
-        this.healthbar = new HealthBar(game, this);
-
+        //movement control on canvas
         this.velocity = { x: 0, y: 0 };
         this.fallAcc = 1500;
         this.collisions = { left: false, right: false, top: false, bottom: false };

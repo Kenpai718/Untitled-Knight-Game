@@ -1,7 +1,16 @@
-class Knight {
+//Define constants to be passed to the superclass instantiation of an AbstractEntity
+const PLAYER = {
+    NAME: "Player (Knight)",
+    MAX_HP: 100,
+    SCALE: 3.12,
+    WIDTH: 120,
+    HEIGHT: 80
+ };
+
+class Knight extends AbstractEntity {
     //game = engine, (x, y) = spawn cords
     constructor(game, x, y) {
-        Object.assign(this, { game, x, y });
+        super(game, x, y, PLAYER.NAME, PLAYER.MAX_HP, PLAYER.WIDTH, PLAYER.HEIGHT, PLAYER.SCALE);
 
         // get spritesheets
         this.spritesheetRight = ASSET_MANAGER.getAsset("./sprites/knight/knightRight.png");
@@ -41,21 +50,11 @@ class Knight {
         this.inAir = false;
         this.doubleJump = true;
         this.attacking = false;
-
-        //health values
-        this.maxHP = 100;
-        this.hp = this.maxHP;
         this.vulnerable = true;
-        this.healthbar = new HealthBar(game, this);
 
         //inventory
         this.numArrows = 100;
         this.numPotions = 0;
-
-        //positioning
-        this.scale = 3.12;
-        this.width = 120 * this.scale;
-        this.height = 80 * this.scale;
 
         // bounding box (hitbox) used for attacks
         this.HB = null;
@@ -72,6 +71,7 @@ class Knight {
             floor: false, floor_left: false, floor_right: false
         };
         this.diffy = { hi: 0, lo: 0 };
+        
         //animations
         this.animations = [];
         this.loadAnimations();
