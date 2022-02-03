@@ -246,7 +246,7 @@ class Knight extends AbstractPlayer {
 
             //choose animation based on keyboard input
             //this if statement is to make sure special states are not interrupted
-            if (this.action != this.states.attack1 && this.action != this.states.attack2 && this.action != this.states.roll) {
+            if (this.action != this.states.attack1 || this.action != this.states.attack2 || this.action != this.states.roll) {
                 if (this.action != this.states.jump && !this.inAir) { //not in the air
                     //horizontal movement
                     this.velocity.x = 0;
