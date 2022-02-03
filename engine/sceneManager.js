@@ -6,6 +6,7 @@ class SceneManager {
         //game status
         this.title = false;
         this.gameOver = false;
+        
 
 
         //levels array to load levels by calling levels[0], levels[1], etc
@@ -31,7 +32,7 @@ class SceneManager {
     */
     makePlayer(x, y) {
         this.player = new Knight(this.game, x, y);
-        this.inventory = new Inventory(this.game, this.player);
+        this.inventory = this.player.myInventory;
         this.heartsbar = new HeartBar(this.game, this.player);
         this.game.addEntity(this.player);
     }
@@ -56,6 +57,7 @@ class SceneManager {
         PARAMS.DEBUG = document.getElementById("debug").checked;
         this.updateAudio();
         this.heartsbar.update();
+        this.inventory.update();
 
         if (this.player.BB.left < 0) this.player.x -= this.player.BB.left;
         else if (this.player.BB.right > this.level.width * PARAMS.BLOCKDIM) this.player.x -= this.player.BB.right - this.level.width * PARAMS.BLOCKDIM;

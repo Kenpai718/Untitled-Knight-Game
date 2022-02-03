@@ -56,11 +56,6 @@ class AbstractEntity {
             throw new TypeError("Must override update() method for the entity");
         }
 
-        //view BB
-        if (this.viewBoundingBox === undefined) {
-            throw new TypeError("Must override viewBoundingBox() method to see box in debugging");
-        }
-
         //get dmg of an attack
         if (this.getDamageValue === undefined) {
             throw new TypeError("Must override getDamageValue() in entity");
@@ -73,6 +68,8 @@ class AbstractEntity {
 
     }
 
+    /**METHODS INHERITED BY ALL ENTITIES */
+
     /**
      * Do damage to an entity
      * @param {*} entity 
@@ -84,7 +81,7 @@ class AbstractEntity {
             var dmg = this.getDamageValue();
             if (dmg > 0) {
                 entity.takeDamage(dmg);
-                this.game.addEntityToFront(new DamageScore(this.game, entity, dmg));
+                this.game.addEntityToFront(new Score(this.game, entity, PARAMS.DMG_ID, dmg));
             }
         }
     }
@@ -105,7 +102,7 @@ class AbstractEntity {
                 this.dead = true;
             }
 
-            this.game.addEntityToFront(new DamageScore(this.game, this, damage, isCritical));
+            this.game.addEntityToFront(new Score(this.game, this, damage, PARAMS.DMG_ID, isCritical));
         }
     }
     
@@ -144,6 +141,10 @@ class AbstractEntity {
         }
     }
 
+    /**
+     * Randomly calculates if the instance hit the crit percentage
+     * @returns bool
+     */
     isCriticalHit() {
         let isCritical = false;
         let percentage = (Math.random() * 100);
@@ -152,4 +153,5 @@ class AbstractEntity {
         this.critical = isCritical;
         return isCritical;
     }
+    
 }

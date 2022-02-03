@@ -4,7 +4,8 @@ const SHROOM = {
     MAX_HP: 100,
     SCALE: 3.5,
     WIDTH: 150,
-    HEIGHT: 150
+    HEIGHT: 150,
+    DAMAGE: 12.5
 };
 
 class Mushroom extends AbstractEnemy {
@@ -26,7 +27,7 @@ class Mushroom extends AbstractEnemy {
         this.runAway = false;
         this.attackCooldown = 0;
 
-        this.damageValue = 10;
+        this.damageValue = SHROOM.DAMAGE;
 
         //movement control on canvas
         this.fallAcc = 1500;
@@ -242,6 +243,7 @@ class Mushroom extends AbstractEnemy {
     viewBoundingBox(ctx) {
         ctx.strokeStyle = "Red";
         ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y, this.BB.width, this.BB.height);
+        ctx.strokeStyle = "Blue";
         ctx.strokeRect(this.VB.x - this.game.camera.x, this.VB.y, this.VB.width, this.VB.height);
         ctx.strokeRect(this.AR.x - this.game.camera.x, this.AR.y, this.AR.width, this.AR.height);
         ctx.strokeStyle = "Green";

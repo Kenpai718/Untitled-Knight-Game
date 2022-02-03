@@ -52,7 +52,7 @@ class Knight extends AbstractPlayer {
             attack1: 14, attack2: 15,
             death: 16
         };
-        this.damages = { slash1: 10, slash2: 20, crouch_atk: 8 };
+        this.damages = { slash1: 10, slash2: 25, crouch_atk: 8 };
 
         //default starting values
         this.DEFAULT_DIRECTION = this.dir.right;
@@ -235,6 +235,7 @@ class Knight extends AbstractPlayer {
     update() {
         const TICK = this.game.clockTick;
         this.checkDamageCooldown(TICK);
+        this.checkInDeathZone();
 
         if (this.dead) {
             this.action = this.states.death;
@@ -245,7 +246,7 @@ class Knight extends AbstractPlayer {
 
             //choose animation based on keyboard input
             //this if statement is to make sure special states are not interrupted
-            if (this.action != this.states.attack1 || this.action != this.states.attack2 || this.action != this.states.roll) {
+            if (this.action != this.states.attack1 && this.action != this.states.attack2 && this.action != this.states.roll) {
                 if (this.action != this.states.jump && !this.inAir) { //not in the air
                     //horizontal movement
                     this.velocity.x = 0;
@@ -430,11 +431,11 @@ class Knight extends AbstractPlayer {
 
             } else if (!this.game.attack && this.game.shoot) { //only shoot an arrow when not attacking
 
-                if (this.numArrows > 0) {
+                if (this.myInventory.arrows > 0) {
                     //try to position starting arrow at the waist of the knight
                     const target = { x: this.game.mouse.x + this.game.camera.x, y: this.game.mouse.y };
                     this.game.addEntityToFront(new Arrow(this.game, this.x + this.offsetxBB, (this.y + this.height / 2) + 40, target));
-                    this.numArrows--;
+                    this.myInventory.arrows--;
                     ASSET_MANAGER.playAsset(SFX.BOW_SHOT);
 
                 }
@@ -442,7 +443,13 @@ class Knight extends AbstractPlayer {
                 this.action = this.DEFAULT_ACTION;
 
 
-            } else { //reset all attack animations
+            } else if(this.game.heal) { //reset all attack animations
+                if(this.myInventory.potions > 0) {
+                    this.healPotion();
+                }
+                this.game.heal = false;
+
+            } else {
                 //crouch attack
                 this.resetAnimationTimers(this.states.crouch_atk);
                 //slash 1 and 2
@@ -585,7 +592,7 @@ class Knight extends AbstractPlayer {
                     //player picks up arrow stuck on ground
                     if (entity instanceof Arrow && entity.stuck) {
                         entity.removeFromWorld = true;
-                        that.numArrows++;
+                        that.myInventory.arrows++;
                         ASSET_MANAGER.playAsset(SFX.ITEM_PICKUP);
                     }
                 }
