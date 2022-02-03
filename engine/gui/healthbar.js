@@ -15,24 +15,42 @@ class HealthBar {
         var widthRatio = (3 / 2);
         var widthDivisor = 4;
 
-        var x = box.x - this.game.camera.x;
-        var y = box.y;
+        var newX = box.x - this.game.camera.x;
+        var newY = box.y;
         var width = this.agent.width / widthDivisor;
         var height = 10;
         var offsetX = (width / (widthDivisor * widthRatio));
         var offsetY = 30;
+        var ratio = this.agent.hp / this.agent.max_hp;
+
         if (this.agent.hp < this.agent.max_hp) {
-            var ratio = this.agent.hp / this.agent.max_hp;
             ctx.strokeStyle = "Black";
             ctx.fillStyle = ratio < 0.2 ? "Red" : ratio < 0.5 ? "Yellow" : "Green";
-            ctx.fillRect(x - offsetX, y - offsetY, width * ratio, height);
-            ctx.strokeRect(x - offsetX, y - offsetY, width, height);
+            ctx.fillRect(newX - offsetX, newY - offsetY, width * ratio, height);
+            ctx.strokeRect(newX - offsetX, newY - offsetY, width, height);
         }
 
-        if (PARAMS.DEBUG) {
-            ctx.fillStyle = "white";
-            ctx.fillText("HP: " + this.agent.hp + "/" + this.agent.max_hp, x, y - 40);
-            ctx.fillText("Vulnerable = " + this.agent.canTakeDamage(), x, y - 50);
+        if (PARAMS.DEBUG) { //show info about the agent object
+            let yBuffer = 12;
+
+            let velX = (this.agent.velocity.x).toFixed(2);
+            let velY = (this.agent.velocity.y).toFixed(2);
+            let cordX = (this.agent.x).toFixed(2);
+            let cordY = (this.agent.y).toFixed(2);ctx.font = PARAMS.DEFAULT_FONT;
+            ctx.strokeStyle = "Black";
+            ctx.fillStyle = ratio < 0.2 ? "Red" : ratio < 0.5 ? "Yellow" : "SpringGreen";
+
+            //print info specific to the agent object above the healthbar for debugging
+            ctx.fillText(this.agent.name, newX, newY - (yBuffer * 5) - offsetY);
+            ctx.fillText("HP: " + this.agent.hp + "/" + this.agent.max_hp, newX, newY - (yBuffer * 4) - offsetY);
+            ctx.fillText("Cords: [" + cordX + ", " + cordY + "]", newX, newY - (yBuffer * 3) - offsetY);
+            ctx.fillText("Velocity: {x: " + velX + ", y: " + velY + "}", newX, newY - (yBuffer * 2) - offsetY);
+
+
+            (this.agent.vulnerable) ? ctx.fillStyle = "GhostWhite" : ctx.fillStyle = "DimGray";
+            ctx.font = PARAMS.DEFAULT_FONT;
+            ctx.fillText("Vulnerable: " + this.agent.vulnerable, newX, newY - (yBuffer * 1) - offsetY)
         }
+        
     };
 };
