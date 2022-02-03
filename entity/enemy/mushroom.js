@@ -93,7 +93,7 @@ class Mushroom extends AbstractEnemy {
         const ACC_RUN = 200.390625 * SCALER;
         const MAX_FALL = 270 * SCALER;
 
-        if (this.hp <= 0) { //mushroom is dead play death animation and remove
+        if (this.dead) { //mushroom is dead play death animation and remove
             //console.log("mushroom died");
             this.healthbar.removeFromWorld = true;
             this.state = this.states.death;
@@ -156,17 +156,15 @@ class Mushroom extends AbstractEnemy {
                         that.state = that.states.attack;
                     }
                 }
-                // // knight attacked mushroom
-                // if (entity.HB && that.BB.collide(entity.HB) && entity instanceof Knight && !that.HB) {
-                //     entity.doDamage(that);
-                //     that.vulnerable = false;
-                //     that.state = that.states.damaged;
 
-                // }
+                //mushroom hit by something switch the state to damaged
+                // knight attacked mushroom
+                if (entity.HB && that.BB.collide(entity.HB) && entity instanceof AbstractPlayer && !that.HB) {
+                    //entity.doDamage(that);
+                    that.setDamagedState();
 
-                //mushroom hit by an arrow
-                if (entity.BB && that.BB.collide(entity.BB) && entity instanceof Arrow) {
-                    that.state = that.states.damaged;
+                } else if (entity.BB && that.BB.collide(entity.BB) && entity instanceof Arrow && !that.HB) {
+                    that.setDamagedState();
                 }
 
             });
@@ -224,8 +222,7 @@ class Mushroom extends AbstractEnemy {
 
     draw(ctx) {
 
-        //flicker if the knight was damaged
-        if (!this.vulnerable && !this.game.roll) {
+        if (this.dead) {
             if (this.flickerFlag) {
                 this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y, this.scale);
             }
@@ -233,6 +230,7 @@ class Mushroom extends AbstractEnemy {
         } else {
             this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y, this.scale);
         }
+
 
         this.healthbar.draw(ctx);
         if (PARAMS.DEBUG) {
@@ -253,6 +251,11 @@ class Mushroom extends AbstractEnemy {
     resetAnimationTimers(action) {
         this.animations[action][0].elapsedTime = 0;
         this.animations[action][1].elapsedTime = 0;
+    }
+
+    setDamagedState() {
+        this.vulnerable = false;
+        this.state = this.states.damaged;
     }
 
 

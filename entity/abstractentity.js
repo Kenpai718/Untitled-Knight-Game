@@ -61,6 +61,11 @@ class AbstractEntity {
             throw new TypeError("Must override getDamageValue() in entity");
         }
 
+        //set state of animation to damaged
+        if (this.setDamagedState === undefined) {
+            throw new TypeError("Must override setDamagedState() in entity");
+        }
+
         // if (this.updateBoxes === undefined) {
         //     throw new TypeError("Must override updateBoxes() method that updates the BoundingBox!");
         // }
@@ -98,21 +103,21 @@ class AbstractEntity {
             this.hp -= damage;
             this.vulnerable = false;
 
-            if(this.hp <= 0) {
+            if (this.hp <= 0) {
                 this.dead = true;
             }
 
             this.game.addEntityToFront(new Score(this.game, this, damage, PARAMS.DMG_ID, isCritical));
         }
     }
-    
+
     /**
      * Entity will be knockbacked after taking damage
      * distance is dependent on how much damage was taken
      * @param {*} damage 
      */
     takeKnockback(damage) {
-        
+
     }
 
     /**
@@ -153,5 +158,5 @@ class AbstractEntity {
         this.critical = isCritical;
         return isCritical;
     }
-    
+
 }

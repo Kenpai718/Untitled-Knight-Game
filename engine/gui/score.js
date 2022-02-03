@@ -25,7 +25,7 @@ class Score {
         if(this.type == PARAMS.DMG_ID) {
             if (this.score > 0) {
                 if (this.isCritical) {
-                    console.log("here");
+    
                     ctx.font = PARAMS.CRITICAL_FONT;
                     ctx.fillStyle = "Black";
                     ctx.fillText(this.score, (this.x - offset + 1) - this.game.camera.x, this.y + 1);

@@ -158,6 +158,7 @@ class Arrow {
             }
         }
 
+
         if (PARAMS.DEBUG) {
 
             //circle

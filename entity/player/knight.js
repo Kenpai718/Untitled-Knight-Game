@@ -815,5 +815,10 @@ class Knight extends AbstractPlayer {
         this.animations[1][16].drawFrame(this.game.clockTick, ctx, 960 * this.scale, 240 * this.scale, this.scale);
     }
 
+    setDamagedState() {
+        //set state to damaged animation
+    }
+
+
 
 }
