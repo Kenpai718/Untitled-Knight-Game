@@ -6,23 +6,61 @@ class SceneManager {
         //game status
         this.title = false;
         this.gameOver = false;
+        
 
-        //main character
-        this.player = new Knight(this.game, 0, 300);
-        this.inventory = new Inventory(this.game, this.player);
+
+        //levels array to load levels by calling levels[0], levels[1], etc
+        this.currentLevel = 1;
+        this.setupAllLevels();
+        this.loadLevel(this.currentLevel);
+        
+
+
+    };
+
+    setupAllLevels() {
+        var self = this;
+        let levelZero = function() {self.loadPrototypeLevel()};
+        let levelOne = function() {self.loadLevel1()};
+
+        this.levels = [levelZero, levelOne];
+        
+    }
+
+    /*
+    * Make sure this is called before a level is made
+    */
+    makePlayer(x, y) {
+        this.player = new Knight(this.game, x, y);
+        this.inventory = this.player.myInventory;
+        this.heartsbar = new HeartBar(this.game, this.player);
         this.game.addEntity(this.player);
-        //uncomment to test mushroom
-        //this.shroom = new Mushroom(this.game, 200, 500);
-        //this.game.addEntity(this.shroom);
-        this.loadLevel1();
+    }
+
+    loadLevel(number) {
+        this.clearEntities();
+        if(number < 0 || number > this.levels.length - 1) {
+            throw "Invalid load level number";
+        } else {
+            console.log("Loading level " + number);
+            this.levels[number]();
+        }
+    }
+
+    clearEntities() {
+        this.game.entities.forEach(function (entity) {
+            entity.removeFromWorld = true;
+        });
     };
 
     update() {
         PARAMS.DEBUG = document.getElementById("debug").checked;
         this.updateAudio();
+        this.heartsbar.update();
+        this.inventory.update();
 
         if (this.player.BB.left < 0) this.player.x -= this.player.BB.left;
-        else if (this.player.BB.right > this.level.width*PARAMS.BLOCKDIM) this.player.x -= this.player.BB.right - this.level.width*PARAMS.BLOCKDIM;
+        else if (this.player.BB.right > this.level.width * PARAMS.BLOCKDIM) this.player.x -= this.player.BB.right - this.level.width * PARAMS.BLOCKDIM;
         if (this.x < this.player.x - this.game.surfaceWidth * 9 / 16 && this.x + this.game.surfaceWidth < this.level.width * PARAMS.BLOCKDIM) this.x = this.player.x - this.game.surfaceWidth * 9 / 16;
         else if (this.x > this.player.x - this.game.surfaceWidth * 7 / 16 && this.x > 0) this.x = this.player.x - this.game.surfaceWidth * 7 / 16;
     };
@@ -38,7 +76,8 @@ class SceneManager {
         //gui
         ctx.fillStyle = "White";
         this.inventory.draw(ctx);
-        
+        this.heartsbar.draw(ctx);
+
 
         if (PARAMS.DEBUG) {
             this.viewDebug(ctx);
@@ -47,6 +86,7 @@ class SceneManager {
 
     //demo of entities for prototshowcase
     loadPrototypeLevel() {
+        this.makePlayer(0, 500);
         //ground
         let bg = new Background(this.game);
         let ground = new Ground(this.game, 0, 12 * PARAMS.BLOCKDIM, this.game.surfaceWidth, PARAMS.BLOCKDIM);
@@ -81,6 +121,7 @@ class SceneManager {
     };
 
     loadLevel1() {
+        this.makePlayer(0, 500);
         let bg = new Background(this.game);
         this.level = level1_1;
         this.x = 0;
@@ -184,5 +225,5 @@ class SceneManager {
         ctx.fillStyle = ctx.strokeStyle;
         ctx.strokeRect(190, this.game.surfaceHeight - 40, 30, 30);
         ctx.fillText("ATK", 195, this.game.surfaceHeight - 20);
-    }
-}
+    };
+};

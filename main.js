@@ -7,6 +7,7 @@ const ASSET_MANAGER = new AssetManager();
 ASSET_MANAGER.queueDownload("./sprites/knight/knightLeft.png");
 ASSET_MANAGER.queueDownload("./sprites/knight/knightRight.png");
 ASSET_MANAGER.queueDownload("./sprites/projectile/arrow.png");
+ASSET_MANAGER.queueDownload("./sprites/Hearts.png");
 
 //enemies
 ASSET_MANAGER.queueDownload("./sprites/enemy/wizard.png");
@@ -32,6 +33,9 @@ ASSET_MANAGER.queueDownload(SFX.DOUBLEJUMP);
 ASSET_MANAGER.queueDownload(SFX.WALLJUMP);
 ASSET_MANAGER.queueDownload(SFX.CRITICAL);
 ASSET_MANAGER.queueDownload(SFX.DODGE);
+ASSET_MANAGER.queueDownload(SFX.DAMAGED);
+ASSET_MANAGER.queueDownload(SFX.HEAL);
+ASSET_MANAGER.queueDownload(SFX.PLAYER_DEATH);
 
 
 

@@ -24,6 +24,7 @@ class GameEngine {
         this.attack = null; //left click
         this.roll = null; //left shift
         this.shoot = null; //right click
+        this.heal = null;
 
         //counter for an attack chain corresponding to attack presses
         this.comboCounter = 0;
@@ -183,6 +184,9 @@ class GameEngine {
                     break;
                 case "Space":
                     that.jump = true;
+                    break;
+                case "KeyH":
+                    that.heal = true;
                     break;
             }
         }, false);
