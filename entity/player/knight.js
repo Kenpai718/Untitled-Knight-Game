@@ -19,6 +19,7 @@ const DEC_REL = 182.8125 * SCALER;
 const DEC_SKID = 365.625 * SCALER;
 const MIN_SKID = 33.75 * SCALER;
 const ROLL_SPD = 400 * SCALER;
+const ATTACK_SKID = 10;
 const CROUCH_SPD = 50 * SCALER;
 const DOUBLE_JUMP_X_BOOST = 10;
 const STOP_FALL = 1575;
@@ -246,7 +247,9 @@ class Knight extends AbstractPlayer {
 
             //choose animation based on keyboard input
             //this if statement is to make sure special states are not interrupted
-            if (this.action != this.states.attack1 || this.action != this.states.attack2 || this.action != this.states.roll) {
+            let uninterruptibleAction = this.action == this.states.roll || this.game.attack ||
+                (this.action == this.states.attack1 || this.action == this.states.attack2);
+            if (!uninterruptibleAction) {
                 if (this.action != this.states.jump && !this.inAir) { //not in the air
                     //horizontal movement
                     this.velocity.x = 0;
@@ -377,10 +380,19 @@ class Knight extends AbstractPlayer {
                             if (this.facing == this.states.left) this.velocity -= DOUBLE_JUMP_X_BOOST;
                         }
                     }
-
-
-
                 }
+            } else { //player is in an uninteruptible action
+                //if player was attacking slow down that momentum on the ground so there is a bit of a skid
+                if (this.game.attack && !this.inAir) {
+                    if (this.velocity.x > 0) { //right momentum
+                        this.velocity.x -= ATTACK_SKID;
+                        if (this.velocity.x < 0) this.velocity.x = 0;
+                    } else { //left momentum
+                        this.velocity.x += ATTACK_SKID;
+                        if (this.velocity.x > 0) this.velocity.x = 0;
+                    }
+                }
+
             }
 
 
@@ -443,8 +455,8 @@ class Knight extends AbstractPlayer {
                 this.action = this.DEFAULT_ACTION;
 
 
-            } else if(this.game.heal) { //reset all attack animations
-                if(this.myInventory.potions > 0) {
+            } else if (this.game.heal) { //reset all attack animations
+                if (this.myInventory.potions > 0) {
                     this.healPotion();
                 }
                 this.game.heal = false;
@@ -610,9 +622,9 @@ class Knight extends AbstractPlayer {
                     if (that.HB != null && entity.BB && that.HB.collide(entity.BB)) {
                         console.log("knight hit an enemy");
                         entity.takeDamage(that.getDamageValue(), that.critical);
-     
+
                     }
-                    
+
                 }
 
 
@@ -704,8 +716,8 @@ class Knight extends AbstractPlayer {
 
     draw(ctx) {
         //flicker if the knight was damaged
-        if(!this.vulnerable && !this.game.roll) {
-            if(this.flickerFlag) {
+        if (!this.vulnerable && !this.game.roll) {
+            if (this.flickerFlag) {
                 this.animations[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y, this.scale);
             }
             this.flickerFlag = !this.flickerFlag;
@@ -748,7 +760,7 @@ class Knight extends AbstractPlayer {
         }
 
         //critical bonus
-        if(this.isCriticalHit()) {
+        if (this.isCriticalHit()) {
             dmg = dmg * PARAMS.CRITICAL_BONUS;
         }
         return dmg;
