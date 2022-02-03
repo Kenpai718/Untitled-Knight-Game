@@ -158,7 +158,6 @@ class Mushroom extends AbstractEnemy {
                 }
 
                 //mushroom hit by something switch the state to damaged
-                // knight attacked mushroom
                 if (entity.HB && that.BB.collide(entity.HB) && entity instanceof AbstractPlayer && !that.HB) {
                     //entity.doDamage(that);
                     that.setDamagedState();

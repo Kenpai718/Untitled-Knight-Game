@@ -86,7 +86,6 @@ class AbstractEntity {
             var dmg = this.getDamageValue();
             if (dmg > 0) {
                 entity.takeDamage(dmg);
-                this.game.addEntityToFront(new Score(this.game, entity, PARAMS.DMG_ID, dmg));
             }
         }
     }
