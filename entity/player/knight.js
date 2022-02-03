@@ -121,7 +121,7 @@ class Knight extends AbstractPlayer {
         if (this.dead) {
             this.action = this.states.death;
             if (this.animations[this.facing][this.action].isDone()) {
-                this.restartGame();
+                super.restartGame();
             }
         } else {
             /**CONTROLS:
@@ -173,7 +173,7 @@ class Knight extends AbstractPlayer {
             }
 
             /**COLLISION HANDLING */
-            this.handleCollisions();
+            this.handleCollisions(TICK);
         }
 
     }
@@ -190,7 +190,7 @@ class Knight extends AbstractPlayer {
             this.animations[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y, this.scale);
         }
         //this.viewAllAnimations(ctx);
-        this.healthbar.draw(ctx);
+        if(!this.dead) this.healthbar.draw(ctx);
 
         if (PARAMS.DEBUG) {
             this.viewBoundingBox(ctx);
@@ -435,7 +435,7 @@ class Knight extends AbstractPlayer {
     checkAndDoHeal() {
         if (this.game.heal) { //reset all attack animations
             if (this.myInventory.potions > 0) {
-                this.healPotion();
+                super.healPotion();
             }
             this.game.heal = false;
 
@@ -473,8 +473,9 @@ class Knight extends AbstractPlayer {
     /**
      * Handles collision detection of the player
      * and adjusts positions or actions if needed
+     * @params this.game.clocktick
      */
-    handleCollisions() {
+    handleCollisions(TICK) {
         //do collisions detection here
         this.collisions = {
             lo_left: false, hi_left: false, lo_right: false, hi_right: false,
