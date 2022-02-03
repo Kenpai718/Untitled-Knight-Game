@@ -13,4 +13,5 @@ class AbstractEnemy extends AbstractEntity {
 
     }
 
+
 }

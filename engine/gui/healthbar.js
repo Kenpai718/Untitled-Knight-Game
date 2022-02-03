@@ -5,14 +5,14 @@ class HealthBar {
     };
 
     update() {
-       
+
     };
 
     draw(ctx) {
         var box = this.agent.BB;
         //var x = this.agent.x;
         //var y = this.agent.y;
-        var widthRatio = (3/2);
+        var widthRatio = (3 / 2);
         var widthDivisor = 4;
 
         var x = box.x - this.game.camera.x;
@@ -29,7 +29,7 @@ class HealthBar {
             ctx.strokeRect(x - offsetX, y - offsetY, width, height);
         }
 
-        if(PARAMS.DEBUG) {
+        if (PARAMS.DEBUG) {
             ctx.fillStyle = "white";
             ctx.fillText("HP: " + this.agent.hp + "/" + this.agent.max_hp, x, y - 40);
             ctx.fillText("Vulnerable = " + this.agent.canTakeDamage(), x, y - 50);
@@ -38,8 +38,8 @@ class HealthBar {
 };
 
 class DamageScore {
-    constructor(game, entity, score) {
-        Object.assign(this, { game, entity, score });
+    constructor(game, entity, score, isCritical) {
+        Object.assign(this, { game, entity, score, isCritical });
 
         var box = this.entity.BB;
         this.x = box.x;
@@ -60,11 +60,22 @@ class DamageScore {
 
         var offset = this.score < 10 ? 6 : 12;
 
-        ctx.font = PARAMS.BIG_FONT;
-        ctx.fillStyle = "Black";
-        ctx.fillText(this.score, (this.x - offset + 1) - this.game.camera.x, this.y + 1);
-        ctx.fillStyle = rgb(183, 3, 3);
-        ctx.fillText(this.score, (this.x - offset) - this.game.camera.x, this.y);
+        if (this.score > 0) {
+            if (this.isCritical) {
+                console.log("here");
+                ctx.font = PARAMS.CRITICAL_FONT;
+                ctx.fillStyle = "Black";
+                ctx.fillText(this.score, (this.x - offset + 1) - this.game.camera.x, this.y + 1);
+                ctx.fillStyle = PARAMS.CRITICAL_COLOR;
+                ctx.fillText(this.score, (this.x - offset) - this.game.camera.x, this.y);
+            } else {
+                ctx.font = PARAMS.BIG_FONT;
+                ctx.fillStyle = "Black";
+                ctx.fillText(this.score, (this.x - offset + 1) - this.game.camera.x, this.y + 1);
+                ctx.fillStyle = PARAMS.DMG_COLOR;
+                ctx.fillText(this.score, (this.x - offset) - this.game.camera.x, this.y);
+            }
+        }
 
         ctx.font = PARAMS.DEFAULT_FONT;
     };

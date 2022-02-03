@@ -1,10 +1,27 @@
 /** Global Parameters Object */
+/**
+ * @param {Number} r Red Value
+ * @param {Number} g Green Value
+ * @param {Number} b Blue Value
+ * @returns String that can be used as a rgb web color
+ */
+ const rgb = (r, g, b) => `rgba(${r}, ${g}, ${b})`;
+
 const PARAMS = {
         DEBUG : false, //for showing debug settings
         BLOCKDIM : 81, //dimensions of blocks
         DMG_COOLDOWN : .8, //how long the cooldown is for an entity to take damage
         BIG_FONT : "30px Impact", //font used for big moments like damage numbers
-        DEFAULT_FONT : "10px Arial" //regular font
+        DEFAULT_FONT : "10px Arial", //regular font
+        HEART_DIM: 17, //for hearts hp bar
+        GUI_SCALE: 3,
+        CRITICAL_BONUS: 2,
+        CRITICAL_FONT: "40px Impact",
+        CRITICAL_CHANCE: 10, //percentage 0-100
+        CRITICAL_COLOR: rgb(255, 215, 0),
+        DMG_COLOR: rgb(183, 3, 3)
+
+
 };
 
 /* Global sfx path object */
@@ -18,7 +35,8 @@ const SFX =  {
     DOUBLEJUMP: "./sound/sfx/double_jump.wav",
     WALLJUMP: "./sound/sfx/walljump.wav",
     CRITICAL: "./sound/sfx/critical_hit.wav",
-    DODGE: "./sound/sfx/dodge.wav"  
+    DODGE: "./sound/sfx/dodge.wav",
+    DAMAGED: "./sound/sfx/hit.mp3"
 
 };
 
@@ -52,14 +70,6 @@ const {
  * @returns Random Integer Between 0 and n-1
  */
 const randomInt = n => Math.floor(random() * n);
-
-/**
- * @param {Number} r Red Value
- * @param {Number} g Green Value
- * @param {Number} b Blue Value
- * @returns String that can be used as a rgb web color
- */
-const rgb = (r, g, b) => `rgba(${r}, ${g}, ${b})`;
 
 /**
  * @param {Number} r Red Value

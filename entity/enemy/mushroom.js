@@ -5,7 +5,7 @@ const SHROOM = {
     SCALE: 3.5,
     WIDTH: 150,
     HEIGHT: 150
- };
+};
 
 class Mushroom extends AbstractEnemy {
     constructor(game, x, y) {
@@ -26,10 +26,12 @@ class Mushroom extends AbstractEnemy {
         this.runAway = false;
         this.attackCooldown = 0;
 
+        this.damageValue = 10;
+
         //movement control on canvas
-        this.velocity = { x: 0, y: 0 };
         this.fallAcc = 1500;
         this.collisions = { left: false, right: false, top: false, bottom: false };
+
 
         this.loadAnimations();
         this.updateBoxes();
@@ -94,6 +96,7 @@ class Mushroom extends AbstractEnemy {
             //console.log("mushroom died");
             this.healthbar.removeFromWorld = true;
             this.state = this.states.death;
+            this.HB = null; //so it cant attack while dead
             if (this.animations[this.state][this.direction].isDone()) {
                 this.removeFromWorld = true;
             }
@@ -152,13 +155,13 @@ class Mushroom extends AbstractEnemy {
                         that.state = that.states.attack;
                     }
                 }
-                // knight attacked mushroom
-                if (entity.HB && that.BB.collide(entity.HB) && entity instanceof Knight && !that.HB) {
-                    entity.doDamage(that);
-                    that.vulnerable = false;
-                    that.state = that.states.damaged;
+                // // knight attacked mushroom
+                // if (entity.HB && that.BB.collide(entity.HB) && entity instanceof Knight && !that.HB) {
+                //     entity.doDamage(that);
+                //     that.vulnerable = false;
+                //     that.state = that.states.damaged;
 
-                }
+                // }
 
                 //mushroom hit by an arrow
                 if (entity.BB && that.BB.collide(entity.BB) && entity instanceof Arrow) {
@@ -214,8 +217,22 @@ class Mushroom extends AbstractEnemy {
         }
     };
 
+    getDamageValue() {
+        return this.damageValue;
+    }
+
     draw(ctx) {
-        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y, this.scale);
+
+        //flicker if the knight was damaged
+        if (!this.vulnerable && !this.game.roll) {
+            if (this.flickerFlag) {
+                this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y, this.scale);
+            }
+            this.flickerFlag = !this.flickerFlag;
+        } else {
+            this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y, this.scale);
+        }
+
         this.healthbar.draw(ctx);
         if (PARAMS.DEBUG) {
             this.viewBoundingBox(ctx);
@@ -236,8 +253,5 @@ class Mushroom extends AbstractEnemy {
         this.animations[action][1].elapsedTime = 0;
     }
 
-    canTakeDamage() {
-        return this.vulnerable;
-    }
 
 };
