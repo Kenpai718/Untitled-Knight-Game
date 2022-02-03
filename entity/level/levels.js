@@ -133,3 +133,84 @@ var level1_1 = {
         { x : 116, y : 0}
     ]
 }
+
+var level1_2 = {
+    width : 120,
+    height : 36,
+    ground : [
+        { x : 0, y : 12, width : 120, height : 1, type : 1 },
+        { x : 45, y : 6, width : 1, height : 1, type : 0},
+        { x : 46, y : 6, width : 14, height : 1, type : 1},
+        { x : 1, y : 6, width : 41, height : 1, type : 1}
+    ],
+    bricks : [
+        { x : 46, y : 7, width : 14, height : 5, type : 0, random : true},
+        { x : 0, y : 7, width : 42, height : 2, type : 0, random : true},
+        { x : 5, y : -6, width : 55, height : 7, type : 0, random : true},
+        { x : 57, y : 1, width : 3, height : 1, type : 0, random : true},
+        { x : 58, y : 2, width : 2, height : 1, type : 0, random : true},
+        { x : 59, y : 3, width : 1, height : 1, type : 0, random : true},
+        { x : 5, y : 1, width : 5, height : 1, type : 0, random : true},
+        { x : 5, y : 2, width : 3, height : 1, type : 0, random : true},
+        { x : 5, y : 3, width : 1, height : 1, type : 0, random : true}
+    ],
+    walls : [
+        { x : 60, y : -6, width : 1, height : 1, type : 2},
+        { x : 60, y : -5, width : 1, height : 1, type : 2},
+        { x : 60, y : -4, width : 1, height : 1, type : 2},
+        { x : 60, y : -3, width : 1, height : 1, type : 2},
+        { x : 60, y : -2, width : 1, height : 1, type : 2},
+        { x : 60, y : -1, width : 1, height : 1, type : 2},
+        { x : 60, y : 0, width : 1, height : 1, type : 2},
+        { x : 60, y : 1, width : 1, height : 1, type : 2},
+        { x : 60, y : 2, width : 1, height : 1, type : 2},
+        { x : 60, y : 3, width : 1, height : 1, type : 2},
+        { x : 60, y : 4, width : 1, height : 1, type : 2},
+        { x : 60, y : 5, width : 1, height : 1, type : 2},
+        { x : 60, y : 6, width : 1, height : 1, type : 2},
+        { x : 60, y : 7, width : 1, height : 1, type : 2},
+        { x : 60, y : 8, width : 1, height : 1, type : 2},
+        { x : 60, y : 9, width : 1, height : 1, type : 2},
+        { x : 60, y : 10, width : 1, height : 1, type : 2},
+        { x : 60, y : 11, width : 1, height : 1, type : 2},
+        { x : 60, y : 12, width : 1, height : 1, type : 2},
+
+        { x : 45, y : 11, width : 1, height : 1, type : 0},
+        { x : 45, y : 10, width : 1, height : 1, type : 0},
+        { x : 45, y : 9, width : 1, height : 1, type : 0},
+        { x : 45, y : 8, width : 1, height : 1, type : 0},
+        { x : 45, y : 7, width : 1, height : 1, type : 0},
+
+        { x : 0, y : 6, width : 1, height : 1, type : 2},
+        { x : 0, y : 5, width : 1, height : 1, type : 2},
+        { x : 0, y : 4, width : 1, height : 1, type : 2},
+        { x : 0, y : 3, width : 1, height : 1, type : 2},
+        { x : 0, y : 2, width : 1, height : 1, type : 2},
+        { x : 0, y : 1, width : 1, height : 1, type : 2},
+        { x : 0, y : 0, width : 1, height : 1, type : 2},
+        { x : 0, y : -1, width : 1, height : 1, type : 2},
+        { x : 0, y : -2, width : 1, height : 1, type : 2},
+        { x : 0, y : -3, width : 1, height : 1, type : 2},
+        { x : 0, y : -4, width : 1, height : 1, type : 2},
+        { x : 0, y : -5, width : 1, height : 1, type : 2},
+        { x : 0, y : -6, width : 1, height : 1, type : 2},
+        { x : 0, y : -7, width : 1, height : 1, type : 2},
+        { x : 0, y : -8, width : 1, height : 1, type : 2},
+        { x : 0, y : -9, width : 1, height : 1, type : 2},
+        { x : 0, y : -10, width : 1, height : 1, type : 2},
+        { x : 0, y : -11, width : 1, height : 1, type : 2},
+        { x : 0, y : -12, width : 1, height : 1, type : 2},
+
+        { x : 4, y : 3, width : 1, height : 1, type : 0},
+        { x : 4, y : 2, width : 1, height : 1, type : 0},
+        { x : 4, y : 1, width : 1, height : 1, type : 0},
+        { x : 4, y : 0, width : 1, height : 1, type : 0},
+        { x : 4, y : -1, width : 1, height : 1, type : 0},
+        { x : 4, y : -2, width : 1, height : 1, type : 0},
+        { x : 4, y : -3, width : 1, height : 1, type : 0},
+        { x : 4, y : -4, width : 1, height : 1, type : 0},
+        { x : 4, y : -5, width : 1, height : 1, type : 0},
+        { x : 4, y : -6, width : 1, height : 1, type : 0}
+
+    ]
+}

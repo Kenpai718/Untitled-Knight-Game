@@ -183,11 +183,11 @@ class Knight extends AbstractPlayer {
         //flicker if the knight was damaged
         if (!this.vulnerable && !this.game.roll) {
             if (this.flickerFlag) {
-                this.animations[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y, this.scale);
+                this.animations[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
             }
             this.flickerFlag = !this.flickerFlag;
         } else {
-            this.animations[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y, this.scale);
+            this.animations[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
         }
         //this.viewAllAnimations(ctx);
         if(!this.dead) this.healthbar.draw(ctx);
@@ -379,7 +379,7 @@ class Knight extends AbstractPlayer {
             }
             this.updateHB();
 
-            //play 
+            //play
             if (this.playAttackSFX1) {
                 this.playAttackSFX1 = false;
                 if (this.action == this.states.attack1 || this.action == this.states.crouch_atk) ASSET_MANAGER.playAsset(SFX.SLASH1);
@@ -592,7 +592,7 @@ class Knight extends AbstractPlayer {
         this.y += dist.y;
         this.updateBB();
 
-        // bottom collision       
+        // bottom collision
         if (this.touchFloor()) {
             if (this.velocity.y > 0) {
                 this.velocity.y = 0;
@@ -670,7 +670,7 @@ class Knight extends AbstractPlayer {
      */
     resetCombo() {
         this.combo = false;
-        this.game.comboCounter = 0; 
+        this.game.comboCounter = 0;
         this.playAttackSFX1 = true;
         this.playAttackSFX2 = true;
     }
@@ -702,12 +702,12 @@ class Knight extends AbstractPlayer {
 
     viewBoundingBox(ctx) { //debug
         ctx.strokeStyle = "Red";
-        ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y, this.BB.width, this.BB.height);
+        ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
         ctx.strokeStyle = "Green";
-        if (this.HB != null) ctx.strokeRect(this.HB.x - this.game.camera.x, this.HB.y, this.HB.width, this.HB.height);
+        if (this.HB != null) ctx.strokeRect(this.HB.x - this.game.camera.x, this.HB.y - this.game.camera.y, this.HB.width, this.HB.height);
     }
 
-    
+
     loadAnimations() {
         let numDir = 2;
         let numStates = 17;

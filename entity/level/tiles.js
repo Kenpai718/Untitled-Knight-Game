@@ -37,12 +37,12 @@ class Ground {
     draw(ctx) {
         let blockCount = this.w / this.scale; // number of blocks to draw
         for (let i = 0; i < blockCount; i++) {
-            ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcWidth, this.srcHeight, this.x + (i * this.scale) - this.game.camera.x, this.y, this.scale, this.scale);
+            ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcWidth, this.srcHeight, this.x + (i * this.scale) - this.game.camera.x, this.y - this.game.camera.y, this.scale, this.scale);
         }
 
         if (PARAMS.DEBUG) {
             ctx.strokeStyle = "Red";
-            ctx.strokeRect(this.BB.x-this.game.camera.x, this.BB.y, this.BB.width, this.BB.height);
+            ctx.strokeRect(this.BB.x-this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
         }
     };
 };
@@ -94,13 +94,13 @@ class Walls {
         let blocksX = this.w / this.scale; // number of columns of blocks
         for (let i = 0; i < blocksY; i++) {
             for (let j = 0; j < blocksX; j++) {
-                ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcWidth, this.srcHeight, this.x + (j * this.scale) - this.game.camera.x, this.y + (i * this.scale), this.scale, this.scale);
+                ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcWidth, this.srcHeight, this.x + (j * this.scale) - this.game.camera.x, this.y + (i * this.scale) - this.game.camera.y, this.scale, this.scale);
             }
         }
 
         if (PARAMS.DEBUG) {
             ctx.strokeStyle = "Red";
-            ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y, this.BB.width, this.BB.height);
+            ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
         }
     };
 }
@@ -146,7 +146,7 @@ class BackgroundWalls {
     draw(ctx) {
         let blockCount = this.w / this.scale;
         for (let i = 0; i < blockCount; i++) {
-            ctx.drawImage(this.spritesheet, this.bricks[i].x, this.bricks[i].y, this.srcWidth, this.srcHeight, this.x + (i * this.scale) - this.game.camera.x, this.y, this.scale, this.scale);
+            ctx.drawImage(this.spritesheet, this.bricks[i].x, this.bricks[i].y, this.srcWidth, this.srcHeight, this.x + (i * this.scale) - this.game.camera.x, this.y - this.game.camera.y, this.scale, this.scale);
         }
 
     };
@@ -165,7 +165,7 @@ class Torch {
     };
 
     draw(ctx) {
-        this.animation.drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y, this.scale);
+        this.animation.drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
     };
 }
 
@@ -195,12 +195,12 @@ class Platform {
     draw(ctx) {
         let blockCount = this.w / this.scale;
         for (let i = 0; i < blockCount; i++) {
-            ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcWidth, this.srcHeight, this.x + (i * this.scale) - this.game.camera.x, this.y, this.scale, this.scale);
+            ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcWidth, this.srcHeight, this.x + (i * this.scale) - this.game.camera.x, this.y - this.game.camera.y, this.scale, this.scale);
         }
 
         if (PARAMS.DEBUG) {
             ctx.strokeStyle = "Red";
-            ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y, this.BB.width, this.BB.height);
+            ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
         }
     };
 
@@ -294,13 +294,13 @@ class Brick {
         let blocksX = this.w / this.scale; // number of columns of blocks
         for (var i = 0; i < blocksY; i++) {
             for (var j = 0; j < blocksX; j++) {
-                ctx.drawImage(this.spritesheet, this.bricks[i][j].x, this.bricks[i][j].y, this.srcWidth, this.srcHeight, this.x + (j * this.scale) - this.game.camera.x, this.y + (i * this.scale), this.scale, this.scale);
+                ctx.drawImage(this.spritesheet, this.bricks[i][j].x, this.bricks[i][j].y, this.srcWidth, this.srcHeight, this.x + (j * this.scale) - this.game.camera.x, this.y + (i * this.scale) - this.game.camera.y, this.scale, this.scale);
             }
         }
 
         if (PARAMS.DEBUG) {
             ctx.strokeStyle = "Red";
-            ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y, this.BB.width, this.BB.height);
+            ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
         }
     };
 };

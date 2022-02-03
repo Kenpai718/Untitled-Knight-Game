@@ -94,7 +94,6 @@ class Mushroom extends AbstractEnemy {
         const MAX_FALL = 270 * SCALER;
 
         if (this.dead) { //mushroom is dead play death animation and remove
-            //console.log("mushroom died");
             this.healthbar.removeFromWorld = true;
             this.state = this.states.death;
             this.HB = null; //so it cant attack while dead
@@ -113,7 +112,6 @@ class Mushroom extends AbstractEnemy {
             this.x += this.velocity.x * TICK;
             this.y += this.velocity.y * TICK;
             this.updateBoxes();
-
 
             let dist = { x: 0, y: 0 };
             let that = this;
