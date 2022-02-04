@@ -16,7 +16,7 @@ class HealthBar {
         var widthDivisor = 4;
 
         var x = box.x - this.game.camera.x;
-        var y = box.y;
+        var y = box.y - this.game.camera.y;
         var width = this.agent.width / widthDivisor;
         var height = 10;
         var offsetX = (width / (widthDivisor * widthRatio));

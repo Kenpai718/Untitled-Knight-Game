@@ -221,11 +221,11 @@ class Mushroom extends AbstractEnemy {
 
         if (this.dead) {
             if (this.flickerFlag) {
-                this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y, this.scale);
+                this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
             }
             this.flickerFlag = !this.flickerFlag;
         } else {
-            this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y, this.scale);
+            this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
             this.healthbar.draw(ctx); //only show healthbar when not dead
         }
 
@@ -237,12 +237,12 @@ class Mushroom extends AbstractEnemy {
 
     viewBoundingBox(ctx) {
         ctx.strokeStyle = "Red";
-        ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y, this.BB.width, this.BB.height);
+        ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
         ctx.strokeStyle = "Blue";
-        ctx.strokeRect(this.VB.x - this.game.camera.x, this.VB.y, this.VB.width, this.VB.height);
-        ctx.strokeRect(this.AR.x - this.game.camera.x, this.AR.y, this.AR.width, this.AR.height);
+        ctx.strokeRect(this.VB.x - this.game.camera.x, this.VB.y - this.game.camera.y, this.VB.width, this.VB.height);
+        ctx.strokeRect(this.AR.x - this.game.camera.x, this.AR.y - this.game.camera.y, this.AR.width, this.AR.height);
         ctx.strokeStyle = "Green";
-        if (this.HB != null) ctx.strokeRect(this.HB.x - this.game.camera.x, this.HB.y, this.HB.width, this.HB.height);
+        if (this.HB != null) ctx.strokeRect(this.HB.x - this.game.camera.x, this.HB.y - this.game.camera.y, this.HB.width, this.HB.height);
     };
 
     resetAnimationTimers(action) {

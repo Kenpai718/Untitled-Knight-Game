@@ -408,7 +408,7 @@ class Knight extends AbstractPlayer {
 
             if (this.myInventory.arrows > 0) {
                 //try to position starting arrow at the waist of the knight
-                const target = { x: this.game.mouse.x + this.game.camera.x, y: this.game.mouse.y };
+                const target = { x: this.game.mouse.x + this.game.camera.x, y: this.game.mouse.y + this.game.camera.y };
                 this.game.addEntityToFront(new Arrow(this.game, this.x + this.offsetxBB, (this.y + this.height / 2) + 40, target));
                 this.myInventory.arrows--;
                 ASSET_MANAGER.playAsset(SFX.BOW_SHOT);

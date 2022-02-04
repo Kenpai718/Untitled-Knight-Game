@@ -133,13 +133,15 @@ class SceneManager {
         if (this.level.bricks) {
             for (var i = 0; i < this.level.bricks.length; i++) {
                 let bricks = this.level.bricks[i];
-                this.game.addEntity(new Brick(this.game, bricks.x * PARAMS.BLOCKDIM, bricks.y * PARAMS.BLOCKDIM, bricks.width * PARAMS.BLOCKDIM, bricks.height * PARAMS.BLOCKDIM, bricks.type, bricks.random));
+                this.game.addEntity(new Brick(this.game, bricks.x * PARAMS.BLOCKDIM, bricks.y * PARAMS.BLOCKDIM, bricks.width * PARAMS.BLOCKDIM, bricks.height * PARAMS.BLOCKDIM));
             }
         }
         if (this.level.walls) {
             for (var i = 0; i < this.level.walls.length; i++) {
                 let walls = this.level.walls[i];
-                this.game.addEntity(new Walls(this.game, walls.x * PARAMS.BLOCKDIM, walls.y * PARAMS.BLOCKDIM, walls.width * PARAMS.BLOCKDIM, walls.height * PARAMS.BLOCKDIM, walls.type));
+                for (var j = 0; j < walls.height; j++) {
+                    this.game.addEntity(new Walls(this.game, walls.x * PARAMS.BLOCKDIM, (walls.y * PARAMS.BLOCKDIM) + (j * PARAMS.BLOCKDIM), PARAMS.BLOCKDIM, PARAMS.BLOCKDIM, walls.type));
+                }
             }
         }
         if (this.level.shrooms) {
@@ -164,7 +166,7 @@ class SceneManager {
         if (this.level.backgroundWalls) {
             for (var i = 0; i < this.level.backgroundWalls.length; i++) {
                 let bw = this.level.backgroundWalls[i];
-                this.game.addEntity(new BackgroundWalls(this.game, bw.x * PARAMS.BLOCKDIM, bw.y * PARAMS.BLOCKDIM, bw.width * PARAMS.BLOCKDIM, PARAMS.BLOCKDIM));
+                this.game.addEntity(new BackgroundWalls(this.game, bw.x * PARAMS.BLOCKDIM, bw.y * PARAMS.BLOCKDIM, bw.width * PARAMS.BLOCKDIM, bw.height * PARAMS.BLOCKDIM));
             }
         }
         this.game.addEntity(bg);
@@ -185,13 +187,15 @@ class SceneManager {
         if (this.level.bricks) {
             for (var i = 0; i < this.level.bricks.length; i++) {
                 let bricks = this.level.bricks[i];
-                this.game.addEntity(new Brick(this.game, bricks.x * PARAMS.BLOCKDIM, bricks.y * PARAMS.BLOCKDIM, bricks.width * PARAMS.BLOCKDIM, bricks.height * PARAMS.BLOCKDIM, bricks.type, bricks.random));
+                this.game.addEntity(new Brick(this.game, bricks.x * PARAMS.BLOCKDIM, bricks.y * PARAMS.BLOCKDIM, bricks.width * PARAMS.BLOCKDIM, bricks.height * PARAMS.BLOCKDIM));
             }
         }
         if (this.level.walls) {
             for (var i = 0; i < this.level.walls.length; i++) {
                 let walls = this.level.walls[i];
-                this.game.addEntity(new Walls(this.game, walls.x * PARAMS.BLOCKDIM, walls.y * PARAMS.BLOCKDIM, walls.width * PARAMS.BLOCKDIM, walls.height * PARAMS.BLOCKDIM, walls.type));
+                for (var j = 0; j < walls.height; j++) {
+                    this.game.addEntity(new Walls(this.game, walls.x * PARAMS.BLOCKDIM, (walls.y * PARAMS.BLOCKDIM) + (j * PARAMS.BLOCKDIM), PARAMS.BLOCKDIM, PARAMS.BLOCKDIM, walls.type));
+                }
             }
         }
         if (this.level.shrooms) {
@@ -207,6 +211,24 @@ class SceneManager {
                 this.game.addEntity(new Torch(this.game, torch.x * PARAMS.BLOCKDIM, torch.y * PARAMS.BLOCKDIM));
             }
         }
+        if (this.level.windows) {
+            for (var i = 0; i < this.level.windows.length; i++) {
+                let w = this.level.windows[i];
+                this.game.addEntity(new Window(this.game, w.x * PARAMS.BLOCKDIM, w.y * PARAMS.BLOCKDIM, w.width * PARAMS.BLOCKDIM, w.height * PARAMS.BLOCKDIM));
+            }
+        }
+        if (this.level.banners) {
+            for (var i = 0; i < this.level.banners.length; i++) {
+                let banner = this.level.banners[i];
+                this.game.addEntity(new Banner(this.game, banner.x * PARAMS.BLOCKDIM, banner.y * PARAMS.BLOCKDIM));
+            }
+        }
+        if (this.level.chains) {
+            for (var i = 0; i < this.level.chains.length; i++) {
+                let chain = this.level.chains[i];
+                this.game.addEntity(new Chain(this.game, chain.x * PARAMS.BLOCKDIM, chain.y * PARAMS.BLOCKDIM));
+            }
+        }
         if (this.level.doors) {
             for (var i = 0; i < this.level.doors.length; i++) {
                 let door = this.level.doors[i];
@@ -216,7 +238,7 @@ class SceneManager {
         if (this.level.backgroundWalls) {
             for (var i = 0; i < this.level.backgroundWalls.length; i++) {
                 let bw = this.level.backgroundWalls[i];
-                this.game.addEntity(new BackgroundWalls(this.game, bw.x * PARAMS.BLOCKDIM, bw.y * PARAMS.BLOCKDIM, bw.width * PARAMS.BLOCKDIM, PARAMS.BLOCKDIM));
+                this.game.addEntity(new BackgroundWalls(this.game, bw.x * PARAMS.BLOCKDIM, bw.y * PARAMS.BLOCKDIM, bw.width * PARAMS.BLOCKDIM, bw.height * PARAMS.BLOCKDIM));
             }
         }
         this.game.addEntity(bg);
