@@ -1,7 +1,33 @@
-class Knight {
+//constants used for physics
+const SCALER = 3;
+//currently using Chris Marriot's mario physics
+const MIN_WALK = 4.453125 * SCALER;
+const MAX_WALK = 93.75 * SCALER;
+const MAX_RUN = 153.75 * SCALER;
+const ACC_WALK = 133.59375 * SCALER;
+const ACC_RUN = 200.390625 * SCALER;
+const DEC_REL = 182.8125 * SCALER;
+const DEC_SKID = 365.625 * SCALER;
+const MIN_SKID = 33.75 * SCALER;
+const ROLL_SPD = 400 * SCALER;
+const ATTACK_SKID = 10;
+const CROUCH_SPD = 50 * SCALER;
+const DOUBLE_JUMP_X_BOOST = 10;
+const STOP_FALL = 1575;
+const WALK_FALL = 1800;
+const RUN_FALL = 2025;
+const STOP_FALL_A = 450;
+const WALK_FALL_A = 421.875;
+const RUN_FALL_A = 562.5;
+const JUMP_HEIGHT = 1500;
+const DOUBLE_JUMP_HEIGHT = 650;
+const MAX_FALL = 270 * SCALER;
+const MAX_SLIDE = 150 * SCALER;
+
+class Knight extends AbstractPlayer {
     //game = engine, (x, y) = spawn cords
     constructor(game, x, y) {
-        Object.assign(this, { game, x, y });
+        super(game, x, y, STATS.PLAYER.NAME,  STATS.PLAYER.MAX_HP,  STATS.PLAYER.WIDTH,  STATS.PLAYER.HEIGHT,  STATS.PLAYER.SCALE);
 
         // get spritesheets
         this.spritesheetRight = ASSET_MANAGER.getAsset("./sprites/knight/knightRight.png");
@@ -25,26 +51,17 @@ class Knight {
 
         //states of the animation
         this.facing = this.DEFAULT_DIRECTION; //0 = left, 1 = right
-        this.action = this.DEFAULT_ACTION;
-        //0 = idle, 1 = run
-        //2 = crouch, 3 = crouch_walk, 4 = crouch_atk,
-        //5 = roll, 6 = wall climb, 7 = wall hang, 8 = wallslide,
-        //9-11 = jump,
-        //12 = turn around, 13 = slide,
-        //14 = attack1, 15 = attack2
-        //16 = death
+        this.action = this.DEFAULT_ACTION; //see this.states for options
 
         //in game variables to keep track state of the MC
         //boolean to check whenever knight is doing a combo or not
         this.combo = false;
         this.inAir = false;
         this.doubleJump = true;
-        this.numArrows = 100;
-
-        //positioning
-        this.scale = 3.12;
-        this.width = 120 * this.scale;
-        this.height = 80 * this.scale;
+        this.flickerFlag = false;
+        //these two audio variables control which sound effect is playing during the attack combo
+        this.playAttackSFX1 = true;
+        this.playAttackSFX2 = true;
 
         // bounding box (hitbox) used for attacks
         this.HB = null;
@@ -55,10 +72,13 @@ class Knight {
         this.velocity = { x: 0, y: 0 };
         this.fallAcc = 1500;
         this.slideAcc = 750;
-        this.collisions = {lo_left: false, hi_left: false, lo_right: false, hi_right: false, 
-                    ceil: false, ceil_left: false, ceil_right: false,
-                    floor: false, floor_left: false, floor_right: false};
-        this.diffy = {hi: 0, lo: 0};
+        this.collisions = {
+            lo_left: false, hi_left: false, lo_right: false, hi_right: false,
+            ceil: false, ceil_left: false, ceil_right: false,
+            floor: false, floor_left: false, floor_right: false
+        };
+        this.diffy = { hi: 0, lo: 0 };
+
         //animations
         this.animations = [];
         this.loadAnimations();
@@ -66,119 +86,7 @@ class Knight {
 
     };
 
-    loadAnimations() {
-        let numDir = 2;
-        let numStates = 17;
-        for (var i = 0; i < numDir; i++) {
-            this.animations.push([]);
-            for (var j = 0; j < numStates; j++) {
-                this.animations[i].push([]);
-            }
-        }
-
-        //states: 1-10
-        // idle = 0
-        this.animations[0][this.states.idle] = new Animator(this.spritesheetLeft, 240, 560, 120, 80, 10, 0.1, 0, true, true, false);
-        this.animations[1][this.states.idle] = new Animator(this.spritesheetRight, 0, 560, 120, 80, 10, 0.1, 0, false, true, false);
-        // run = 1
-        this.animations[0][this.states.run] = new Animator(this.spritesheetLeft, 240, 880, 120, 80, 10, 0.1, 0, true, true, false);
-        this.animations[1][this.states.run] = new Animator(this.spritesheetRight, 0, 880, 120, 80, 10, 0.1, 0, false, true, false);
-        // crouch = 2
-        this.animations[0][this.states.crouch] = new Animator(this.spritesheetLeft, 1200, 80, 120, 80, 1, 1, 0, true, true, false);
-        this.animations[1][this.states.crouch] = new Animator(this.spritesheetRight, 120, 80, 120, 80, 1, 1, 0, false, true, false);
-        // crouch walk = 3
-        this.animations[0][this.states.crouch_walk] = new Animator(this.spritesheetLeft, 480, 240, 120, 80, 8, 0.1, 0, true, true, false);
-        this.animations[1][this.states.crouch_walk] = new Animator(this.spritesheetRight, 0, 240, 120, 80, 8, 0.1, 0, false, true, false);
-        // crouch attack = 4
-        this.animations[0][this.states.crouch_atk] = new Animator(this.spritesheetLeft, 960, 160, 120, 80, 4, 0.08, 0, true, false, false);
-        this.animations[1][this.states.crouch_atk] = new Animator(this.spritesheetRight, 0, 160, 120, 80, 4, 0.08, 0, false, false, false);
-        // roll = 5
-        this.animations[0][this.states.roll] = new Animator(this.spritesheetLeft, 0, 800, 120, 80, 12, 0.083, 0, true, false, false);
-        this.animations[1][this.states.roll] = new Animator(this.spritesheetRight, 0, 800, 120, 80, 12, 0.083, 0, false, false, false);
-        // wall climb = 6
-        this.animations[0][this.states.wall_climb] = new Animator(this.spritesheetLeft, 600, 1120, 120, 80, 7, 0.2, 0, true, false, false);
-        this.animations[1][this.states.wall_climb] = new Animator(this.spritesheetRight, 0, 1120, 120, 80, 7, 0.2, 0, false, false, false);
-        // wall hang = 7
-        this.animations[0][this.states.wall_hang] = new Animator(this.spritesheetLeft, 1320, 1200, 120, 80, 1, 0.1, 0, true, true, false);
-        this.animations[1][this.states.wall_hang] = new Animator(this.spritesheetRight, 0, 1200, 120, 80, 1, 0.1, 0, false, true, false);
-        // wall slide
-        this.animations[0][this.states.wall_slide] = new Animator(this.spritesheetLeft, 1076, 1280, 120, 80, 3, 0.1, 0, true, true, false);
-        this.animations[1][this.states.wall_slide] = new Animator(this.spritesheetRight, 4, 1280, 120, 80, 3, 0.1, 0, false, true, false);
-        // jump -> jump/fall inbetween -> fall
-        // jump = 9
-        this.animations[0][this.states.jump] = new Animator(this.spritesheetLeft, 1080, 640, 120, 80, 3, 0.1, 0, true, false, false);
-        this.animations[1][this.states.jump] = new Animator(this.spritesheetRight, 0, 640, 120, 80, 3, 0.1, 0, false, false, false);
-        // jump/fall inbetween = 10
-        this.animations[0][this.states.jump_to_fall] = new Animator(this.spritesheetLeft, 1200, 720, 120, 80, 2, 0.1, 0, true, false, false);
-        this.animations[1][this.states.jump_to_fall] = new Animator(this.spritesheetRight, 0, 720, 120, 80, 2, 0.1, 0, false, false, false);
-        // fall = 11
-        this.animations[0][this.states.falling] = new Animator(this.spritesheetLeft, 1080, 480, 120, 80, 3, 0.1, 0, true, true, false);
-        this.animations[1][this.states.falling] = new Animator(this.spritesheetRight, 0, 480, 120, 80, 3, 0.1, 0, false, true, false);
-        // turn around = 12
-        this.animations[0][this.states.turn_around] = new Animator(this.spritesheetLeft, 1080, 1040, 120, 80, 3, 0.1, 0, true, false, false);
-        this.animations[1][this.states.turn_around] = new Animator(this.spritesheetRight, 0, 1040, 120, 80, 3, 0.1, 0, false, false, false);
-        // slide = 13
-        this.animations[0][this.states.slide] = new Animator(this.spritesheetLeft, 960, 960, 120, 80, 4, 0.1, 0, true, true, false);
-        this.animations[1][this.states.slide] = new Animator(this.spritesheetRight, 0, 960, 120, 80, 4, 0.1, 0, false, true, false);
-
-        //attack combo (on ground or in air)
-        //Note: Slash 1 is a faster attack but less damage. Slash 2 is slower but more damage
-        //slash 1 = 14
-        this.animations[0][this.states.attack1] = new Animator(this.spritesheetLeft, 240, 0, 120, 80, 6, 0.09, 0, true, false, false);
-        this.animations[1][this.states.attack1] = new Animator(this.spritesheetRight, 0, 0, 120, 80, 6, 0.09, 0, false, false, false);
-        //slash 2 = 15
-        this.animations[0][this.states.attack2] = new Animator(this.spritesheetLeft, 720, 0, 120, 80, 6, 0.1, 0, true, false, false);
-        this.animations[1][this.states.attack2] = new Animator(this.spritesheetRight, 480, 0, 120, 80, 6, 0.1, 0, false, false, false);
-
-        // death = 16 (special property so might be better to just have it called only when the player dies)
-        this.animations[0][this.states.death] = new Animator(this.spritesheetLeft, 360, 400, 120, 80, 9, 0.1, 0, true, false, false);
-        this.animations[1][this.states.death] = new Animator(this.spritesheetRight, 0, 400, 120, 80, 9, 0.1, 0, false, false, false);
-    };
-
-    getOffsets() {
-        switch (this.action) {
-            // idle, running and jumping BB offsets
-            case this.states.idle:
-            case this.states.run:
-            case this.states.jump:
-            case this.states.jump_to_fall:
-            case this.states.falling:
-                case this.states.wall_slide:
-                this.offsetxBB = this.facing == 1 ? 44 * this.scale : 55 * this.scale;
-                this.offsetyBB = 41 * this.scale;
-                this.widthBB = 21 * this.scale;
-                this.heightBB = 39 * this.scale;
-                break;
-            // crouch and crouch walk BB offsets
-            case this.states.crouch:
-            case this.states.crouch_walk:
-                this.offsetxBB = this.facing == 1 ? 44 * this.scale : 55 * this.scale;
-                this.offsetyBB = 53 * this.scale;
-                this.heightBB = 27 * this.scale;
-                break;
-            // roll BB offsets
-            case this.states.roll:
-                this.offsetxBB = this.facing == 1 ? 44 * this.scale : 35 * this.scale;
-                this.offsetyBB = 53 * this.scale;
-                this.heightBB = 27 * this.scale;
-                this.widthBB = 42 * this.scale;
-                break;
-            // crouch attack HB offsets
-            case this.states.crouch_atk:
-                this.offsetxHB = 20 * this.scale;
-                this.offsetyHB = 53 * this.scale;
-                this.heightHB = 27 * this.scale;
-                break;
-            // attack combo HB offsets
-            case this.states.attack1:
-            case this.states.attack2:
-                this.offsetxHB = this.facing == 1 ? 26 * this.scale : 14 * this.scale;
-                this.offsetyHB = 35 * this.scale;
-                this.widthHB = 80 * this.scale;
-                this.heightHB = 45 * this.scale;
-                break;
-        }
-    };
+    /** Update methods */
 
     updateHB() {
         this.getOffsets();
@@ -192,35 +100,106 @@ class Knight {
         this.BB = new BoundingBox(this.x + this.offsetxBB, this.y + this.offsetyBB, this.widthBB, this.heightBB);
     };
 
+    //**Controls player animations and movement */
     update() {
         const TICK = this.game.clockTick;
-        const SCALER = 3;
-        //currently using Chris Marriot's mario physics
-        const MIN_WALK = 4.453125 * SCALER;
-        const MAX_WALK = 93.75 * SCALER;
-        const MAX_RUN = 153.75 * SCALER;
-        const ACC_WALK = 133.59375 * SCALER;
-        const ACC_RUN = 200.390625 * SCALER;
-        const DEC_REL = 182.8125 * SCALER;
-        const DEC_SKID = 365.625 * SCALER;
-        const MIN_SKID = 33.75 * SCALER;
-        const ROLL_SPD = 400 * SCALER;
-        const CROUCH_SPD = 50 * SCALER;
-        const DOUBLE_JUMP_X_BOOST = 10;
-        const STOP_FALL = 1575;
-        const WALK_FALL = 1800;
-        const RUN_FALL = 2025;
-        const STOP_FALL_A = 450;
-        const WALK_FALL_A = 421.875;
-        const RUN_FALL_A = 562.5;
-        const JUMP_HEIGHT = 1500;
-        const DOUBLE_JUMP_HEIGHT = 650;
-        const MAX_FALL = 270 * SCALER;
-        const MAX_SLIDE = 150 * SCALER;
-        
+        //to prevent playing the same roll sound
+        if (this.action != this.states.roll) super.checkDamageCooldown(TICK); //check if can be hit
+        super.checkInDeathZone(); //check if outside of canvas
+
+
+        //NOTE: this.dead is set when the knight hp drops to 0.
+        if (this.dead) {
+            this.action = this.states.death;
+            if (this.animations[this.facing][this.action].isDone()) {
+                super.restartGame();
+            }
+        } else {
+            /**CONTROLS:
+             * CheckAndDo..() checks user input and executs that action is possible
+            */
+            this.checkAndDoMovement(TICK);
+            this.checkAndDoAttack();
+            this.checkAndDoHeal();
+            //NOTE: Roll should be the last option checked because user should be able to cancel actions into roll
+            this.checkAndDoRoll();
+
+
+            /**SET THE VELOCITY OF THE PLAYER */
+            //constant falling velocity
+            if (this.action == this.states.wall_slide) {
+                this.velocity.y += this.slideAcc * TICK;
+            }
+            else {
+                this.velocity.y += this.fallAcc * TICK;
+            }
+
+            // max y velocity
+            if (this.velocity.y >= MAX_FALL) this.velocity.y = MAX_FALL;
+            if (this.velocity.y <= -MAX_FALL) this.velocity.y = -MAX_FALL;
+            if (this.action == this.states.wall_slide) {
+                if (this.velocity.y >= MAX_SLIDE) this.velocity.y = MAX_SLIDE;
+            }
+
+            //max x velocity
+            let doubleJumpBonus = 0;
+            if (!this.doubleJump) doubleJumpBonus = DOUBLE_JUMP_X_BOOST;
+            if (this.velocity.x >= MAX_RUN) this.velocity.x = MAX_RUN + doubleJumpBonus;
+            if (this.velocity.x <= -MAX_RUN) this.velocity.x = -MAX_RUN - doubleJumpBonus;
+
+            /**UPDATE POSITIONING AND BOUNDING BOX */
+            this.x += this.velocity.x * TICK;
+            if (this.action != this.states.wall_hang)
+                this.y += this.velocity.y * TICK;
+            this.updateBB();
+
+            //set to falling state if needed
+            if (!this.touchFloor() && (this.action < this.states.jump || this.action > this.states.falling)) {
+                if ((this.action != this.states.wall_slide && this.action != this.states.roll && this.action != this.states.wall_hang) ||
+                    (this.action == this.states.wall_slide &&
+                        !(this.collisions.lo_left || this.collisions.hi_left) && !(this.collisions.lo_right || this.collisions.hi_right))) {
+                    this.action = this.states.falling;
+                    this.inAir = true;
+                }
+            }
+
+            /**COLLISION HANDLING */
+            this.handleCollisions(TICK);
+        }
+
+    }
+
+    /**Draws player to the canvas */
+    draw(ctx) {
+        //flicker if the knight was damaged
+        if (!this.vulnerable && !this.game.roll) {
+            if (this.flickerFlag) {
+                this.animations[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
+            }
+            this.flickerFlag = !this.flickerFlag;
+        } else {
+            this.animations[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
+        }
+        //this.viewAllAnimations(ctx);
+        if (!this.dead) this.healthbar.draw(ctx);
+
+        if (PARAMS.DEBUG) {
+            this.viewBoundingBox(ctx);
+        }
+
+    };
+
+    /**
+     * Checks/Executes horizontal and vertical movement
+     * @params TICK = this.game.clocktick
+     */
+    checkAndDoMovement(TICK) {
+
         //choose animation based on keyboard input
         //this if statement is to make sure special states are not interrupted
-        if (this.action != this.states.attack1 || this.action != this.states.attack2 || this.action != this.states.roll) {
+        let uninterruptibleAction = this.action == this.states.roll || this.game.attack ||
+            (this.action == this.states.attack1 || this.action == this.states.attack2);
+        if (!uninterruptibleAction) {
             if (this.action != this.states.jump && !this.inAir) { //not in the air
                 //horizontal movement
                 this.velocity.x = 0;
@@ -249,6 +228,7 @@ class Knight {
                 }
                 //jump press
                 if (this.game.jump && !this.action.jump && !this.touchCeiling()) {
+                    ASSET_MANAGER.playAsset(SFX.JUMP);
                     this.action = this.states.jump; //jump (9-11)
                     //set jump distance
                     this.velocity.y -= JUMP_HEIGHT;
@@ -305,7 +285,9 @@ class Knight {
                 if (this.game.jump) {
                     // do a wall jump if touching a wall
                     if (!this.collisions.floor) {
+
                         if (this.collisions.lo_left && this.diffy.hi >= this.heightBB / 8 || this.collisions.hi_left && this.diffy.lo >= this.heightBB / 8) {
+                            ASSET_MANAGER.playAsset(SFX.WALLJUMP);
                             this.game.jump = false;
                             this.resetAnimationTimers(this.states.jump);
                             if (this.action == this.states.wall_slide || this.action == this.states.wall_hang)
@@ -317,20 +299,22 @@ class Knight {
                             this.action = this.states.jump;
                         }
                         else if (this.collisions.lo_right && this.diffy.hi >= this.heightBB / 8 || this.collisions.hi_right && this.diffy.lo >= this.heightBB / 8) {
+                            ASSET_MANAGER.playAsset(SFX.WALLJUMP);
                             this.game.jump = false;
                             this.resetAnimationTimers(this.states.jump);
                             if (this.action == this.states.wall_slide || this.action == this.states.wall_hang)
                                 this.velocity.y -= JUMP_HEIGHT;
                             else
-                                this.velocity.y -= DOUBLE_JUMP_HEIGHT;  
+                                this.velocity.y -= DOUBLE_JUMP_HEIGHT;
                             this.velocity.x -= MAX_WALK;
                             this.facing = this.dir.left;
                             this.action = this.states.jump;
                         }
                     }
-                    
+
                     //do a double jump if the player is in the air and hasn't double jumped while in air
                     if (this.doubleJump && this.inAir && this.action >= this.states.jump && this.action <= this.states.falling) {
+                        ASSET_MANAGER.playAsset(SFX.DOUBLEJUMP);
                         this.doubleJump = false;
                         this.game.jump = false;
                         this.resetAnimationTimers(this.states.jump);
@@ -339,20 +323,33 @@ class Knight {
                             this.velocity.y -= DOUBLE_JUMP_HEIGHT;
                         }
                         else {
-                            this.velocity.y = -JUMP_HEIGHT/2;
+                            this.velocity.y = -JUMP_HEIGHT / 2;
                         }
                         this.action = this.states.jump;
                         if (this.facing == this.states.right) this.velocity += DOUBLE_JUMP_X_BOOST;
                         if (this.facing == this.states.left) this.velocity -= DOUBLE_JUMP_X_BOOST;
                     }
                 }
-
-                
-
             }
+        } else { //player is in an uninteruptible action
+            //if player was attacking slow down that momentum on the ground so there is a bit of a skid
+            if (this.game.attack && !this.inAir) {
+                if (this.velocity.x > 0) { //right momentum
+                    this.velocity.x -= ATTACK_SKID;
+                    if (this.velocity.x < 0) this.velocity.x = 0;
+                } else { //left momentum
+                    this.velocity.x += ATTACK_SKID;
+                    if (this.velocity.x > 0) this.velocity.x = 0;
+                }
+            }
+
         }
+    }
 
-
+    /**
+     * Checks and execute attack input
+     */
+    checkAndDoAttack() {
         //attack logic (melee/ranged)
         if (this.game.attack) {
 
@@ -364,17 +361,28 @@ class Knight {
                 //If attack button was pressed more than once change action to the second attack after the animation is complete
                 this.combo = (this.game.comboCounter > 1 && this.animations[this.facing][this.states.attack1].isDone()) ? true : false;
                 this.action = (this.combo) ? this.states.attack2 : this.states.attack1; //if comboing switch to the second animation
+
+                //play the second attack sound if the first sword swing is done
+                if (this.action == this.states.attack2 && this.combo && !this.playAttackSFX1 && this.playAttackSFX2) {
+                    this.playAttackSFX2 = false;
+                    ASSET_MANAGER.playAsset(SFX.SLASH2)
+                }
             }
             this.updateHB();
+
+            //play
+            if (this.playAttackSFX1) {
+                this.playAttackSFX1 = false;
+                if (this.action == this.states.attack1 || this.action == this.states.crouch_atk) ASSET_MANAGER.playAsset(SFX.SLASH1);
+            }
 
             let done = this.animations[this.facing][this.action].isDone();
             //console.log(this.action + " " + this.game.comboCounter + " " + this.combo);
 
             if (done) {
-
-                //console.log(this.game.comboCounter);
                 if (this.combo && this.action == this.states.attack1) { //continue combo after first attack
                     this.action = this.states.attack2;
+
                 } else { //end attack
                     this.action = this.game.down || this.touchHole() ? this.states.crouch : this.DEFAULT_ACTION; //back to idle; added case for crouch attacks
                     this.HB = null;
@@ -388,20 +396,12 @@ class Knight {
             }
 
         } else if (!this.game.attack && this.game.shoot) { //only shoot an arrow when not attacking
-
-            if (this.numArrows > 0) {
-                //try to position starting arrow at the waist of the knight
-                const target = { x: this.game.mouse.x + this.game.camera.x, y: this.game.mouse.y };
-                this.game.addEntityToFront(new Arrow(this.game, this.x + this.offsetxBB, (this.y + this.height / 2) + 40, target));
-                this.numArrows--;
-
-            }
-            this.game.shoot = false;
+            super.shootArrow();
             this.action = this.DEFAULT_ACTION;
-            //}
+            this.game.shoot = false;
 
 
-        } else { //reset all attack animations
+        } else {
             //crouch attack
             this.resetAnimationTimers(this.states.crouch_atk);
             //slash 1 and 2
@@ -410,65 +410,62 @@ class Knight {
 
             //reset shooting animation
         }
-        
-        //roll input
-        //this is placed last because the player should be able to cancel their animation to dodge
+    }
+
+    /**
+     * Checks and executes heal input
+     */
+    checkAndDoHeal() {
+        if (this.game.heal) { //reset all attack animations
+            super.usePotion();
+            this.game.heal = false;
+
+        }
+    }
+
+    /**
+     * Checks and executes roll input
+     */
+    checkAndDoRoll() {
         if (this.game.roll && !this.inAir) {
+            //disable attack so the player isn't buffered into an attack during the roll
+            this.game.attack = false;
+            this.resetCombo();
+            this.HB = null;
+
+            //set roll behavior
             this.action = this.states.roll; //roll
             this.velocity.x += (this.facing == this.dir.left) ? -1 * (ROLL_SPD) : (ROLL_SPD); //movement speed boost
+            if (this.vulnerable) {
+                ASSET_MANAGER.playAsset(SFX.DODGE);
+                this.vulnerable = false;
+            }
+
             if (this.animations[this.facing][this.states.roll].isDone()) {
                 this.action = this.states.idle;
                 this.game.roll = false;
+                this.vulnerable = true;
             }
         } else {
             //roll
             this.resetAnimationTimers(this.states.roll);
         }
+    }
 
-        
-        //constant falling velocity
-        if (this.action == this.states.wall_slide) {
-            this.velocity.y += this.slideAcc * TICK;
-        }
-        else {
-            this.velocity.y += this.fallAcc * TICK;
-        }
-
-
-        // max y velocity
-        if (this.velocity.y >= MAX_FALL) this.velocity.y = MAX_FALL;
-        if (this.velocity.y <= -MAX_FALL) this.velocity.y = -MAX_FALL;
-        if (this.action == this.states.wall_slide){
-            if (this.velocity.y >= MAX_SLIDE)  this.velocity.y = MAX_SLIDE;
-        }
-
-        //max x velocity
-        let doubleJumpBonus = 0;
-        if (!this.doubleJump) doubleJumpBonus = DOUBLE_JUMP_X_BOOST;
-        if (this.velocity.x >= MAX_RUN) this.velocity.x = MAX_RUN + doubleJumpBonus;
-        if (this.velocity.x <= -MAX_RUN) this.velocity.x = -MAX_RUN - doubleJumpBonus;
-
-        //update position and bounding box
-        this.x += this.velocity.x * TICK;
-        if (this.action != this.states.wall_hang)
-            this.y += this.velocity.y * TICK;
-        this.updateBB();
-
-        if (!this.touchFloor() && (this.action < this.states.jump || this.action > this.states.falling)) {
-            if ((this.action != this.states.wall_slide && this.action != this.states.roll && this.action != this.states.wall_hang) || 
-                (this.action == this.states.wall_slide && 
-                    !(this.collisions.lo_left || this.collisions.hi_left) && !(this.collisions.lo_right || this.collisions.hi_right))) {
-                this.action = this.states.falling;
-                this.inAir = true;
-            }
-        }
-        
+    /**
+     * Handles collision detection of the player
+     * and adjusts positions or actions if needed
+     * @params this.game.clocktick
+     */
+    handleCollisions(TICK) {
         //do collisions detection here
-        this.collisions = {lo_left: false, hi_left: false, lo_right: false, hi_right: false, 
+        this.collisions = {
+            lo_left: false, hi_left: false, lo_right: false, hi_right: false,
             ceil: false, ceil_left: false, ceil_right: false,
-            floor: false, floor_left: false, floor_right: false};
-        let dist = {x:0, y:0};
-        this.diffy = {hi: 0, lo: 0};
+            floor: false, floor_left: false, floor_right: false
+        };
+        let dist = { x: 0, y: 0 };
+        this.diffy = { hi: 0, lo: 0 };
         //let hole = 0; // at most 15, floor/ceil = 8, adj floor/ceil = 4, low wall = 2, high wall = 1
         let that = this;
         this.game.entities.forEach(function (entity) {
@@ -530,11 +527,32 @@ class Knight {
                 //player picks up arrow stuck on ground
                 if (entity instanceof Arrow && entity.stuck) {
                     entity.removeFromWorld = true;
-                    that.numArrows++;
+                    that.myInventory.arrows++;
+                    ASSET_MANAGER.playAsset(SFX.ITEM_PICKUP);
                 }
-            } 
+            }
+
+            //interactions with enemy
+            if (entity instanceof AbstractEnemy) {
+                //attacked by an enemy
+                if (entity.HB && that.BB.collide(entity.HB)) {
+                    //console.log("knight hit by enemy");
+                    that.takeDamage(entity.getDamageValue(), false);
+
+                }
+
+                //attacked an enemy
+                if (that.HB != null && entity.BB && that.HB.collide(entity.BB)) {
+                    //console.log("knight hit an enemy");
+                    entity.takeDamage(that.getDamageValue(), that.critical);
+
+                }
+
+            }
+
+
         });
-        
+
         // used to debug the number for collision as well as which side are collided
         //console.log(this.collisions.hi_left + " " + this.collisions.ceil_left + " " + this.collisions.ceil + " " + this.collisions.ceil_right + " " + this.collisions.hi_right);
         //console.log(this.diffy.hi + " " + this.diffy.lo)
@@ -555,8 +573,8 @@ class Knight {
         this.x += dist.x;
         this.y += dist.y;
         this.updateBB();
-        
-        // bottom collision       
+
+        // bottom collision
         if (this.touchFloor()) {
             if (this.velocity.y > 0) {
                 this.velocity.y = 0;
@@ -569,7 +587,7 @@ class Knight {
                 this.resetAnimationTimers(this.states.jump_to_fall);
                 this.resetAnimationTimers(this.states.falling);
 
-                
+
             }
         }
 
@@ -584,17 +602,19 @@ class Knight {
 
         // left collison
         if (this.collisions.hi_left || this.collisions.lo_left) {
-            if(this.velocity.x < 0)
+            if (this.velocity.x < 0)
                 this.velocity.x = 0;
         }
 
         // right collison
         if (this.collisions.hi_right || this.collisions.lo_right) {
-            if(this.velocity.x > 0)
+            if (this.velocity.x > 0)
                 this.velocity.x = 0;
         }
-        
+
     }
+
+    /**Collision helper methods */
 
     touchFloor() {
         return this.collisions.floor || (this.collisions.floor_right && this.collisions.floor_left) ||
@@ -618,22 +638,172 @@ class Knight {
         return this.action == this.states.crouch || this.action == this.states.crouch_walk || this.action == this.states.crouch_atk;
     }
 
-    draw(ctx) {
-        this.animations[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y, this.scale);
-        //this.viewAllAnimations(ctx);
+    //reset the animation timer in both direction
+    resetAnimationTimers(action) {
+        this.animations[0][action].elapsedTime = 0;
+        this.animations[1][action].elapsedTime = 0;
+    }
 
-        if (PARAMS.DEBUG) {
-            this.viewBoundingBox(ctx);
+    /**Attack/Damage Logic helper methods */
+
+    /** reset the combocounter for an attack
+     *  call this whenever an attack is finished
+     *  so attack variables are put to a default slate
+     */
+    resetCombo() {
+        this.combo = false;
+        this.game.comboCounter = 0;
+        this.playAttackSFX1 = true;
+        this.playAttackSFX2 = true;
+    }
+
+    //choose how much damage the knight should do based on what action it is doing
+    getDamageValue() {
+        let dmg = 0;
+        if (this.action == this.states.attack1) {
+            dmg = STATS.PLAYER.DMG_SLASH1;
+        } else if (this.action == this.states.attack2) {
+            dmg = STATS.PLAYER.DMG_SLASH2;
+        } else if (this.action == this.states.crouch_atk) {
+            dmg = STATS.PLAYER.DMG_CROUCHATK;
         }
 
-    };
+        //critical bonus
+        if (this.isCriticalHit()) {
+            dmg = dmg * PARAMS.CRITICAL_BONUS;
+        }
+        return dmg;
+
+    }
+
+    setDamagedState() {
+        //set state to damaged animation
+    }
+
+    /**Animations and bounding box logic */
 
     viewBoundingBox(ctx) { //debug
         ctx.strokeStyle = "Red";
-        ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y, this.BB.width, this.BB.height);
+        ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
         ctx.strokeStyle = "Green";
-        if (this.HB != null) ctx.strokeRect(this.HB.x - this.game.camera.x, this.HB.y, this.HB.width, this.HB.height);
+        if (this.HB != null) ctx.strokeRect(this.HB.x - this.game.camera.x, this.HB.y - this.game.camera.y, this.HB.width, this.HB.height);
     }
+
+
+    loadAnimations() {
+        let numDir = 2;
+        let numStates = 17;
+        for (var i = 0; i < numDir; i++) {
+            this.animations.push([]);
+            for (var j = 0; j < numStates; j++) {
+                this.animations[i].push([]);
+            }
+        }
+
+        //states: 1-10
+        // idle = 0
+        this.animations[0][this.states.idle] = new Animator(this.spritesheetLeft, 240, 560, 120, 80, 10, 0.1, 0, true, true, false);
+        this.animations[1][this.states.idle] = new Animator(this.spritesheetRight, 0, 560, 120, 80, 10, 0.1, 0, false, true, false);
+        // run = 1
+        this.animations[0][this.states.run] = new Animator(this.spritesheetLeft, 240, 880, 120, 80, 10, 0.1, 0, true, true, false);
+        this.animations[1][this.states.run] = new Animator(this.spritesheetRight, 0, 880, 120, 80, 10, 0.1, 0, false, true, false);
+        // crouch = 2
+        this.animations[0][this.states.crouch] = new Animator(this.spritesheetLeft, 1200, 80, 120, 80, 1, 1, 0, true, true, false);
+        this.animations[1][this.states.crouch] = new Animator(this.spritesheetRight, 120, 80, 120, 80, 1, 1, 0, false, true, false);
+        // crouch walk = 3
+        this.animations[0][this.states.crouch_walk] = new Animator(this.spritesheetLeft, 480, 240, 120, 80, 8, 0.1, 0, true, true, false);
+        this.animations[1][this.states.crouch_walk] = new Animator(this.spritesheetRight, 0, 240, 120, 80, 8, 0.1, 0, false, true, false);
+        // crouch attack = 4
+        this.animations[0][this.states.crouch_atk] = new Animator(this.spritesheetLeft, 960, 160, 120, 80, 4, 0.08, 0, true, false, false);
+        this.animations[1][this.states.crouch_atk] = new Animator(this.spritesheetRight, 0, 160, 120, 80, 4, 0.08, 0, false, false, false);
+        // roll = 5
+        this.animations[0][this.states.roll] = new Animator(this.spritesheetLeft, 0, 800, 120, 80, 12, 0.083, 0, true, false, false);
+        this.animations[1][this.states.roll] = new Animator(this.spritesheetRight, 0, 800, 120, 80, 12, 0.083, 0, false, false, false);
+        // wall climb = 6
+        this.animations[0][this.states.wall_climb] = new Animator(this.spritesheetLeft, 600, 1120, 120, 80, 7, 0.2, 0, true, false, false);
+        this.animations[1][this.states.wall_climb] = new Animator(this.spritesheetRight, 0, 1120, 120, 80, 7, 0.2, 0, false, false, false);
+        // wall hang = 7
+        this.animations[0][this.states.wall_hang] = new Animator(this.spritesheetLeft, 1320, 1200, 120, 80, 1, 0.1, 0, true, true, false);
+        this.animations[1][this.states.wall_hang] = new Animator(this.spritesheetRight, 0, 1200, 120, 80, 1, 0.1, 0, false, true, false);
+        // wall slide
+        this.animations[0][this.states.wall_slide] = new Animator(this.spritesheetLeft, 1076, 1280, 120, 80, 3, 0.1, 0, true, true, false);
+        this.animations[1][this.states.wall_slide] = new Animator(this.spritesheetRight, 4, 1280, 120, 80, 3, 0.1, 0, false, true, false);
+        // jump -> jump/fall inbetween -> fall
+        // jump = 9
+        this.animations[0][this.states.jump] = new Animator(this.spritesheetLeft, 1080, 640, 120, 80, 3, 0.1, 0, true, false, false);
+        this.animations[1][this.states.jump] = new Animator(this.spritesheetRight, 0, 640, 120, 80, 3, 0.1, 0, false, false, false);
+        // jump/fall inbetween = 10
+        this.animations[0][this.states.jump_to_fall] = new Animator(this.spritesheetLeft, 1200, 720, 120, 80, 2, 0.1, 0, true, false, false);
+        this.animations[1][this.states.jump_to_fall] = new Animator(this.spritesheetRight, 0, 720, 120, 80, 2, 0.1, 0, false, false, false);
+        // fall = 11
+        this.animations[0][this.states.falling] = new Animator(this.spritesheetLeft, 1080, 480, 120, 80, 3, 0.1, 0, true, true, false);
+        this.animations[1][this.states.falling] = new Animator(this.spritesheetRight, 0, 480, 120, 80, 3, 0.1, 0, false, true, false);
+        // turn around = 12
+        this.animations[0][this.states.turn_around] = new Animator(this.spritesheetLeft, 1080, 1040, 120, 80, 3, 0.1, 0, true, false, false);
+        this.animations[1][this.states.turn_around] = new Animator(this.spritesheetRight, 0, 1040, 120, 80, 3, 0.1, 0, false, false, false);
+        // slide = 13
+        this.animations[0][this.states.slide] = new Animator(this.spritesheetLeft, 960, 960, 120, 80, 4, 0.1, 0, true, true, false);
+        this.animations[1][this.states.slide] = new Animator(this.spritesheetRight, 0, 960, 120, 80, 4, 0.1, 0, false, true, false);
+
+        //attack combo (on ground or in air)
+        //Note: Slash 1 is a faster attack but less damage. Slash 2 is slower but more damage
+        //slash 1 = 14
+        this.animations[0][this.states.attack1] = new Animator(this.spritesheetLeft, 720, 0, 120, 80, 6, 0.09, 0, true, false, false);
+        this.animations[1][this.states.attack1] = new Animator(this.spritesheetRight, 0, 0, 120, 80, 6, 0.09, 0, false, false, false);
+        //slash 2 = 15
+        this.animations[0][this.states.attack2] = new Animator(this.spritesheetLeft, 240, 0, 120, 80, 6, 0.1, 0, true, false, false);
+        this.animations[1][this.states.attack2] = new Animator(this.spritesheetRight, 480, 0, 120, 80, 6, 0.1, 0, false, false, false);
+
+        // death = 16 (special property so might be better to just have it called only when the player dies)
+        this.animations[0][this.states.death] = new Animator(this.spritesheetLeft, 360, 400, 120, 80, 9, 0.1, 0, true, false, false);
+        this.animations[1][this.states.death] = new Animator(this.spritesheetRight, 0, 400, 120, 80, 9, 0.1, 0, false, false, false);
+    };
+
+    /**Offset the bounding box based on action state */
+    getOffsets() {
+        switch (this.action) {
+            // idle, running and jumping BB offsets
+            case this.states.idle:
+            case this.states.run:
+            case this.states.jump:
+            case this.states.jump_to_fall:
+            case this.states.falling:
+            case this.states.wall_slide:
+                this.offsetxBB = this.facing == 1 ? 44 * this.scale : 55 * this.scale;
+                this.offsetyBB = 41 * this.scale;
+                this.widthBB = 21 * this.scale;
+                this.heightBB = 39 * this.scale;
+                break;
+            // crouch and crouch walk BB offsets
+            case this.states.crouch:
+            case this.states.crouch_walk:
+                this.offsetxBB = this.facing == 1 ? 44 * this.scale : 55 * this.scale;
+                this.offsetyBB = 53 * this.scale;
+                this.heightBB = 27 * this.scale;
+                break;
+            // roll BB offsets
+            case this.states.roll:
+                this.offsetxBB = this.facing == 1 ? 44 * this.scale : 35 * this.scale;
+                this.offsetyBB = 53 * this.scale;
+                this.heightBB = 27 * this.scale;
+                this.widthBB = 42 * this.scale;
+                break;
+            // crouch attack HB offsets
+            case this.states.crouch_atk:
+                this.offsetxHB = 20 * this.scale;
+                this.offsetyHB = 53 * this.scale;
+                this.heightHB = 27 * this.scale;
+                break;
+            // attack combo HB offsets
+            case this.states.attack1:
+            case this.states.attack2:
+                this.offsetxHB = this.facing == 1 ? 26 * this.scale : 14 * this.scale;
+                this.offsetyHB = 35 * this.scale;
+                this.widthHB = 80 * this.scale;
+                this.heightHB = 45 * this.scale;
+                break;
+        }
+    };
 
     viewAllAnimations(ctx) { //for development purposes
         this.animations[0][0].drawFrame(this.game.clockTick, ctx, 0 * this.scale, 0 * this.scale, this.scale);
@@ -688,17 +858,6 @@ class Knight {
         this.animations[1][16].drawFrame(this.game.clockTick, ctx, 960 * this.scale, 240 * this.scale, this.scale);
     }
 
-    //reset the animation timer in both direction
-    resetAnimationTimers(action) {
-        this.animations[0][action].elapsedTime = 0;
-        this.animations[1][action].elapsedTime = 0;
-    }
 
-
-    //reset the combocounter for an attack
-    resetCombo() {
-        this.combo = false;
-        this.game.comboCounter = 0; //set combo counter to 0
-    }
 
 }
