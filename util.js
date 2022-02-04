@@ -37,7 +37,9 @@ const PARAMS = {
         //HP RATIOS to compare with a percentage
         LOW_HP: .2,
         MID_HP: .5,
-        HIGH_HP: .8 
+        HIGH_HP: .8,
+
+        POTION_HEAL: 50
 };
 
 /**Global stats that define an entity */
@@ -106,7 +108,9 @@ const STATS = {
 /* Global sfx paths */
 const SFX =  {
     ARROW_HIT: "./sound/sfx/arrow_hit.mp3",
+    ARROW_STICK: "./sound/sfx/arrow_stick.wav",
     BOW_SHOT: "./sound/sfx/bow_shoot.mp3",
+    CLICK: "./sound/sfx/click.wav",
     ITEM_PICKUP: "./sound/sfx/item_pickup.mp3",
     SLASH1: "./sound/sfx/slash1.wav",
     SLASH2: "./sound/sfx/slash2.wav",
@@ -117,6 +121,8 @@ const SFX =  {
     DODGE: "./sound/sfx/dodge.wav",
     DAMAGED: "./sound/sfx/hit.mp3",
     HEAL: "./sound/sfx/heal.mp3",
+    DRINK: "./sound/sfx/potion_drink.mp3",
+    HEARTBEAT: "./sound/sfx/heartbeat.mp3",
     PLAYER_DEATH: "./sound/sfx/player_death.mp3",
     PLAYER_GRUNT: "./sound/sfx/player_grunt.wav",
     PLAYER_GRUNT2: "./sound/sfx/player_grunt2.wav",

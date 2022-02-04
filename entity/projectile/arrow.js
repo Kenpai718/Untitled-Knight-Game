@@ -61,9 +61,12 @@ class Arrow extends AbstractEntity {
                 //if it hits something in environment stick to the ground
                 if ((entity instanceof Ground || entity instanceof Walls || entity instanceof Brick || entity instanceof Platform)) {
                     //stick to ground
-                    self.velocity.x = 0;
-                    self.velocity.y = 0;
-                    self.stuck = true;
+                    if(!self.stuck) {
+                        self.velocity.x = 0;
+                        self.velocity.y = 0;
+                        self.stuck = true;
+                        ASSET_MANAGER.playAsset(SFX.ARROW_STICK);
+                    } 
                 }
 
                 //damage value against an enemy that was hit by an arrow

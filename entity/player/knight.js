@@ -396,17 +396,9 @@ class Knight extends AbstractPlayer {
             }
 
         } else if (!this.game.attack && this.game.shoot) { //only shoot an arrow when not attacking
-
-            if (this.myInventory.arrows > 0) {
-                //try to position starting arrow at the waist of the knight
-                const target = { x: this.game.mouse.x + this.game.camera.x, y: this.game.mouse.y + this.game.camera.y };
-                this.game.addEntityToFront(new Arrow(this.game, this.x + this.offsetxBB, (this.y + this.height / 2) + 40, target));
-                this.myInventory.arrows--;
-                ASSET_MANAGER.playAsset(SFX.BOW_SHOT);
-
-            }
-            this.game.shoot = false;
+            super.shootArrow();
             this.action = this.DEFAULT_ACTION;
+            this.game.shoot = false;
 
 
         } else {
@@ -425,9 +417,7 @@ class Knight extends AbstractPlayer {
      */
     checkAndDoHeal() {
         if (this.game.heal) { //reset all attack animations
-            if (this.myInventory.potions > 0) {
-                super.healPotion();
-            }
+            super.usePotion();
             this.game.heal = false;
 
         }
