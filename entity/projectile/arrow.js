@@ -1,5 +1,13 @@
-class Arrow {
+var ARROW = {NAME: "Arrow",
+             MAX_HP: 10,
+             WIDTH: 32,
+             HEIGHT: 32,
+             SCALE: 2
+};
+
+class Arrow extends AbstractEntity {
     constructor(game, x, y, target, team) {
+        super(game, x, y, ARROW.NAME, ARROW.MAX_HP, ARROW.WIDTH, ARROW.HEIGHT, ARROW.SCALE);
         Object.assign(this, { game, x, y, target });
         this.radius = 15;
         this.smooth = false;
@@ -17,11 +25,8 @@ class Arrow {
         this.cache = [];
 
         this.animations = [];
-        this.animations.push(new Animator(this.spritesheet, 0, 0, 32, 32, 1, 0.2, 0, false, true)); //up
-        this.animations.push(new Animator(this.spritesheet, 40, 0, 32, 32, 1, 0.2, 0, false, true)); //up right
-        this.animations.push(new Animator(this.spritesheet, 80, 0, 32, 32, 1, 0.2, 0, false, true)); //right
-        this.animations.push(new Animator(this.spritesheet, 120, 0, 32, 32, 1, 0.2, 0, false, true)); //down right
-        this.animations.push(new Animator(this.spritesheet, 160, 0, 32, 32, 1, 0.2, 0, false, true)); //down
+        this.loadAnimations();
+
 
         this.facing = 5;
         this.scale = 2;
@@ -33,40 +38,8 @@ class Arrow {
         this.stuck = false; //stuck = true, hit something like ground and cannot move. Can be picked up by player.
         this.hit = false; //false = not hit an enemy, true = hit enemy. This is needed so an arrow doesn't multi hit during collision.
         this.damage = 10; //how much hp this arrow will take away if it hits something
-        this.critical = false;
 
         this.updateBB();
-    };
-
-    drawAngle(ctx, angle) {
-        if (angle < 0 || angle > 359) return;
-
-
-        if (!this.cache[angle]) {
-            let radians = angle / 360 * 2 * Math.PI;
-            let offscreenCanvas = document.createElement('canvas');
-
-            offscreenCanvas.width = 32;
-            offscreenCanvas.height = 32;
-
-            let offscreenCtx = offscreenCanvas.getContext('2d');
-
-            offscreenCtx.save();
-            offscreenCtx.translate(16, 16);
-            offscreenCtx.rotate(radians);
-            offscreenCtx.translate(-16, -16);
-            offscreenCtx.drawImage(this.spritesheet, 80, 0, 32, 32, 0, 0, 32, 32);
-            offscreenCtx.restore();
-            this.cache[angle] = offscreenCanvas;
-        }
-        var xOffset = 16;
-        var yOffset = 16;
-
-        ctx.drawImage(this.cache[angle], this.x - xOffset, this.y - yOffset);
-        if (PARAMS.DEBUG) {
-            ctx.strokeStyle = 'Green';
-            ctx.strokeRect(this.x - xOffset, this.y - yOffset, 32, 32);
-        }
     };
 
     update() {
@@ -112,24 +85,6 @@ class Arrow {
 
     };
 
-    getDamageValue() {
-        //critical bonus
-        let dmg = this.damage;
-        if (this.isCriticalHit()) {
-            dmg = dmg * PARAMS.CRITICAL_BONUS;
-        }
-        return dmg;
-    }
-
-    isCriticalHit() {
-        let isCritical = false;
-        let percentage = (Math.random() * 100);
-
-        isCritical = percentage <= PARAMS.CRITICAL_CHANCE;
-        this.critical = isCritical;
-        return isCritical;
-    }
-
     updateBB() {
         //offset needed so the arrow doesnt move with the camera when it is
         this.BB = new BoundingBox(this.x - this.radius, this.y - this.radius, this.arrowHeight, this.arrowWidth);
@@ -171,6 +126,54 @@ class Arrow {
             //bounding box
             ctx.strokeStyle = "Red";
             ctx.strokeRect(this.BB.x - camera_offsetx, this.BB.y - camera_offsety, this.BB.width, this.BB.height);
+        }
+    };
+
+    setDamagedState() {
+        //do nothing this is just required by AbstractEntity
+    }
+
+    getDamageValue() {
+        return this.damage;
+    }
+
+    
+    loadAnimations() {
+        this.animations.push(new Animator(this.spritesheet, 0, 0, 32, 32, 1, 0.2, 0, false, true)); //up
+        this.animations.push(new Animator(this.spritesheet, 40, 0, 32, 32, 1, 0.2, 0, false, true)); //up right
+        this.animations.push(new Animator(this.spritesheet, 80, 0, 32, 32, 1, 0.2, 0, false, true)); //right
+        this.animations.push(new Animator(this.spritesheet, 120, 0, 32, 32, 1, 0.2, 0, false, true)); //down right
+        this.animations.push(new Animator(this.spritesheet, 160, 0, 32, 32, 1, 0.2, 0, false, true)); //down
+    }
+
+    drawAngle(ctx, angle) {
+        if (angle < 0 || angle > 359) return;
+
+
+        if (!this.cache[angle]) {
+            let radians = angle / 360 * 2 * Math.PI;
+            let offscreenCanvas = document.createElement('canvas');
+
+            offscreenCanvas.width = 32;
+            offscreenCanvas.height = 32;
+
+            let offscreenCtx = offscreenCanvas.getContext('2d');
+
+            offscreenCtx.save();
+            offscreenCtx.translate(16, 16);
+            offscreenCtx.rotate(radians);
+            offscreenCtx.translate(-16, -16);
+            offscreenCtx.drawImage(this.spritesheet, 80, 0, 32, 32, 0, 0, 32, 32);
+            offscreenCtx.restore();
+            this.cache[angle] = offscreenCanvas;
+        }
+        var xOffset = 16;
+        var yOffset = 16;
+
+        ctx.drawImage(this.cache[angle], this.x - xOffset, this.y - yOffset);
+        if (PARAMS.DEBUG) {
+            ctx.strokeStyle = 'Green';
+            ctx.strokeRect(this.x - xOffset, this.y - yOffset, 32, 32);
         }
     };
 
