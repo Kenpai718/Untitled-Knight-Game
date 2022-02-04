@@ -113,16 +113,25 @@ class AssetManager {
 
     autoRepeat(path) {
         var aud = this.cache[path];
-        
-        //force music play without a click
-        const autoPlayID = setInterval(() => {
-            aud.play()
-                .then(() => clearInterval(autoPlayID))
-                .catch(console.error);
-        }, 500);
-
         aud.addEventListener("ended", function () {
             aud.play();
         });
     };
+
+    /**
+     * This will keep an interval that will try to play the bg music
+     * until it works. This is a temporary solution until a title screen is made.
+     * 
+     * Used to bypass browser restrictions.
+     * @param {*} path 
+     */
+    forcePlayMusic(path) {
+        this.autoRepeat(path);
+        const autoPlayID = setInterval(() => {
+            let audio = this.cache[path];
+            audio.play()
+                .then(() => clearInterval(autoPlayID))
+                .catch(console.error);
+        }, 500);
+    }
 };

@@ -37,11 +37,11 @@ const SFX =  {
     JUMP: "./sound/sfx/jump.wav",
     DOUBLEJUMP: "./sound/sfx/double_jump.wav",
     WALLJUMP: "./sound/sfx/walljump.wav",
-    CRITICAL: "./sound/sfx/critical_hit.wav",
+    CRITICAL: "./sound/sfx/critical.wav",
     DODGE: "./sound/sfx/dodge.wav",
     DAMAGED: "./sound/sfx/hit.mp3",
     HEAL: "./sound/sfx/heal.mp3",
-    PLAYER_DEATH: "./sound/sfx/PLAYER_DEATH.mp3",
+    PLAYER_DEATH: "./sound/sfx/player_death.mp3",
 
 
 };

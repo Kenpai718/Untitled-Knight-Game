@@ -21,6 +21,7 @@ ASSET_MANAGER.queueDownload("./sprites/environment/dark_castle_tileset.png");
 ASSET_MANAGER.queueDownload("./sprites/environment/moonlit_sky.png");
 
 //music
+ASSET_MANAGER.queueDownload("./sound/music/FE3H-Chasing-Daybreak.mp3");
 
 //sfx
 ASSET_MANAGER.queueDownload(SFX.ARROW_HIT);
@@ -43,6 +44,14 @@ ASSET_MANAGER.downloadAll(() => {
 	const canvas = document.getElementById("gameWorld");
 	const ctx = canvas.getContext("2d");
 	ctx.imageSmoothingEnabled = false;
+
+	//play music
+	/**
+	 * force play is a temporary method until a title screen is made
+	 * It pings the webpage to play every few seconds until it can and
+	 * sets the song to play on auto repeat
+	*/
+	ASSET_MANAGER.forcePlayMusic("./sound/music/FE3H-Chasing-Daybreak.mp3");
 
 	gameEngine.init(ctx);
 	new SceneManager(gameEngine);

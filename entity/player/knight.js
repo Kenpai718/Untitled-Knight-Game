@@ -113,7 +113,8 @@ class Knight extends AbstractPlayer {
     //**Controls player animations and movement */
     update() {
         const TICK = this.game.clockTick;
-        super.checkDamageCooldown(TICK); //check if can be hit
+        //to prevent playing the same roll sound
+        if(this.action != this.states.roll) super.checkDamageCooldown(TICK); //check if can be hit
         super.checkInDeathZone(); //check if outside of canvas
 
 
@@ -459,6 +460,7 @@ class Knight extends AbstractPlayer {
                 ASSET_MANAGER.playAsset(SFX.DODGE);
                 this.vulnerable = false;
             }
+
             if (this.animations[this.facing][this.states.roll].isDone()) {
                 this.action = this.states.idle;
                 this.game.roll = false;
@@ -554,14 +556,14 @@ class Knight extends AbstractPlayer {
             if (entity instanceof AbstractEnemy) {
                 //attacked by an enemy
                 if (entity.HB && that.BB.collide(entity.HB)) {
-                    console.log("knight hit by enemy");
+                    //console.log("knight hit by enemy");
                     that.takeDamage(entity.getDamageValue(), false);
 
                 }
 
                 //attacked an enemy
                 if (that.HB != null && entity.BB && that.HB.collide(entity.BB)) {
-                    console.log("knight hit an enemy");
+                    //console.log("knight hit an enemy");
                     entity.takeDamage(that.getDamageValue(), that.critical);
 
                 }
