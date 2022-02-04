@@ -10,7 +10,7 @@ const SHROOM = {
 
 class Mushroom extends AbstractEnemy {
     constructor(game, x, y) {
-        super(game, x, y, SHROOM.NAME, SHROOM.MAX_HP, SHROOM.WIDTH, SHROOM.HEIGHT, SHROOM.SCALE);
+        super(game, x, y, STATS.MUSHROOM.NAME, STATS.MUSHROOM.MAX_HP, STATS.MUSHROOM.WIDTH, STATS.MUSHROOM.HEIGHT, STATS.MUSHROOM.SCALE);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/mushroom.png");
 
         //seting up animation states
@@ -27,7 +27,7 @@ class Mushroom extends AbstractEnemy {
         this.runAway = false;
         this.attackCooldown = 0;
 
-        this.damageValue = SHROOM.DAMAGE;
+        this.damageValue = STATS.MUSHROOM.DAMAGE;
 
         //movement control on canvas
         this.fallAcc = 1500;

@@ -1,4 +1,5 @@
-/** Global Parameters Object */
+/**This file holds helpful functions and global variables/objects used throughout the game */
+
 /**
  * @param {Number} r Red Value
  * @param {Number} g Green Value
@@ -7,39 +8,102 @@
  */
  const rgb = (r, g, b) => `rgba(${r}, ${g}, ${b})`;
 
+/** Global Parameters Objects */
 const PARAMS = {
-        DEBUG : false, //for showing debug settings
-        BLOCKDIM : 81, //dimensions of blocks
-        DMG_COOLDOWN : .8, //how long the cooldown is for an entity to take damage
+        DEBUG : false,      //for showing debug settings on canvas when ticked
+        BLOCKDIM : 81,      //dimensions of blocks
+        DMG_COOLDOWN : .8,  //how long the cooldown is for an entity to take damage
 
         //GUI
-        BIG_FONT : "30px Impact", //font used for big moments like damage numbers
-        DEFAULT_FONT : "10px Arial", //regular font
-        HEART_DIM: 17, //for hearts hp bar
-        GUI_SCALE: 3, //gui scaling
+        BIG_FONT : "30px Impact",       //font used for big moments like damage numbers
+        DEFAULT_FONT : "10px Arial",    //regular font
+        HEART_DIM: 17,                  //for hearts hp bar
+        GUI_SCALE: 3,                   //gui scaling
 
         //critical
-        CRITICAL_BONUS: 2, //multipler for a crit dmg
+        CRITICAL_BONUS: 2,                  //multipler for a crit dmg
         CRITICAL_FONT: "40px Impact",
-        CRITICAL_CHANCE: 10, //percentage 0-100
-        CRITICAL_COLOR: rgb(255, 215, 0), //yellow
+        CRITICAL_CHANCE: 10,                //percentage 0-100
+        CRITICAL_COLOR: rgb(255, 215, 0),   //yellow
 
         //colors
-        DMG_COLOR: rgb(183, 3, 3), //red
-        HEAL_COLOR: rgb(124, 252, 0), //green
+        DMG_COLOR: rgb(183, 3, 3),      //red
+        HEAL_COLOR: rgb(124, 252, 0),   //green
 
-        //IDS for Score
+        //IDS for Score class
         DMG_ID: 0, 
         HEAL_ID: 1, 
 
-        //HP RATIOS
+        //HP RATIOS to compare with a percentage
         LOW_HP: .2,
-        MID_HP: .5
+        MID_HP: .5,
+        HIGH_HP: .8 
 };
 
+/**Global stats that define an entity */
+const STATS = {
+    /*player stats*/
+    PLAYER: {
+        NAME: "Player (Knight)",
+        MAX_HP: 100,
+        SCALE: 3.12,
+        WIDTH: 120,
+        HEIGHT: 80,
+        DMG_SLASH1: 10,
+        DMG_SLASH2: 15,
+        DMG_CROUCHATK: 8
+    },
 
+    /*enemy stats*/
 
-/* Global sfx path object */
+    MUSHROOM: {
+        NAME: "Mushroom",
+        MAX_HP: 100,
+        SCALE: 3.5,
+        WIDTH: 150,
+        HEIGHT: 150,
+        DAMAGE: 12.5
+    },
+
+    GOBLIN: {
+        NAME: "Goblin",
+        MAX_HP: 50,
+        SCALE: 2.5,
+        WIDTH: 33,
+        HEIGHT: 36,
+        DAMAGE: 15
+    },
+
+    SKELETON: {
+        NAME: "Skeleton",
+        MAX_HP: 50,
+        SCALE: 2.5,
+        WIDTH: 45,
+        HEIGHT: 51,
+        DAMAGE: 10
+    },
+
+    WIZARD: {
+        NAME: "Wizard",
+        MAX_HP: 80,
+        SCALE: 3,
+        WIDTH: 80,
+        HEIGHT: 80,
+        DAMAGE: 20
+    },
+
+    FLYINGEYE: {
+        NAME: "Flying Eye",
+        MAX_HP: 30,
+        SCALE: 2,
+        WIDTH: 150,
+        HEIGHT: 150,
+        DAMAGE: 5
+    },
+
+}
+
+/* Global sfx paths */
 const SFX =  {
     ARROW_HIT: "./sound/sfx/arrow_hit.mp3",
     BOW_SHOT: "./sound/sfx/bow_shoot.mp3",
@@ -57,6 +121,8 @@ const SFX =  {
 
 
 };
+
+/** HELPER FUNCTIONS */
 
 function getFacing(velocity) {
     if (velocity.x === 0 && velocity.y === 0) return 4;
