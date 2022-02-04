@@ -61,7 +61,8 @@ const STATS = {
         MAX_HP: 10,
         WIDTH: 32,
         HEIGHT: 32,
-        SCALE: 2
+        SCALE: 2,
+        DAMAGE: 10
     },
 
     /*enemy stats*/
