@@ -1,12 +1,3 @@
-//Define constants to be passed to the superclass instantiation of an AbstractEntity
-const PLAYER = {
-    NAME: "Player (Knight)",
-    MAX_HP: 100,
-    SCALE: 3.12,
-    WIDTH: 120,
-    HEIGHT: 80
-};
-
 //constants used for physics
 const SCALER = 3;
 //currently using Chris Marriot's mario physics
@@ -36,7 +27,7 @@ const MAX_SLIDE = 150 * SCALER;
 class Knight extends AbstractPlayer {
     //game = engine, (x, y) = spawn cords
     constructor(game, x, y) {
-        super(game, x, y, PLAYER.NAME, PLAYER.MAX_HP, PLAYER.WIDTH, PLAYER.HEIGHT, PLAYER.SCALE);
+        super(game, x, y, STATS.PLAYER.NAME,  STATS.PLAYER.MAX_HP,  STATS.PLAYER.WIDTH,  STATS.PLAYER.HEIGHT,  STATS.PLAYER.SCALE);
 
         // get spritesheets
         this.spritesheetRight = ASSET_MANAGER.getAsset("./sprites/knight/knightRight.png");
@@ -53,7 +44,6 @@ class Knight extends AbstractPlayer {
             attack1: 14, attack2: 15,
             death: 16
         };
-        this.damages = { slash1: 10, slash2: 15, crouch_atk: 8 };
 
         //default starting values
         this.DEFAULT_DIRECTION = this.dir.right;
@@ -113,7 +103,8 @@ class Knight extends AbstractPlayer {
     //**Controls player animations and movement */
     update() {
         const TICK = this.game.clockTick;
-        super.checkDamageCooldown(TICK); //check if can be hit
+        //to prevent playing the same roll sound
+        if (this.action != this.states.roll) super.checkDamageCooldown(TICK); //check if can be hit
         super.checkInDeathZone(); //check if outside of canvas
 
 
@@ -190,7 +181,7 @@ class Knight extends AbstractPlayer {
             this.animations[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y, this.scale);
         }
         //this.viewAllAnimations(ctx);
-        if(!this.dead) this.healthbar.draw(ctx);
+        if (!this.dead) this.healthbar.draw(ctx);
 
         if (PARAMS.DEBUG) {
             this.viewBoundingBox(ctx);
@@ -459,6 +450,7 @@ class Knight extends AbstractPlayer {
                 ASSET_MANAGER.playAsset(SFX.DODGE);
                 this.vulnerable = false;
             }
+
             if (this.animations[this.facing][this.states.roll].isDone()) {
                 this.action = this.states.idle;
                 this.game.roll = false;
@@ -554,14 +546,14 @@ class Knight extends AbstractPlayer {
             if (entity instanceof AbstractEnemy) {
                 //attacked by an enemy
                 if (entity.HB && that.BB.collide(entity.HB)) {
-                    console.log("knight hit by enemy");
+                    //console.log("knight hit by enemy");
                     that.takeDamage(entity.getDamageValue(), false);
 
                 }
 
                 //attacked an enemy
                 if (that.HB != null && entity.BB && that.HB.collide(entity.BB)) {
-                    console.log("knight hit an enemy");
+                    //console.log("knight hit an enemy");
                     entity.takeDamage(that.getDamageValue(), that.critical);
 
                 }
@@ -670,7 +662,7 @@ class Knight extends AbstractPlayer {
      */
     resetCombo() {
         this.combo = false;
-        this.game.comboCounter = 0; 
+        this.game.comboCounter = 0;
         this.playAttackSFX1 = true;
         this.playAttackSFX2 = true;
     }
@@ -679,11 +671,11 @@ class Knight extends AbstractPlayer {
     getDamageValue() {
         let dmg = 0;
         if (this.action == this.states.attack1) {
-            dmg = this.damages.slash1;
+            dmg = STATS.PLAYER.DMG_SLASH1;
         } else if (this.action == this.states.attack2) {
-            dmg = this.damages.slash2;
+            dmg = STATS.PLAYER.DMG_SLASH2;
         } else if (this.action == this.states.crouch_atk) {
-            dmg = this.damages.crouch_atk;
+            dmg = STATS.PLAYER.DMG_CROUCHATK;
         }
 
         //critical bonus
@@ -707,7 +699,7 @@ class Knight extends AbstractPlayer {
         if (this.HB != null) ctx.strokeRect(this.HB.x - this.game.camera.x, this.HB.y, this.HB.width, this.HB.height);
     }
 
-    
+
     loadAnimations() {
         let numDir = 2;
         let numStates = 17;

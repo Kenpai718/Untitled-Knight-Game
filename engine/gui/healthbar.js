@@ -25,7 +25,7 @@ class HealthBar {
 
         if (this.agent.hp < this.agent.max_hp) {
             ctx.strokeStyle = "Black";
-            ctx.fillStyle = ratio < 0.2 ? "Red" : ratio < 0.5 ? "Yellow" : "Green";
+            ctx.fillStyle = ratio < PARAMS.LOW_HP ? "Red" : ratio < PARAMS.MID_HP ? "Yellow" : "Green";
             ctx.fillRect(newX - offsetX, newY - offsetY, width * ratio, height);
             ctx.strokeRect(newX - offsetX, newY - offsetY, width, height);
         }
@@ -38,7 +38,7 @@ class HealthBar {
             let cordX = (this.agent.x).toFixed(2);
             let cordY = (this.agent.y).toFixed(2);ctx.font = PARAMS.DEFAULT_FONT;
             ctx.strokeStyle = "Black";
-            ctx.fillStyle = ratio < 0.2 ? "Red" : ratio < 0.5 ? "Yellow" : "SpringGreen";
+            ctx.fillStyle = ratio < PARAMS.LOW_HP ? "Red" : ratio < PARAMS.MID_HP ? "Yellow" : "SpringGreen";
 
             //print info specific to the agent object above the healthbar for debugging
             ctx.fillText(this.agent.name, newX, newY - (yBuffer * 5) - offsetY);

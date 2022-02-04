@@ -97,7 +97,7 @@ class AbstractEntity {
      */
     takeDamage(damage, isCritical) {
         if (this.canTakeDamage()) {
-            ASSET_MANAGER.playAsset(SFX.DAMAGED);
+            isCritical ? ASSET_MANAGER.playAsset(SFX.CRITICAL) : ASSET_MANAGER.playAsset(SFX.DAMAGED);
             this.takeKnockback();
             this.hp -= damage;
             this.vulnerable = false;
