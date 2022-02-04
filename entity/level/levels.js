@@ -128,7 +128,10 @@ var level1_2 = {
         { x : 0, y : -24, width : 120, height : 36 }
     ],
     shrooms : [
-        { x : 6, y : -12 }
+        { x : 6, y : -12 },
+        { x : 12, y : 9 },
+        { x : 40, y : 9 },
+
     ],
     windows : [
         { x : 67, y : 4, width : 4, height : 7 },

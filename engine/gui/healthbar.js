@@ -24,9 +24,13 @@ class HealthBar {
         var ratio = this.agent.hp / this.agent.max_hp;
 
         if (this.agent.hp < this.agent.max_hp) {
-            ctx.strokeStyle = "Black";
-            ctx.fillStyle = ratio < PARAMS.LOW_HP ? "Red" : ratio < PARAMS.MID_HP ? "Yellow" : "Green";
-            ctx.fillRect(newX - offsetX, newY - offsetY, width * ratio, height);
+            ctx.strokeStyle = "Black"; //border
+            //transparent gray as hp fill
+            ctx.fillStyle = rgba(41,41,41, 0.5); 
+            ctx.fillRect(newX - offsetX, newY - offsetY, width, height);
+            //hp ratio color
+            ctx.fillStyle = ratio < PARAMS.LOW_HP ? "Red" : ratio < PARAMS.MID_HP ? "Yellow" : "Green"; 
+            ctx.fillRect(newX - offsetX, newY - offsetY, width * ratio, height); 
             ctx.strokeRect(newX - offsetX, newY - offsetY, width, height);
         }
 
@@ -43,7 +47,7 @@ class HealthBar {
             //print info specific to the agent object above the healthbar for debugging
             ctx.fillText(this.agent.name, newX, newY - (yBuffer * 5) - offsetY);
             ctx.fillText("HP: " + this.agent.hp + "/" + this.agent.max_hp, newX, newY - (yBuffer * 4) - offsetY);
-            ctx.fillText("Cords: [" + cordX + ", " + cordY + "]", newX, newY - (yBuffer * 3) - offsetY);
+            ctx.fillText("Cords: [x:" + cordX + ", y:" + cordY + "]", newX, newY - (yBuffer * 3) - offsetY);
             ctx.fillText("Velocity: {x: " + velX + ", y: " + velY + "}", newX, newY - (yBuffer * 2) - offsetY);
 
 

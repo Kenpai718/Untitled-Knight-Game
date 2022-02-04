@@ -118,6 +118,9 @@ const SFX =  {
     DAMAGED: "./sound/sfx/hit.mp3",
     HEAL: "./sound/sfx/heal.mp3",
     PLAYER_DEATH: "./sound/sfx/player_death.mp3",
+    PLAYER_GRUNT: "./sound/sfx/player_grunt.wav",
+    PLAYER_GRUNT2: "./sound/sfx/player_grunt2.wav",
+    PLAYER_GRUNT3: "./sound/sfx/player_grunt3.wav",
 
 
 };
