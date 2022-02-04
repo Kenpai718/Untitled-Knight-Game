@@ -20,6 +20,9 @@ ASSET_MANAGER.queueDownload("./sprites/enemy/flyingeye.png");
 ASSET_MANAGER.queueDownload("./sprites/environment/dark_castle_tileset.png");
 ASSET_MANAGER.queueDownload("./sprites/environment/moonlit_sky.png");
 
+//other
+ASSET_MANAGER.queueDownload("./sprites/vignette.png");
+
 //music
 ASSET_MANAGER.queueDownload("./sound/music/FE3H-Chasing-Daybreak.mp3");
 

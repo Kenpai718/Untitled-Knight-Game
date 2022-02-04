@@ -114,7 +114,7 @@ class Knight extends AbstractPlayer {
     update() {
         const TICK = this.game.clockTick;
         //to prevent playing the same roll sound
-        if(this.action != this.states.roll) super.checkDamageCooldown(TICK); //check if can be hit
+        if (this.action != this.states.roll) super.checkDamageCooldown(TICK); //check if can be hit
         super.checkInDeathZone(); //check if outside of canvas
 
 
@@ -191,7 +191,7 @@ class Knight extends AbstractPlayer {
             this.animations[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y, this.scale);
         }
         //this.viewAllAnimations(ctx);
-        if(!this.dead) this.healthbar.draw(ctx);
+        if (!this.dead) this.healthbar.draw(ctx);
 
         if (PARAMS.DEBUG) {
             this.viewBoundingBox(ctx);
@@ -672,7 +672,7 @@ class Knight extends AbstractPlayer {
      */
     resetCombo() {
         this.combo = false;
-        this.game.comboCounter = 0; 
+        this.game.comboCounter = 0;
         this.playAttackSFX1 = true;
         this.playAttackSFX2 = true;
     }
@@ -709,7 +709,7 @@ class Knight extends AbstractPlayer {
         if (this.HB != null) ctx.strokeRect(this.HB.x - this.game.camera.x, this.HB.y, this.HB.width, this.HB.height);
     }
 
-    
+
     loadAnimations() {
         let numDir = 2;
         let numStates = 17;
