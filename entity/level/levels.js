@@ -3,133 +3,169 @@ var level1_1 = {
     //label:
     width: 120,
     ground: [
-        { x : 0, y : 12, width: 15, height : 1, type : 1},
-        { x : 60, y : 12, width: 34, height : 1, type : 1},
-        { x : 15, y : 11, width: 1, height : 1, type : 0},
-        { x : 16, y : 11, width: 1, height : 1, type : 1},
-        { x : 17, y : 11, width: 1, height : 1, type : 2},
-        { x : 20, y : 10, width: 1, height : 1, type : 0},
-        { x : 21, y : 10, width: 3, height : 1, type : 1},
-        { x : 24, y : 10, width: 1, height : 1, type : 2},
-        { x : 25, y : 11, width: 3, height : 1, type : 1},
-        { x : 28, y : 10, width : 1, height : 1, type : 0},
-        { x : 29, y : 10, width : 1, height : 1, type : 1},
-        { x : 30, y : 8, width : 1, height : 1, type : 0},
-        { x : 31, y : 8, width : 28, height : 1, type : 1},
-        { x : 59, y : 8, width : 1, height : 1, type : 2},
-        { x : 94, y : 3, width : 1, height : 1, type : 0},
-        { x : 95, y : 3, width : 25, height : 1, type : 1}
+        { x : 0, y : 12, width: 15, height : 1, type : 1 },
+        { x : 60, y : 12, width: 34, height : 1, type : 1 },
+        { x : 15, y : 11, width: 1, height : 1, type : 0 },
+        { x : 16, y : 11, width: 1, height : 1, type : 1 },
+        { x : 17, y : 11, width: 1, height : 1, type : 2 },
+        { x : 20, y : 10, width: 1, height : 1, type : 0 },
+        { x : 21, y : 10, width: 3, height : 1, type : 1 },
+        { x : 24, y : 10, width: 1, height : 1, type : 2 },
+        { x : 25, y : 11, width: 3, height : 1, type : 1 },
+        { x : 28, y : 10, width : 1, height : 1, type : 0 },
+        { x : 29, y : 10, width : 1, height : 1, type : 1 },
+        { x : 30, y : 8, width : 1, height : 1, type : 0 },
+        { x : 31, y : 8, width : 28, height : 1, type : 1 },
+        { x : 59, y : 8, width : 1, height : 1, type : 2 },
+        { x : 94, y : 3, width : 1, height : 1, type : 0 },
+        { x : 95, y : 3, width : 25, height : 1, type : 1 }
     ],
     bricks: [
-        { x : 30, y : 0, width : 60, height : 1, type : 0, random : true},
-
-        { x : 30, y : 1, width : 60, height : 1, type : 0, random : true},
-
-        { x : 30, y : 2, width : 30, height : 1, type : 0, random : true},
-        { x : 75, y : 2, width : 15, height : 1, type : 0, random : true},
-
-        { x : 30, y : 3, width : 25, height : 1, type : 0, random : true},
-        { x : 80, y : 3, width : 10, height : 1, type : 0, random : true},
-
-        { x : 32, y : 4, width : 18, height : 1, type : 0, random : true},
-        { x : 85, y : 4, width : 5, height : 1, type : 0, random : true},
-        { x : 95, y : 4, width : 25, height : 9, type : 0, random : true},
-
-        { x : 32, y : 5, width : 13, height : 1, type : 0, random : true},
-        { x : 85, y : 5, width : 5, height : 1, type : 0, random : true},
-
-        { x : 40, y : 6, width : 5, height : 1, type : 0, random : true},
-        { x : 85, y : 6, width : 5, height : 1, type : 0, random : true},
-
-        { x : 85, y : 7, width : 5, height : 1, type : 0, random : true},
-
-        { x : 85, y : 8, width : 5, height : 1, type : 0, random : true},
-
-        { x : 31, y : 9, width : 28, height : 1, type : 0, random : true},
-
-        { x : 30, y : 10, width : 29, height : 1, type : 0, random : true},
-
-        { x : 21, y : 11, width : 4, height : 1, type : 0, random : true},
-        { x : 28, y : 11, width : 31, height : 1, type : 0, random : true},
-
-        { x : 15, y : 12, width : 3, height : 1, type : 0, random : true},
-        { x : 20, y : 12, width : 42, height : 1, type : 0, random : true},
-        { x : 94, y : 12, width : 1, height : 1, type : 0, random : true}
+        { x : 30, y : -3, width : 90, height : 3 },
+        { x : 30, y : 0, width : 60, height : 1 },
+        { x : 30, y : 1, width : 60, height : 1 },
+        { x : 30, y : 2, width : 30, height : 1 },
+        { x : 75, y : 2, width : 15, height : 1 },
+        { x : 30, y : 3, width : 25, height : 1 },
+        { x : 80, y : 3, width : 10, height : 1 },
+        { x : 32, y : 4, width : 18, height : 1 },
+        { x : 85, y : 4, width : 5, height : 1 },
+        { x : 95, y : 4, width : 25, height : 9 },
+        { x : 32, y : 5, width : 13, height : 1 },
+        { x : 85, y : 5, width : 5, height : 1 },
+        { x : 40, y : 6, width : 5, height : 1 },
+        { x : 85, y : 6, width : 5, height : 1 },
+        { x : 85, y : 7, width : 5, height : 1 },
+        { x : 85, y : 8, width : 5, height : 1 },
+        { x : 31, y : 9, width : 28, height : 1 },
+        { x : 30, y : 10, width : 29, height : 1 },
+        { x : 21, y : 11, width : 4, height : 1 },
+        { x : 28, y : 11, width : 31, height : 1 },
+        { x : 15, y : 12, width : 3, height : 1 },
+        { x : 20, y : 12, width : 42, height : 1 },
+        { x : 94, y : 12, width : 1, height : 1 }
     ],
     walls: [
-        { x : 90, y : 0, width : 1, height : 1, type : 2},
-
-        { x : 90, y : 1, width : 1, height : 1, type : 2},
-
-        { x : 90, y : 2, width : 1, height : 1, type : 2},
-
-        { x : 90, y : 3, width : 1, height : 1, type : 2},
-
-        { x : 90, y : 4, width : 1, height : 1, type : 2},
-        { x : 94, y : 4, width : 1, height : 1, type : 0},
-
-        { x : 90, y : 5, width : 1, height : 1, type : 2},
-        { x : 94, y : 5, width : 1, height : 1, type : 0},
-
-        { x : 90, y : 6, width : 1, height : 1, type : 2},
-        { x : 94, y : 6, width : 1, height : 1, type : 0},
-
-        { x : 90, y : 7, width : 1, height : 1, type : 2},
-        { x : 94, y : 7, width : 1, height : 1, type : 0},
-
-        { x : 90, y : 8, width : 1, height : 1, type : 3},
-        { x : 94, y : 8, width : 1, height : 1, type : 0},
-
-        { x : 30, y : 9, width : 1, height : 1, type : 0},
-        { x : 59, y : 9, width : 1, height : 1, type : 2},
-        { x : 94, y : 9, width : 1, height : 1, type : 0},
-
-        { x : 59, y : 10, width : 1, height : 1, type : 2},
-        { x : 94, y : 10, width : 1, height : 1, type : 0},
-
-        { x : 20, y : 11, width : 1, height : 1, type : 0},
-        { x : 59, y : 11, width : 1, height : 1, type : 2},
-        { x : 94, y : 11, width : 1, height : 1, type : 0}
+        { x : 90, y : 0, height : 8, type : 2 },
+        { x : 90, y : 8, height : 1, type : 3 },
+        { x : 94, y : 4, height : 8, type : 0 },
+        { x : 30, y : 9, height : 1, type : 0 },
+        { x : 59, y : 9, height : 3, type : 2 },
+        { x : 20, y : 11, height : 1, type : 0 }
     ],
     backgroundWalls: [
-        { x : 90, y : 0, width : 30, height : 1},
-        { x : 90, y : 1, width : 30, height : 1},
-        { x : 60, y : 2, width : 20, height : 1},
-        { x : 90, y : 2, width : 30, height : 1},
-        { x : 55, y : 3, width : 25, height : 1},
-        { x : 90, y : 3, width : 5, height : 1},
-        { x : 30, y : 4, width : 2, height : 1},
-        { x : 50, y : 4, width : 35, height : 1},
-        { x : 90, y : 4, width : 5, height : 1},
-        { x : 30, y : 5, width : 2, height : 1},
-        { x : 45, y : 5, width : 40, height : 1},
-        { x : 90, y : 5, width : 5, height : 1},
-        { x : 30, y : 6, width : 10, height : 1},
-        { x : 45, y : 6, width : 40, height : 1},
-        { x : 90, y : 6, width : 5, height : 1},
-        { x : 30, y : 7, width : 55, height : 1},
-        { x : 90, y : 7, width : 5, height : 1},
-        { x : 60, y : 8, width : 25, height : 1},
-        { x : 90, y : 8, width : 5, height : 1},
-        { x : 60, y : 9, width : 34, height : 1},
-        { x : 60, y : 10, width : 34, height : 1},
-        { x : 60, y : 11, width : 34, height : 1}
+        { x : 30, y : 0, width : 90, height : 12 }
     ],
     torches: [
-        { x : 31, y : 5},
-        { x : 59, y : 5},
-        { x : 70, y : 7},
-        { x : 85, y : 9},
-        { x : 94, y : 0},
-        { x : 115, y : 0}
+        { x : 31, y : 5 },
+        { x : 59, y : 5 },
+        { x : 70, y : 7 },
+        { x : 85, y : 9 },
+        { x : 94, y : 0 },
+        { x : 115, y : 0 }
     ],
     shrooms: [
-        { x : 13, y : 6},
-        { x : 59, y : 5},
-        { x : 70, y : 7},
+        { x : 13, y : 6 },
+        { x : 59, y : 5 },
+        { x : 70, y : 7 },
 
     ],
     doors: [
-        { x : 116, y : 0}
+        { x : 116, y : 0 }
+    ]
+}
+
+var level1_2 = {
+    width : 120,
+    height : 36,
+    ground : [
+        { x : 0, y : 12, width : 120, type : 1 },
+        { x : 45, y : 6, width : 1, type : 0 },
+        { x : 46, y : 6, width : 14, type : 1 },
+        { x : 1, y : 6, width : 41, type : 1 },
+        { x : 5, y : -7, width: 35, type : 1 },
+        { x : 4, y : -7, width : 1, type : 0 }
+    ],
+    bricks : [
+        { x : 46, y : 7, width : 14, height : 5 },
+        { x : 0, y : 7, width : 41, height : 2 },
+        { x : 5, y : -6, width : 55, height : 7 },
+        { x : 57, y : 1, width : 3, height : 1 },
+        { x : 58, y : 2, width : 2, height : 1 },
+        { x : 59, y : 3, width : 1, height : 1 },
+        { x : 5, y : 1, width : 5, height : 1 },
+        { x : 5, y : 2, width : 3, height : 1 },
+        { x : 5, y : 3, width : 1, height : 1 },
+        { x : 0, y : -12, width : 30, height : 2 },
+        { x : 30, y : -8, width : 2, height : 1 },
+        { x : 0, y : -24, width : 65, height : 8 },
+        { x : 10, y : -16, width : 15, height : 2 },
+        { x : 25, y : - 16, width : 1, height : 1 },
+        { x : 10, y : -14, width : 5, height : 1 },
+        { x : 35, y : -12, width : 25, height : 2 },
+        { x : 41, y : -10, width : 19, height : 4 },
+        { x : 65, y : -24, width : 55, height : 14 },
+        { x : 65, y : -7, width : 55, height : 8 },
+        { x : 85, y : -10, width : 35, height : 3 },
+        { x : 9, y : -16, width : 1, height : 1 }
+    ],
+    walls : [
+        { x : 41, y : 7, height : 2, type : 2 },
+        { x : 40, y : -10, height : 4, type : 0 },
+        { x : 64, y : -16, height : 6, type: 0 },
+        { x : 64, y : -7, height : 15, type : 0 },
+        { x : 60, y : -12, height : 25, type : 2 },
+        { x : 45, y : 7, height : 5, type : 0 },
+        { x : 0, y : -10, height : 19, type : 2 },
+        { x : 4, y : -6, height : 10, type : 0 },
+        { x : 0, y : -16, height : 4, type : 2 },
+        { x : 30, y : -12, height : 2, type : 2 },
+        { x : 34, y : -12, height : 3, type : 0 },
+        { x : 84, y : -10, height : 3, type : 0 }
+
+    ],
+    backgroundWalls: [
+        { x : 0, y : -24, width : 120, height : 36 }
+    ],
+    shrooms : [
+        { x : 6, y : -12 }
+    ],
+    windows : [
+        { x : 67, y : 4, width : 4, height : 7 },
+        { x : 77, y : 4, width : 4, height : 7 },
+        { x : 87, y : 4, width : 4, height : 7 },
+        { x : 97, y : 4, width : 4, height : 7 },
+        { x : 107, y : 4, width : 4, height : 7 },
+        { x : 37, y : 2, width : 3, height : 3 },
+        { x : 47, y : 2, width : 3, height : 3 }
+    ],
+    banners : [
+        { x : 71, y : 8 },
+        { x : 76, y : 8 },
+        { x : 81, y : 8 },
+        { x : 86, y : 8 },
+        { x : 91, y : 8 },
+        { x : 96, y : 8 },
+        { x : 101, y : 8 },
+        { x : 106, y : 8 },
+    ],
+    doors : [
+        { x : 116, y : 9 },
+        { x : 0, y : 9 }
+    ],
+    torches : [
+        { x : 10, y : 9 },
+        { x : 20, y : 9 },
+        { x : 30, y : 9 },
+        { x : 40, y : 9 },
+        { x : 35, y : 3 },
+        { x : 25, y : 3 },
+        { x : 15, y : 3 },
+    ],
+    chains : [
+        { x : 36, y : 2 },
+        { x : 40, y : 2 },
+        { x : 46, y : 2 },
+        { x : 50, y : 2 }
     ]
 }

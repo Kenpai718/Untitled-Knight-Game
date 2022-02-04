@@ -80,7 +80,7 @@ class Arrow extends AbstractEntity {
         });
 
         //remove from world if outside the canvas
-        if (this.x > this.game.surfaceWidth + this.game.camera.x || this.x < 0 || this.y > this.game.surfaceHeight || this.y < 0) this.removeFromWorld = true;
+        if (this.x > this.game.surfaceWidth + this.game.camera.x || this.x < 0 || this.y > this.game.surfaceHeight) this.removeFromWorld = true;
 
 
     };
@@ -101,14 +101,14 @@ class Arrow extends AbstractEntity {
 
             this.drawAngle(ctx, degrees);
         } else { //this is where the arrow gets drawn
-            var camera_offset = this.game.camera.x;
-
+            var camera_offsetx = this.game.camera.x;
+            var camera_offsety = this.game.camera.y;
             if (this.facing < 5) {
-                this.animations[this.facing].drawFrame(this.game.clockTick, ctx, (this.x - xOffset) - camera_offset, this.y - yOffset, this.scale);
+                this.animations[this.facing].drawFrame(this.game.clockTick, ctx, (this.x - xOffset) - camera_offsetx, (this.y - yOffset) - camera_offsety, this.scale);
             } else {
                 ctx.save();
                 ctx.scale(-1, 1);
-                this.animations[8 - this.facing].drawFrame(this.game.clockTick, ctx, (-(this.x) - (32 * this.scale) + xOffset) + camera_offset, this.y - yOffset, this.scale);
+                this.animations[8 - this.facing].drawFrame(this.game.clockTick, ctx, (-(this.x) - (32 * this.scale) + xOffset) + camera_offsetx, (this.y - yOffset) - camera_offsety, this.scale);
                 ctx.restore();
             }
         }
@@ -125,7 +125,7 @@ class Arrow extends AbstractEntity {
 
             //bounding box
             ctx.strokeStyle = "Red";
-            ctx.strokeRect(this.BB.x - camera_offset, this.BB.y, this.BB.width, this.BB.height);
+            ctx.strokeRect(this.BB.x - camera_offsetx, this.BB.y - camera_offsety, this.BB.width, this.BB.height);
         }
     };
 
