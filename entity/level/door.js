@@ -1,6 +1,6 @@
 class Door {
-    constructor(game, x, y) {
-        Object.assign(this, { game, x, y });
+    constructor(game, x, y, canEnter) {
+        Object.assign(this, { game, x, y, canEnter });
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
         this.scale = PARAMS.BLOCKDIM;
         this.w = 2 * PARAMS.BLOCKDIM;
@@ -10,11 +10,19 @@ class Door {
         this.srcW = 28;
         this.srcH = 36;
         this.BB = new BoundingBox(this.x, this.y, this.w, this.h);
-        console.log(this.BB)
     };
 
     update() {
-        //some kind of collision detection to load next level
+        var that = this;
+        this.game.entities.forEach(function (entity) {
+            if (entity.BB && that.BB.collide(entity.BB)) {
+                if (entity instanceof AbstractPlayer && that.canEnter) {
+                    that.game.camera.currentLevel += 1;
+                    that.game.camera.loadLevel(that.game.camera.currentLevel);
+                    that.canEnter = false;
+                }
+            }
+        });
     };
 
     draw(ctx) {

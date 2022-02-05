@@ -9,7 +9,7 @@ class SceneManager {
         this.gameOver = false;
 
         //levels array to load levels by calling levels[0], levels[1], etc
-        this.currentLevel = 2;
+        this.currentLevel = 1;
         this.setupAllLevels();
         this.loadLevel(this.currentLevel);
     };
@@ -161,7 +161,7 @@ class SceneManager {
         if (this.level.doors) {
             for (var i = 0; i < this.level.doors.length; i++) {
                 let door = this.level.doors[i];
-                this.game.addEntity(new Door(this.game, door.x * PARAMS.BLOCKDIM, door.y * PARAMS.BLOCKDIM));
+                this.game.addEntity(new Door(this.game, door.x * PARAMS.BLOCKDIM, door.y * PARAMS.BLOCKDIM, door.canEnter));
             }
         }
         if (this.level.backgroundWalls) {
@@ -231,7 +231,7 @@ class SceneManager {
         if (this.level.doors) {
             for (var i = 0; i < this.level.doors.length; i++) {
                 let door = this.level.doors[i];
-                this.game.addEntity(new Door(this.game, door.x * PARAMS.BLOCKDIM, door.y * PARAMS.BLOCKDIM));
+                this.game.addEntity(new Door(this.game, door.x * PARAMS.BLOCKDIM, door.y * PARAMS.BLOCKDIM, door.canEnter));
             }
         }
         if (this.level.backgroundWalls) {

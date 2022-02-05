@@ -71,7 +71,7 @@ var level1_1 = {
 
     ],
     doors: [
-        { x : 116, y : 0 }
+        { x : 116, y : 0 , canEnter : true }
     ]
 }
 
@@ -153,8 +153,8 @@ var level1_2 = {
         { x : 106, y : 8 },
     ],
     doors : [
-        { x : 116, y : 9 },
-        { x : 0, y : 9 }
+        { x : 116, y : 9, canEnter : false}, // change to true when there is another level
+        { x : 0, y : 9, canEnter : false }
     ],
     torches : [
         { x : 10, y : 9 },
