@@ -160,7 +160,7 @@ class Knight extends AbstractPlayer {
                     this.velocity.y += this.fallAcc * TICK;
                     break;
             }
-            
+
             // max y velocity
             if (this.velocity.y >= MAX_FALL) this.velocity.y = MAX_FALL;
             if (this.velocity.y <= -MAX_FALL) this.velocity.y = -MAX_FALL;
@@ -327,7 +327,7 @@ class Knight extends AbstractPlayer {
                         this.action = this.states.jump_to_fall; //set to falling-in-between
                         //console.log("transition jump here");
                     }
-                    
+
                     if (this.action == this.states.falling) {
                         if (this.action != this.states.wall_climb) {
                             if (this.diffy.hi > 0 * this.scale && this.diffy.hi <= 12 * this.scale) {
@@ -536,7 +536,7 @@ class Knight extends AbstractPlayer {
      * and adjusts positions or actions if needed
      * @params this.game.clocktick
      */
-    handleCollisions(TICK) {    
+    handleCollisions(TICK) {
         //do collisions detection here
         this.collisions = {
             lo_left: false, hi_left: false, lo_right: false, hi_right: false,
@@ -556,7 +556,7 @@ class Knight extends AbstractPlayer {
                 const right = that.BB.right <= entity.BB.right && that.BB.right >= entity.BB.left;
                 const left = that.BB.left >= entity.BB.left && that.BB.left <= entity.BB.right;
                 const between = that.BB.top >= entity.BB.top && that.BB.bottom <= entity.BB.bottom;
-                if (between || 
+                if (between ||
                     below && that.BB.top > entity.BB.top - 20 * that.scale ||
                     above && that.BB.bottom < entity.BB.bottom + 20 * that.scale) {
                     if (right) {
@@ -657,8 +657,8 @@ class Knight extends AbstractPlayer {
         });
 
         this.diffy.hi = high - this.BB.top;
-        console.log(this.diffy.hi);
-        
+        //console.log(this.diffy.hi);
+
         if (this.collisions.hi_right && ent.top_right && (this.collisions.ceil || this.collisions.ceil_left)) {
             if (ent.top && ent.top.BB.bottom == ent.top_right.BB.bottom ||
                 ent.top_left && ent.top_left.BB.bottom == ent.top_right.BB.bottom) {
@@ -695,7 +695,7 @@ class Knight extends AbstractPlayer {
         this.x += dist.x;
         this.y += dist.y;
         this.updateBB();
-        
+
         // bottom collision
         if (this.touchFloor()) {
             if (this.velocity.y > 0) {
