@@ -83,7 +83,6 @@ class Knight extends AbstractPlayer {
         this.animations = [];
         this.loadAnimations();
         this.updateBB();
-
     };
 
     /** Update methods */
@@ -124,16 +123,44 @@ class Knight extends AbstractPlayer {
             //NOTE: Roll should be the last option checked because user should be able to cancel actions into roll
             this.checkAndDoRoll();
 
+            if (this.action == this.states.wall_hang) {
+                if (this.game.up) {
+                    this.action = this.states.wall_climb;
+                    this.y -= 3 * this.scale;
+                    if (this.animations[this.facing][this.action].isDone()) {
+                        this.resetAnimationTimers(this.action);
+                    }
+                }
+                else if (this.game.down) {
+                    this.action = this.states.wall_slide;
+                    this.facing = this.facing == this.dir.right ? this.dir.left : this.dir.right;
+                }
+            }
+            if (this.action == this.states.wall_climb) {
+                if (this.animations[this.facing][this.action].currentFrame() < 4)
+                    this.velocity.y = -250;
+                else if (this.animations[this.facing][this.action].currentFrame() == 4)
+                    this.velocity.y = -125;
+            }
 
             /**SET THE VELOCITY OF THE PLAYER */
             //constant falling velocity
-            if (this.action == this.states.wall_slide) {
-                this.velocity.y += this.slideAcc * TICK;
+            switch (this.action) {
+                case this.states.wall_slide:
+                    this.velocity.y += this.slideAcc * TICK;
+                    break;
+                case this.action == this.states.wall_climb:
+                    if (this.animations[this.facing][this.action].currentFrame() >= 3)
+                        this.velocity.y += this.fallAcc * TICK;
+                    break;
+                case this.states.wall_hang:
+                    this.velocity.y = 0;
+                    break;
+                default:
+                    this.velocity.y += this.fallAcc * TICK;
+                    break;
             }
-            else {
-                this.velocity.y += this.fallAcc * TICK;
-            }
-
+            
             // max y velocity
             if (this.velocity.y >= MAX_FALL) this.velocity.y = MAX_FALL;
             if (this.velocity.y <= -MAX_FALL) this.velocity.y = -MAX_FALL;
@@ -146,18 +173,21 @@ class Knight extends AbstractPlayer {
             if (!this.doubleJump) doubleJumpBonus = DOUBLE_JUMP_X_BOOST;
             if (this.velocity.x >= MAX_RUN) this.velocity.x = MAX_RUN + doubleJumpBonus;
             if (this.velocity.x <= -MAX_RUN) this.velocity.x = -MAX_RUN - doubleJumpBonus;
+            if (this.action == this.states.crouch_walk) {
+                if (this.velocity.x >= CROUCH_SPD) this.velocity.x = CROUCH_SPD;
+                if (this.velocity.x <= -CROUCH_SPD) this.velocity.x = -CROUCH_SPD;
+            }
 
             /**UPDATE POSITIONING AND BOUNDING BOX */
             this.x += this.velocity.x * TICK;
-            if (this.action != this.states.wall_hang)
+            if (this.action != this.states.wall_hang || this.action != this.states.wall_climb)
                 this.y += this.velocity.y * TICK;
             this.updateBB();
 
             //set to falling state if needed
-            if (!this.touchFloor() && (this.action < this.states.jump || this.action > this.states.falling)) {
-                if ((this.action != this.states.wall_slide && this.action != this.states.roll && this.action != this.states.wall_hang) ||
-                    (this.action == this.states.wall_slide &&
-                        !(this.collisions.lo_left || this.collisions.hi_left) && !(this.collisions.lo_right || this.collisions.hi_right))) {
+            if (!this.touchFloor() && (this.action < this.states.jump || this.action > this.states.falling) && this.action != this.states.attack1 && this.action != this.states.attack2) {
+                if ((this.action != this.states.wall_slide && this.action != this.states.roll && this.action != this.states.wall_hang && this.action != this.states.wall_climb) ||
+                    (this.action == this.states.wall_slide && !(this.collisions.lo_left || this.collisions.lo_right))) {
                     this.action = this.states.falling;
                     this.inAir = true;
                 }
@@ -185,8 +215,8 @@ class Knight extends AbstractPlayer {
 
         if (PARAMS.DEBUG) {
             this.viewBoundingBox(ctx);
+            this.viewCollisionsBox(ctx);
         }
-
     };
 
     /**
@@ -197,12 +227,11 @@ class Knight extends AbstractPlayer {
 
         //choose animation based on keyboard input
         //this if statement is to make sure special states are not interrupted
-        let uninterruptibleAction = this.action == this.states.roll || this.game.attack ||
+        let uninterruptibleAction = this.action == this.states.roll || this.game.attack || this.action == this.states.wall_climb ||
             (this.action == this.states.attack1 || this.action == this.states.attack2);
         if (!uninterruptibleAction) {
             if (this.action != this.states.jump && !this.inAir) { //not in the air
                 //horizontal movement
-                this.velocity.x = 0;
                 if (this.game.down || this.touchHole()) { //crouch
                     this.action = this.states.crouch;
                     //crouch left or right (move at half speed)
@@ -215,15 +244,53 @@ class Knight extends AbstractPlayer {
                         this.action = this.states.crouch_walk; //crouch walk
                         this.velocity.x -= CROUCH_SPD;
                     }
+                    else {
+                        if (this.facing == this.dir.left) {
+                            if (this.velocity.x < 0) {
+                                this.velocity.x += 25;
+                            }
+                            else this.velocity.x = 0;
+                        }
+                        else if (this.facing == this.dir.right) {
+                            if (this.velocity.x > 0) {
+                                this.velocity.x -= 25;
+                            }
+                            else this.velocity.x = 0;
+                        }
+                    }
                 } else if (this.game.right && !this.game.attack) { //run right
-                    this.facing = this.dir.right;
-                    this.action = this.states.run;
-                    this.velocity.x += MAX_RUN;
+                    if (this.facing == this.dir.left && this.velocity.x < 0) {
+                        this.action = this.states.turn_around;
+                        this.velocity.x += 40;
+                    }
+                    else {
+                        this.facing = this.dir.right;
+                        this.action = this.states.run;
+                        this.velocity.x += MAX_RUN;
+                    }
                 } else if (this.game.left && !this.game.attack) { //run left
-                    this.facing = this.dir.left;
-                    this.action = this.states.run;
-                    this.velocity.x -= MAX_RUN;
+                    if (this.facing == this.dir.right && this.velocity.x > 0) {
+                        this.action = this.states.turn_around;
+                        this.velocity.x -= 50;
+                    }
+                    else {
+                        this.facing = this.dir.left;
+                        this.action = this.states.run;
+                        this.velocity.x -= MAX_RUN;
+                    }
                 } else { //idle
+                    if (this.facing == this.dir.left) {
+                        if (this.velocity.x < 0) {
+                            this.velocity.x += 25;
+                        }
+                        else this.velocity.x = 0;
+                    }
+                    else if (this.facing == this.dir.right) {
+                        if (this.velocity.x > 0) {
+                            this.velocity.x -= 25;
+                        }
+                        else this.velocity.x = 0;
+                    }
                     this.action = this.DEFAULT_ACTION;
                 }
                 //jump press
@@ -237,14 +304,16 @@ class Knight extends AbstractPlayer {
                 }
             } else { //in the air
                 // horizontal physics
-                if (this.game.right && !this.game.left) {
-                    if (Math.abs(this.velocity.x) > MAX_WALK) {
-                        this.velocity.x += ACC_RUN * TICK;
-                    } else this.velocity.x += ACC_WALK * TICK;
-                } else if (this.game.left && !this.game.right) {
-                    if (Math.abs(this.velocity.x) > MAX_WALK) {
-                        this.velocity.x -= ACC_RUN * TICK;
-                    } else this.velocity.x -= ACC_WALK * TICK;
+                if (this.action != this.states.wall_hang || this.action != this.states.wall_climb) {
+                    if (this.game.right && !this.game.left) {
+                        if (Math.abs(this.velocity.x) > MAX_WALK) {
+                            this.velocity.x += ACC_RUN * TICK;
+                        } else this.velocity.x += ACC_WALK * TICK;
+                    } else if (this.game.left && !this.game.right) {
+                        if (Math.abs(this.velocity.x) > MAX_WALK) {
+                            this.velocity.x -= ACC_RUN * TICK;
+                        } else this.velocity.x -= ACC_WALK * TICK;
+                    }
                 }
 
                 if (this.inAir) {
@@ -258,54 +327,56 @@ class Knight extends AbstractPlayer {
                         this.action = this.states.jump_to_fall; //set to falling-in-between
                         //console.log("transition jump here");
                     }
-
+                    
                     if (this.action == this.states.falling) {
-                        // TODO: Fix wall hang
-                        if (this.collisions.hi_left) {
-                            this.action = this.states.wall_slide;
-                            this.facing = this.dir.right;
+                        if (this.action != this.states.wall_climb) {
+                            if (this.diffy.hi > 0 * this.scale && this.diffy.hi <= 12 * this.scale) {
+                                if ((this.collisions.lo_left || this.collisions.hi_left) && this.facing == this.dir.left ||
+                                (this.collisions.lo_right || this.collisions.hi_right) && this.facing == this.dir.right) {
+                                    this.action = this.states.wall_hang;
+                                    this.y = this.y + this.diffy.hi - 8 * this.scale;
+                                    this.velocity.x = 0;
+                                }
+                            }
+                            else if (this.diffy.hi < 8) {
+                                if (this.collisions.lo_left) {
+                                    this.action = this.states.wall_slide;
+                                    this.facing = this.dir.right;
+                                }
+                                else if (this.collisions.lo_right) {
+                                    this.action = this.states.wall_slide;
+                                    this.facing = this.dir.left;
+                                }
+                            }
                         }
-                        //if (this.collisions.lo_left && !this.collisions.hi_left && this.diffy.lo > 20 && this.diffy.lo < 25) {
-                        //    this.action = this.states.wall_hang;
-                        //}
-                        //if (this.collisions.lo_left && this.diffy.hi > 21 && this.diffy.hi < 45) {
-                        //    this.y -= this.diffy.hi - 20;
-                        //    this.action = this.states.wall_hang;
-                        //}
-                        else if (this.collisions.hi_right) {
-                            this.action = this.states.wall_slide;
-                            this.facing = this.dir.left;
-                        }
-                        //if (this.collisions.lo_right && this.diffy.hi > 21 && this.diffy.hi < 40 ) {
-                        //    this.action = this.states.wall_hang;
-                        //}
                     }
                 }
 
                 if (this.game.jump) {
                     // do a wall jump if touching a wall
-                    if (!this.collisions.floor) {
-
-                        if (this.collisions.lo_left && this.diffy.hi >= this.heightBB / 8 || this.collisions.hi_left && this.diffy.lo >= this.heightBB / 8) {
+                    if (!this.touchFloor()) {
+                        if (this.collisions.lo_left) {
                             ASSET_MANAGER.playAsset(SFX.WALLJUMP);
                             this.game.jump = false;
                             this.resetAnimationTimers(this.states.jump);
-                            if (this.action == this.states.wall_slide || this.action == this.states.wall_hang)
+                            this.resetAnimationTimers(this.states.jump_to_fall);
+                            if (this.action == this.states.wall_slide || this.action == this.states.wall_hang && this.game.left && this.facing == this.dir.right)
                                 this.velocity.y -= JUMP_HEIGHT;
                             else
-                                this.velocity.y -= DOUBLE_JUMP_HEIGHT;
+                                this.velocity.y -= DOUBLE_JUMP_HEIGHT * 2;
                             this.velocity.x += MAX_WALK;
                             this.facing = this.dir.right;
                             this.action = this.states.jump;
                         }
-                        else if (this.collisions.lo_right && this.diffy.hi >= this.heightBB / 8 || this.collisions.hi_right && this.diffy.lo >= this.heightBB / 8) {
+                        else if (this.collisions.lo_right) {
                             ASSET_MANAGER.playAsset(SFX.WALLJUMP);
                             this.game.jump = false;
                             this.resetAnimationTimers(this.states.jump);
-                            if (this.action == this.states.wall_slide || this.action == this.states.wall_hang)
+                            this.resetAnimationTimers(this.states.jump_to_fall);
+                            if (this.action == this.states.wall_slide || this.action == this.states.wall_hang && (this.game.left && this.facing == this.dir.right))
                                 this.velocity.y -= JUMP_HEIGHT;
                             else
-                                this.velocity.y -= DOUBLE_JUMP_HEIGHT;
+                                this.velocity.y -= DOUBLE_JUMP_HEIGHT * 2;
                             this.velocity.x -= MAX_WALK;
                             this.facing = this.dir.left;
                             this.action = this.states.jump;
@@ -342,7 +413,15 @@ class Knight extends AbstractPlayer {
                     if (this.velocity.x > 0) this.velocity.x = 0;
                 }
             }
-
+            if (this.action == this.states.wall_climb) {
+                this.velocity.x = (this.facing == 1? 50 : -50) * this.scale;
+                if (this.animations[this.facing][this.action].isDone()){
+                    if (this.touchHole()) {
+                        this.action = this.states.crouch;
+                    }
+                    else this.action = this.states.idle;
+                }
+            }
         }
     }
 
@@ -467,7 +546,7 @@ class Knight extends AbstractPlayer {
      * and adjusts positions or actions if needed
      * @params this.game.clocktick
      */
-    handleCollisions(TICK) {
+    handleCollisions(TICK) {    
         //do collisions detection here
         this.collisions = {
             lo_left: false, hi_left: false, lo_right: false, hi_right: false,
@@ -476,21 +555,43 @@ class Knight extends AbstractPlayer {
         };
         let dist = { x: 0, y: 0 };
         this.diffy = { hi: 0, lo: 0 };
-        //let hole = 0; // at most 15, floor/ceil = 8, adj floor/ceil = 4, low wall = 2, high wall = 1
+        let ent = {top_left: null, top: null, top_right: null};
+        let high = 100000 * this.scale;
         let that = this;
         this.game.entities.forEach(function (entity) {
             if (entity.BB && that.BB.collide(entity.BB) && (entity instanceof Ground || entity instanceof Walls || entity instanceof Platform || entity instanceof Brick)) {
                 // defines which sides are collided
-                if (that.BB.top < entity.BB.top && that.BB.bottom > entity.BB.top) { // checks if mainly bottom, left, or right collison
-                    if (that.BB.left < entity.BB.left && Math.abs(that.BB.right - entity.BB.left) <= Math.abs(that.BB.bottom - entity.BB.top)) {
+                const below = that.BB.top <= entity.BB.top && that.BB.bottom >= entity.BB.top;
+                const above = that.BB.bottom >= entity.BB.bottom && that.BB.top <= entity.BB.bottom;
+                const right = that.BB.right <= entity.BB.right && that.BB.right >= entity.BB.left;
+                const left = that.BB.left >= entity.BB.left && that.BB.left <= entity.BB.right;
+                const between = that.BB.top >= entity.BB.top && that.BB.bottom <= entity.BB.bottom;
+                if (between || 
+                    below && that.BB.top > entity.BB.top - 20 * that.scale ||
+                    above && that.BB.bottom < entity.BB.bottom + 20 * that.scale) {
+                    if (right) {
+                        that.collisions.lo_right = true;
+                        that.collisions.hi_right = true;
+                        dist.x = entity.BB.left - that.BB.right;
+                        if (high > entity.BB.top) high = entity.BB.top;
+                    }
+                    else {
+                        that.collisions.lo_left = true;
+                        that.collisions.hi_left = true;
+                        dist.x = entity.BB.right - that.BB.left;
+                        if (high > entity.BB.top) high = entity.BB.top;
+                    }
+                }
+                if (below) { // checks if mainly bottom, left, or right collison
+                    if (right && Math.abs(that.BB.right - entity.BB.left) <= Math.abs(that.BB.bottom - entity.BB.top)) {
                         that.collisions.lo_right = true;
                         dist.x = entity.BB.left - that.BB.right;
-                        that.diffy.hi = entity.BB.top - that.BB.top;
+                        if (high > entity.BB.top) high = entity.BB.top;
                     }
-                    else if (that.BB.right > entity.BB.right && Math.abs(that.BB.left - entity.BB.right) <= Math.abs(that.BB.bottom - entity.BB.top)) {
+                    else if (left && Math.abs(that.BB.left - entity.BB.right) <= Math.abs(that.BB.bottom - entity.BB.top)) {
                         that.collisions.lo_left = true;
                         dist.x = entity.BB.right - that.BB.left;
-                        that.diffy.hi = entity.BB.top - that.BB.top;
+                        if (high > entity.BB.top) high = entity.BB.top;
                     }
                     else {
                         if (Math.abs(entity.BB.top - that.BB.bottom) > Math.abs(dist.y) || dist.y > 0)
@@ -506,32 +607,36 @@ class Knight extends AbstractPlayer {
                         }
                     }
                 }
-                else if (that.BB.bottom > entity.BB.bottom && that.BB.top < entity.BB.bottom) { // checks if mainly top, left, or right collison
-                    if (that.BB.left < entity.BB.left && Math.abs(that.BB.right - entity.BB.left) <= Math.abs(that.BB.top - entity.BB.bottom)) {
+                else if (above) { // checks if mainly top, left, or right collison
+                    if (right && Math.abs(that.BB.right - entity.BB.left) <= Math.abs(that.BB.top - entity.BB.bottom)) {
                         that.collisions.hi_right = true;
+                        ent.top_right = entity;
                         dist.x = entity.BB.left - that.BB.right;
-                        that.diffy.lo = that.BB.bottom - entity.BB.bottom;
+                        if (high > entity.BB.top) high = entity.BB.top;
                     }
-                    else if (that.BB.right > entity.BB.right && Math.abs(that.BB.left - entity.BB.right) <= Math.abs(that.BB.top - entity.BB.bottom)) {
+                    else if (left && Math.abs(that.BB.left - entity.BB.right) <= Math.abs(that.BB.top - entity.BB.bottom)) {
                         that.collisions.hi_left = true;
+                        ent.top_left = entity;
                         dist.x = entity.BB.right - that.BB.left;
-                        that.diffy.lo = that.BB.bottom - entity.BB.bottom;
+                        if (high > entity.BB.top) high = entity.BB.top;
                     }
                     else {
                         if (Math.abs(entity.BB.bottom - that.BB.top && !that.collisions.floor) > Math.abs(dist.y))
                             dist.y = entity.BB.bottom - that.BB.top;
                         if (that.BB.left <= entity.BB.left) {
                             that.collisions.ceil_right = true;
+                            ent.top_right = entity;
                         }
                         else if (that.BB.right >= entity.BB.right) {
                             that.collisions.ceil_left = true;
+                            ent.top_left = entity;
                         }
                         else {
                             that.collisions.ceil = true;
+                            ent.top = entity;
                         }
                     }
                 }
-                that.updateBB();
             }
             else if (entity.BB && that.BB.collide(entity.BB)) {
                 //player picks up arrow stuck on ground
@@ -559,13 +664,31 @@ class Knight extends AbstractPlayer {
                 }
 
             }
-
-
         });
 
-        // used to debug the number for collision as well as which side are collided
-        //console.log(this.collisions.hi_left + " " + this.collisions.ceil_left + " " + this.collisions.ceil + " " + this.collisions.ceil_right + " " + this.collisions.hi_right);
-        //console.log(this.diffy.hi + " " + this.diffy.lo)
+        this.diffy.hi = high - this.BB.top;
+        console.log(this.diffy.hi);
+        
+        if (this.collisions.hi_right && ent.top_right && (this.collisions.ceil || this.collisions.ceil_left)) {
+            if (ent.top && ent.top.BB.bottom == ent.top_right.BB.bottom ||
+                ent.top_left && ent.top_left.BB.bottom == ent.top_right.BB.bottom) {
+                this.collisions.hi_right = false;
+                this.collisions.ceil = true;
+                if (!this.collisions.lo_right);
+                    dist.x = 0;
+            }
+
+        }
+        else if (this.collisions.hi_left && ent.top_left && (this.collisions.ceil || this.collisions.ceil_right)) {
+            if (ent.top && ent.top.BB.bottom == ent.top_left.BB.bottom ||
+                ent.top_right && ent.top_left.BB.bottom == ent.top_right.BB.bottom) {
+                this.collisions.hi_left = false;
+                this.collisions.ceil = true;
+                if (!this.collisions.lo_left);
+                    dist.x = 0;
+            }
+
+        }
 
         // instances where there are collisions along vertical, but need ignoring
         // all cases are when there's no definitive ceiling or floor (top/bottom collision as part of a wall)
@@ -574,16 +697,15 @@ class Knight extends AbstractPlayer {
         }
         // instances where there are collisons along horizontal, but need ignoring
         // currently only when there's a crawl space to allow auto-crawl
-        if (this.touchFloor() && (this.touchHole())) {
+        if (this.touchFloor() && this.touchHole()) {
             dist.x = 0;
-            this.collisions.ceil = true;
         }
 
         // update position as a result of collision
         this.x += dist.x;
         this.y += dist.y;
         this.updateBB();
-
+        
         // bottom collision
         if (this.touchFloor()) {
             if (this.velocity.y > 0) {
@@ -699,6 +821,58 @@ class Knight extends AbstractPlayer {
         if (this.HB != null) ctx.strokeRect(this.HB.x - this.game.camera.x, this.HB.y - this.game.camera.y, this.HB.width, this.HB.height);
     }
 
+    viewCollisionsBox(ctx) { // debug
+        ctx.strokeStyle = "Gray";
+        const x = 20;
+        const y = 20+this.height - this.heightBB;
+        ctx.lineWidth = 4;
+        ctx.strokeRect(x, y, this.widthBB, this.heightBB);
+        const coll = this.collisions;
+        ctx.strokeStyle = "white";
+        ctx.beginPath();
+        if (coll.ceil) {
+            ctx.moveTo(x, y);
+            ctx.lineTo(x+this.widthBB, y);
+        }
+        if (coll.ceil_left) {
+            ctx.moveTo(x, y);
+            ctx.lineTo(x+this.widthBB / 2, y);
+        }
+        if (coll.ceil_right) {
+            ctx.moveTo(x+this.widthBB / 2, y);
+            ctx.lineTo(x+this.widthBB, y);
+        }
+        if (coll.floor) {
+            ctx.moveTo(x, y+this.heightBB);
+            ctx.lineTo(x+this.widthBB, y+this.heightBB);
+        }
+        if (coll.floor_left) {
+            ctx.moveTo(x, y+this.heightBB);
+            ctx.lineTo(x+this.widthBB / 2, y+this.heightBB);
+        }
+        if (coll.floor_right) {
+            ctx.moveTo(x+this.widthBB / 2, y+this.heightBB);
+            ctx.lineTo(x+this.widthBB, y+this.heightBB);
+        }
+        if (coll.hi_left) {
+            ctx.moveTo(x, y);
+            ctx.lineTo(x, y + this.heightBB/2);
+        }
+        if (coll.lo_left) {
+            ctx.moveTo(x, y + this.heightBB/2);
+            ctx.lineTo(x, y + this.heightBB);
+        }
+        if (coll.hi_right) {
+            ctx.moveTo(x+this.widthBB, y);
+            ctx.lineTo(x+this.widthBB, y + this.heightBB/2);
+        }
+        if (coll.lo_right) {
+            ctx.moveTo(x+this.widthBB, y + this.heightBB/2);
+            ctx.lineTo(x+this.widthBB, y + this.heightBB);
+        }
+        ctx.stroke();
+    }
+
 
     loadAnimations() {
         let numDir = 2;
@@ -730,11 +904,11 @@ class Knight extends AbstractPlayer {
         this.animations[0][this.states.roll] = new Animator(this.spritesheetLeft, 0, 800, 120, 80, 12, 0.083, 0, true, false, false);
         this.animations[1][this.states.roll] = new Animator(this.spritesheetRight, 0, 800, 120, 80, 12, 0.083, 0, false, false, false);
         // wall climb = 6
-        this.animations[0][this.states.wall_climb] = new Animator(this.spritesheetLeft, 600, 1120, 120, 80, 7, 0.2, 0, true, false, false);
-        this.animations[1][this.states.wall_climb] = new Animator(this.spritesheetRight, 0, 1120, 120, 80, 7, 0.2, 0, false, false, false);
+        this.animations[0][this.states.wall_climb] = new Animator(this.spritesheetLeft, 603, 1120, 120, 80, 7, 0.1, 0, true, false, false);
+        this.animations[1][this.states.wall_climb] = new Animator(this.spritesheetRight, -3, 1120, 120, 80, 7, 0.1, 0, false, false, false);
         // wall hang = 7
-        this.animations[0][this.states.wall_hang] = new Animator(this.spritesheetLeft, 1320, 1200, 120, 80, 1, 0.1, 0, true, true, false);
-        this.animations[1][this.states.wall_hang] = new Animator(this.spritesheetRight, 0, 1200, 120, 80, 1, 0.1, 0, false, true, false);
+        this.animations[0][this.states.wall_hang] = new Animator(this.spritesheetLeft, 1318, 1200, 120, 80, 1, 0.2, 0, true, true, false);
+        this.animations[1][this.states.wall_hang] = new Animator(this.spritesheetRight, 2, 1200, 120, 80, 1, 0.2, 0, false, true, false);
         // wall slide
         this.animations[0][this.states.wall_slide] = new Animator(this.spritesheetLeft, 1076, 1280, 120, 80, 3, 0.1, 0, true, true, false);
         this.animations[1][this.states.wall_slide] = new Animator(this.spritesheetRight, 4, 1280, 120, 80, 3, 0.1, 0, false, true, false);
@@ -771,6 +945,7 @@ class Knight extends AbstractPlayer {
 
     /**Offset the bounding box based on action state */
     getOffsets() {
+        const frame = this.animations[this.facing][this.action].currentFrame();
         switch (this.action) {
             // idle, running and jumping BB offsets
             case this.states.idle:
@@ -783,6 +958,25 @@ class Knight extends AbstractPlayer {
                 this.offsetyBB = 41 * this.scale;
                 this.widthBB = 21 * this.scale;
                 this.heightBB = 39 * this.scale;
+                break;
+            // wall hang BB offsets
+            case this.states.wall_hang:
+                this.offsetyBB = 41 * this.scale;
+                this.heightBB = 35 * this.scale;
+                break;
+            // wall climb BB offsets
+            case this.states.wall_climb:
+                switch (frame) {
+                    case 0:
+                        this.offsetyBB = 48 * this.scale;
+                        break;
+                    case 2:
+                        this.heightBB = 28 * this.scale;
+                        break;
+                    case 3:
+                        this.heightBB = 28 * this.scale;
+                        break;
+                }
                 break;
             // crouch and crouch walk BB offsets
             case this.states.crouch:
@@ -806,11 +1000,25 @@ class Knight extends AbstractPlayer {
                 break;
             // attack combo HB offsets
             case this.states.attack1:
+                if (frame > 0 && frame < 3) {
+                    this.offsetyHB = 37 * this.scale;
+                    this.offsetxHB = this.facing == 1 ? 38 * this.scale : 14 * this.scale;
+                    this.widthHB = 68 * this.scale;
+                    this.heightHB = 44 * this.scale;
+                }
+                else this.HB = null;
+                break;
             case this.states.attack2:
-                this.offsetxHB = this.facing == 1 ? 26 * this.scale : 14 * this.scale;
-                this.offsetyHB = 35 * this.scale;
-                this.widthHB = 80 * this.scale;
-                this.heightHB = 45 * this.scale;
+                if (frame > 1 && frame <= 4) {
+                    this.offsetyHB = 38 * this.scale;
+                    this.widthHB = 79 * this.scale;
+                    this.heightHB = 42 * this.scale;
+                    if (frame > 2) {
+                        this.widthHB = 62 * this.scale;
+                    }
+                    this.offsetxHB = this.facing == 1 ? 25 * this.scale : this.width - 25 * this.scale - this.widthHB;
+                }
+                else this.HB = null;
                 break;
         }
     };
