@@ -45,6 +45,7 @@ class Mushroom extends AbstractEnemy {
     };
     // use after any change to this.x or this.y
     updateBoxes() {
+        this.lastBB = this.BB;
         this.getOffsets();
         this.AR = new BoundingBox(this.x + (40 * this.scale), this.y + this.offsetyBB, this.width - (80 * this.scale), this.heightBB);
         this.VB = new BoundingBox(this.x - (80 * this.scale), this.y, this.width + (160 * this.scale), this.height);
@@ -117,23 +118,42 @@ class Mushroom extends AbstractEnemy {
             let that = this;
             let knightInSight = false;
             this.collisions = { left: false, right: false, top: false, bottom: false };
-            this.game.entities.forEach(function (entity) {
+            this.game.foreground2.forEach(function (entity) {
                 // collision with environment
-                if (entity.BB && that.BB.collide(entity.BB) && (entity instanceof Ground || entity instanceof Walls || entity instanceof Platform || entity instanceof Brick)) {
-                    if (that.BB.top < entity.BB.top && that.BB.bottom > entity.BB.top) {
-                        if (that.BB.left < entity.BB.left && Math.abs(that.BB.right - entity.BB.left) <= Math.abs(that.BB.bottom - entity.BB.top)) {
-                            that.collisions.right = true;
-                            dist.x = entity.BB.left - that.BB.right;
-                        } else if (that.BB.right > entity.BB.right && Math.abs(that.BB.left - entity.BB.right) <= Math.abs(that.BB.bottom - entity.BB.top)) {
+                if (entity.BB && that.BB.collide(entity.BB)) {
+                    const below = that.lastBB.top <= entity.BB.top && that.BB.bottom >= entity.BB.top;
+                    const above = that.lastBB.bottom >= entity.BB.bottom && that.BB.top <= entity.BB.bottom;
+                    const right = that.lastBB.right <= entity.BB.right && that.BB.right >= entity.BB.left;
+                    const left = that.lastBB.left >= entity.BB.left && that.BB.left <= entity.BB.right;
+                    const between = that.lastBB.top >= entity.BB.top && that.lastBB.bottom <= entity.BB.bottom;
+                    if (between ||
+                        below && that.BB.top > entity.BB.top - 20 * that.scale ||
+                        above && that.BB.bottom < entity.BB.bottom + 20 * that.scale) {
+                            if (right) {
+                                that.collisions.right = true;
+                                dist.x = entity.BB.left - that.BB.right;
+                            } else {
+                                that.collisions.left = true;
+                                dist.x = entity.BB.right - that.BB.left;
+                            }
+                    }
+                    if (below) {
+                        if (left && Math.abs(that.BB.left - entity.BB.right) <= Math.abs(that.BB.bottom - entity.BB.top)) {
                             that.collisions.left = true;
                             dist.x = entity.BB.right - that.BB.left;
+                        } else if (right && Math.abs(that.BB.right - entity.BB.left) <= Math.abs(that.BB.bottom - entity.BB.top)) {
+                            that.collisions.right = true;
+                            dist.x = entity.BB.left - that.BB.right;
                         } else {
-                            that.collisions.bottom = true;
                             dist.y = entity.BB.top - that.BB.bottom;
+                            that.collisions.bottom = true;
                         }
                     }
                     that.updateBoxes();
                 }
+            });
+
+            this.game.entities.forEach(function (entity) {
                 // knight is in the vision box
                 if (entity.BB && entity instanceof Knight && that.VB.collide(entity.BB)) {
                     knightInSight = true;
@@ -146,7 +166,7 @@ class Mushroom extends AbstractEnemy {
                     }
                 }
                 // knight is in attack range
-                if (entity.BB && entity instanceof Knight && that.AR.collide(entity.BB)) {
+                if (entity.BB && entity instanceof Knight && that.AR.collide(entity.BB) && that.vulnerable) {
                     that.velocity.x = 0;
                     if (that.canAttack || !that.animations[that.states.attack][that.direction].isDone()) {
                         that.runAway = true;
@@ -154,17 +174,19 @@ class Mushroom extends AbstractEnemy {
                         that.state = that.states.attack;
                     }
                 }
-
                 //mushroom hit by something switch the state to damaged
                 if (entity.HB && that.BB.collide(entity.HB) && entity instanceof AbstractPlayer && !that.HB) {
                     //entity.doDamage(that);
                     that.setDamagedState();
+                }
+            });
 
-                } else if (entity.BB && that.BB.collide(entity.BB) && entity instanceof Arrow && !that.HB) {
+            this.game.entities.forEach(function (entity) {
+                if (entity.BB && that.BB.collide(entity.BB) && entity instanceof Arrow && !that.HB) {
                     that.setDamagedState();
                 }
-
             });
+
             // update positions based on environment collisions
             this.x += dist.x;
             this.y += dist.y;
@@ -228,21 +250,6 @@ class Mushroom extends AbstractEnemy {
             this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
             this.healthbar.draw(ctx); //only show healthbar when not dead
         }
-
-
-        if (PARAMS.DEBUG) {
-            this.viewBoundingBox(ctx);
-        }
-    };
-
-    viewBoundingBox(ctx) {
-        ctx.strokeStyle = "Red";
-        ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
-        ctx.strokeStyle = "Blue";
-        ctx.strokeRect(this.VB.x - this.game.camera.x, this.VB.y - this.game.camera.y, this.VB.width, this.VB.height);
-        ctx.strokeRect(this.AR.x - this.game.camera.x, this.AR.y - this.game.camera.y, this.AR.width, this.AR.height);
-        ctx.strokeStyle = "Green";
-        if (this.HB != null) ctx.strokeRect(this.HB.x - this.game.camera.x, this.HB.y - this.game.camera.y, this.HB.width, this.HB.height);
     };
 
     resetAnimationTimers(action) {

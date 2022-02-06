@@ -14,8 +14,6 @@ class AbstractPlayer extends AbstractEntity {
         }
 
         this.myInventory = new Inventory(this.game);
-        this.vignette = new Vignette(this.game, this); //low hp border effect
-        this.game.addEntityToFront(this.vignette);
 
     }
 

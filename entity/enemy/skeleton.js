@@ -90,6 +90,7 @@ class Skeleton extends AbstractEnemy {
         
     };
 
+
     update() {
 
         this.seconds += this.game.clockTick;
@@ -295,10 +296,5 @@ class Skeleton extends AbstractEnemy {
                 break;
             }
         }
-
-        if (PARAMS.DEBUG) {
-            this.viewBoundingBox(ctx);
-        }
-
     };
 };

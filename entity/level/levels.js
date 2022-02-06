@@ -71,7 +71,7 @@ var level1_1 = {
 
     ],
     doors: [
-        { x : 116, y : 0 }
+        { x : 116, y : 0 , canEnter : true }
     ]
 }
 
@@ -129,18 +129,24 @@ var level1_2 = {
     ],
     shrooms : [
         { x : 6, y : -12 },
-        { x : 12, y : 9 },
-        { x : 40, y : 9 },
+        { x : 12, y : 8 },
+        { x : 40, y : 8 }
 
     ],
     windows : [
+        { x : 2, y : 3, width : 1, height : 1.5 },
+        { x : 2, y : 0, width : 1, height : 1.5 },
+        { x : 2, y : -3, width : 1, height : 1.5 },
+        { x : 2, y : -6, width : 1, height : 1.5 },
         { x : 67, y : 4, width : 4, height : 7 },
         { x : 77, y : 4, width : 4, height : 7 },
         { x : 87, y : 4, width : 4, height : 7 },
         { x : 97, y : 4, width : 4, height : 7 },
         { x : 107, y : 4, width : 4, height : 7 },
         { x : 37, y : 2, width : 3, height : 3 },
-        { x : 47, y : 2, width : 3, height : 3 }
+        { x : 47, y : 2, width : 3, height : 3 },
+        { x : 39, y : -14, width : 1, height : 1.5},
+        { x : 46, y : -14, width : 1, height : 1.5}
     ],
     banners : [
         { x : 71, y : 8 },
@@ -150,11 +156,11 @@ var level1_2 = {
         { x : 91, y : 8 },
         { x : 96, y : 8 },
         { x : 101, y : 8 },
-        { x : 106, y : 8 },
+        { x : 106, y : 8 }
     ],
     doors : [
-        { x : 116, y : 9 },
-        { x : 0, y : 9 }
+        { x : 116, y : 9, canEnter : false}, // change to true when there is another level
+        { x : 0, y : 9, canEnter : false }
     ],
     torches : [
         { x : 10, y : 9 },
@@ -164,11 +170,34 @@ var level1_2 = {
         { x : 35, y : 3 },
         { x : 25, y : 3 },
         { x : 15, y : 3 },
+        { x : 25, y : -14},
+        { x : 35, y : -10},
+        { x : 83, y : -10},
+        { x : 77, y : -9},
+        { x : 71, y : - 10},
+        { x : 1, y : -15}
     ],
     chains : [
-        { x : 36, y : 2 },
-        { x : 40, y : 2 },
-        { x : 46, y : 2 },
-        { x : 50, y : 2 }
+        { x : 36, y : 3 },
+        { x : 40, y : 3 },
+        { x : 46, y : 3 },
+        { x : 50, y : 3 },
+        { x : 35, y : -15 },
+        { x : 42, y : -15 },
+        { x : 49, y : -15 },
+    ],
+    columns : [
+        { x : 74, y : 1, height : 11},
+        { x : 84, y : 1, height : 11},
+        { x : 94, y : 1, height : 11},
+        { x : 104, y : 1, height : 11},
+        { x : 53, y : 1, height : 5},
+        { x : 34, y : 1, height : 5},
+        { x : 24, y : 1, height : 5},
+        { x : 14, y : 1, height : 5}
+    ],
+    supports : [
+        { x : 64, y : 1, width : 56 },
+        { x : 10, y : 1, width : 47 }
     ]
 }

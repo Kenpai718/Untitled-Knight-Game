@@ -9,7 +9,7 @@ class SceneManager {
         this.gameOver = false;
 
         //levels array to load levels by calling levels[0], levels[1], etc
-        this.currentLevel = 2;
+        this.currentLevel = 1;
         this.setupAllLevels();
         this.loadLevel(this.currentLevel);
     };
@@ -30,6 +30,7 @@ class SceneManager {
         this.player = new Knight(this.game, x, y);
         this.inventory = this.player.myInventory;
         this.heartsbar = new HeartBar(this.game, this.player);
+        this.vignette = new Vignette(this.game);
         this.game.addEntity(this.player);
     }
 
@@ -44,16 +45,25 @@ class SceneManager {
     }
 
     clearEntities() {
-        this.game.entities.forEach(function (entity) {
+        this.clearLayer(this.game.background1);
+        this.clearLayer(this.game.background2);
+        this.clearLayer(this.game.foreground1);
+        this.clearLayer(this.game.foreground2);
+        this.clearLayer(this.game.entities);
+        this.clearLayer(this.game.projectiles);
+    };
+
+    clearLayer(layer) {
+        layer.forEach(function (entity) {
             entity.removeFromWorld = true;
         });
-    };
+    }
 
     update() {
         PARAMS.DEBUG = document.getElementById("debug").checked;
         this.updateAudio();
-        this.heartsbar.update();
-        this.inventory.update();
+        this.updateGUI();
+
 
         if (this.player.BB.left < 0) this.player.x -= this.player.BB.left;
         else if (this.player.BB.right > this.level.width * PARAMS.BLOCKDIM) this.player.x -= this.player.BB.right - this.level.width * PARAMS.BLOCKDIM;
@@ -61,7 +71,16 @@ class SceneManager {
         else if (this.x > this.player.x - this.game.surfaceWidth * 7 / 16 && this.x > 0) this.x = this.player.x - this.game.surfaceWidth * 7 / 16;
         if (this.y > this.player.y - this.game.surfaceHeight * 1 / 16) this.y = this.player.y - this.game.surfaceHeight * 1 / 16;
         else if (this.y < this.player.y - this.game.surfaceHeight * 3 / 16 && this.y < 0) this.y = this.player.y - this.game.surfaceHeight * 3 / 16;
+
+        this.x = Math.round(this.x);
+        this.y = Math.round(this.y);
     };
+
+    updateGUI() {
+        this.vignette.update();
+        this.heartsbar.update();
+        this.inventory.update();
+    }
 
     updateAudio() {
         let mute = document.getElementById("mute").checked;
@@ -73,6 +92,7 @@ class SceneManager {
     draw(ctx) {
         //gui
         ctx.fillStyle = "White";
+        this.vignette.draw(ctx);
         this.inventory.draw(ctx);
         this.heartsbar.draw(ctx);
 
@@ -81,6 +101,7 @@ class SceneManager {
             this.viewDebug(ctx);
         }
     };
+
 
     //demo of entities for prototshowcase
     loadPrototypeLevel() {
@@ -139,9 +160,7 @@ class SceneManager {
         if (this.level.walls) {
             for (var i = 0; i < this.level.walls.length; i++) {
                 let walls = this.level.walls[i];
-                for (var j = 0; j < walls.height; j++) {
-                    this.game.addEntity(new Walls(this.game, walls.x * PARAMS.BLOCKDIM, (walls.y * PARAMS.BLOCKDIM) + (j * PARAMS.BLOCKDIM), PARAMS.BLOCKDIM, PARAMS.BLOCKDIM, walls.type));
-                }
+                this.game.addEntity(new Walls(this.game, walls.x * PARAMS.BLOCKDIM, walls.y * PARAMS.BLOCKDIM, PARAMS.BLOCKDIM, walls.height * PARAMS.BLOCKDIM, walls.type));
             }
         }
         if (this.level.shrooms) {
@@ -160,7 +179,7 @@ class SceneManager {
         if (this.level.doors) {
             for (var i = 0; i < this.level.doors.length; i++) {
                 let door = this.level.doors[i];
-                this.game.addEntity(new Door(this.game, door.x * PARAMS.BLOCKDIM, door.y * PARAMS.BLOCKDIM));
+                this.game.addEntity(new Door(this.game, door.x * PARAMS.BLOCKDIM, door.y * PARAMS.BLOCKDIM, door.canEnter));
             }
         }
         if (this.level.backgroundWalls) {
@@ -193,9 +212,7 @@ class SceneManager {
         if (this.level.walls) {
             for (var i = 0; i < this.level.walls.length; i++) {
                 let walls = this.level.walls[i];
-                for (var j = 0; j < walls.height; j++) {
-                    this.game.addEntity(new Walls(this.game, walls.x * PARAMS.BLOCKDIM, (walls.y * PARAMS.BLOCKDIM) + (j * PARAMS.BLOCKDIM), PARAMS.BLOCKDIM, PARAMS.BLOCKDIM, walls.type));
-                }
+                this.game.addEntity(new Walls(this.game, walls.x * PARAMS.BLOCKDIM, walls.y * PARAMS.BLOCKDIM, PARAMS.BLOCKDIM, walls.height * PARAMS.BLOCKDIM, walls.type));
             }
         }
         if (this.level.shrooms) {
@@ -223,6 +240,18 @@ class SceneManager {
                 this.game.addEntity(new Banner(this.game, banner.x * PARAMS.BLOCKDIM, banner.y * PARAMS.BLOCKDIM));
             }
         }
+        if (this.level.columns) {
+            for (var i = 0; i < this.level.columns.length; i++) {
+                let column = this.level.columns[i];
+                this.game.addEntity(new Column(this.game, column.x * PARAMS.BLOCKDIM, column.y * PARAMS.BLOCKDIM, column.height * PARAMS.BLOCKDIM));
+            }
+        }
+        if (this.level.supports) {
+            for (var i = 0; i < this.level.supports.length; i++) {
+                let support = this.level.supports[i];
+                this.game.addEntity(new Support(this.game, support.x * PARAMS.BLOCKDIM, support.y * PARAMS.BLOCKDIM, support.width * PARAMS.BLOCKDIM));
+            }
+        }
         if (this.level.chains) {
             for (var i = 0; i < this.level.chains.length; i++) {
                 let chain = this.level.chains[i];
@@ -232,7 +261,7 @@ class SceneManager {
         if (this.level.doors) {
             for (var i = 0; i < this.level.doors.length; i++) {
                 let door = this.level.doors[i];
-                this.game.addEntity(new Door(this.game, door.x * PARAMS.BLOCKDIM, door.y * PARAMS.BLOCKDIM));
+                this.game.addEntity(new Door(this.game, door.x * PARAMS.BLOCKDIM, door.y * PARAMS.BLOCKDIM, door.canEnter));
             }
         }
         if (this.level.backgroundWalls) {
@@ -281,14 +310,14 @@ class SceneManager {
         ctx.lineWidth = 2;
         ctx.strokeStyle = this.game.jump ? "Red" : "SpringGreen";
         ctx.fillStyle = ctx.strokeStyle;
-        ctx.strokeRect(130, this.game.surfaceHeight - 40, 50, 30);
+        ctx.strokeRect(130, this.game.surfaceHeight - 40, 75, 30);
         ctx.fillText("SPACE", 140, this.game.surfaceHeight - 20);
 
         // roll debug
         ctx.lineWidth = 2;
         ctx.strokeStyle = this.game.roll ? "Red" : "SpringGreen";
         ctx.fillStyle = ctx.strokeStyle;
-        ctx.strokeRect(130, this.game.surfaceHeight - 80, 50, 30);
+        ctx.strokeRect(130, this.game.surfaceHeight - 80, 75, 30);
         ctx.fillText("LSHIFT", 140, this.game.surfaceHeight - 60);
 
         // attack debug
@@ -296,7 +325,7 @@ class SceneManager {
         ctx.lineWidth = 2;
         ctx.strokeStyle = this.game.attack ? "Red" : "SpringGreen";
         ctx.fillStyle = ctx.strokeStyle;
-        ctx.strokeRect(190, this.game.surfaceHeight - 40, 30, 30);
-        ctx.fillText("ATK", 195, this.game.surfaceHeight - 20);
+        ctx.strokeRect(215, this.game.surfaceHeight - 40, 45, 30);
+        ctx.fillText("ATK", 220, this.game.surfaceHeight - 20);
     };
 };

@@ -11,7 +11,7 @@ class AbstractEnemy extends AbstractEntity {
             throw new TypeError("Cannot construct AbstractEnemy instance directly!");
         }
 
-    }
+    }   
 
 
 }

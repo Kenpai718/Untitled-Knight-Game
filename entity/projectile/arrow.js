@@ -48,22 +48,24 @@ class Arrow extends AbstractEntity {
         this.updateBB();
 
         let self = this;
+
+        this.game.foreground2.forEach(function (entity) {
+            //if it hits something in environment stick to the ground
+            //stick to ground
+            if (entity.BB && self.BB.collide(entity.BB)) {
+                if (!self.stuck) {
+                    self.velocity.x = 0;
+                    self.velocity.y = 0;
+                    self.stuck = true;
+                    ASSET_MANAGER.playAsset(SFX.ARROW_STICK);
+                }
+            }
+        });
+
         this.game.entities.forEach(function (entity) {
             if (entity.BB && self.BB.collide(entity.BB)) {
-
-                //if it hits something in environment stick to the ground
-                if ((entity instanceof Ground || entity instanceof Walls || entity instanceof Brick || entity instanceof Platform)) {
-                    //stick to ground
-                    if (!self.stuck) {
-                        self.velocity.x = 0;
-                        self.velocity.y = 0;
-                        self.stuck = true;
-                        ASSET_MANAGER.playAsset(SFX.ARROW_STICK);
-                    }
-                }
-
                 //damage value against an enemy that was hit by an arrow
-                if (entity instanceof AbstractEnemy && self.hit == false && self.stuck == false) {
+                if (entity instanceof AbstractEnemy && !self.hit && !self.stuck && !entity.dead) {
                     ASSET_MANAGER.playAsset(SFX.ARROW_HIT);
                     //console.log("hit mushroom with arrow");
                     self.removeFromWorld = true;
@@ -108,21 +110,6 @@ class Arrow extends AbstractEntity {
                 ctx.restore();
             }
         }
-
-
-        if (PARAMS.DEBUG) {
-
-            //circle
-            // ctx.strokeStyle = "Red";
-            // ctx.beginPath();
-            // ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
-            // ctx.closePath();
-            // ctx.stroke();
-
-            //bounding box
-            ctx.strokeStyle = "Red";
-            ctx.strokeRect(this.BB.x - camera_offsetx, this.BB.y - camera_offsety, this.BB.width, this.BB.height);
-        }
     };
 
     setDamagedState() {
@@ -130,7 +117,12 @@ class Arrow extends AbstractEntity {
     }
 
     getDamageValue() {
-        return this.damage;
+        let dmg = this.damage;
+        //critical bonus
+        if (this.isCriticalHit()) {
+            dmg = dmg * PARAMS.CRITICAL_BONUS;
+        }
+        return dmg;
     }
 
 
@@ -167,11 +159,25 @@ class Arrow extends AbstractEntity {
         var yOffset = 16;
 
         ctx.drawImage(this.cache[angle], this.x - xOffset, this.y - yOffset);
-        if (PARAMS.DEBUG) {
-            ctx.strokeStyle = 'Green';
-            ctx.strokeRect(this.x - xOffset, this.y - yOffset, 32, 32);
-        }
     };
 
+    drawDebug(ctx) {
+        const camera_offsetx = this.game.camera.x;
+        const camera_offsety = this.game.camera.y;
+        const xOffset = 16 * this.scale;
+        const yOffset = 16 * this.scale;
+        //circle
+        // ctx.strokeStyle = "Red";
+        // ctx.beginPath();
+        // ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+        // ctx.closePath();
+        // ctx.stroke();
+
+        //bounding box
+        ctx.strokeStyle = "Red";
+        ctx.strokeRect(this.BB.x - camera_offsetx, this.BB.y - camera_offsety, this.BB.width, this.BB.height);
+        //ctx.strokeStyle = 'Green';
+        //ctx.strokeRect(this.x - xOffset, this.y - yOffset, 32, 32);
+    }
 
 };

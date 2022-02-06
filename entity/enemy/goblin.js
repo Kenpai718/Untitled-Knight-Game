@@ -50,7 +50,6 @@ class Goblin extends AbstractEnemy {
 
         this.seconds += this.game.clockTick;
 
-
         const TICK = this.game.clockTick;
         const SCALER = 3;
         const MAX_RUN = 123 * SCALER;
@@ -309,11 +308,10 @@ class Goblin extends AbstractEnemy {
             else                        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - 8- this.game.camera.x, this.y - 5 - this.game.camera.y, this.scale);
             break;
         }
-    }
 
         if (PARAMS.DEBUG) {
             this.viewBoundingBox(ctx);
         }
-    };
 
+    };
 };

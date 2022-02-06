@@ -70,11 +70,11 @@ class HeartContainer {
         if(damage >= this.hp) {
             this.status = this.states.empty;
         } else if(damage >= (this.hp * .75)) {
-            this.status = this.states.threefourth;
+            this.status = this.states.quarter;
         } else if (damage >= (this.hp * .5)) {
             this.status = this.states.half;
         } else if (damage >= (this.hp * .25)) {
-            this.status = this.states.quarter;
+            this.status = this.states.threefourth;
         } else if (damage <= 0) {
             this.status = this.states.full;
         }
