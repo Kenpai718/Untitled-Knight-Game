@@ -1,6 +1,7 @@
-class Door {
+class Door extends AbstractBackFeature {
     constructor(game, x, y, canEnter) {
-        Object.assign(this, { game, x, y, canEnter });
+        super(game, x, y);
+        this.canEnter = canEnter;
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
         this.scale = PARAMS.BLOCKDIM;
         this.w = 2 * PARAMS.BLOCKDIM;
@@ -27,9 +28,10 @@ class Door {
 
     draw(ctx) {
         ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x - this.game.camera.x, this.y - this.game.camera.y, this.w, this.h);
-        if (PARAMS.DEBUG) {
-            ctx.strokeStyle = "Red";
-            ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
-        }
     };
+
+    drawDebug(ctx) {
+        ctx.strokeStyle = "Red";
+        ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
+    }
 }

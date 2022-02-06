@@ -56,24 +56,6 @@ class Skeleton {
         this.VB = new BoundingBox(this.x + 62 - this.visionwidth/2, this.y-37, this.visionwidth, this.height)
     }
 
-    viewBoundingBox(ctx) { 
-        if(this.displayHitbox) {        // This is the Hitbox, defines space where mob can be hit
-            ctx.strokeStyle = "Red";
-            ctx.strokeRect(this.x + 14 * this.scale, this.y-37, 21 * this.scale, 51 * this.scale);
-        }
-        if(this.displayAttackbox) {     // This is Attack Box, defines mob attack area
-            ctx.strokeStyle = "Orange";
-            this.attackwidth = 200;
-            if (this.direction == 0)    ctx.strokeRect(this.x - 109, this.y-53, this.attackwidth, 57 * this.scale);
-            else                        ctx.strokeRect(this.x + 32, this.y-53, this.attackwidth, 57 * this.scale);
-        }
-        if(this.displayVisionbox) {      // This is Vision Box, allows mob to see player when it collides with player's hitbox
-            this.visionwidth = 1200;
-            ctx.strokeStyle = "Yellow";
-            ctx.strokeRect(this.x + 62 - this.visionwidth/2, this.y-37, this.visionwidth, this.height);
-        }
-    };
-
     update() {
 
         this.seconds += this.game.clockTick;
@@ -181,10 +163,5 @@ class Skeleton {
                 else    this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x + 14, this.y-24, this.scale);
                 break;
         }
-
-        if (PARAMS.DEBUG) {
-            this.viewBoundingBox(ctx);
-        }
-
     };
 };
