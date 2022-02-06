@@ -30,6 +30,7 @@ class SceneManager {
         this.player = new Knight(this.game, x, y);
         this.inventory = this.player.myInventory;
         this.heartsbar = new HeartBar(this.game, this.player);
+        this.vignette = new Vignette(this.game);
         this.game.addEntity(this.player);
     }
 
@@ -61,8 +62,8 @@ class SceneManager {
     update() {
         PARAMS.DEBUG = document.getElementById("debug").checked;
         this.updateAudio();
-        this.heartsbar.update();
-        this.inventory.update();
+        this.updateGUI();
+
 
         if (this.player.BB.left < 0) this.player.x -= this.player.BB.left;
         else if (this.player.BB.right > this.level.width * PARAMS.BLOCKDIM) this.player.x -= this.player.BB.right - this.level.width * PARAMS.BLOCKDIM;
@@ -75,6 +76,12 @@ class SceneManager {
         this.y = Math.round(this.y);
     };
 
+    updateGUI() {
+        this.vignette.update();
+        this.heartsbar.update();
+        this.inventory.update();
+    }
+
     updateAudio() {
         let mute = document.getElementById("mute").checked;
         let volume = document.getElementById("volume").value;
@@ -85,6 +92,7 @@ class SceneManager {
     draw(ctx) {
         //gui
         ctx.fillStyle = "White";
+        this.vignette.draw(ctx);
         this.inventory.draw(ctx);
         this.heartsbar.draw(ctx);
 
@@ -93,6 +101,7 @@ class SceneManager {
             this.viewDebug(ctx);
         }
     };
+
 
     //demo of entities for prototshowcase
     loadPrototypeLevel() {
