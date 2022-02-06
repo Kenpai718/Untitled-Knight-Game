@@ -44,10 +44,19 @@ class SceneManager {
     }
 
     clearEntities() {
-        this.game.entities.forEach(function (entity) {
+        this.clearLayer(this.game.background1);
+        this.clearLayer(this.game.background2);
+        this.clearLayer(this.game.foreground1);
+        this.clearLayer(this.game.foreground2);
+        this.clearLayer(this.game.entities);
+        this.clearLayer(this.game.projectiles);
+    };
+
+    clearLayer(layer) {
+        layer.forEach(function (entity) {
             entity.removeFromWorld = true;
         });
-    };
+    }
 
     update() {
         PARAMS.DEBUG = document.getElementById("debug").checked;
