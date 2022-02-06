@@ -146,7 +146,7 @@ class Mushroom extends AbstractEnemy {
                     }
                 }
                 // knight is in attack range
-                if (entity.BB && entity instanceof Knight && that.AR.collide(entity.BB)) {
+                if (entity.BB && entity instanceof Knight && that.AR.collide(entity.BB) && that.vulnerable) {
                     that.velocity.x = 0;
                     if (that.canAttack || !that.animations[that.states.attack][that.direction].isDone()) {
                         that.runAway = true;
