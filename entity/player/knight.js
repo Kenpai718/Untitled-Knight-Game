@@ -214,12 +214,13 @@ class Knight extends AbstractPlayer {
         }
         //this.viewAllAnimations(ctx);
         if (!this.dead) this.healthbar.draw(ctx);
-
-        if (PARAMS.DEBUG) {
-            this.viewBoundingBox(ctx);
-            this.viewCollisionsBox(ctx);
-        }
     };
+
+    drawDebug(ctx) {
+        super.drawDebug(ctx);
+        this.viewBoundingBox(ctx);
+        this.viewCollisionsBox(ctx);
+    }
 
     /**
      * Checks/Executes horizontal and vertical movement
@@ -650,7 +651,6 @@ class Knight extends AbstractPlayer {
                 if (that.HB != null && entity.BB && that.HB.collide(entity.BB)) {
                     //console.log("knight hit an enemy");
                     entity.takeDamage(that.getDamageValue(), that.critical);
-
                 }
 
             }
@@ -871,6 +871,7 @@ class Knight extends AbstractPlayer {
             ctx.lineTo(x+this.widthBB, y + this.heightBB);
         }
         ctx.stroke();
+        ctx.lineWidth = 2;
     }
 
 

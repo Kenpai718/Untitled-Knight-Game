@@ -250,12 +250,12 @@ class Mushroom extends AbstractEnemy {
             this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
             this.healthbar.draw(ctx); //only show healthbar when not dead
         }
-
-
-        if (PARAMS.DEBUG) {
-            this.viewBoundingBox(ctx);
-        }
     };
+
+    drawDebug(ctx) {
+        super.drawDebug(ctx);
+        this.viewBoundingBox(ctx);
+    }
 
     viewBoundingBox(ctx) {
         ctx.strokeStyle = "Red";

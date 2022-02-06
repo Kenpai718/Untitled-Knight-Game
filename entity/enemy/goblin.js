@@ -181,11 +181,10 @@ class Goblin {
             else                        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x-8, this.y-5, this.scale);
             break;
         }
-
-        if (PARAMS.DEBUG) {
-            this.viewBoundingBox(ctx);
-        }
-
     };
+
+    drawDebug(ctx) {
+        this.viewBoundingBox(ctx);
+    }
 
 };

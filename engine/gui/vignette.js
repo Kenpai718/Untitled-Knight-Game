@@ -51,13 +51,12 @@ class Vignette {
             ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
             ctx.restore();
         }
-
-        if (PARAMS.DEBUG) {
-            ctx.strokeStyle = "red";
-            ctx.strokeRect(this.x, this.y, this.width, this.height);
-        }
-
     };
+
+    drawDebug(ctx) {
+        ctx.strokeStyle = "red";
+        ctx.strokeRect(this.x, this.y, this.width, this.height);
+    }
 
 };
 

@@ -50,4 +50,8 @@ class Score {
 
         ctx.font = PARAMS.DEFAULT_FONT;
     };
+
+    drawDebug(ctx) {
+
+    }
 };

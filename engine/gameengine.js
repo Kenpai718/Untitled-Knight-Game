@@ -14,6 +14,7 @@ class GameEngine {
         this.foreground2 = [];
         this.entities = [];
         this.projectiles = [];
+        this.information = [];
 
         // Information on the input
         this.click = null;
@@ -238,7 +239,8 @@ class GameEngine {
             this.foreground1.push(entity);
         else if (e instanceof Ground || e instanceof Walls || e instanceof Platform || e instanceof Brick)
             this.foreground2.push(entity);
-
+        else
+            this.information.push(entity);
     };
 
     addEntityToFront(entity) {
@@ -255,6 +257,8 @@ class GameEngine {
             this.foreground1.unshift(entity);
         else if (e instanceof Ground || e instanceof Walls || e instanceof Platform || e instanceof Brick)
             this.foreground2.unshift(entity);
+        else
+            this.information.unshift(entity);
     };
 
     draw() {
@@ -269,6 +273,17 @@ class GameEngine {
         this.drawLayer(this.foreground2);
         this.drawLayer(this.entities);
         this.drawLayer(this.projectiles);
+        this.drawLayer(this.information);
+
+        if (PARAMS.DEBUG) {
+            //this.drawDebug(this.background1);
+            //this.drawDebug(this.background2);
+            this.drawDebug(this.foreground1);
+            this.drawDebug(this.foreground2);
+            this.drawDebug(this.entities);
+            this.drawDebug(this.projectiles);
+            this.drawDebug(this.information);
+        }
 
 
         //update the camera (scene manager)
@@ -281,26 +296,17 @@ class GameEngine {
         }
     }
 
-    update() {
-        /*
-        let entitiesCount = this.entities.length;
-
-        for (let i = 0; i < entitiesCount; i++) {
-            let entity = this.entities[i];
-
-            if (!entity.removeFromWorld) {
-                entity.update();
-            }
+    drawDebug(layer) {
+        for (let i = layer.length - 1; i >= 0; i--) {
+            layer[i].drawDebug(this.ctx, this);
         }
+    }
 
-        for (let i = this.entities.length - 1; i >= 0; --i) {
-            if (this.entities[i].removeFromWorld) {
-                this.entities.splice(i, 1);
-            }
-        }*/
+    update() {
         this.updateLayer(this.entities);
         this.updateLayer(this.projectiles);
-        this.updateLayer(this.foreground1)
+        this.updateLayer(this.foreground1);
+        this.updateLayer(this.information);
 
         this.removeFromLayer(this.background1);
         this.removeFromLayer(this.background2);
@@ -308,6 +314,7 @@ class GameEngine {
         this.removeFromLayer(this.foreground2);
         this.removeFromLayer(this.entities);
         this.removeFromLayer(this.projectiles);
+        this.removeFromLayer(this.information);
 
         //update the camera (scene manager)
         this.camera.update();

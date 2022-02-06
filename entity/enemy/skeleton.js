@@ -181,10 +181,9 @@ class Skeleton {
                 else    this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x + 14, this.y-24, this.scale);
                 break;
         }
-
-        if (PARAMS.DEBUG) {
-            this.viewBoundingBox(ctx);
-        }
-
     };
+
+    drawDebug(ctx) {
+        this.viewBoundingBox(ctx);
+    }
 };

@@ -39,12 +39,12 @@ class Ground {
         for (let i = 0; i < blockCount; i++) {
             ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcWidth, this.srcHeight, this.x + (i * this.scale) - this.game.camera.x, this.y - this.game.camera.y, this.scale, this.scale);
         }
-
-        if (PARAMS.DEBUG) {
-            ctx.strokeStyle = "Red";
-            ctx.strokeRect(this.BB.x-this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
-        }
     };
+
+    drawDebug(ctx) {
+        ctx.strokeStyle = "Red";
+        ctx.strokeRect(this.BB.x-this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
+    }
 };
 
 class Walls {
@@ -94,12 +94,12 @@ class Walls {
         for (var i = 0; i < blockcount; i++) {
             ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcWidth, this.srcHeight, this.x - this.game.camera.x, this.y + (i * this.scale) - this.game.camera.y, this.scale, this.scale);
         }
-
-        if (PARAMS.DEBUG) {
-            ctx.strokeStyle = "Red";
-            ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
-        }
     };
+
+    drawDebug(ctx) {
+        ctx.strokeStyle = "Red";
+        ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
+    }
 };
 
 
@@ -194,12 +194,12 @@ class Brick {
                 ctx.drawImage(this.spritesheet, this.bricks[i][j].x, this.bricks[i][j].y, this.srcWidth, this.srcHeight, this.x + (j * this.scale) - this.game.camera.x, this.y + (i * this.scale) - this.game.camera.y, this.scale, this.scale);
             }
         }
-
-        if (PARAMS.DEBUG) {
-            ctx.strokeStyle = "Red";
-            ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
-        }
     };
+
+   drawDebug(ctx) {
+        ctx.strokeStyle = "Red";
+        ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
+    }
 };
 
 class Platform {
@@ -230,12 +230,12 @@ class Platform {
         for (let i = 0; i < blockCount; i++) {
             ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcWidth, this.srcHeight, this.x + (i * this.scale) - this.game.camera.x, this.y - this.game.camera.y, this.scale, this.scale);
         }
-
-        if (PARAMS.DEBUG) {
-            ctx.strokeStyle = "Red";
-            ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
-        }
     };
+
+    drawDebug(ctx) {
+        ctx.strokeStyle = "Red";
+        ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
+    }
 
 };
 
@@ -313,6 +313,9 @@ class Torch {
     draw(ctx) {
         this.animation.drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
     };
+
+    drawDebug(cts) {
+    }
 };
 
 class Window {
@@ -331,6 +334,9 @@ class Window {
 
     draw(ctx) {
         ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x - this.game.camera.x, this.y - this.game.camera.y, this.w, this.h);
+    };
+
+    drawDebug(cts) {
     };
 };
 
@@ -352,6 +358,9 @@ class Banner {
 
     draw(ctx) {
         ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x - this.game.camera.x, this.y - this.game.camera.y, this.w, this.h);
+    };
+
+    drawDebug(cts) {
     };
 };
 
@@ -375,6 +384,10 @@ class Chain {
     draw(ctx) {
         ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x - this.game.camera.x, this.y - this.game.camera.y, this.w, this.h);
     };
+
+    drawDebug(ctx) {
+        
+    }
 };
 
 class Column {
@@ -394,6 +407,9 @@ class Column {
 
     draw(ctx) {
         ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x - this.game.camera.x, this.y - this.game.camera.y, this.w, this.h);
+    };
+
+    drawDebug(ctx) {
     };
 };
 
@@ -417,5 +433,9 @@ class Support {
         for (var i = 0; i < blockcount; i++) {
             ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x + (i * PARAMS.BLOCKDIM) - this.game.camera.x, this.y - this.game.camera.y, PARAMS.BLOCKDIM, this.h);
         }
+    };
+
+    drawDebug(ctx) {
+
     };
 }

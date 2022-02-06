@@ -158,4 +158,8 @@ class AbstractEntity {
         return isCritical;
     }
 
+    drawDebug(ctx) {
+        this.healthbar.drawDebug(ctx);
+    }
+
 }
