@@ -78,6 +78,7 @@ class Knight extends AbstractPlayer {
             floor: false, floor_left: false, floor_right: false
         };
         this.diffy = { hi: 0, lo: 0 };
+        this.lastBB = this.BB;
 
         //animations
         this.animations = [];
@@ -196,6 +197,7 @@ class Knight extends AbstractPlayer {
             /**COLLISION HANDLING */
             this.handleCollisions(TICK);
         }
+        this.lastBB = this.BB;
 
     }
 
@@ -247,13 +249,13 @@ class Knight extends AbstractPlayer {
                     else {
                         if (this.facing == this.dir.left) {
                             if (this.velocity.x < 0) {
-                                this.velocity.x += 25;
+                                this.velocity.x += 60;
                             }
                             else this.velocity.x = 0;
                         }
                         else if (this.facing == this.dir.right) {
                             if (this.velocity.x > 0) {
-                                this.velocity.x -= 25;
+                                this.velocity.x -= 60;
                             }
                             else this.velocity.x = 0;
                         }
@@ -304,7 +306,7 @@ class Knight extends AbstractPlayer {
                 }
             } else { //in the air
                 // horizontal physics
-                if (this.action != this.states.wall_hang || this.action != this.states.wall_climb) {
+                if (this.action != this.states.wall_hang && this.action != this.states.wall_climb) {
                     if (this.game.right && !this.game.left) {
                         if (Math.abs(this.velocity.x) > MAX_WALK) {
                             this.velocity.x += ACC_RUN * TICK;
@@ -364,8 +366,10 @@ class Knight extends AbstractPlayer {
                                 this.velocity.y -= JUMP_HEIGHT;
                             else
                                 this.velocity.y -= DOUBLE_JUMP_HEIGHT * 2;
-                            this.velocity.x += MAX_WALK;
-                            this.facing = this.dir.right;
+                            if (this.action != this.states.wall_hang || this.action == this.states.wall_hang && this.game.right) {
+                                this.velocity.x += MAX_WALK;
+                                this.facing = this.dir.right;
+                            }
                             this.action = this.states.jump;
                         }
                         else if (this.collisions.lo_right) {
@@ -373,12 +377,14 @@ class Knight extends AbstractPlayer {
                             this.game.jump = false;
                             this.resetAnimationTimers(this.states.jump);
                             this.resetAnimationTimers(this.states.jump_to_fall);
-                            if (this.action == this.states.wall_slide || this.action == this.states.wall_hang && (this.game.left && this.facing == this.dir.right))
+                            if (this.action == this.states.wall_slide || this.action == this.states.wall_hang && this.game.right && this.facing == this.dir.right)
                                 this.velocity.y -= JUMP_HEIGHT;
                             else
                                 this.velocity.y -= DOUBLE_JUMP_HEIGHT * 2;
-                            this.velocity.x -= MAX_WALK;
-                            this.facing = this.dir.left;
+                            if (this.action != this.states.wall_hang || this.action == this.states.wall_hang && this.game.left) {
+                                this.velocity.x -= MAX_WALK;
+                                this.facing = this.dir.left;
+                            }
                             this.action = this.states.jump;
                         }
                     }
@@ -551,12 +557,12 @@ class Knight extends AbstractPlayer {
         this.game.entities.forEach(function (entity) {
             if (entity.BB && that.BB.collide(entity.BB) && (entity instanceof Ground || entity instanceof Walls || entity instanceof Platform || entity instanceof Brick)) {
                 // defines which sides are collided
-                const below = that.BB.top <= entity.BB.top && that.BB.bottom >= entity.BB.top;
-                const above = that.BB.bottom >= entity.BB.bottom && that.BB.top <= entity.BB.bottom;
-                const right = that.BB.right <= entity.BB.right && that.BB.right >= entity.BB.left;
-                const left = that.BB.left >= entity.BB.left && that.BB.left <= entity.BB.right;
-                const between = that.BB.top >= entity.BB.top && that.BB.bottom <= entity.BB.bottom;
-                if (between ||
+                const below = that.lastBB.top <= entity.BB.top && that.BB.bottom >= entity.BB.top;
+                const above = that.lastBB.bottom >= entity.BB.bottom && that.BB.top <= entity.BB.bottom;
+                const right = that.lastBB.right <= entity.BB.right && that.BB.right >= entity.BB.left;
+                const left = that.lastBB.left >= entity.BB.left && that.BB.left <= entity.BB.right;
+                const between = that.lastBB.top >= entity.BB.top && that.lastBB.bottom <= entity.BB.bottom;
+                if (between || 
                     below && that.BB.top > entity.BB.top - 20 * that.scale ||
                     above && that.BB.bottom < entity.BB.bottom + 20 * that.scale) {
                     if (right) {
@@ -657,8 +663,7 @@ class Knight extends AbstractPlayer {
         });
 
         this.diffy.hi = high - this.BB.top;
-        //console.log(this.diffy.hi);
-
+      
         if (this.collisions.hi_right && ent.top_right && (this.collisions.ceil || this.collisions.ceil_left)) {
             if (ent.top && ent.top.BB.bottom == ent.top_right.BB.bottom ||
                 ent.top_left && ent.top_left.BB.bottom == ent.top_right.BB.bottom) {
