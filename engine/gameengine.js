@@ -226,26 +226,26 @@ class GameEngine {
 
     addEntity(entity) {
         const e = entity;
-        if (e instanceof Arrow || e instanceof FlyingEyeProjectile) 
+        if (e instanceof Arrow || e instanceof FlyingEyeProjectile)
             this.projectiles.push(e);
-        else if (e instanceof AbstractEntity) 
+        else if (e instanceof AbstractEntity)
             this.entities.push(e);
         else if (e instanceof Background)
             this.background1.push(e);
         else if (e instanceof BackgroundWalls)
             this.background2.push(e);
-        else if (e instanceof Torch || e instanceof Window || e instanceof Banner || e instanceof Chain || e instanceof Door)
+        else if (e instanceof Torch || e instanceof Window || e instanceof Banner || e instanceof Chain || e instanceof Door || e instanceof Column || e instanceof Support)
             this.foreground1.push(entity);
         else if (e instanceof Ground || e instanceof Walls || e instanceof Platform || e instanceof Brick)
             this.foreground2.push(entity);
-    
+
     };
 
     addEntityToFront(entity) {
         const e = entity;
-        if (e instanceof Arrow || e instanceof FlyingEyeProjectile) 
+        if (e instanceof Arrow || e instanceof FlyingEyeProjectile)
             this.projectiles.unshift(e);
-        else if (e instanceof AbstractEntity) 
+        else if (e instanceof AbstractEntity)
             this.entities.unshift(e);
         else if (e instanceof Background)
             this.background1.unshift(e);
