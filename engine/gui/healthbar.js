@@ -47,7 +47,7 @@ class HealthBar {
             //print info specific to the agent object above the healthbar for debugging
             ctx.fillText(this.agent.name, newX, newY - (yBuffer * 5) - offsetY);
             ctx.fillText("HP: " + this.agent.hp + "/" + this.agent.max_hp, newX, newY - (yBuffer * 4) - offsetY);
-            ctx.fillText("Cords: [x:" + cordX + ", y:" + cordY + "]", newX, newY - (yBuffer * 3) - offsetY);
+            ctx.fillText("Cords: [x: " + cordX + ", y: " + cordY + "]", newX, newY - (yBuffer * 3) - offsetY);
             ctx.fillText("Velocity: {x: " + velX + ", y: " + velY + "}", newX, newY - (yBuffer * 2) - offsetY);
 
 
