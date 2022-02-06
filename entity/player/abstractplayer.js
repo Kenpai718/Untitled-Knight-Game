@@ -1,7 +1,9 @@
 /**
- * Abstract implementation of an enemy so polymorphism can be used
+ * Abstract implementation of an player entity so polymorphism can be used
  * 
  * Mainly used for the "is-a" relationship
+ * 
+ * Has methods a player object should have access to such as healing, shooting, potions, and inventory
  */
 
 class AbstractPlayer extends AbstractEntity {
@@ -18,32 +20,61 @@ class AbstractPlayer extends AbstractEntity {
     }
 
     /**
-     * Use a potion to heal the character for up to half their hp
+     * Heal the character for a given ammount
      */
-    healPotion() {
+    heal(amount) {
         if (this.hp < this.max_hp) {
-            let potionRestore = (this.max_hp / 2);
             let healed;
 
-            if ((potionRestore + this.hp) >= this.max_hp) {
+            if ((amount + this.hp) >= this.max_hp) {
                 healed = this.max_hp - this.hp;
             } else {
-                healed = potionRestore;
+                healed = amount;
             }
 
             this.hp += healed;
-            this.myInventory.potions--;
             ASSET_MANAGER.playAsset(SFX.HEAL);
             this.game.addEntityToFront(new Score(this.game, this, healed, PARAMS.HEAL_ID, false));
         }
     }
 
     /**
- * Player takes damages
- * Set dead if hp below 0
- * Overrides original method to play a different grunt sound
- * @param {*} damage
- */
+     * Shoot an arrow
+     */
+    shootArrow() {
+        if (this.myInventory.arrows > 0) {
+            //try to position starting arrow at the waist of the knight
+            const target = { x: this.game.mouse.x + this.game.camera.x, y: this.game.mouse.y + this.game.camera.y };
+            this.game.addEntityToFront(new Arrow(this.game, this.x + this.offsetxBB + 20, (this.y + this.height / 2) + 40, target));
+            this.myInventory.arrows--;
+            ASSET_MANAGER.playAsset(SFX.BOW_SHOT);
+
+        } else { //out of arrows 
+            ASSET_MANAGER.playAsset(SFX.CLICK);
+        }
+    }
+
+    /**
+     * Use a potion to heal if there are any
+     */
+    usePotion() {
+        if (this.hp < this.max_hp) {
+            if (this.myInventory.potions > 0) {
+                this.heal(PARAMS.POTION_HEAL);
+                this.myInventory.potions--;
+                ASSET_MANAGER.playAsset(SFX.DRINK);
+            } else { //out of potions
+                ASSET_MANAGER.playAsset(SFX.CLICK);
+            }
+        }
+    }
+
+    /**
+    * Player takes damages
+    * Set dead if hp below 0
+    * Overrides original method to play a different grunt sound
+    * @param {*} damage
+    */
     takeDamage(damage, isCritical) {
         if (this.canTakeDamage()) {
             isCritical ? ASSET_MANAGER.playAsset(SFX.CRITICAL) : ASSET_MANAGER.playAsset(SFX.DAMAGED);
@@ -67,8 +98,6 @@ class AbstractPlayer extends AbstractEntity {
     }
 
 
-
-
     /**
      * Restarts the current level when called
      */
@@ -77,7 +106,7 @@ class AbstractPlayer extends AbstractEntity {
     }
 
     /**
-     * Dead if too far below the stage
+     * Dead if too far below the initial canvas height
      */
     checkInDeathZone() {
         if (this.y >= (this.game.surfaceHeight + 200)) {

@@ -1,13 +1,6 @@
-var ARROW = {NAME: "Arrow",
-             MAX_HP: 10,
-             WIDTH: 32,
-             HEIGHT: 32,
-             SCALE: 2
-};
-
 class Arrow extends AbstractEntity {
     constructor(game, x, y, target, team) {
-        super(game, x, y, ARROW.NAME, ARROW.MAX_HP, ARROW.WIDTH, ARROW.HEIGHT, ARROW.SCALE);
+        super(game, x, y, STATS.ARROW.NAME, STATS.ARROW.MAX_HP, STATS.ARROW.WIDTH, STATS.ARROW.HEIGHT, STATS.ARROW.SCALE);
         Object.assign(this, { game, x, y, target });
         this.radius = 15;
         this.smooth = false;
@@ -37,7 +30,7 @@ class Arrow extends AbstractEntity {
         //specific game values
         this.stuck = false; //stuck = true, hit something like ground and cannot move. Can be picked up by player.
         this.hit = false; //false = not hit an enemy, true = hit enemy. This is needed so an arrow doesn't multi hit during collision.
-        this.damage = 10; //how much hp this arrow will take away if it hits something
+        this.damage = STATS.ARROW.DAMAGE; //how much hp this arrow will take away if it hits something
 
         this.updateBB();
     };
@@ -61,9 +54,12 @@ class Arrow extends AbstractEntity {
                 //if it hits something in environment stick to the ground
                 if ((entity instanceof Ground || entity instanceof Walls || entity instanceof Brick || entity instanceof Platform)) {
                     //stick to ground
-                    self.velocity.x = 0;
-                    self.velocity.y = 0;
-                    self.stuck = true;
+                    if (!self.stuck) {
+                        self.velocity.x = 0;
+                        self.velocity.y = 0;
+                        self.stuck = true;
+                        ASSET_MANAGER.playAsset(SFX.ARROW_STICK);
+                    }
                 }
 
                 //damage value against an enemy that was hit by an arrow
@@ -137,7 +133,7 @@ class Arrow extends AbstractEntity {
         return this.damage;
     }
 
-    
+
     loadAnimations() {
         this.animations.push(new Animator(this.spritesheet, 0, 0, 32, 32, 1, 0.2, 0, false, true)); //up
         this.animations.push(new Animator(this.spritesheet, 40, 0, 32, 32, 1, 0.2, 0, false, true)); //up right

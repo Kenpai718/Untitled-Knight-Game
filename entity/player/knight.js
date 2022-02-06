@@ -161,7 +161,7 @@ class Knight extends AbstractPlayer {
                     this.velocity.y += this.fallAcc * TICK;
                     break;
             }
-            
+
             // max y velocity
             if (this.velocity.y >= MAX_FALL) this.velocity.y = MAX_FALL;
             if (this.velocity.y <= -MAX_FALL) this.velocity.y = -MAX_FALL;
@@ -329,7 +329,7 @@ class Knight extends AbstractPlayer {
                         this.action = this.states.jump_to_fall; //set to falling-in-between
                         //console.log("transition jump here");
                     }
-                    
+
                     if (this.action == this.states.falling) {
                         if (this.action != this.states.wall_climb) {
                             if (this.diffy.hi > 0 * this.scale && this.diffy.hi <= 12 * this.scale) {
@@ -481,17 +481,9 @@ class Knight extends AbstractPlayer {
             }
 
         } else if (!this.game.attack && this.game.shoot) { //only shoot an arrow when not attacking
-
-            if (this.myInventory.arrows > 0) {
-                //try to position starting arrow at the waist of the knight
-                const target = { x: this.game.mouse.x + this.game.camera.x, y: this.game.mouse.y + this.game.camera.y };
-                this.game.addEntityToFront(new Arrow(this.game, this.x + this.offsetxBB, (this.y + this.height / 2) + 40, target));
-                this.myInventory.arrows--;
-                ASSET_MANAGER.playAsset(SFX.BOW_SHOT);
-
-            }
-            this.game.shoot = false;
+            super.shootArrow();
             this.action = this.DEFAULT_ACTION;
+            this.game.shoot = false;
 
 
         } else {
@@ -510,9 +502,7 @@ class Knight extends AbstractPlayer {
      */
     checkAndDoHeal() {
         if (this.game.heal) { //reset all attack animations
-            if (this.myInventory.potions > 0) {
-                super.healPotion();
-            }
+            super.usePotion();
             this.game.heal = false;
 
         }
@@ -552,7 +542,7 @@ class Knight extends AbstractPlayer {
      * and adjusts positions or actions if needed
      * @params this.game.clocktick
      */
-    handleCollisions(TICK) {    
+    handleCollisions(TICK) {
         //do collisions detection here
         this.collisions = {
             lo_left: false, hi_left: false, lo_right: false, hi_right: false,
@@ -673,7 +663,7 @@ class Knight extends AbstractPlayer {
         });
 
         this.diffy.hi = high - this.BB.top;
-        
+      
         if (this.collisions.hi_right && ent.top_right && (this.collisions.ceil || this.collisions.ceil_left)) {
             if (ent.top && ent.top.BB.bottom == ent.top_right.BB.bottom ||
                 ent.top_left && ent.top_left.BB.bottom == ent.top_right.BB.bottom) {
@@ -710,7 +700,7 @@ class Knight extends AbstractPlayer {
         this.x += dist.x;
         this.y += dist.y;
         this.updateBB();
-        
+
         // bottom collision
         if (this.touchFloor()) {
             if (this.velocity.y > 0) {

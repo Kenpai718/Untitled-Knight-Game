@@ -90,7 +90,10 @@ class Walls {
     };
 
     draw(ctx) {
-        ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcWidth, this.srcHeight, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale, this.scale);
+        let blockcount = this.h / this.scale;
+        for (var i = 0; i < blockcount; i++) {
+            ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcWidth, this.srcHeight, this.x - this.game.camera.x, this.y + (i * this.scale) - this.game.camera.y, this.scale, this.scale);
+        }
 
         if (PARAMS.DEBUG) {
             ctx.strokeStyle = "Red";
