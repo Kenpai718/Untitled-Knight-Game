@@ -8,7 +8,12 @@ class GameEngine {
         this.ctx = null;
 
         // Everything that will be updated and drawn each frame
+        this.background1 = [];
+        this.background2 = [];
+        this.foreground1 = [];
+        this.foreground2 = [];
         this.entities = [];
+        this.projectiles = [];
 
         // Information on the input
         this.click = null;
@@ -220,28 +225,64 @@ class GameEngine {
     };
 
     addEntity(entity) {
-        this.entities.push(entity);
+        const e = entity;
+        if (e instanceof Arrow || e instanceof FlyingEyeProjectile) 
+            this.projectiles.push(e);
+        else if (e instanceof AbstractEntity) 
+            this.entities.push(e);
+        else if (e instanceof Background)
+            this.background1.push(e);
+        else if (e instanceof BackgroundWalls)
+            this.background2.push(e);
+        else if (e instanceof Torch || e instanceof Window || e instanceof Banner || e instanceof Chain || e instanceof Door)
+            this.foreground1.push(entity);
+        else if (e instanceof Ground || e instanceof Walls || e instanceof Platform || e instanceof Brick)
+            this.foreground2.push(entity);
+    
     };
 
     addEntityToFront(entity) {
-        this.entities.unshift(entity);
+        const e = entity;
+        if (e instanceof Arrow || e instanceof FlyingEyeProjectile) 
+            this.projectiles.unshift(e);
+        else if (e instanceof AbstractEntity) 
+            this.entities.unshift(e);
+        else if (e instanceof Background)
+            this.background1.unshift(e);
+        else if (e instanceof BackgroundWalls)
+            this.background2.unshift(e);
+        else if (e instanceof Torch || e instanceof Window || e instanceof Banner || e instanceof Chain || e instanceof Door)
+            this.foreground1.unshift(entity);
+        else if (e instanceof Ground || e instanceof Walls || e instanceof Platform || e instanceof Brick)
+            this.foreground2.unshift(entity);
     };
 
     draw() {
         // Clear the whole canvas with transparent color (rgba(0, 0, 0, 0))
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
+
         // Draw latest things first
-        for (let i = this.entities.length - 1; i >= 0; i--) {
-            this.entities[i].draw(this.ctx, this);
-        }
+        this.drawLayer(this.background1);
+        this.drawLayer(this.background2);
+        this.drawLayer(this.foreground1);
+        this.drawLayer(this.foreground2);
+        this.drawLayer(this.entities);
+        this.drawLayer(this.projectiles);
 
 
         //update the camera (scene manager)
         this.camera.draw(this.ctx);
     };
 
+    drawLayer(layer) {
+        for (let i = layer.length - 1; i >= 0; i--) {
+            layer[i].draw(this.ctx, this);
+        }
+    }
+
     update() {
+        /*
         let entitiesCount = this.entities.length;
 
         for (let i = 0; i < entitiesCount; i++) {
@@ -256,11 +297,40 @@ class GameEngine {
             if (this.entities[i].removeFromWorld) {
                 this.entities.splice(i, 1);
             }
-        }
+        }*/
+        this.updateLayer(this.entities);
+        this.updateLayer(this.projectiles);
+        this.updateLayer(this.foreground1)
+
+        this.removeFromLayer(this.background1);
+        this.removeFromLayer(this.background2);
+        this.removeFromLayer(this.foreground1);
+        this.removeFromLayer(this.foreground2);
+        this.removeFromLayer(this.entities);
+        this.removeFromLayer(this.projectiles);
 
         //update the camera (scene manager)
         this.camera.update();
     };
+
+    updateLayer(layer) {
+        let entitiesCount = layer.length;
+        for (let i = 0; i < entitiesCount; i++) {
+            let entity = layer[i];
+
+            if (!entity.removeFromWorld) {
+                entity.update();
+            }
+        }
+    }
+
+    removeFromLayer(layer) {
+        for (let i = layer.length - 1; i >= 0; --i) {
+            if (layer[i].removeFromWorld) {
+                layer.splice(i, 1);
+            }
+        }
+    }
 
     loop() {
         this.clockTick = this.timer.tick();

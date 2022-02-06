@@ -554,7 +554,7 @@ class Knight extends AbstractPlayer {
         let ent = {top_left: null, top: null, top_right: null};
         let high = 100000 * this.scale;
         let that = this;
-        this.game.entities.forEach(function (entity) {
+        this.game.foreground2.forEach(function (entity) {
             if (entity.BB && that.BB.collide(entity.BB) && (entity instanceof Ground || entity instanceof Walls || entity instanceof Platform || entity instanceof Brick)) {
                 // defines which sides are collided
                 const below = that.lastBB.top <= entity.BB.top && that.BB.bottom >= entity.BB.top;
@@ -633,16 +633,10 @@ class Knight extends AbstractPlayer {
                         }
                     }
                 }
-            }
-            else if (entity.BB && that.BB.collide(entity.BB)) {
-                //player picks up arrow stuck on ground
-                if (entity instanceof Arrow && entity.stuck) {
-                    entity.removeFromWorld = true;
-                    that.myInventory.arrows++;
-                    ASSET_MANAGER.playAsset(SFX.ITEM_PICKUP);
-                }
-            }
+            }            
+        });
 
+        this.game.entities.forEach(function (entity) {
             //interactions with enemy
             if (entity instanceof AbstractEnemy) {
                 //attacked by an enemy
@@ -659,6 +653,17 @@ class Knight extends AbstractPlayer {
 
                 }
 
+            }
+        });
+
+        this.game.projectiles.forEach(function (entity) {
+            if (entity.BB && that.BB.collide(entity.BB)) {
+                //player picks up arrow stuck on ground
+                if (entity instanceof Arrow && entity.stuck) {
+                    entity.removeFromWorld = true;
+                    that.myInventory.arrows++;
+                    ASSET_MANAGER.playAsset(SFX.ITEM_PICKUP);
+                }
             }
         });
 

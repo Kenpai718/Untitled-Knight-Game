@@ -117,9 +117,9 @@ class Mushroom extends AbstractEnemy {
             let that = this;
             let knightInSight = false;
             this.collisions = { left: false, right: false, top: false, bottom: false };
-            this.game.entities.forEach(function (entity) {
+            this.game.foreground2.forEach(function (entity) {
                 // collision with environment
-                if (entity.BB && that.BB.collide(entity.BB) && (entity instanceof Ground || entity instanceof Walls || entity instanceof Platform || entity instanceof Brick)) {
+                if (entity.BB && that.BB.collide(entity.BB)) {
                     if (that.BB.top < entity.BB.top && that.BB.bottom > entity.BB.top) {
                         if (that.BB.left < entity.BB.left && Math.abs(that.BB.right - entity.BB.left) <= Math.abs(that.BB.bottom - entity.BB.top)) {
                             that.collisions.right = true;
@@ -134,6 +134,9 @@ class Mushroom extends AbstractEnemy {
                     }
                     that.updateBoxes();
                 }
+            });
+
+            this.game.entities.forEach(function (entity) {
                 // knight is in the vision box
                 if (entity.BB && entity instanceof Knight && that.VB.collide(entity.BB)) {
                     knightInSight = true;
@@ -154,17 +157,19 @@ class Mushroom extends AbstractEnemy {
                         that.state = that.states.attack;
                     }
                 }
-
                 //mushroom hit by something switch the state to damaged
                 if (entity.HB && that.BB.collide(entity.HB) && entity instanceof AbstractPlayer && !that.HB) {
                     //entity.doDamage(that);
                     that.setDamagedState();
-
-                } else if (entity.BB && that.BB.collide(entity.BB) && entity instanceof Arrow && !that.HB) {
+                } 
+            });
+            
+            this.game.entities.forEach(function (entity) {
+                if (entity.BB && that.BB.collide(entity.BB) && entity instanceof Arrow && !that.HB) {
                     that.setDamagedState();
                 }
-
             });
+
             // update positions based on environment collisions
             this.x += dist.x;
             this.y += dist.y;

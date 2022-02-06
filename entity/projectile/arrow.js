@@ -48,22 +48,24 @@ class Arrow extends AbstractEntity {
         this.updateBB();
 
         let self = this;
+
+        this.game.foreground2.forEach(function (entity) {
+            //if it hits something in environment stick to the ground
+            //stick to ground
+            if (entity.BB && self.BB.collide(entity.BB)) {
+                if (!self.stuck) {
+                    self.velocity.x = 0;
+                    self.velocity.y = 0;
+                    self.stuck = true;
+                    ASSET_MANAGER.playAsset(SFX.ARROW_STICK);
+                }
+            }
+        });
+
         this.game.entities.forEach(function (entity) {
             if (entity.BB && self.BB.collide(entity.BB)) {
-
-                //if it hits something in environment stick to the ground
-                if ((entity instanceof Ground || entity instanceof Walls || entity instanceof Brick || entity instanceof Platform)) {
-                    //stick to ground
-                    if (!self.stuck) {
-                        self.velocity.x = 0;
-                        self.velocity.y = 0;
-                        self.stuck = true;
-                        ASSET_MANAGER.playAsset(SFX.ARROW_STICK);
-                    }
-                }
-
                 //damage value against an enemy that was hit by an arrow
-                if (entity instanceof AbstractEnemy && self.hit == false && self.stuck == false) {
+                if (entity instanceof AbstractEnemy && !self.hit && !self.stuck) {
                     ASSET_MANAGER.playAsset(SFX.ARROW_HIT);
                     //console.log("hit mushroom with arrow");
                     self.removeFromWorld = true;
