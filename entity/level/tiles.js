@@ -259,7 +259,7 @@ class BackgroundWalls {
             this.bricks.push([]);
             for (let j = 0; j < blockCountX; j++) {
                 this.bricks[i].push([]);
-                this.type = randomInt(2);
+                this.type = randomInt(20);
                 this.getTileType();
                 this.bricks[i][j] = { x : this.srcX, y : this.srcY };
             }
@@ -277,6 +277,9 @@ class BackgroundWalls {
                 this.srcX = 208;
                 this.srcY = 48;
                 break;
+            default:
+                this.srcX = 176;
+                this.srcY = 30;
         }
     };
 
@@ -360,8 +363,9 @@ class Chain {
         this.srcY = 7;
         this.srcW = 7;
         this.srcH = 26;
-        this.w = 1 * PARAMS.BLOCKDIM;
-        this.h = 3 * PARAMS.BLOCKDIM;
+        this.w = PARAMS.BLOCKDIM / 2;
+        this.h = 2 * PARAMS.BLOCKDIM;
+        this.x += this.w;
     };
 
     update() {
@@ -372,3 +376,46 @@ class Chain {
         ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x - this.game.camera.x, this.y - this.game.camera.y, this.w, this.h);
     };
 };
+
+class Column {
+    constructor(game, x, y, h) {
+        Object.assign(this, { game, x, y, h });
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
+        this.srcX = 320;
+        this.srcY = 25;
+        this.srcW = 19;
+        this.srcH = 39;
+        this.w = 1 * PARAMS.BLOCKDIM;
+    };
+
+    update() {
+
+    };
+
+    draw(ctx) {
+        ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x - this.game.camera.x, this.y - this.game.camera.y, this.w, this.h);
+    };
+};
+
+class Support {
+    constructor(game, x, y, w) {
+        Object.assign(this, { game, x, y, w });
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
+        this.srcX = 272;
+        this.srcY = 0;
+        this.srcW = 32;
+        this.srcH = 13;
+        this.h = 1 * PARAMS.BLOCKDIM;
+    };
+
+    update() {
+
+    };
+
+    draw(ctx) {
+        let blockcount = this.w / PARAMS.BLOCKDIM;
+        for (var i = 0; i < blockcount; i++) {
+            ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x + (i * PARAMS.BLOCKDIM) - this.game.camera.x, this.y - this.game.camera.y, PARAMS.BLOCKDIM, this.h);
+        }
+    };
+}

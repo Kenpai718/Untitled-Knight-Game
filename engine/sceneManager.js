@@ -231,6 +231,18 @@ class SceneManager {
                 this.game.addEntity(new Banner(this.game, banner.x * PARAMS.BLOCKDIM, banner.y * PARAMS.BLOCKDIM));
             }
         }
+        if (this.level.columns) {
+            for (var i = 0; i < this.level.columns.length; i++) {
+                let column = this.level.columns[i];
+                this.game.addEntity(new Column(this.game, column.x * PARAMS.BLOCKDIM, column.y * PARAMS.BLOCKDIM, column.height * PARAMS.BLOCKDIM));
+            }
+        }
+        if (this.level.supports) {
+            for (var i = 0; i < this.level.supports.length; i++) {
+                let support = this.level.supports[i];
+                this.game.addEntity(new Support(this.game, support.x * PARAMS.BLOCKDIM, support.y * PARAMS.BLOCKDIM, support.width * PARAMS.BLOCKDIM));
+            }
+        }
         if (this.level.chains) {
             for (var i = 0; i < this.level.chains.length; i++) {
                 let chain = this.level.chains[i];

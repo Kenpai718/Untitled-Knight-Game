@@ -45,6 +45,7 @@ class Mushroom extends AbstractEnemy {
     };
     // use after any change to this.x or this.y
     updateBoxes() {
+        this.lastBB = this.BB;
         this.getOffsets();
         this.AR = new BoundingBox(this.x + (40 * this.scale), this.y + this.offsetyBB, this.width - (80 * this.scale), this.heightBB);
         this.VB = new BoundingBox(this.x - (80 * this.scale), this.y, this.width + (160 * this.scale), this.height);
@@ -120,16 +121,32 @@ class Mushroom extends AbstractEnemy {
             this.game.foreground2.forEach(function (entity) {
                 // collision with environment
                 if (entity.BB && that.BB.collide(entity.BB)) {
-                    if (that.BB.top < entity.BB.top && that.BB.bottom > entity.BB.top) {
-                        if (that.BB.left < entity.BB.left && Math.abs(that.BB.right - entity.BB.left) <= Math.abs(that.BB.bottom - entity.BB.top)) {
-                            that.collisions.right = true;
-                            dist.x = entity.BB.left - that.BB.right;
-                        } else if (that.BB.right > entity.BB.right && Math.abs(that.BB.left - entity.BB.right) <= Math.abs(that.BB.bottom - entity.BB.top)) {
+                    const below = that.lastBB.top <= entity.BB.top && that.BB.bottom >= entity.BB.top;
+                    const above = that.lastBB.bottom >= entity.BB.bottom && that.BB.top <= entity.BB.bottom;
+                    const right = that.lastBB.right <= entity.BB.right && that.BB.right >= entity.BB.left;
+                    const left = that.lastBB.left >= entity.BB.left && that.BB.left <= entity.BB.right;
+                    const between = that.lastBB.top >= entity.BB.top && that.lastBB.bottom <= entity.BB.bottom;
+                    if (between ||
+                        below && that.BB.top > entity.BB.top - 20 * that.scale ||
+                        above && that.BB.bottom < entity.BB.bottom + 20 * that.scale) {
+                            if (right) {
+                                that.collisions.right = true;
+                                dist.x = entity.BB.left - that.BB.right;
+                            } else {
+                                that.collisions.left = true;
+                                dist.x = entity.BB.right - that.BB.left;
+                            }
+                    }
+                    if (below) {
+                        if (left && Math.abs(that.BB.left - entity.BB.right) <= Math.abs(that.BB.bottom - entity.BB.top)) {
                             that.collisions.left = true;
                             dist.x = entity.BB.right - that.BB.left;
+                        } else if (right && Math.abs(that.BB.right - entity.BB.left) <= Math.abs(that.BB.bottom - entity.BB.top)) {
+                            that.collisions.right = true;
+                            dist.x = entity.BB.left - that.BB.right;
                         } else {
-                            that.collisions.bottom = true;
                             dist.y = entity.BB.top - that.BB.bottom;
+                            that.collisions.bottom = true;
                         }
                     }
                     that.updateBoxes();
@@ -161,9 +178,9 @@ class Mushroom extends AbstractEnemy {
                 if (entity.HB && that.BB.collide(entity.HB) && entity instanceof AbstractPlayer && !that.HB) {
                     //entity.doDamage(that);
                     that.setDamagedState();
-                } 
+                }
             });
-            
+
             this.game.entities.forEach(function (entity) {
                 if (entity.BB && that.BB.collide(entity.BB) && entity instanceof Arrow && !that.HB) {
                     that.setDamagedState();
