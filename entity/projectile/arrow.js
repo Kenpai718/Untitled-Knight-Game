@@ -117,7 +117,12 @@ class Arrow extends AbstractEntity {
     }
 
     getDamageValue() {
-        return this.damage;
+        let dmg = this.damage;
+        //critical bonus
+        if (this.isCriticalHit()) {
+            dmg = dmg * PARAMS.CRITICAL_BONUS;
+        }
+        return dmg;
     }
 
 

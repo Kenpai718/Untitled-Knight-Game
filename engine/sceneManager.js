@@ -310,14 +310,14 @@ class SceneManager {
         ctx.lineWidth = 2;
         ctx.strokeStyle = this.game.jump ? "Red" : "SpringGreen";
         ctx.fillStyle = ctx.strokeStyle;
-        ctx.strokeRect(130, this.game.surfaceHeight - 40, 50, 30);
+        ctx.strokeRect(130, this.game.surfaceHeight - 40, 75, 30);
         ctx.fillText("SPACE", 140, this.game.surfaceHeight - 20);
 
         // roll debug
         ctx.lineWidth = 2;
         ctx.strokeStyle = this.game.roll ? "Red" : "SpringGreen";
         ctx.fillStyle = ctx.strokeStyle;
-        ctx.strokeRect(130, this.game.surfaceHeight - 80, 50, 30);
+        ctx.strokeRect(130, this.game.surfaceHeight - 80, 75, 30);
         ctx.fillText("LSHIFT", 140, this.game.surfaceHeight - 60);
 
         // attack debug
@@ -325,7 +325,7 @@ class SceneManager {
         ctx.lineWidth = 2;
         ctx.strokeStyle = this.game.attack ? "Red" : "SpringGreen";
         ctx.fillStyle = ctx.strokeStyle;
-        ctx.strokeRect(190, this.game.surfaceHeight - 40, 30, 30);
-        ctx.fillText("ATK", 195, this.game.surfaceHeight - 20);
+        ctx.strokeRect(215, this.game.surfaceHeight - 40, 45, 30);
+        ctx.fillText("ATK", 220, this.game.surfaceHeight - 20);
     };
 };

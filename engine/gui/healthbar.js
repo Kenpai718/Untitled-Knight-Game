@@ -60,14 +60,14 @@ class HealthBar {
         ctx.fillStyle = ratio < PARAMS.LOW_HP ? "Red" : ratio < PARAMS.MID_HP ? "Yellow" : "SpringGreen";
 
         //print info specific to the agent object above the healthbar for debugging
-        ctx.fillText(this.agent.name, newX, newY - (yBuffer * 5) - offsetY);
-        ctx.fillText("HP: " + this.agent.hp + "/" + this.agent.max_hp, newX, newY - (yBuffer * 4) - offsetY);
-        ctx.fillText("Cords: [x: " + cordX + ", y: " + cordY + "]", newX, newY - (yBuffer * 3) - offsetY);
-        ctx.fillText("Velocity: {x: " + velX + ", y: " + velY + "}", newX, newY - (yBuffer * 2) - offsetY);
+        ctx.fillText(this.agent.name, newX - offsetX, newY - (yBuffer * 5) - offsetY);
+        ctx.fillText("HP:" + this.agent.hp + "/" + this.agent.max_hp, newX - offsetX, newY - (yBuffer * 4) - offsetY);
+        ctx.fillText("Cords:[x:" + cordX + ",y:" + cordY + "]", newX - offsetX, newY - (yBuffer * 3) - offsetY);
+        ctx.fillText("Velocity:{x:" + velX + ",y:" + velY + "}", newX - offsetX, newY - (yBuffer * 2) - offsetY);
 
 
         (this.agent.vulnerable) ? ctx.fillStyle = "GhostWhite" : ctx.fillStyle = "DimGray";
         ctx.font = PARAMS.DEFAULT_FONT;
-        ctx.fillText("Vulnerable: " + this.agent.vulnerable, newX, newY - (yBuffer * 1) - offsetY)
+        ctx.fillText("Vulnerable:" + this.agent.vulnerable, newX - offsetX, newY - (yBuffer * 1) - offsetY)
     }
 };

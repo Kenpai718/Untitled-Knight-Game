@@ -12,17 +12,17 @@ const rgb = (r, g, b) => `rgba(${r}, ${g}, ${b})`;
 const PARAMS = {
     DEBUG: false,      //for showing debug settings on canvas when ticked
     BLOCKDIM: 81,      //dimensions of blocks
-    DMG_COOLDOWN: .8,  //how long the cooldown is for an entity to take damage
+    DMG_COOLDOWN: .5,  //how long the cooldown is for an entity to take damage
 
     //GUI
-    BIG_FONT: "30px Impact",       //font used for big moments like damage numbers
-    DEFAULT_FONT: "10px Arial",    //regular font
+    BIG_FONT: '20px "Press Start 2P"',       //font used for big moments like damage numbers
+    DEFAULT_FONT: '10px "Press Start 2P"',    //regular font
     HEART_DIM: 17,                  //for hearts hp bar
     GUI_SCALE: 3,                   //gui scaling
 
     //critical
     CRITICAL_BONUS: 2,                  //multipler for a crit dmg
-    CRITICAL_FONT: "40px Impact",
+    CRITICAL_FONT: '30px "Press Start 2P"',
     CRITICAL_CHANCE: 10,                //percentage 0-100
     CRITICAL_COLOR: rgb(255, 215, 0),   //yellow
 
