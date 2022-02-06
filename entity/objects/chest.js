@@ -60,9 +60,6 @@ class Chest {
                 entity.myInventory.potions += that.potionStorage; 
                 entity.myInventory.arrows += that.arrowStorage;
 
-                console.log("Arrows: " + that.arrowStorage);
-                console.log("Potion: " + that.potionStorage);
-
                 that.timerGUI = that.timerGUI2 + 1;
             }
         }); // Allows timer to start when open, used for fade effect
