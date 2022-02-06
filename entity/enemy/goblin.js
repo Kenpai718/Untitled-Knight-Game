@@ -56,24 +56,6 @@ class Goblin {
         this.VB = new BoundingBox(this.x + 32 - this.visionwidth/2, this.y, this.visionwidth, this.height + 1)
     }
 
-    viewBoundingBox(ctx) { 
-        if(this.displayHitbox) {        // This is the Hitbox, defines space where mob can be hit
-            ctx.strokeStyle = "Red";
-            ctx.strokeRect(this.x + 4 * this.scale, this.y + 2 * this.scale, 19 * this.scale, 34 * this.scale + 1);
-        }
-        if(this.displayAttackbox) {     // This is Attack Box, defines mob attack area
-            ctx.strokeStyle = "Orange";
-            this.attackwidth = 89 * this.scale;
-            if (this.direction == 0)    ctx.strokeRect(this.x-71, this.y-24, this.attackwidth, 46 * this.scale);
-            else                        ctx.strokeRect(this.x-84, this.y-24, this.attackwidth, 46 * this.scale);
-        }
-        if(this.displayVisionbox) {      // This is Vision Box, allows mob to see player when it collides with player's hitbox
-            this.visionwidth = 1400;
-            ctx.strokeStyle = "Yellow";
-            ctx.strokeRect(this.x + 32 - this.visionwidth/2, this.y, this.visionwidth, this.height + 1);
-        }
-    };
-
     update() { // physics
 
         this.seconds += this.game.clockTick;
@@ -182,9 +164,4 @@ class Goblin {
             break;
         }
     };
-
-    drawDebug(ctx) {
-        this.viewBoundingBox(ctx);
-    }
-
 };

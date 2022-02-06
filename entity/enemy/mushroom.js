@@ -252,21 +252,6 @@ class Mushroom extends AbstractEnemy {
         }
     };
 
-    drawDebug(ctx) {
-        super.drawDebug(ctx);
-        this.viewBoundingBox(ctx);
-    }
-
-    viewBoundingBox(ctx) {
-        ctx.strokeStyle = "Red";
-        ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
-        ctx.strokeStyle = "Blue";
-        ctx.strokeRect(this.VB.x - this.game.camera.x, this.VB.y - this.game.camera.y, this.VB.width, this.VB.height);
-        ctx.strokeRect(this.AR.x - this.game.camera.x, this.AR.y - this.game.camera.y, this.AR.width, this.AR.height);
-        ctx.strokeStyle = "Green";
-        if (this.HB != null) ctx.strokeRect(this.HB.x - this.game.camera.x, this.HB.y - this.game.camera.y, this.HB.width, this.HB.height);
-    };
-
     resetAnimationTimers(action) {
         this.animations[action][0].elapsedTime = 0;
         this.animations[action][1].elapsedTime = 0;
