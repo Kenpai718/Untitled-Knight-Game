@@ -235,9 +235,9 @@ class GameEngine {
             this.background1.push(e);
         else if (e instanceof BackgroundWalls)
             this.background2.push(e);
-        else if (e instanceof Torch || e instanceof Window || e instanceof Banner || e instanceof Chain || e instanceof Door || e instanceof Column || e instanceof Support)
+        else if (e instanceof AbstractBackFeature || e instanceof Door)
             this.foreground1.push(entity);
-        else if (e instanceof Ground || e instanceof Walls || e instanceof Platform || e instanceof Brick)
+        else if (e instanceof AbstractBarrier)
             this.foreground2.push(entity);
         else
             this.information.push(entity);

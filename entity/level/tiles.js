@@ -1,6 +1,25 @@
-class Ground {
+class AbstractBarrier {
+    constructor(game, x, y, w, h) {
+        Object.assign(this, {game, x, y, w, h});
+    }
+
+    update() {
+    };
+
+    draw(ctx) {
+    }
+
+    drawDebug(ctx) {
+        ctx.strokeStyle = "Red";
+        if (this.BB)
+            ctx.strokeRect(this.BB.x-this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
+    }
+}
+
+class Ground extends AbstractBarrier {
     constructor(game, x, y, w, h, type) {
-        Object.assign(this, { game, x, y, w, h, type});
+        super(game, x, y, w, h);
+        this.type = type;
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
         // left is for left corner piece, middle is for middle piece, right is for right corner piece
         this.types = { left : 0, middle : 1, right : 2};
@@ -31,25 +50,18 @@ class Ground {
         this.bottomBB = new BoundingBox(this.x, this.y + this.h / 2, this.w, this.h / 2);
     };
 
-    update() {
-    };
-
     draw(ctx) {
         let blockCount = this.w / this.scale; // number of blocks to draw
         for (let i = 0; i < blockCount; i++) {
             ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcWidth, this.srcHeight, this.x + (i * this.scale) - this.game.camera.x, this.y - this.game.camera.y, this.scale, this.scale);
         }
     };
-
-    drawDebug(ctx) {
-        ctx.strokeStyle = "Red";
-        ctx.strokeRect(this.BB.x-this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
-    }
 };
 
-class Walls {
+class Walls extends AbstractBarrier {
     constructor(game, x, y, w, h, type) {
-        Object.assign(this, { game, x, y, w, h, type});
+        super(game, x, y, w, h);
+        this.type = type;
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
         // left : middle left wall, leftCorner : bottom left corner wall, right : middle right wall, rightCorner : bottom right corner wall
         this.types = { left : 0, leftCorner : 1, right : 2, rightCorner : 3};
@@ -86,27 +98,17 @@ class Walls {
         this.bottomBB = new BoundingBox(this.x, this.y + this.h / 2, this.w, this.h / 2);
     };
 
-    update() {
-    };
-
     draw(ctx) {
         let blockcount = this.h / this.scale;
         for (var i = 0; i < blockcount; i++) {
             ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcWidth, this.srcHeight, this.x - this.game.camera.x, this.y + (i * this.scale) - this.game.camera.y, this.scale, this.scale);
         }
     };
-
-    drawDebug(ctx) {
-        ctx.strokeStyle = "Red";
-        ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
-    }
 };
 
-
-
-class Brick {
+class Brick extends AbstractBarrier {
     constructor(game, x, y, w, h) {
-        Object.assign(this, { game, x, y, w, h});
+        super(game, x, y, w, h);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
         this.scale = PARAMS.BLOCKDIM;
         // only need to worry about these if you want a specific kind of brick
@@ -183,9 +185,6 @@ class Brick {
         this.bottomBB = new BoundingBox(this.x, this.y + this.h / 2, this.w, this.h / 2);
     };
 
-    update() {
-    };
-
     draw(ctx) {
         let blocksY = this.h / this.scale; // number of rows of blocks
         let blocksX = this.w / this.scale; // number of columns of blocks
@@ -195,16 +194,11 @@ class Brick {
             }
         }
     };
-
-   drawDebug(ctx) {
-        ctx.strokeStyle = "Red";
-        ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
-    }
 };
 
-class Platform {
+class Platform extends AbstractBarrier {
     constructor(game, x, y, w, h) {
-        Object.assign(this, { game, x, y, w, h });
+        super(game, x, y, w, h);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
         this.scale = PARAMS.BLOCKDIM;
         this.srcX = 144;
@@ -222,23 +216,13 @@ class Platform {
         this.bottomBB = new BoundingBox(this.x, this.y + this.h / 2, this.w, this.h / 2);
     };
 
-    update() {
-    };
-
     draw(ctx) {
         let blockCountX = this.w / this.scale;
         for (let i = 0; i < blockCount; i++) {
             ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcWidth, this.srcHeight, this.x + (i * this.scale) - this.game.camera.x, this.y - this.game.camera.y, this.scale, this.scale);
         }
     };
-
-    drawDebug(ctx) {
-        ctx.strokeStyle = "Red";
-        ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
-    }
-
 };
-
 
 class BackgroundWalls {
     constructor(game, x, y, w, h) {
@@ -298,29 +282,33 @@ class BackgroundWalls {
     };
 };
 
-class Torch {
+class AbstractBackFeature {
     constructor(game, x, y) {
-        Object.assign(this, {game, x, y});
+        Object.assign(this, { game, x, y });
+    }
+
+    update() {}
+    drawDebug() {}
+}
+
+class Torch extends AbstractBackFeature {
+    constructor(game, x, y) {
+        super(game, x, y);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
         this.scale = 5;
         this.animation = new Animator(this.spritesheet, 19, 112, 17, 17, 3, 0.7, 4, false, true, false); // torch animation
     };
 
-    update() {
-
-    };
-
     draw(ctx) {
         this.animation.drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
     };
-
-    drawDebug(cts) {
-    }
 };
 
-class Window {
+class Window extends AbstractBackFeature {
     constructor(game, x, y, w, h) {
-        Object.assign(this, { game, x, y, w, h });
+        super(game, x, y);
+        this.w = w;
+        this.h = h;
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
         this.srcX = 176;
         this.srcY = 70;
@@ -328,21 +316,14 @@ class Window {
         this.srcH = 25;
     };
 
-    update() {
-
-    };
-
     draw(ctx) {
         ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x - this.game.camera.x, this.y - this.game.camera.y, this.w, this.h);
     };
-
-    drawDebug(cts) {
-    };
 };
 
-class Banner {
+class Banner extends AbstractBackFeature {
     constructor(game, x, y) {
-        Object.assign(this, { game, x, y });
+        super(game, x, y);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
         this.srcX = 207;
         this.srcY = 7;
@@ -352,21 +333,14 @@ class Banner {
         this.h = 3 * PARAMS.BLOCKDIM;
     };
 
-    update() {
-
-    };
-
     draw(ctx) {
         ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x - this.game.camera.x, this.y - this.game.camera.y, this.w, this.h);
     };
-
-    drawDebug(cts) {
-    };
 };
 
-class Chain {
+class Chain extends AbstractBackFeature {
     constructor(game, x, y) {
-        Object.assign(this, { game, x, y });
+        super(game, x, y);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
         this.srcX = 245;
         this.srcY = 7;
@@ -377,22 +351,15 @@ class Chain {
         this.x += this.w;
     };
 
-    update() {
-
-    };
-
     draw(ctx) {
         ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x - this.game.camera.x, this.y - this.game.camera.y, this.w, this.h);
     };
-
-    drawDebug(ctx) {
-        
-    }
 };
 
-class Column {
+class Column extends AbstractBackFeature {
     constructor(game, x, y, h) {
-        Object.assign(this, { game, x, y, h });
+        super(game, x, y);
+        this.h = h;
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
         this.srcX = 320;
         this.srcY = 25;
@@ -401,21 +368,15 @@ class Column {
         this.w = 1 * PARAMS.BLOCKDIM;
     };
 
-    update() {
-
-    };
-
     draw(ctx) {
         ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x - this.game.camera.x, this.y - this.game.camera.y, this.w, this.h);
     };
-
-    drawDebug(ctx) {
-    };
 };
 
-class Support {
+class Support extends AbstractBackFeature {
     constructor(game, x, y, w) {
-        Object.assign(this, { game, x, y, w });
+        super(game, x, y);
+        this.w = w;
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
         this.srcX = 272;
         this.srcY = 0;
@@ -424,18 +385,10 @@ class Support {
         this.h = 1 * PARAMS.BLOCKDIM;
     };
 
-    update() {
-
-    };
-
     draw(ctx) {
         let blockcount = this.w / PARAMS.BLOCKDIM;
         for (var i = 0; i < blockcount; i++) {
             ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x + (i * PARAMS.BLOCKDIM) - this.game.camera.x, this.y - this.game.camera.y, PARAMS.BLOCKDIM, this.h);
         }
-    };
-
-    drawDebug(ctx) {
-
     };
 }

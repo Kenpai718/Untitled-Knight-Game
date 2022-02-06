@@ -1,6 +1,7 @@
-class Door {
+class Door extends AbstractBackFeature {
     constructor(game, x, y, canEnter) {
-        Object.assign(this, { game, x, y, canEnter });
+        super(game, x, y);
+        this.canEnter = canEnter;
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
         this.scale = PARAMS.BLOCKDIM;
         this.w = 2 * PARAMS.BLOCKDIM;
