@@ -171,6 +171,18 @@ class SceneManager {
                 this.game.addEntity(new Mushroom(this.game, shroom.x * PARAMS.BLOCKDIM, shroom.y * PARAMS.BLOCKDIM));
             }
         }
+        if (this.level.goblins) {
+            for (var i = 0; i < this.level.goblins.length; i++) {
+                let goblin = this.level.goblins[i];
+                this.game.addEntity(new Goblin(this.game, goblin.x * PARAMS.BLOCKDIM, goblin.y * PARAMS.BLOCKDIM));
+            }
+        }
+        if (this.level.skeletons) {
+            for (var i = 0; i < this.level.skeletons.length; i++) {
+                let skeleton = this.level.skeletons[i];
+                this.game.addEntity(new Skeleton(this.game, skeleton.x * PARAMS.BLOCKDIM, skeleton.y * PARAMS.BLOCKDIM));
+            }
+        }
         // The following must be last
         if (this.level.torches) {
             for (var i = 0; i < this.level.torches.length; i++) {
