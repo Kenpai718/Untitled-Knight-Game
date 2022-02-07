@@ -362,14 +362,19 @@ class Column extends AbstractBackFeature {
         this.h = h;
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
         this.srcX = 320;
-        this.srcY = 25;
+        this.srcY = 27;
         this.srcW = 19;
-        this.srcH = 39;
+        this.srcH = 28;
+        this.baseX = 320;
+        this.baseY = 55;
+        this.baseW = 16;
+        this.baseH = 9;
         this.w = 1 * PARAMS.BLOCKDIM;
     };
 
     draw(ctx) {
         ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x - this.game.camera.x, this.y - this.game.camera.y, this.w, this.h);
+        ctx.drawImage(this.spritesheet, this.baseX, this.baseY, this.baseW, this.baseH, this.x - this.game.camera.x, this.y - this.game.camera.y + this.h - PARAMS.BLOCKDIM, this.w, PARAMS.BLOCKDIM);
     };
 };
 
