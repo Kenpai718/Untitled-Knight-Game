@@ -29,7 +29,8 @@ class Goblin extends AbstractEnemy {
         this.damagedCooldown = 0;
         this.runAway = false;
         this.attackCooldown = 0;
-
+        this.visionwidth = 1400;
+        this.attackwidth = 89 * this.scale;
         this.damageValue = STATS.GOBLIN.DAMAGE;
 
         // Mapping animations and mob states
@@ -80,23 +81,41 @@ class Goblin extends AbstractEnemy {
             let that = this;
             let knightInSight = false;
             this.collisions = { left: false, right: false, top: false, bottom: false };
-            this.game.entities.forEach(function (entity) {
+            this.game.foreground2.forEach(function (entity) {
                 // collision with environment
-                if (entity.BB && that.BB.collide(entity.BB) && (entity instanceof Ground || entity instanceof Walls || entity instanceof Platform || entity instanceof Brick)) {
-                    if (that.BB.top < entity.BB.top && that.BB.bottom > entity.BB.top) {
-                        if (that.BB.left < entity.BB.left && Math.abs(that.BB.right - entity.BB.left) <= Math.abs(that.BB.bottom - entity.BB.top)) {
-                            that.collisions.right = true;
-                            dist.x = entity.BB.left - that.BB.right;
-                        } else if (that.BB.right > entity.BB.right && Math.abs(that.BB.left - entity.BB.right) <= Math.abs(that.BB.bottom - entity.BB.top)) {
+                if (entity.BB && that.BB.collide(entity.BB)) {
+                    const below = that.lastBB.top <= entity.BB.top && that.BB.bottom >= entity.BB.top;
+                    const above = that.lastBB.bottom >= entity.BB.bottom && that.BB.top <= entity.BB.bottom;
+                    const right = that.lastBB.right <= entity.BB.right && that.BB.right >= entity.BB.left;
+                    const left = that.lastBB.left >= entity.BB.left && that.BB.left <= entity.BB.right;
+                    const between = that.lastBB.top >= entity.BB.top && that.lastBB.bottom <= entity.BB.bottom;
+                    if (between ||
+                        below && that.BB.top > entity.BB.top - 20 * that.scale ||
+                        above && that.BB.bottom < entity.BB.bottom + 20 * that.scale) {
+                            if (right) {
+                                that.collisions.right = true;
+                                dist.x = entity.BB.left - that.BB.right;
+                            } else {
+                                that.collisions.left = true;
+                                dist.x = entity.BB.right - that.BB.left;
+                            }
+                    }
+                    if (below) {
+                        if (left && Math.abs(that.BB.left - entity.BB.right) <= Math.abs(that.BB.bottom - entity.BB.top)) {
                             that.collisions.left = true;
                             dist.x = entity.BB.right - that.BB.left;
+                        } else if (right && Math.abs(that.BB.right - entity.BB.left) <= Math.abs(that.BB.bottom - entity.BB.top)) {
+                            that.collisions.right = true;
+                            dist.x = entity.BB.left - that.BB.right;
                         } else {
-                            that.collisions.bottom = true;
                             dist.y = entity.BB.top - that.BB.bottom;
+                            that.collisions.bottom = true;
                         }
                     }
                     that.updateBoxes();
                 }
+            });
+            this.game.entities.forEach(function (entity) {
                 // knight is in the vision box
                 if (entity.BB && entity instanceof Knight && that.VB.collide(entity.BB)) {
                     knightInSight = true;
@@ -207,28 +226,11 @@ class Goblin extends AbstractEnemy {
     };
 
     updateBoxes() {
+        this.lastBB = this.BB;
         this.BB = new BoundingBox(this.x + 4 * this.scale, this.y + 2 * this.scale, 19 * this.scale, 34 * this.scale + 1);
         if (this.direction == 0)    this.AR = new BoundingBox(this.x-71, this.y-24, this.attackwidth, 46 * this.scale);
         else                        this.AR = new BoundingBox(this.x-84, this.y-24, this.attackwidth, 46 * this.scale);
         this.VB = new BoundingBox(this.x + 32 - this.visionwidth/2, this.y, this.visionwidth, this.height + 1);
-    };
-
-
-    viewBoundingBox(ctx) {
-       // This is the Bounding Box, defines space where mob can be hit
-        ctx.strokeStyle = "Red";
-        ctx.strokeRect(this.x + 4 * this.scale  - this.game.camera.x, this.y + 2 * this.scale  - this.game.camera.y, 19 * this.scale, 34 * this.scale + 1);
-
-        // This is Attack Box, defines mob attack area
-        ctx.strokeStyle = "Orange";
-        this.attackwidth = 89 * this.scale;
-        if (this.direction == 0)    ctx.strokeRect(this.x-71 - this.game.camera.x, this.y-24 - this.game.camera.y, this.attackwidth, 46 * this.scale);
-        else                        ctx.strokeRect(this.x-84 - this.game.camera.x, this.y-24  - this.game.camera.y, this.attackwidth, 46 * this.scale);
-
-        // This is Vision Box, allows mob to see player when it collides with player's hitbox
-        this.visionwidth = 1400;
-        ctx.strokeStyle = "Yellow";
-        ctx.strokeRect(this.x + 32 - this.visionwidth/2  - this.game.camera.x, this.y  - this.game.camera.y, this.visionwidth, this.height + 1);
     };
 
     loadAnimations() {
@@ -307,10 +309,6 @@ class Goblin extends AbstractEnemy {
             if(this.direction == 1)     this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - 20 - this.game.camera.x, this.y - 5 - this.game.camera.y, this.scale);
             else                        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - 8- this.game.camera.x, this.y - 5 - this.game.camera.y, this.scale);
             break;
-        }
-
-        if (PARAMS.DEBUG) {
-            this.viewBoundingBox(ctx);
         }
 
         };

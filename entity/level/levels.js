@@ -70,6 +70,12 @@ var level1_1 = {
         { x : 70, y : 7 },
 
     ],
+    goblins : [
+        { x : 10, y : 5}
+    ],
+    skeletons : [
+        { x : 10, y : 5}
+    ],
     doors: [
         { x : 116, y : 0 , canEnter : true }
     ]

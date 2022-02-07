@@ -10,7 +10,7 @@ const SKELETON = {
 class Skeleton extends AbstractEnemy {
 
     constructor(game, x, y){
-        
+
         super(game, x, y, STATS.SKELETON.NAME,  STATS.SKELETON.MAX_HP, STATS.SKELETON.WIDTH, STATS.SKELETON.HEIGHT, STATS.SKELETON.SCALE);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/skeleton.png");
 
@@ -30,6 +30,9 @@ class Skeleton extends AbstractEnemy {
        this.damagedCooldown = 0;
        this.runAway = false;
        this.attackCooldown = 0;
+
+       this.attackwidth = 200;
+       this.visionwidth = 1200;
 
        this.damageValue = STATS.SKELETON.DAMAGE;
 
@@ -65,31 +68,12 @@ class Skeleton extends AbstractEnemy {
     };
 
     updateBoxes() {
+        this.lastBB = this.BB;
         this.BB = new BoundingBox(this.x + 14 * this.scale, this.y-37, 21 * this.scale, 51 * this.scale)
         if (this.direction == 0)    this.AR = new BoundingBox(this.x - 109, this.y-53, this.attackwidth, 57 * this.scale)
         else                        this.AR = new BoundingBox(this.x + 32, this.y-53, this.attackwidth, 57 * this.scale)
         this.VB = new BoundingBox(this.x + 62 - this.visionwidth/2, this.y-37, this.visionwidth, this.height)
-
     }
-
-    viewBoundingBox(ctx) { 
-        // This is the Bounding Box, defines space where mob can be hit
-        ctx.strokeStyle = "Red";
-        ctx.strokeRect(this.x + 14 * this.scale, this.y-37, 21 * this.scale, 51 * this.scale);
-        
-        // This is Attack Box, defines mob attack area
-        ctx.strokeStyle = "Orange";
-        this.attackwidth = 200;
-        if (this.direction == 0)    ctx.strokeRect(this.x - 109, this.y-53, this.attackwidth, 57 * this.scale);
-        else                        ctx.strokeRect(this.x + 32, this.y-53, this.attackwidth, 57 * this.scale);
-        
-        // This is Vision Box, allows mob to see player when it collides with player's hitbox
-        this.visionwidth = 1200;
-        ctx.strokeStyle = "Yellow";
-        ctx.strokeRect(this.x + 62 - this.visionwidth/2, this.y-37, this.visionwidth, this.height);
-        
-    };
-
 
     update() {
 
@@ -126,23 +110,42 @@ class Skeleton extends AbstractEnemy {
             let that = this;
             let knightInSight = false;
             this.collisions = { left: false, right: false, top: false, bottom: false };
-            this.game.entities.forEach(function (entity) {
+            this.game.foreground2.forEach(function (entity) {
                 // collision with environment
-                if (entity.BB && that.BB.collide(entity.BB) && (entity instanceof Ground || entity instanceof Walls || entity instanceof Platform || entity instanceof Brick)) {
-                    if (that.BB.top < entity.BB.top && that.BB.bottom > entity.BB.top) {
-                        if (that.BB.left < entity.BB.left && Math.abs(that.BB.right - entity.BB.left) <= Math.abs(that.BB.bottom - entity.BB.top)) {
-                            that.collisions.right = true;
-                            dist.x = entity.BB.left - that.BB.right;
-                        } else if (that.BB.right > entity.BB.right && Math.abs(that.BB.left - entity.BB.right) <= Math.abs(that.BB.bottom - entity.BB.top)) {
+                if (entity.BB && that.BB.collide(entity.BB)) {
+                    const below = that.lastBB.top <= entity.BB.top && that.BB.bottom >= entity.BB.top;
+                    const above = that.lastBB.bottom >= entity.BB.bottom && that.BB.top <= entity.BB.bottom;
+                    const right = that.lastBB.right <= entity.BB.right && that.BB.right >= entity.BB.left;
+                    const left = that.lastBB.left >= entity.BB.left && that.BB.left <= entity.BB.right;
+                    const between = that.lastBB.top >= entity.BB.top && that.lastBB.bottom <= entity.BB.bottom;
+                    if (between ||
+                        below && that.BB.top > entity.BB.top - 20 * that.scale ||
+                        above && that.BB.bottom < entity.BB.bottom + 20 * that.scale) {
+                            if (right) {
+                                that.collisions.right = true;
+                                dist.x = entity.BB.left - that.BB.right;
+                            } else {
+                                that.collisions.left = true;
+                                dist.x = entity.BB.right - that.BB.left;
+                            }
+                    }
+                    if (below) {
+                        if (left && Math.abs(that.BB.left - entity.BB.right) <= Math.abs(that.BB.bottom - entity.BB.top)) {
                             that.collisions.left = true;
                             dist.x = entity.BB.right - that.BB.left;
+                        } else if (right && Math.abs(that.BB.right - entity.BB.left) <= Math.abs(that.BB.bottom - entity.BB.top)) {
+                            that.collisions.right = true;
+                            dist.x = entity.BB.left - that.BB.right;
                         } else {
-                            that.collisions.bottom = true;
                             dist.y = entity.BB.top - that.BB.bottom;
+                            that.collisions.bottom = true;
                         }
                     }
                     that.updateBoxes();
                 }
+            });
+
+            this.game.entities.forEach(function (entity) {
                 // knight is in the vision box
                 if (entity.BB && entity instanceof Knight && that.VB.collide(entity.BB)) {
                     knightInSight = true;
@@ -205,13 +208,13 @@ class Skeleton extends AbstractEnemy {
             }
             // deleted HB when not attacking
             if (this.state != this.states.attack) this.HB = null;
-            // Do something random when player isnt in sight 
+            // Do something random when player isnt in sight
             if (!knightInSight) {
                 this.state = this.states.idle;
                 this.velocity.x = 0;
             }
         }
-        
+
 
     };
 
@@ -227,7 +230,7 @@ class Skeleton extends AbstractEnemy {
         }
 
         // Animations  [state][direction]
-        
+
         // Idle Animation
         this.animations[0][0] = new Animator(this.spritesheet, 495, 50, 45, 51, 4, 0.7, -195, 0, 1, 0); // 0.7
         this.animations[0][1] = new Animator(this.spritesheet, 660, 50, 45, 51, 4, 0.7, 105, 0, 1, 0);
@@ -248,7 +251,7 @@ class Skeleton extends AbstractEnemy {
         this.animations[4][0] = new Animator(this.spritesheet, 495, 650, 45, 51, 4, 0.3, -195, 0, 1, 0); // 0.3?
         this.animations[4][1] = new Animator(this.spritesheet, 660, 650, 45, 51, 4, 0.3, 105, 0, 1, 0);
 
-        // Block Animation 
+        // Block Animation
         this.animations[5][0] = new Animator(this.spritesheet, 491, 505, 40, 46, 4, 0.2, -190, 0, 1, 0); // 0.2
         this.animations[5][1] = new Animator(this.spritesheet, 669, 505, 40, 46, 4, 0.2, 110, 0, 1, 0);
     };
@@ -262,37 +265,37 @@ class Skeleton extends AbstractEnemy {
             this.flickerFlag = !this.flickerFlag;
         } else {
             this.healthbar.draw(ctx); //only show healthbar when not dead
-        
+
         switch(this.state) {
             case 0: // Idle
                 if(this.direction == 1)
-                        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x+10, this.y-37, this.scale);
-                else    this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x, this.y-37, this.scale);
+                        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x+10 - this.game.camera.x, this.y-37 - this.game.camera.y, this.scale);
+                else    this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y-37 - this.game.camera.y, this.scale);
                 break;
             case 1: // Damaged
                 if(this.direction == 1)
-                        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x-15, this.y-42, this.scale);
-                else    this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x, this.y-42, this.scale);
+                        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x-15 - this.game.camera.x, this.y-42 - this.game.camera.y, this.scale);
+                else    this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y-42 - this.game.camera.y, this.scale);
                 break;
             case 2: // Death
-                if(this.direction == 1) 
-                        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x-10, this.y-37, this.scale);
-                else    this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x-10, this.y-37, this.scale);
+                if(this.direction == 1)
+                        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x-10 - this.game.camera.x, this.y-37 - this.game.camera.y, this.scale);
+                else    this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x-10 - this.game.camera.x, this.y-37 - this.game.camera.y, this.scale);
                 break;
             case 3: // Attack
                 if(this.direction == 1)
-                        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x-7, this.y-52, this.scale);
-                else    this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x-108, this.y-52, this.scale);
+                        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x-7 - this.game.camera.x, this.y-52 - this.game.camera.y, this.scale);
+                else    this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x-108 - this.game.camera.x, this.y-52 - this.game.camera.y, this.scale);
                 break;
             case 4: // Move
                 if(this.direction == 1)
-                        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x + 10, this.y-37, this.scale);
-                else    this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x, this.y-37, this.scale);
+                        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x + 10 - this.game.camera.x, this.y-37 - this.game.camera.y, this.scale);
+                else    this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y-37 - this.game.camera.y, this.scale);
                 break;
             case 5: // Block
                 if(this.direction == 1)
-                        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x + 7, this.y-24, this.scale);
-                else    this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x + 14, this.y-24, this.scale);
+                        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x + 7 - this.game.camera.x, this.y-24 - this.game.camera.y, this.scale);
+                else    this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x + 14 - this.game.camera.x, this.y-24 - this.game.camera.y, this.scale);
                 break;
             }
         }
