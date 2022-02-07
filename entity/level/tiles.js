@@ -217,7 +217,7 @@ class Platform extends AbstractBarrier {
     };
 
     draw(ctx) {
-        let blockCountX = this.w / this.scale;
+        let blockCount = this.w / this.scale;
         for (let i = 0; i < blockCount; i++) {
             ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcWidth, this.srcHeight, this.x + (i * this.scale) - this.game.camera.x, this.y - this.game.camera.y, this.scale, this.scale);
         }

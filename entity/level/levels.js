@@ -201,3 +201,19 @@ var level1_2 = {
         { x : 10, y : 1, width : 47 }
     ]
 }
+
+var level1_3 = {
+    width : 120,
+    height : 44,
+    ground : [
+        { x : 0, y : 12, width : 10, type : 1}
+    ],
+    bricks : [
+        { x : 10, y : 10, width : 3, height : 3},
+        { x : 13, y : 12, width : 20, height : 1},
+        { x : 33, y : 10, width : 3, height : 3}
+    ],
+    platforms : [
+        { x : 22, y : 10, width : 2, height : 1}
+    ]
+}

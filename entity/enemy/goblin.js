@@ -9,7 +9,7 @@ const GOBLIN = {
 
 class Goblin extends AbstractEnemy {
     constructor(game, x, y){
-        
+
         super(game, x, y, STATS.GOBLIN.NAME,  STATS.GOBLIN.MAX_HP, STATS.GOBLIN.WIDTH, STATS.GOBLIN.HEIGHT, STATS.GOBLIN.SCALE);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/goblin.png");
 
@@ -44,7 +44,7 @@ class Goblin extends AbstractEnemy {
         this.updateBoxes();
     };
 
-    
+
 
     update() { // physics
 
@@ -159,11 +159,11 @@ class Goblin extends AbstractEnemy {
             }
             // deleted HB when not attacking
             if (this.state != this.states.attack) this.HB = null;
-            // Do something random when player isnt in sight 
+            // Do something random when player isnt in sight
             if (!knightInSight) {
 
                 if(this.seconds >= this.doRandom){
-                    
+
                     this.direction = Math.floor(Math.random() * 2);
                     this.event = Math.floor(Math.random() * 6);
                     if(this.event <= 0) {
@@ -182,9 +182,9 @@ class Goblin extends AbstractEnemy {
             }
         }
 
-        
 
-        
+
+
     };
 
     resetAnimationTimers(action) {
@@ -214,17 +214,17 @@ class Goblin extends AbstractEnemy {
     };
 
 
-    viewBoundingBox(ctx) { 
+    viewBoundingBox(ctx) {
        // This is the Bounding Box, defines space where mob can be hit
         ctx.strokeStyle = "Red";
         ctx.strokeRect(this.x + 4 * this.scale  - this.game.camera.x, this.y + 2 * this.scale  - this.game.camera.y, 19 * this.scale, 34 * this.scale + 1);
-        
+
         // This is Attack Box, defines mob attack area
         ctx.strokeStyle = "Orange";
         this.attackwidth = 89 * this.scale;
         if (this.direction == 0)    ctx.strokeRect(this.x-71 - this.game.camera.x, this.y-24 - this.game.camera.y, this.attackwidth, 46 * this.scale);
         else                        ctx.strokeRect(this.x-84 - this.game.camera.x, this.y-24  - this.game.camera.y, this.attackwidth, 46 * this.scale);
-    
+
         // This is Vision Box, allows mob to see player when it collides with player's hitbox
         this.visionwidth = 1400;
         ctx.strokeStyle = "Yellow";
@@ -245,7 +245,7 @@ class Goblin extends AbstractEnemy {
         // Animations  [state][direction]
 
         // Idle Animation
-        this.animations[0][0] = new Animator(this.spritesheet, 509, 65, 33, 36, 4, 0.14, -183, 0, 1, 0);    // 0.14 Animation Speed 
+        this.animations[0][0] = new Animator(this.spritesheet, 509, 65, 33, 36, 4, 0.14, -183, 0, 1, 0);    // 0.14 Animation Speed
         this.animations[0][1] = new Animator(this.spritesheet, 658, 65, 33, 36, 4, 0.14, 117, 0, 1, 0);
 
         // Damaged Animation
@@ -281,7 +281,7 @@ class Goblin extends AbstractEnemy {
             this.flickerFlag = !this.flickerFlag;
         } else {
             this.healthbar.draw(ctx); //only show healthbar when not dead
-        
+
         switch(this.state) { // Prefecting Refections... Might just remove anyways.
             case 0: // Idle
                 if(this.direction == 1)     this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - 16 - this.game.camera.x, this.y - this.game.camera.y, this.scale);
@@ -313,5 +313,6 @@ class Goblin extends AbstractEnemy {
             this.viewBoundingBox(ctx);
         }
 
+        };
     };
 };
