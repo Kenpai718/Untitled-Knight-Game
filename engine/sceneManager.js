@@ -19,7 +19,7 @@ class SceneManager {
         let levelZero = function() {self.loadPrototypeLevel()};
         let levelOne = function() {self.loadScene(level1_1, 0, 10 * PARAMS.BLOCKDIM)};
         let levelTwo = function() {self.loadScene(level1_2, 0, 10 * PARAMS.BLOCKDIM)};
-        let levelThree = function() {self.loadLevel3(level1_3, 0, 10 * PARAMS.BLOCKDIM)};
+        let levelThree = function() {self.loadScene(level1_3, 0, 10 * PARAMS.BLOCKDIM)};
         this.levels = [levelZero, levelOne, levelTwo, levelThree];
 
     }
