@@ -248,8 +248,8 @@ class Skeleton extends AbstractEnemy {
         this.animations[3][1] = new Animator(this.spritesheet, 53, 794, 95, 57, 8, 0.1, 55, 0, 1, 0);
 
         // Move Animation
-        this.animations[4][0] = new Animator(this.spritesheet, 495, 650, 45, 51, 4, 0.3, -195, 0, 1, 0); // 0.3?
-        this.animations[4][1] = new Animator(this.spritesheet, 660, 650, 45, 51, 4, 0.3, 105, 0, 1, 0);
+        this.animations[4][0] = new Animator(this.spritesheet, 495, 650, 45, 51, 4, 0.1, -195, 0, 1, 0); // 0.3?
+        this.animations[4][1] = new Animator(this.spritesheet, 660, 650, 45, 51, 4, 0.1, 105, 0, 1, 0);
 
         // Block Animation
         this.animations[5][0] = new Animator(this.spritesheet, 491, 505, 40, 46, 4, 0.2, -190, 0, 1, 0); // 0.2

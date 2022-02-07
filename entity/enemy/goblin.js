@@ -263,8 +263,8 @@ class Goblin extends AbstractEnemy {
         this.animations[3][1] = new Animator(this.spritesheet, 31, 505, 88, 46, 8, 0.06, 62, 0, 1, 0);
 
         // Move Animation
-        this.animations[4][0] = new Animator(this.spritesheet, 1106, 963, 38, 38, 8, 0.2, -188, 0, 1, 0);   // 0.1 Animation Speed
-        this.animations[4][1] = new Animator(this.spritesheet, 56, 813, 38, 38, 8, 0.2, 112, 0, 1, 0);
+        this.animations[4][0] = new Animator(this.spritesheet, 1106, 963, 38, 38, 8, 0.1, -188, 0, 1, 0);   // 0.1 Animation Speed
+        this.animations[4][1] = new Animator(this.spritesheet, 56, 813, 38, 38, 8, 0.1, 112, 0, 1, 0);
 
         // Move Animation
         this.animations[5][0] = new Animator(this.spritesheet, 1106, 963, 38, 38, 8, 0.1, -188, 0, 1, 0);   // 0.1 Animation Speed
