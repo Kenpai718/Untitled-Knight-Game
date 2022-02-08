@@ -8,9 +8,9 @@ const GOBLIN = {
 };
 
 class Goblin extends AbstractEnemy {
-    constructor(game, x, y){
+    constructor(game, x, y) {
 
-        super(game, x, y, STATS.GOBLIN.NAME,  STATS.GOBLIN.MAX_HP, STATS.GOBLIN.WIDTH, STATS.GOBLIN.HEIGHT, STATS.GOBLIN.SCALE);
+        super(game, x, y, STATS.GOBLIN.NAME, STATS.GOBLIN.MAX_HP, STATS.GOBLIN.WIDTH, STATS.GOBLIN.HEIGHT, STATS.GOBLIN.SCALE);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/goblin.png");
 
         // Update settings
@@ -21,7 +21,7 @@ class Goblin extends AbstractEnemy {
 
         // Physics
         this.fallAcc = 1500;
-        this.collisions = {left: false, right: false, top: false, bottom: false};
+        this.collisions = { left: false, right: false, top: false, bottom: false };
 
         //variables to control behavior
         this.canAttack = true;
@@ -35,8 +35,8 @@ class Goblin extends AbstractEnemy {
 
         // Mapping animations and mob states
         this.animations = []; // [state][direction]
-        this.states = {idle: 0, damaged: 1, death: 2, attack: 3, move: 4, run: 5};
-        this.directions = {left: 0, right: 1 };
+        this.states = { idle: 0, damaged: 1, death: 2, attack: 3, move: 4, run: 5 };
+        this.directions = { left: 0, right: 1 };
         this.direction = this.directions.left;
         this.state = this.states.idle;
 
@@ -92,13 +92,13 @@ class Goblin extends AbstractEnemy {
                     if (between ||
                         below && that.BB.top > entity.BB.top - 20 * that.scale ||
                         above && that.BB.bottom < entity.BB.bottom + 20 * that.scale) {
-                            if (right) {
-                                that.collisions.right = true;
-                                dist.x = entity.BB.left - that.BB.right;
-                            } else {
-                                that.collisions.left = true;
-                                dist.x = entity.BB.right - that.BB.left;
-                            }
+                        if (right) {
+                            that.collisions.right = true;
+                            dist.x = entity.BB.left - that.BB.right;
+                        } else {
+                            that.collisions.left = true;
+                            dist.x = entity.BB.right - that.BB.left;
+                        }
                     }
                     if (below) {
                         if (left && Math.abs(that.BB.left - entity.BB.right) <= Math.abs(that.BB.bottom - entity.BB.top)) {
@@ -130,7 +130,7 @@ class Goblin extends AbstractEnemy {
                 // knight is in attack range
                 if (entity.BB && entity instanceof Knight && that.AR.collide(entity.BB)) {
                     that.velocity.x = 0;
-                    if (that.canAttack || !that.animations[that.states.attack][that.direction].isDone()) {
+                    if (that.canAttack && !that.animations[that.states.attack][that.direction].isDone()) {
                         that.runAway = true;
                         that.canAttack = false;
                         that.state = that.states.attack;
@@ -156,9 +156,10 @@ class Goblin extends AbstractEnemy {
             if (this.collisions.left && this.velocity.x < 0) this.velocity.x = 0;
             if (this.collisions.right && this.velocity.x > 0) this.velocity.x = 0;
             // goblin attack cooldown
+            
             if (!this.canAttack) {
                 this.attackCooldown += TICK;
-                if (this.attackCooldown >= 1.7) {
+                if (this.attackCooldown >= 2) {
                     this.resetAnimationTimers(this.states.attack);
                     this.attackCooldown = 0;
                     this.canAttack = true;
@@ -176,21 +177,27 @@ class Goblin extends AbstractEnemy {
                     this.vulnerable = true;
                 }
             }
-            // deleted HB when not attacking
-            if (this.state != this.states.attack) this.HB = null;
+
+            //attack hitbox if attacking
+            if (this.state == this.states.attack && this.animations[this.states.attack][this.direction].isHalfwayDone()) {
+                console.log("spawn hitbox");
+                this.updateHB();
+            } else {
+                this.HB = null;
+            }
             // Do something random when player isnt in sight
             if (!knightInSight) {
 
-                if(this.seconds >= this.doRandom){
+                if (this.seconds >= this.doRandom) {
 
                     this.direction = Math.floor(Math.random() * 2);
                     this.event = Math.floor(Math.random() * 6);
-                    if(this.event <= 0) {
+                    if (this.event <= 0) {
                         this.doRandom = this.seconds + Math.floor(Math.random() * 3);
                         this.state = 4;
                         this.velocity.x = 0;
-                        if(this.direction == 0)     this.velocity.x -= MAX_RUN;
-                        else                        this.velocity.x += MAX_RUN;
+                        if (this.direction == 0) this.velocity.x -= MAX_RUN;
+                        else this.velocity.x += MAX_RUN;
                     }
                     else {
                         this.doRandom = this.seconds + Math.floor(Math.random() * 10);
@@ -204,6 +211,15 @@ class Goblin extends AbstractEnemy {
 
 
 
+    };
+
+    updateHB() {
+        let offsetxBB = 30 * this.scale;
+        let offsetyBB = 10 * this.scale;
+        let heightBB = (this.height / 3) * this.scale;
+
+        if(this.direction == this.directions.left) offsetxBB = (offsetxBB * -1) - (this.width / 2); //flip hitbox offset
+        this.HB = new BoundingBox(this.x + offsetxBB, this.y + offsetyBB, this.width * 1.5, heightBB);
     };
 
     resetAnimationTimers(action) {
@@ -220,17 +236,12 @@ class Goblin extends AbstractEnemy {
         this.state = this.states.damaged;
     };
 
-    updateHB() {
-        if (this.direction == 0)    this.AR = new BoundingBox(this.x-71, this.y-24, this.attackwidth, 46 * this.scale);
-        else                        this.AR = new BoundingBox(this.x-84, this.y-24, this.attackwidth, 46 * this.scale);
-    };
-
     updateBoxes() {
         this.lastBB = this.BB;
         this.BB = new BoundingBox(this.x + 4 * this.scale, this.y + 2 * this.scale, 19 * this.scale, 34 * this.scale + 1);
-        if (this.direction == 0)    this.AR = new BoundingBox(this.x-71, this.y-24, this.attackwidth, 46 * this.scale);
-        else                        this.AR = new BoundingBox(this.x-84, this.y-24, this.attackwidth, 46 * this.scale);
-        this.VB = new BoundingBox(this.x + 32 - this.visionwidth/2, this.y, this.visionwidth, this.height + 1);
+        if (this.direction == 0) this.AR = new BoundingBox(this.x - 71, this.y - 24, this.attackwidth, 46 * this.scale);
+        else this.AR = new BoundingBox(this.x - 84, this.y - 24, this.attackwidth, 46 * this.scale);
+        this.VB = new BoundingBox(this.x + 32 - this.visionwidth / 2, this.y, this.visionwidth, this.height + 1);
     };
 
     loadAnimations() {
@@ -239,7 +250,7 @@ class Goblin extends AbstractEnemy {
         let numStates = 6;
         for (var i = 0; i < numStates; i++) { //defines action
             this.animations.push([]);
-            for (var j = 0; j < numDir; j++){ //defines directon: left = 0, right = 1
+            for (var j = 0; j < numDir; j++) { //defines directon: left = 0, right = 1
                 this.animations[i].push([]);
             }
         }
@@ -284,32 +295,32 @@ class Goblin extends AbstractEnemy {
         } else {
             this.healthbar.draw(ctx); //only show healthbar when not dead
 
-        switch(this.state) { // Prefecting Refections... Might just remove anyways.
-            case 0: // Idle
-                if(this.direction == 1)     this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - 16 - this.game.camera.x, this.y - this.game.camera.y, this.scale);
-                else                        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
-                break;
-            case 1: // Damaged
-                if(this.direction == 1)     this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - 25 - this.game.camera.x, this.y - 2 - this.game.camera.y, this.scale);
-                else                        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - 13 - this.game.camera.x, this.y - 2 - this.game.camera.y, this.scale);
-                break;
-            case 2: // Death
-                if(this.direction == 1)     this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - 50 - this.game.camera.x, this.y - 4 - this.game.camera.y, this.scale);
-                else                        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - 40 - this.game.camera.x, this.y - 4 - this.game.camera.y, this.scale);
-                break;
-            case 3: // Attack
-                if(this.direction == 1)     this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - 83 - this.game.camera.x, this.y - 25 - this.game.camera.y, this.scale);
-                else                        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - 70 - this.game.camera.x, this.y - 25 - this.game.camera.y, this.scale);
-                break;
-            case 4: // Move
-                if(this.direction == 1)     this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - 20 - this.game.camera.x, this.y - 5 - this.game.camera.y, this.scale);
-                else                        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - 8 - this.game.camera.x, this.y - 5 - this.game.camera.y, this.scale);
-                break;
-            case 5: // Run
-            if(this.direction == 1)     this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - 20 - this.game.camera.x, this.y - 5 - this.game.camera.y, this.scale);
-            else                        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - 8- this.game.camera.x, this.y - 5 - this.game.camera.y, this.scale);
-            break;
-        }
+            switch (this.state) { // Prefecting Refections... Might just remove anyways.
+                case 0: // Idle
+                    if (this.direction == 1) this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - 16 - this.game.camera.x, this.y - this.game.camera.y, this.scale);
+                    else this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
+                    break;
+                case 1: // Damaged
+                    if (this.direction == 1) this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - 25 - this.game.camera.x, this.y - 2 - this.game.camera.y, this.scale);
+                    else this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - 13 - this.game.camera.x, this.y - 2 - this.game.camera.y, this.scale);
+                    break;
+                case 2: // Death
+                    if (this.direction == 1) this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - 50 - this.game.camera.x, this.y - 4 - this.game.camera.y, this.scale);
+                    else this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - 40 - this.game.camera.x, this.y - 4 - this.game.camera.y, this.scale);
+                    break;
+                case 3: // Attack
+                    if (this.direction == 1) this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - 83 - this.game.camera.x, this.y - 25 - this.game.camera.y, this.scale);
+                    else this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - 70 - this.game.camera.x, this.y - 25 - this.game.camera.y, this.scale);
+                    break;
+                case 4: // Move
+                    if (this.direction == 1) this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - 20 - this.game.camera.x, this.y - 5 - this.game.camera.y, this.scale);
+                    else this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - 8 - this.game.camera.x, this.y - 5 - this.game.camera.y, this.scale);
+                    break;
+                case 5: // Run
+                    if (this.direction == 1) this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - 20 - this.game.camera.x, this.y - 5 - this.game.camera.y, this.scale);
+                    else this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - 8 - this.game.camera.x, this.y - 5 - this.game.camera.y, this.scale);
+                    break;
+            }
 
         };
     };

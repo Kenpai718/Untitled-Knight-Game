@@ -9,9 +9,11 @@ class SceneManager {
         this.gameOver = false;
 
         //levels array to load levels by calling levels[0], levels[1], etc
-        this.currentLevel = 1;
+        this.currentLevel = 2;
         this.setupAllLevels();
         this.loadLevel(this.currentLevel);
+
+        //this.loadTestingLevel();
     };
 
     setupAllLevels() {
@@ -102,35 +104,35 @@ class SceneManager {
         }
     };
 
-    //demo of entities for prototshowcase
-    loadPrototypeLevel() {
+    //Level used for testing entity interactions
+    loadTestingLevel() {
         this.makePlayer(0, 500);
         this.level = {};
         this.level.width = 1920;
         this.level.height = 1040;
         //ground
         let bg = new Background(this.game);
-        let ground = new Ground(this.game, 0, 12 * PARAMS.BLOCKDIM, this.game.surfaceWidth, PARAMS.BLOCKDIM);
+        let ground = new Ground(this.game, 0, 12 * PARAMS.BLOCKDIM, this.game.surfaceWidth, PARAMS.BLOCKDIM, 1);
         let plat = new Brick(this.game, 70, this.game.surfaceHeight - 340, PARAMS.BLOCKDIM * 4, PARAMS.BLOCKDIM);
         let plat2 = new Platform(this.game, this.game.surfaceWidth - 570, this.game.surfaceHeight - 340, PARAMS.BLOCKDIM * 4, PARAMS.BLOCKDIM);
         let plat3 = new Platform(this.game, this.game.surfaceWidth - 1150, 10 * PARAMS.BLOCKDIM, PARAMS.BLOCKDIM * 4, PARAMS.BLOCKDIM);
         //show animations
         let skel = new Skeleton(this.game, 190, 927);
         let gob = new Goblin(this.game, 1065, 565 - 90);
-        let mush = new Mushroom(this.game, 1505, 740 - 90);
-        let wiz = new Wizard(this.game, 50, 75);
-        let eye = new FlyingEye(this.game, 1570, 45);
+        let mush = new Mushroom(this.game, 200, 740 - 90);
+        //let wiz = new Wizard(this.game, 50, 75);
+        //let eye = new FlyingEye(this.game, 1570, 45);
         //add entities
         this.game.addEntity(ground);
         this.game.addEntity(plat);
         this.game.addEntity(plat2);
         this.game.addEntity(plat3);
         //enemies
-        this.game.addEntity(skel);
+        //this.game.addEntity(skel);
         this.game.addEntity(gob);
-        this.game.addEntity(mush);
-        this.game.addEntity(wiz);
-        this.game.addEntity(eye);
+        //this.game.addEntity(mush);
+        //this.game.addEntity(wiz);
+       // this.game.addEntity(eye);
         //background always last
         this.game.addEntity(bg);
     };

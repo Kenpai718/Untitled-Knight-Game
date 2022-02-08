@@ -66,15 +66,15 @@ var level1_1 = {
     ],
     shrooms: [
         { x : 13, y : 6 },
-        { x : 59, y : 5 },
+        { x : 59, y : 5},
         { x : 70, y : 7 },
 
     ],
     goblins : [
-        { x : 10, y : 5}
+        { x : 105, y : 0}
     ],
     skeletons : [
-        { x : 10, y : 5}
+        { x : 59, y : 5},
     ],
     doors: [
         { x : 116, y : 0 , canEnter : true }
@@ -139,6 +139,7 @@ var level1_2 = {
         { x : 40, y : 8 }
 
     ],
+
     windows : [
         { x : 2, y : 3, width : 1, height : 1.5 },
         { x : 2, y : 0, width : 1, height : 1.5 },

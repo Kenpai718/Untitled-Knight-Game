@@ -642,7 +642,7 @@ class Knight extends AbstractPlayer {
             if (entity instanceof AbstractEnemy) {
                 //attacked by an enemy
                 if (entity.HB && that.BB.collide(entity.HB)) {
-                    //console.log("knight hit by enemy");
+                    console.log("knight hit by enemy");
                     that.takeDamage(entity.getDamageValue(), false);
 
                 }

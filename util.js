@@ -87,7 +87,7 @@ const STATS = {
 
     SKELETON: {
         NAME: "Skeleton",
-        MAX_HP: 50,
+        MAX_HP: 75,
         SCALE: 2.5,
         WIDTH: 45,
         HEIGHT: 51,
@@ -136,6 +136,7 @@ const SFX = {
     PLAYER_GRUNT: "./sound/sfx/player_grunt.wav",
     PLAYER_GRUNT2: "./sound/sfx/player_grunt2.wav",
     PLAYER_GRUNT3: "./sound/sfx/player_grunt3.wav",
+    SHIELD_BLOCK: "./sound/sfx/shield_block.mp3",
 
 
 };
