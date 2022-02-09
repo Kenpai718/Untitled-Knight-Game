@@ -9,14 +9,14 @@ class SceneManager {
         this.gameOver = false;
 
         //levels array to load levels by calling levels[0], levels[1], etc
-        this.currentLevel = 1;
+        this.currentLevel = 0;
         this.setupAllLevels();
         this.loadLevel(this.currentLevel);
     };
 
     setupAllLevels() {
         var self = this;
-        let levelZero = function() {self.loadPrototypeLevel()};
+        let levelZero = function() {self.loadScene(testLevel)};
         let levelOne = function() {self.loadScene(level1_1)};
         let levelTwo = function() {self.loadScene(level1_2)};
         let levelThree = function() {self.loadScene(level1_3)};

@@ -1,3 +1,12 @@
+/**
+ * Skeleton is a entity about the size of the player. It's attacks are rather slow.
+ * It doesn't have that much hp, but it has a shield to reduce damage.
+ * 
+ * Unique behavior: Switching between shield and attack mode when in range
+ * At half HP it will keep its shield up during the idle.
+ * 
+ */
+
 class Skeleton extends AbstractEnemy {
 
     constructor(game, x, y) {
@@ -53,7 +62,7 @@ class Skeleton extends AbstractEnemy {
         let offsetyBB = 20 * this.scale;
         let heightBB = (this.height / 3) * this.scale;
 
-        if(this.direction == this.directions.left) offsetxBB = (offsetxBB * -1) - (this.width / 2); //flip hitbox offset
+        if (this.direction == this.directions.left) offsetxBB = (offsetxBB * -1) - (this.width / 2); //flip hitbox offset
         this.HB = new BoundingBox(this.x + offsetxBB, this.y - offsetyBB, this.width * 1.5, heightBB);
     };
 
@@ -63,7 +72,10 @@ class Skeleton extends AbstractEnemy {
         this.BB = new BoundingBox(this.x + 14 * this.scale, this.y - 37, 21 * this.scale, 51 * this.scale)
         if (this.direction == 0) this.AR = new BoundingBox(this.x - 109, this.y - 53, this.attackwidth, 57 * this.scale)
         else this.AR = new BoundingBox(this.x + 32, this.y - 53, this.attackwidth, 57 * this.scale)
-        this.VB = new BoundingBox(this.x + 62 - this.visionwidth / 2, this.y - 37, this.visionwidth, this.height)
+
+        if (this.direction == 0) this.VB = new BoundingBox((this.x - this.visionwidth / 2) + 150, this.y - 37, this.visionwidth / 2, this.height)
+        else this.VB = new BoundingBox((this.x + this.visionwidth / 2) - 650, this.y - 37, this.visionwidth / 2, this.height)
+        
     }
 
     update() {
@@ -102,6 +114,9 @@ class Skeleton extends AbstractEnemy {
             let knightInSight = false;
             this.checkEnvironmentCollisions(dist);
 
+            /**
+             * Interactions with entities
+             */
             this.game.entities.forEach(function (entity) {
                 // knight is in the vision box
                 if (entity.BB && entity instanceof Knight && that.VB.collide(entity.BB)) {
@@ -112,6 +127,10 @@ class Skeleton extends AbstractEnemy {
                         that.state = that.states.move;
                         that.direction = entity.BB.right < that.BB.left ? that.directions.left : that.directions.right;
                         that.velocity.x = that.direction == that.directions.right ? that.velocity.x + MAX_RUN : that.velocity.x - MAX_RUN;
+
+                        //reset action states
+                        that.setAttackState(false);
+                        that.setBlockState(false);
                     }
                 }
                 // knight is in attack range
@@ -130,7 +149,7 @@ class Skeleton extends AbstractEnemy {
                     }
 
                     //do an attack or block
-                    if(!that.state != that.states.damaged) that.setCombatPhase();
+                    if (!that.state != that.states.damaged) that.setCombatPhase();
 
                 }
 
@@ -140,7 +159,7 @@ class Skeleton extends AbstractEnemy {
                     if (!that.blocking) {
                         that.setDamagedState();
                     } else {
-                        console.log("hit skeleton's shield");
+                        //console.log("hit skeleton's shield");
                     }
 
 
@@ -149,6 +168,7 @@ class Skeleton extends AbstractEnemy {
                 }
 
             });
+
             // update positions based on environment collisions
             this.x += dist.x;
             this.y += dist.y;
@@ -182,22 +202,49 @@ class Skeleton extends AbstractEnemy {
             }
 
             //attack hitbox if attacking
-            if(this.state == this.states.attack && this.animations[this.states.attack][this.direction].isHalfwayDone()) {
+            if (this.state == this.states.attack && this.animations[this.states.attack][this.direction].isHalfwayDone()) {
                 this.updateHB();
             } else {
                 this.HB = null;
             }
-            
 
-            // Do something random when player isnt in sight
+
+            // Actions when player not in sight
             if (!knightInSight) {
-                this.state = this.states.idle;
+
                 this.velocity.x = 0;
+                //while hp is at half keep shield up to block projectiles
+                if ((this.hp / this.max_hp) <= PARAMS.MID_HP) {
+                    that.setBlockState(true);
+                    that.setAttackState(false);
+                } else { //do random movement
+                    if (this.seconds >= this.doRandom) {
+
+                        this.direction = Math.floor(Math.random() * 2);
+                        this.event = Math.floor(Math.random() * 6);
+                        if (this.event <= 0) {
+                            this.doRandom = this.seconds + Math.floor(Math.random() * 3);
+                            this.state = this.states.move;
+                            this.velocity.x = 0;
+                            if (this.direction == 0) this.velocity.x -= MAX_RUN;
+                            else this.velocity.x += MAX_RUN;
+                        }
+                        else {
+                            this.doRandom = this.seconds + Math.floor(Math.random() * 10);
+                            this.state = this.states.idle;
+                            this.velocity.x = 0
+                        }
+                    }
+                    //reset action states
+                    that.setAttackState(false);
+                    that.setBlockState(false);
+                }
             }
         }
 
 
     };
+
 
     checkEnvironmentCollisions(dist) {
         let that = this;
@@ -274,9 +321,9 @@ class Skeleton extends AbstractEnemy {
      */
     setCombatPhase() {
         if (this.phase == "block") {
-            this.setBlockState();
+            this.setBlockState(true);
         } else {
-            this.setAttackState();
+            this.setAttackState(true);
         }
     }
 
@@ -290,18 +337,40 @@ class Skeleton extends AbstractEnemy {
         }
     }
 
-    setBlockState() {
-        this.state = this.states.block;
-        this.blocking = true;
-        this.shieldCooldown = 0;
-        this.canAttack = false;
+
+    /**
+     * Toggle block state on or off
+     * @param {} isOn 
+     */
+    setBlockState(isOn) {
+        if (isOn) {
+            this.state = this.states.block;
+            this.blocking = true;
+            this.shieldCooldown = 0;
+            this.canAttack = false;
+        } else {
+            this.blocking = false;
+            this.shieldCooldown = 0;
+            this.canAttack = false;
+        }
     }
 
-    setAttackState() {
-        this.canAttack = false;
-        this.state = this.states.attack;
-    }
+    /**
+     * Toggle attack state on or off
+     * @param {} isOn 
+     */
+    setAttackState(isOn) {
+        if (isOn) {
+            this.canAttack = false;
+            this.state = this.states.attack;
+        } else {
+            this.resetAnimationTimers(this.states.attack);
+            this.attackCooldown = 0;
+            this.canAttack = true;
+            this.runAway = false;
+        }
 
+    }
 
 
     getDamageValue() {
@@ -313,12 +382,12 @@ class Skeleton extends AbstractEnemy {
         this.state = this.states.damaged;
     };
 
-    
+
     resetAnimationTimers(action) {
         this.animations[action][0].elapsedTime = 0;
         this.animations[action][1].elapsedTime = 0;
     }
-    
+
     loadAnimations() {
 
         let numDir = 2;

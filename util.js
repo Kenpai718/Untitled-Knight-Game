@@ -82,12 +82,12 @@ const STATS = {
         SCALE: 2.5,
         WIDTH: 33,
         HEIGHT: 36,
-        DAMAGE: 15
+        DAMAGE: 8
     },
 
     SKELETON: {
         NAME: "Skeleton",
-        MAX_HP: 75,
+        MAX_HP: 50,
         SCALE: 2.5,
         WIDTH: 45,
         HEIGHT: 51,

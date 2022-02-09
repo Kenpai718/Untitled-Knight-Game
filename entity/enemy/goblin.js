@@ -1,11 +1,10 @@
-const GOBLIN = {
-    NAME: "Goblin",
-    MAX_HP: 100,
-    SCALE: 2.5,
-    WIDTH: 33 * this.scale,
-    HEIGHT: 36 * this.scale,
-    DAMAGE: 10
-};
+/**
+ * Goblin is a small enemy entity that attacks fast. It has low hp and not much of a threat on its own.
+ * However when in a group it becomes dangerous as it attacks your blindspot!
+ * 
+ * Special behavior: prioritizes attacking player from behind while they have half hp.
+ * They do 1.5* more damage when attacking from behind.
+ */
 
 class Goblin extends AbstractEnemy {
     constructor(game, x, y) {
@@ -18,6 +17,7 @@ class Goblin extends AbstractEnemy {
         this.seconds = 0;
         this.doRandom = 0;
         this.alert = false; // enemy is near or got hit
+        this.behindPlayer = false;
 
         // Physics
         this.fallAcc = 1500;
@@ -78,75 +78,11 @@ class Goblin extends AbstractEnemy {
             this.updateBoxes();
 
             let dist = { x: 0, y: 0 };
-            let that = this;
             let knightInSight = false;
-            this.collisions = { left: false, right: false, top: false, bottom: false };
-            this.game.foreground2.forEach(function (entity) {
-                // collision with environment
-                if (entity.BB && that.BB.collide(entity.BB)) {
-                    const below = that.lastBB.top <= entity.BB.top && that.BB.bottom >= entity.BB.top;
-                    const above = that.lastBB.bottom >= entity.BB.bottom && that.BB.top <= entity.BB.bottom;
-                    const right = that.lastBB.right <= entity.BB.right && that.BB.right >= entity.BB.left;
-                    const left = that.lastBB.left >= entity.BB.left && that.BB.left <= entity.BB.right;
-                    const between = that.lastBB.top >= entity.BB.top && that.lastBB.bottom <= entity.BB.bottom;
-                    if (between ||
-                        below && that.BB.top > entity.BB.top - 20 * that.scale ||
-                        above && that.BB.bottom < entity.BB.bottom + 20 * that.scale) {
-                        if (right) {
-                            that.collisions.right = true;
-                            dist.x = entity.BB.left - that.BB.right;
-                        } else {
-                            that.collisions.left = true;
-                            dist.x = entity.BB.right - that.BB.left;
-                        }
-                    }
-                    if (below) {
-                        if (left && Math.abs(that.BB.left - entity.BB.right) <= Math.abs(that.BB.bottom - entity.BB.top)) {
-                            that.collisions.left = true;
-                            dist.x = entity.BB.right - that.BB.left;
-                        } else if (right && Math.abs(that.BB.right - entity.BB.left) <= Math.abs(that.BB.bottom - entity.BB.top)) {
-                            that.collisions.right = true;
-                            dist.x = entity.BB.left - that.BB.right;
-                        } else {
-                            dist.y = entity.BB.top - that.BB.bottom;
-                            that.collisions.bottom = true;
-                        }
-                    }
-                    that.updateBoxes();
-                }
-            });
-            this.game.entities.forEach(function (entity) {
-                // knight is in the vision box
-                if (entity.BB && entity instanceof Knight && that.VB.collide(entity.BB)) {
-                    knightInSight = true;
-                    // knight is in the vision box and not in the attack range
-                    if (!that.AR.collide(entity.BB)) {
-                        // move towards the knight
-                        that.state = that.states.move;
-                        that.direction = entity.BB.right < that.BB.left ? that.directions.left : that.directions.right;
-                        that.velocity.x = that.direction == that.directions.right ? that.velocity.x + MAX_RUN : that.velocity.x - MAX_RUN;
-                    }
-                }
-                // knight is in attack range
-                if (entity.BB && entity instanceof Knight && that.AR.collide(entity.BB)) {
-                    that.velocity.x = 0;
-                    if (that.canAttack && !that.animations[that.states.attack][that.direction].isDone()) {
-                        that.runAway = true;
-                        that.canAttack = false;
-                        that.state = that.states.attack;
-                    }
-                }
+            this.checkEnvironmentCollisions(dist);
+            this.checkEntityInteractions(knightInSight);
 
-                // goblin hit by something switch the state to damaged
-                if (entity.HB && that.BB.collide(entity.HB) && entity instanceof AbstractPlayer && !that.HB) {
-                    //entity.doDamage(that);
-                    that.setDamagedState();
 
-                } else if (entity.BB && that.BB.collide(entity.BB) && entity instanceof Arrow && !that.HB) {
-                    that.setDamagedState();
-                }
-
-            });
             // update positions based on environment collisions
             this.x += dist.x;
             this.y += dist.y;
@@ -155,80 +91,245 @@ class Goblin extends AbstractEnemy {
             if (this.collisions.bottom && this.velocity.y > 0) this.velocity.y = 0;
             if (this.collisions.left && this.velocity.x < 0) this.velocity.x = 0;
             if (this.collisions.right && this.velocity.x > 0) this.velocity.x = 0;
-            // goblin attack cooldown
-            
-            if (!this.canAttack) {
-                this.attackCooldown += TICK;
-                if (this.attackCooldown >= 2) {
-                    this.resetAnimationTimers(this.states.attack);
-                    this.attackCooldown = 0;
-                    this.canAttack = true;
-                    this.runAway = false;
-                }
-            }
-            // goblin hit cooldown
-            if (!this.vulnerable) {
-                this.damagedCooldown += TICK;
-                if (this.damagedCooldown >= PARAMS.DMG_COOLDOWN) {
-                    this.resetAnimationTimers(this.states.damaged);
-                    this.damagedCooldown = 0;
-                    this.canAttack = true;
-                    this.runAway = false;
-                    this.vulnerable = true;
-                }
-            }
+
+            this.checkCooldowns(TICK);
+
 
             //attack hitbox if attacking
             if (this.state == this.states.attack && this.animations[this.states.attack][this.direction].isHalfwayDone()) {
-                console.log("spawn hitbox");
+                //console.log("spawn hitbox");
                 this.updateHB();
             } else {
                 this.HB = null;
             }
+
             // Do something random when player isnt in sight
-            if (!knightInSight) {
+            if (!knightInSight) this.doRandomMovement();
+        }
+    };
 
-                if (this.seconds >= this.doRandom) {
 
-                    this.direction = Math.floor(Math.random() * 2);
-                    this.event = Math.floor(Math.random() * 6);
-                    if (this.event <= 0) {
-                        this.doRandom = this.seconds + Math.floor(Math.random() * 3);
-                        this.state = 4;
-                        this.velocity.x = 0;
-                        if (this.direction == 0) this.velocity.x -= MAX_RUN;
-                        else this.velocity.x += MAX_RUN;
-                    }
-                    else {
-                        this.doRandom = this.seconds + Math.floor(Math.random() * 10);
-                        this.state = 0;
-                        this.velocity.x = 0
+    checkEnvironmentCollisions(dist) {
+        let that = this;
+        this.collisions = { left: false, right: false, top: false, bottom: false };
+        this.game.foreground2.forEach(function (entity) {
+            // collision with environment
+            if (entity.BB && that.BB.collide(entity.BB)) {
+                const below = that.lastBB.top <= entity.BB.top && that.BB.bottom >= entity.BB.top;
+                const above = that.lastBB.bottom >= entity.BB.bottom && that.BB.top <= entity.BB.bottom;
+                const right = that.lastBB.right <= entity.BB.right && that.BB.right >= entity.BB.left;
+                const left = that.lastBB.left >= entity.BB.left && that.BB.left <= entity.BB.right;
+                const between = that.lastBB.top >= entity.BB.top && that.lastBB.bottom <= entity.BB.bottom;
+                if (between ||
+                    below && that.BB.top > entity.BB.top - 20 * that.scale ||
+                    above && that.BB.bottom < entity.BB.bottom + 20 * that.scale) {
+                    if (right) {
+                        that.collisions.right = true;
+                        dist.x = entity.BB.left - that.BB.right;
+                    } else {
+                        that.collisions.left = true;
+                        dist.x = entity.BB.right - that.BB.left;
                     }
                 }
+                if (below) {
+                    if (left && Math.abs(that.BB.left - entity.BB.right) <= Math.abs(that.BB.bottom - entity.BB.top)) {
+                        that.collisions.left = true;
+                        dist.x = entity.BB.right - that.BB.left;
+                    } else if (right && Math.abs(that.BB.right - entity.BB.left) <= Math.abs(that.BB.bottom - entity.BB.top)) {
+                        that.collisions.right = true;
+                        dist.x = entity.BB.left - that.BB.right;
+                    } else {
+                        dist.y = entity.BB.top - that.BB.bottom;
+                        that.collisions.bottom = true;
+                    }
+                }
+                that.updateBoxes();
+            }
+        });
+    }
+
+    checkEntityInteractions(knightInSight) {
+        let that = this;
+        /* Entity Interactions */
+        this.game.entities.forEach(function (entity) {
+            // knight is in the vision box
+            if (entity.BB && entity instanceof Knight && that.VB.collide(entity.BB)) {
+                knightInSight = true;
+                // knight is in the vision box and not in the attack range
+
+                if (!that.AR.collide(entity.BB)) {
+                    // move towards the knight
+                    that.state = that.states.move;
+                    that.direction = entity.BB.right < that.BB.left ? that.directions.left : that.directions.right;
+                    that.velocity.x = that.direction == that.directions.right ? that.velocity.x + MAX_RUN : that.velocity.x - MAX_RUN;
+                    that.resetAttack();
+                }
+            }
+            // knight is in attack range
+            if (entity.BB && entity instanceof Knight && that.AR.collide(entity.BB)) {
+
+
+                /**
+                 * Until low hp prioritize attacking from the back
+                 */
+                let changeBehavior = (that.hp / that.max_hp) <= 0.5;
+                that.behindPlayer = that.isBehindPlayer(entity);
+
+                if (!changeBehavior) { //strike the back or player
+                    if (that.behindPlayer) {
+                        that.velocity.x = 0;
+                        if (!that.sameFacing(entity)) {
+                            that.flipDir();
+                        }
+                        if (that.canAttack && !that.animations[that.states.attack][that.direction].isDone()) {
+                            that.runAway = true;
+                            that.canAttack = false;
+                            that.state = that.states.attack;
+                        }
+                    }
+                } else { //attack normally from wherever 
+                    that.velocity.x = 0;
+                    if (that.canAttack && !that.animations[that.states.attack][that.direction].isDone()) {
+                        that.runAway = true;
+                        that.canAttack = false;
+                        that.state = that.states.attack;
+                    }
+                }
+
+            }
+
+
+            // goblin hit by something switch the state to damaged
+            if (entity.HB && that.BB.collide(entity.HB) && entity instanceof AbstractPlayer && !that.HB) {
+                //entity.doDamage(that);
+                that.setDamagedState();
+                that.resetAttack();
+
+            } else if (entity.BB && that.BB.collide(entity.BB) && entity instanceof Arrow && !that.HB) {
+                that.setDamagedState();
+                that.resetAttack();
+            }
+
+        });
+    }
+
+    checkCooldowns(TICK) {
+        // goblin attack cooldown
+        if (!this.canAttack) {
+            this.attackCooldown += TICK;
+            if (this.attackCooldown >= 1.7) {
+                this.resetAttack();
+            }
+        }
+        // goblin hit cooldown
+        if (!this.vulnerable) {
+            this.damagedCooldown += TICK;
+            if (this.damagedCooldown >= PARAMS.DMG_COOLDOWN) {
+                this.resetAnimationTimers(this.states.damaged);
+                this.damagedCooldown = 0;
+                this.canAttack = true;
+                this.runAway = false;
+                this.vulnerable = true;
+                this.state = this.states.idle;
+            }
+        }
+    }
+
+    doRandomMovement() {
+        if (this.seconds >= this.doRandom) {
+
+            this.direction = Math.floor(Math.random() * 2);
+            this.event = Math.floor(Math.random() * 6);
+            if (this.event <= 0) {
+                this.doRandom = this.seconds + Math.floor(Math.random() * 3);
+                this.state = this.states.move;
+                this.velocity.x = 0;
+                if (this.direction == 0) this.velocity.x -= MAX_RUN;
+                else this.velocity.x += MAX_RUN;
+            }
+            else {
+                this.doRandom = this.seconds + Math.floor(Math.random() * 10);
+                this.state = this.states.idle;
+                this.velocity.x = 0
             }
         }
 
+    }
+
+    /**
+     * Uses bounding boxes to check if the goblin is 
+     * behind the player so it can attack
+     * @param {*} thePlayer 
+     * @returns 
+     */
+    isBehindPlayer(thePlayer) {
+        let isBehind = false;
+        if (thePlayer instanceof AbstractPlayer) {
+            let facingLeft = thePlayer.facing == thePlayer.dir.left;
+            //let offset = 30 * this.scale; //same offset as HB
+            let offset = this.attackwidth - (this.width * this.scale);
+
+            if (facingLeft) {
+                isBehind = thePlayer.BB.right < this.BB.left - offset
+            } else {
+                isBehind = thePlayer.BB.left > this.BB.right + offset;
+            }
+        }
+        return isBehind;
+
+    }
 
 
+    /**
+     * Checks if goblin is facing the same direction as the player
+     * @param {*} thePlayer 
+     * @returns 
+     */
+    sameFacing(thePlayer) {
 
-    };
+        let result = false;
+        if (thePlayer instanceof AbstractPlayer) {
+            let playerLeft = thePlayer.facing == thePlayer.dir.left;
+            let playerRight = thePlayer.facing == thePlayer.dir.right;
+            let goblinLeft = this.direction == this.directions.left;
+            let goblinRight = this.direction == this.directions.right;
 
-    updateHB() {
-        let offsetxBB = 30 * this.scale;
-        let offsetyBB = 10 * this.scale;
-        let heightBB = (this.height / 3) * this.scale;
+            result = (playerLeft == goblinLeft) || (playerRight == goblinRight);
+        }
 
-        if(this.direction == this.directions.left) offsetxBB = (offsetxBB * -1) - (this.width / 2); //flip hitbox offset
-        this.HB = new BoundingBox(this.x + offsetxBB, this.y + offsetyBB, this.width * 1.5, heightBB);
-    };
+        return result;
+    }
+
+    /**
+     * Flip current direction of the goblin
+     */
+    flipDir() {
+        this.direction = (this.direction == this.directions.right) ? this.directions.left : this.directions.right;
+    }
+
+    /**
+    * Hard reset all variables related to attacking
+    */
+    resetAttack() {
+        this.resetAnimationTimers(this.states.attack);
+        this.attackCooldown = 0;
+        this.canAttack = true;
+        this.runAway = false;
+
+    }
 
     resetAnimationTimers(action) {
         this.animations[action][0].elapsedTime = 0;
         this.animations[action][1].elapsedTime = 0;
     }
 
+    /**
+     * Does more damage if attacking player from behind
+     */
     getDamageValue() {
-        return this.damageValue;
+        let dmg = this.damageValue;
+        if (this.behindPlayer) dmg = dmg * 1.5;
+        return dmg;
     };
 
     setDamagedState() {
@@ -236,12 +337,27 @@ class Goblin extends AbstractEnemy {
         this.state = this.states.damaged;
     };
 
+    /**
+     * When attackin place the hitbox directly in front of the goblin
+     */
+    updateHB() {
+        let offsetxBB = this.width * this.scale;
+        let offsetyBB = 10 * this.scale;
+        let heightBB = (this.height / 3) * this.scale;
+
+        if (this.direction == this.directions.left) offsetxBB = (offsetxBB * -1); //flip hitbox offset
+        this.HB = new BoundingBox(this.x - this.width, this.y + offsetyBB, this.attackwidth, heightBB);
+    };
+
     updateBoxes() {
         this.lastBB = this.BB;
         this.BB = new BoundingBox(this.x + 4 * this.scale, this.y + 2 * this.scale, 19 * this.scale, 34 * this.scale + 1);
         if (this.direction == 0) this.AR = new BoundingBox(this.x - 71, this.y - 24, this.attackwidth, 46 * this.scale);
         else this.AR = new BoundingBox(this.x - 84, this.y - 24, this.attackwidth, 46 * this.scale);
-        this.VB = new BoundingBox(this.x + 32 - this.visionwidth / 2, this.y, this.visionwidth, this.height + 1);
+
+
+        if (this.direction == 0) this.VB = new BoundingBox((this.x - this.visionwidth / 2) + 155, this.y - 37, this.visionwidth / 2, this.height + 1)
+        else this.VB = new BoundingBox((this.x + this.visionwidth / 2) - 800, this.y - 37, this.visionwidth / 2, this.height + 1)
     };
 
     loadAnimations() {

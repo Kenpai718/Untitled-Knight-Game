@@ -1,12 +1,10 @@
-//Define constants to be passed to the superclass instantiation of an AbstractEnemy
-const SHROOM = {
-    NAME: "Mushroom",
-    MAX_HP: 100,
-    SCALE: 3.5,
-    WIDTH: 150,
-    HEIGHT: 150,
-    DAMAGE: 12.5
-};
+/**
+ * 
+ * Mushroom is a big entity about the size of the player.
+ * Its attacks are slow but pack a punch.
+ * 
+ * Unique behavior: runs away after an attack
+ */
 
 class Mushroom extends AbstractEnemy {
     constructor(game, x, y) {

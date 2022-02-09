@@ -13,11 +13,11 @@ class HealthBar {
         //var x = this.agent.x;
         //var y = this.agent.y;
         var widthRatio = (3 / 2);
-        var widthDivisor = 4;
+        var widthDivisor = 3;
 
         var newX = box.x - this.game.camera.x;
         var newY = box.y - this.game.camera.y;
-        var width = this.agent.width / widthDivisor;
+        var width = (this.agent.BB.width);// / widthDivisor;
         var height = 10;
         var offsetX = (width / (widthDivisor * widthRatio));
         var offsetY = 30;
@@ -45,7 +45,7 @@ class HealthBar {
 
         var newX = box.x - this.game.camera.x;
         var newY = box.y - this.game.camera.y;
-        var width = this.agent.width / widthDivisor;
+        var width = (this.agent.BB.width * this.agent.scale);
         var height = 10;
         var offsetX = (width / (widthDivisor * widthRatio));
         var offsetY = 30;

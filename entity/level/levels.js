@@ -1,3 +1,44 @@
+
+//modify this for testing entities
+var testLevel = {
+    width: 24, height: 14,
+    player: {x: 0, y: 1},
+    backgroundWalls: [
+        { x : 0, y : 14, width : 24, height : 14 }
+    ],
+    ground: [
+        { x : 0, y : 0, width: 30, height : 1, type : 1 },
+        { x : 3, y : 3, width: 5, height : 1, type : 2},
+        { x : 10, y : 6, width: 3, height : 1, type : 2}
+
+    ],
+
+    doors: [
+        { x : 21, y : 3 , canEnter : false }
+    ],
+
+    walls: [
+        { x : -1, y : 14, height : 14, type : 2 },
+        { x : 15, y : 8, height : 7, type : 2 },
+        { x : 25, y : 14, height : 7, type : 2 },
+    ],
+
+    shrooms: [
+        { x : 22, y : 3 },
+
+    ],
+    goblins : [
+        { x : 10, y : 1}
+    ],
+    skeletons : [
+        { x : 10, y : 6}
+    ],
+}
+
+
+/**
+ * Levels below
+ */
 var level1_1 = {
     //music:
     //label:
@@ -67,10 +108,10 @@ var level1_1 = {
 
     ],
     goblins : [
-        { x : 10, y : 1}
+        { x : 112, y : 12}
     ],
     skeletons : [
-        { x : 10, y : 1}
+        { x : 57, y : 7}
     ],
     doors: [
         { x : 116, y : 12 , canEnter : true }
