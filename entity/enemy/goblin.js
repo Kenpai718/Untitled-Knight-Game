@@ -1,5 +1,5 @@
 /**
- * Goblin is a small enemy entity that attacks fast. It has low hp and not much of a threat on its own.
+ * Goblin is a small enemy entity self attacks fast. It has low hp and not much of a threat on its own.
  * However when in a group it becomes dangerous as it attacks your blindspot!
  * 
  * Special behavior: prioritizes attacking player from behind while they have half hp.
@@ -16,8 +16,8 @@ class Goblin extends AbstractEnemy {
         this.tick = 0;
         this.seconds = 0;
         this.doRandom = 0;
-        this.alert = false; // enemy is near or got hit
         this.behindPlayer = false;
+        this.playerInSight = false;
 
         // Physics
         this.fallAcc = 1500;
@@ -66,154 +66,198 @@ class Goblin extends AbstractEnemy {
             }
 
         } else { // not dead keep moving
+            this.velocity.y += this.fallAcc * TICK; //constant falling, and fixed by collision detection
 
-            this.velocity.y += this.fallAcc * TICK;
+            //set maximum speeds
             if (this.velocity.y >= MAX_FALL) this.velocity.y = MAX_FALL;
             if (this.velocity.y <= -MAX_FALL) this.velocity.y = -MAX_FALL;
             if (this.velocity.x >= MAX_RUN) this.velocity.x = MAX_RUN;
             if (this.velocity.x <= -MAX_RUN) this.velocity.x = -MAX_RUN;
 
+            //update cordinate based on velocity
             this.x += this.velocity.x * TICK;
             this.y += this.velocity.y * TICK;
             this.updateBoxes();
 
-            let dist = { x: 0, y: 0 };
-            let knightInSight = false;
-            this.checkEnvironmentCollisions(dist);
-            this.checkEntityInteractions(knightInSight);
+            /**UPDATING BEHAVIOR*/
+            let dist = { x: 0, y: 0 }; //the displacement needed between entities
+            this.playerInSight = false; //set to true in environment collisions
+            dist = this.checkEnvironmentCollisions(dist); //check if colliding with environment and adjust entity accordingly
+            dist = this.checkEntityInteractions(dist, TICK); //move entity according to other entities
 
 
-            // update positions based on environment collisions
-            this.x += dist.x;
-            this.y += dist.y;
-            this.updateBoxes();
-            // set respective velocities to 0 for environment collisions
-            if (this.collisions.bottom && this.velocity.y > 0) this.velocity.y = 0;
-            if (this.collisions.left && this.velocity.x < 0) this.velocity.x = 0;
-            if (this.collisions.right && this.velocity.x > 0) this.velocity.x = 0;
-
-            this.checkCooldowns(TICK);
+            this.updatePositionAndVelocity(dist); //set where entity is based on interactions/collisions put on dist
+            this.checkCooldowns(TICK); //check and reset the cooldowns of its actions
 
 
-            //attack hitbox if attacking
-            if (this.state == this.states.attack && this.animations[this.states.attack][this.direction].isHalfwayDone()) {
-                //console.log("spawn hitbox");
-                this.updateHB();
+            //set the attack hitbox if in an attack state and the attack frame is out
+            if (this.state == this.states.attack) {
+                const frame = this.animations[this.state][this.direction].currentFrame();
+                if(frame >= 6 && frame <= 8) this.updateHB();
+                else this.HB = null;
             } else {
                 this.HB = null;
             }
 
-            // Do something random when player isnt in sight
-            if (!knightInSight) this.doRandomMovement();
+            //do random movement while the player is not in sight
+            if (!this.playerInSight) this.doRandomMovement();
         }
     };
 
+    /**
+    * Based on distance {x, y} displace
+    * the entity by the given amount.
+    * 
+    * Set velocities based on positioning
+    * @param {} dist {x, y}
+    */
+    updatePositionAndVelocity(dist) {
+        // update positions based on environment collisions
+        this.x += dist.x;
+        this.y += dist.y;
+        this.updateBoxes();
+        // set respective velocities to 0 for environment collisions
+        if (this.collisions.bottom && this.velocity.y > 0) this.velocity.y = 0;
+        if (this.collisions.left && this.velocity.x < 0) this.velocity.x = 0;
+        if (this.collisions.right && this.velocity.x > 0) this.velocity.x = 0;
 
+    }
+
+    /**
+     * Checks collisions with environment.
+     * Returns distance needed to be displaced.
+     * @param {*} dist 
+     * @returns dist 
+     */
     checkEnvironmentCollisions(dist) {
-        let that = this;
+        let self = this;
         this.collisions = { left: false, right: false, top: false, bottom: false };
         this.game.foreground2.forEach(function (entity) {
             // collision with environment
-            if (entity.BB && that.BB.collide(entity.BB)) {
-                const below = that.lastBB.top <= entity.BB.top && that.BB.bottom >= entity.BB.top;
-                const above = that.lastBB.bottom >= entity.BB.bottom && that.BB.top <= entity.BB.bottom;
-                const right = that.lastBB.right <= entity.BB.right && that.BB.right >= entity.BB.left;
-                const left = that.lastBB.left >= entity.BB.left && that.BB.left <= entity.BB.right;
-                const between = that.lastBB.top >= entity.BB.top && that.lastBB.bottom <= entity.BB.bottom;
+            if (entity.BB && self.BB.collide(entity.BB)) {
+                const below = self.lastBB.top <= entity.BB.top && self.BB.bottom >= entity.BB.top;
+                const above = self.lastBB.bottom >= entity.BB.bottom && self.BB.top <= entity.BB.bottom;
+                const right = self.lastBB.right <= entity.BB.right && self.BB.right >= entity.BB.left;
+                const left = self.lastBB.left >= entity.BB.left && self.BB.left <= entity.BB.right;
+                const between = self.lastBB.top >= entity.BB.top && self.lastBB.bottom <= entity.BB.bottom;
                 if (between ||
-                    below && that.BB.top > entity.BB.top - 20 * that.scale ||
-                    above && that.BB.bottom < entity.BB.bottom + 20 * that.scale) {
+                    below && self.BB.top > entity.BB.top - 20 * self.scale ||
+                    above && self.BB.bottom < entity.BB.bottom + 20 * self.scale) {
                     if (right) {
-                        that.collisions.right = true;
-                        dist.x = entity.BB.left - that.BB.right;
+                        self.collisions.right = true;
+                        dist.x = entity.BB.left - self.BB.right;
                     } else {
-                        that.collisions.left = true;
-                        dist.x = entity.BB.right - that.BB.left;
+                        self.collisions.left = true;
+                        dist.x = entity.BB.right - self.BB.left;
                     }
                 }
                 if (below) {
-                    if (left && Math.abs(that.BB.left - entity.BB.right) <= Math.abs(that.BB.bottom - entity.BB.top)) {
-                        that.collisions.left = true;
-                        dist.x = entity.BB.right - that.BB.left;
-                    } else if (right && Math.abs(that.BB.right - entity.BB.left) <= Math.abs(that.BB.bottom - entity.BB.top)) {
-                        that.collisions.right = true;
-                        dist.x = entity.BB.left - that.BB.right;
+                    if (left && Math.abs(self.BB.left - entity.BB.right) <= Math.abs(self.BB.bottom - entity.BB.top)) {
+                        self.collisions.left = true;
+                        dist.x = entity.BB.right - self.BB.left;
+                    } else if (right && Math.abs(self.BB.right - entity.BB.left) <= Math.abs(self.BB.bottom - entity.BB.top)) {
+                        self.collisions.right = true;
+                        dist.x = entity.BB.left - self.BB.right;
                     } else {
-                        dist.y = entity.BB.top - that.BB.bottom;
-                        that.collisions.bottom = true;
+                        dist.y = entity.BB.top - self.BB.bottom;
+                        self.collisions.bottom = true;
                     }
                 }
-                that.updateBoxes();
+                self.updateBoxes();
             }
         });
+
+        return dist;
     }
 
-    checkEntityInteractions(knightInSight) {
-        let that = this;
+    /**
+    * Checks interactions with entities.
+    * Also controls how the entity will move/act.
+    * Adds dist displacement if necessary
+    * @param {} dist 
+    * @param {*} TICK 
+    * @returns dist
+    */
+    checkEntityInteractions(dist, TICK) {
+        let self = this;
         /* Entity Interactions */
         this.game.entities.forEach(function (entity) {
-            // knight is in the vision box
-            if (entity.BB && entity instanceof Knight && that.VB.collide(entity.BB)) {
-                knightInSight = true;
-                // knight is in the vision box and not in the attack range
+            // knight interactions
+            if (entity instanceof AbstractPlayer) {
+                //set flag to see if the goblin is currently behind the knight
+                self.behindPlayer = self.isBehindPlayer(entity);
 
-                if (!that.AR.collide(entity.BB)) {
-                    // move towards the knight
-                    that.state = that.states.move;
-                    that.direction = entity.BB.right < that.BB.left ? that.directions.left : that.directions.right;
-                    that.velocity.x = that.direction == that.directions.right ? that.velocity.x + MAX_RUN : that.velocity.x - MAX_RUN;
-                    that.resetAttack();
-                }
-            }
-            // knight is in attack range
-            if (entity.BB && entity instanceof Knight && that.AR.collide(entity.BB)) {
-
-
-                /**
-                 * Until low hp prioritize attacking from the back
-                 */
-                let changeBehavior = (that.hp / that.max_hp) <= 0.5;
-                that.behindPlayer = that.isBehindPlayer(entity);
-
-                if (!changeBehavior) { //strike the back or player
-                    if (that.behindPlayer) {
-                        that.velocity.x = 0;
-                        if (!that.sameFacing(entity)) {
-                            that.flipDir();
-                        }
-                        if (that.canAttack && !that.animations[that.states.attack][that.direction].isDone()) {
-                            that.runAway = true;
-                            that.canAttack = false;
-                            that.state = that.states.attack;
-                        }
-                    }
-                } else { //attack normally from wherever 
-                    that.velocity.x = 0;
-                    if (that.canAttack && !that.animations[that.states.attack][that.direction].isDone()) {
-                        that.runAway = true;
-                        that.canAttack = false;
-                        that.state = that.states.attack;
+                // knight is in the vision box
+                let playerInVB = entity.BB && self.VB.collide(entity.BB);
+                let playerAtkInVB = entity.HB != null && self.VB.collide(entity.HB);
+                if (playerInVB || playerAtkInVB) {
+                    self.playerInSight = true;
+                    // knight is in the vision box and not in the attack range
+                    if (!self.AR.collide(entity.BB)) {
+                        // move towards the knight
+                        self.state = self.states.move;
+                        self.direction = entity.BB.right < self.BB.left ? self.directions.left : self.directions.right;
+                        self.velocity.x = self.direction == self.directions.right ? self.velocity.x + MAX_RUN : self.velocity.x - MAX_RUN;
+                        self.resetAttack();
                     }
                 }
 
-            }
+
+                //knight within attack range
+                if (entity.BB && self.AR.collide(entity.BB)) {
+                    /**
+                     * Until low hp prioritize attacking from the back
+                     */
+                    let changeBehavior = (self.hp / self.max_hp) <= 0.5;
 
 
-            // goblin hit by something switch the state to damaged
-            if (entity.HB && that.BB.collide(entity.HB) && entity instanceof AbstractPlayer && !that.HB) {
-                //entity.doDamage(that);
-                that.setDamagedState();
-                that.resetAttack();
+                    if (!changeBehavior) { //strike the back or player
+                        if (self.behindPlayer) {
+                            self.velocity.x = 0;
+                            if (!self.sameFacing(entity)) {
+                                self.flipDir();
+                            }
+                            if (self.canAttack && !self.animations[self.states.attack][self.direction].isDone()) {
+                                self.runAway = true;
+                                self.canAttack = false;
+                                self.state = self.states.attack;
+                            }
+                        }
+                    } else { //attack normally from wherever 
+                        self.velocity.x = 0;
+                        if (self.canAttack && !self.animations[self.states.attack][self.direction].isDone()) {
+                            self.runAway = true;
+                            self.canAttack = false;
+                            self.state = self.states.attack;
+                        }
+                    }
 
-            } else if (entity.BB && that.BB.collide(entity.BB) && entity instanceof Arrow && !that.HB) {
-                that.setDamagedState();
-                that.resetAttack();
+                    // goblin hit by player switch to damaged state
+                    if (entity.HB && self.BB.collide(entity.HB) && !self.HB) {
+                        //entity.doDamage(self);
+                        self.setDamagedState();
+                        self.resetAttack();
+
+                    }
+                }
+
+
+                //projectile interaction
+                if (entity instanceof Arrow) {
+                    if (entity.BB && self.BB.collide(entity.BB) && !self.HB) {
+                        self.setDamagedState();
+                        self.resetAttack();
+                    }
+                }
             }
 
         });
+
+        return dist;
     }
 
-    checkCooldowns(TICK) {
+    checkCooldowns() {
+        const TICK = this.game.clockTick;
         // goblin attack cooldown
         if (!this.canAttack) {
             this.attackCooldown += TICK;

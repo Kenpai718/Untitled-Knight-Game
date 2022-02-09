@@ -19,8 +19,8 @@ var testLevel = {
 
     walls: [
         { x : -1, y : 14, height : 14, type : 2 },
-        { x : 15, y : 8, height : 7, type : 2 },
-        { x : 25, y : 14, height : 7, type : 2 },
+        { x : 15, y : 14, height : 13, type : 2 },
+        { x : 25, y : 14, height : 14, type : 2 },
     ],
 
     shrooms: [

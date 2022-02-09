@@ -17,7 +17,15 @@ class HealthBar {
 
         var newX = box.x - this.game.camera.x;
         var newY = box.y - this.game.camera.y;
-        var width = (this.agent.BB.width);// / widthDivisor;
+        var width;
+
+        //set healthbar width for player because it's BB changes frequently
+        if(this.agent instanceof AbstractPlayer) {
+            width = this.agent.width / widthDivisor;
+        } else { //set width to size of bounding box
+            width = (this.agent.BB.width);
+        }
+        
         var height = 10;
         var offsetX = (width / (widthDivisor * widthRatio));
         var offsetY = 30;

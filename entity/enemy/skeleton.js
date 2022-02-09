@@ -1,6 +1,6 @@
 /**
  * Skeleton is a entity about the size of the player. It's attacks are rather slow.
- * It doesn't have that much hp, but it has a shield to reduce damage.
+ * It doesn't have self much hp, but it has a shield to reduce damage.
  * 
  * Unique behavior: Switching between shield and attack mode when in range
  * At half HP it will keep its shield up during the idle.
@@ -30,6 +30,7 @@ class Skeleton extends AbstractEnemy {
         this.damagedCooldown = 0;
         this.runAway = false;
         this.attackCooldown = 0;
+        this.playerInSight = false;
 
 
         //unique shielding behavior
@@ -37,8 +38,7 @@ class Skeleton extends AbstractEnemy {
         this.phaseSwitchTime = 1;
         this.blockTimer = 0;
         this.blocking = false; //blocking state
-        this.shieldHP = 20;
-        this.combatPhase = "block";
+        this.combatPhase = "block"; //block or attack string
 
         this.attackwidth = 200;
         this.visionwidth = 1200;
@@ -75,7 +75,7 @@ class Skeleton extends AbstractEnemy {
 
         if (this.direction == 0) this.VB = new BoundingBox((this.x - this.visionwidth / 2) + 150, this.y - 37, this.visionwidth / 2, this.height)
         else this.VB = new BoundingBox((this.x + this.visionwidth / 2) - 650, this.y - 37, this.visionwidth / 2, this.height)
-        
+
     }
 
     update() {
@@ -99,190 +99,253 @@ class Skeleton extends AbstractEnemy {
 
         } else { // not dead keep moving
 
-            this.velocity.y += this.fallAcc * TICK;
+            this.velocity.y += this.fallAcc * TICK; //constant falling
+
+            //set maximum speeds
             if (this.velocity.y >= MAX_FALL) this.velocity.y = MAX_FALL;
             if (this.velocity.y <= -MAX_FALL) this.velocity.y = -MAX_FALL;
             if (this.velocity.x >= MAX_RUN) this.velocity.x = MAX_RUN;
             if (this.velocity.x <= -MAX_RUN) this.velocity.x = -MAX_RUN;
 
+            //update cordinate based on velocity
             this.x += this.velocity.x * TICK;
             this.y += this.velocity.y * TICK;
             this.updateBoxes();
 
-            let dist = { x: 0, y: 0 };
-            let that = this;
-            let knightInSight = false;
-            this.checkEnvironmentCollisions(dist);
+            /**UPDATING BEHAVIOR*/
+            let dist = { x: 0, y: 0 }; //the displacement needed between entities
+            this.playerInSight = false; //set to true in environment collisions
+            dist = this.checkEnvironmentCollisions(dist); //check if colliding with environment and adjust entity accordingly
+            dist = this.checkEntityInteractions(dist, TICK); //move entity according to other entities
+            this.updatePositionAndVelocity(dist); //set where entity is based on interactions/collisions put on dist
+            this.checkCooldowns(TICK); //check and reset the cooldowns of its actions
 
-            /**
-             * Interactions with entities
-             */
-            this.game.entities.forEach(function (entity) {
-                // knight is in the vision box
-                if (entity.BB && entity instanceof Knight && that.VB.collide(entity.BB)) {
-                    knightInSight = true;
-                    // knight is in the vision box and not in the attack range
-                    if (!that.AR.collide(entity.BB)) {
-                        // move towards the knight
-                        that.state = that.states.move;
-                        that.direction = entity.BB.right < that.BB.left ? that.directions.left : that.directions.right;
-                        that.velocity.x = that.direction == that.directions.right ? that.velocity.x + MAX_RUN : that.velocity.x - MAX_RUN;
-
-                        //reset action states
-                        that.setAttackState(false);
-                        that.setBlockState(false);
-                    }
-                }
-                // knight is in attack range
-
-                let inAttackRange = entity.BB && entity instanceof Knight && that.AR.collide(entity.BB);
-                if (inAttackRange) {
-                    that.velocity.x = 0;
-
-                    that.switchTimer += TICK;
-
-                    //switch the combat phase after reaching time
-                    if (that.switchTimer >= that.phaseSwitchTime && that.state != that.states.damaged) {
-                        that.switchTimer = 0; //reset timer
-                        that.switchPhase();
-
-                    }
-
-                    //do an attack or block
-                    if (!that.state != that.states.damaged) that.setCombatPhase();
-
-                }
-
-                // skeleton hit by something switch the state to damaged
-                if (entity.HB && that.BB.collide(entity.HB) && entity instanceof AbstractPlayer && !that.HB) {
-                    //entity.doDamage(that);
-                    if (!that.blocking) {
-                        that.setDamagedState();
-                    } else {
-                        //console.log("hit skeleton's shield");
-                    }
-
-
-                } else if (entity.BB && that.BB.collide(entity.BB) && entity instanceof Arrow && !that.HB) {
-                    that.setDamagedState();
-                }
-
-            });
-
-            // update positions based on environment collisions
-            this.x += dist.x;
-            this.y += dist.y;
-            this.updateBoxes();
-            // set respective velocities to 0 for environment collisions
-            if (this.collisions.bottom && this.velocity.y > 0) this.velocity.y = 0;
-            if (this.collisions.left && this.velocity.x < 0) this.velocity.x = 0;
-            if (this.collisions.right && this.velocity.x > 0) this.velocity.x = 0;
-
-            // skeleton attack cooldown
-            if (!this.canAttack) {
-                this.attackCooldown += TICK;
-                if (this.attackCooldown >= 1.7) {
-                    this.resetAnimationTimers(this.states.attack);
-                    this.attackCooldown = 0;
-                    this.canAttack = true;
-                    this.runAway = false;
-                }
-            }
-
-            // skeleton hit cooldown
-            if (!this.vulnerable) {
-                this.damagedCooldown += TICK;
-                if (this.damagedCooldown >= PARAMS.DMG_COOLDOWN) {
-                    this.resetAnimationTimers(this.states.damaged);
-                    this.damagedCooldown = 0;
-                    this.canAttack = true;
-                    this.runAway = false;
-                    this.vulnerable = true;
-                }
-            }
-
-            //attack hitbox if attacking
-            if (this.state == this.states.attack && this.animations[this.states.attack][this.direction].isHalfwayDone()) {
-                this.updateHB();
+            //set the attack hitbox if in an attack state and the attack frame is out
+            if (this.state == this.states.attack) {
+                const frame = this.animations[this.state][this.direction].currentFrame();
+                if(frame >= 6 && frame <= 8) this.updateHB();
+                else this.HB = null;
             } else {
                 this.HB = null;
             }
 
+            //do random movement while the player is not in sight
+            if (!this.playerInSight) this.doRandomMovement();
 
-            // Actions when player not in sight
-            if (!knightInSight) {
-
-                this.velocity.x = 0;
-                //while hp is at half keep shield up to block projectiles
-                if ((this.hp / this.max_hp) <= PARAMS.MID_HP) {
-                    that.setBlockState(true);
-                    that.setAttackState(false);
-                } else { //do random movement
-                    if (this.seconds >= this.doRandom) {
-
-                        this.direction = Math.floor(Math.random() * 2);
-                        this.event = Math.floor(Math.random() * 6);
-                        if (this.event <= 0) {
-                            this.doRandom = this.seconds + Math.floor(Math.random() * 3);
-                            this.state = this.states.move;
-                            this.velocity.x = 0;
-                            if (this.direction == 0) this.velocity.x -= MAX_RUN;
-                            else this.velocity.x += MAX_RUN;
-                        }
-                        else {
-                            this.doRandom = this.seconds + Math.floor(Math.random() * 10);
-                            this.state = this.states.idle;
-                            this.velocity.x = 0
-                        }
-                    }
-                    //reset action states
-                    that.setAttackState(false);
-                    that.setBlockState(false);
-                }
-            }
         }
 
 
     };
 
+    /**
+     * Based on distance {x, y} displace
+     * the entity by the givven amount.
+     * 
+     * Set velocities based on positioning
+     * @param {} dist {x, y}
+     */
+    updatePositionAndVelocity(dist) {
+        // update positions based on environment collisions
+        this.x += dist.x;
+        this.y += dist.y;
+        this.updateBoxes();
+        // set respective velocities to 0 for environment collisions
+        if (this.collisions.bottom && this.velocity.y > 0) this.velocity.y = 0;
+        if (this.collisions.left && this.velocity.x < 0) this.velocity.x = 0;
+        if (this.collisions.right && this.velocity.x > 0) this.velocity.x = 0;
 
+    }
+
+
+    /**
+     * Checks collisions with environment.
+     * Returns distance needed to be displaced.
+     * @param {*} dist 
+     * @returns dist 
+     */
     checkEnvironmentCollisions(dist) {
-        let that = this;
+        let self = this;
         this.collisions = { left: false, right: false, top: false, bottom: false };
         this.game.foreground2.forEach(function (entity) {
             // collision with environment
-            if (entity.BB && that.BB.collide(entity.BB)) {
-                const below = that.lastBB.top <= entity.BB.top && that.BB.bottom >= entity.BB.top;
-                const above = that.lastBB.bottom >= entity.BB.bottom && that.BB.top <= entity.BB.bottom;
-                const right = that.lastBB.right <= entity.BB.right && that.BB.right >= entity.BB.left;
-                const left = that.lastBB.left >= entity.BB.left && that.BB.left <= entity.BB.right;
-                const between = that.lastBB.top >= entity.BB.top && that.lastBB.bottom <= entity.BB.bottom;
+            if (entity.BB && self.BB.collide(entity.BB)) {
+                const below = self.lastBB.top <= entity.BB.top && self.BB.bottom >= entity.BB.top;
+                const above = self.lastBB.bottom >= entity.BB.bottom && self.BB.top <= entity.BB.bottom;
+                const right = self.lastBB.right <= entity.BB.right && self.BB.right >= entity.BB.left;
+                const left = self.lastBB.left >= entity.BB.left && self.BB.left <= entity.BB.right;
+                const between = self.lastBB.top >= entity.BB.top && self.lastBB.bottom <= entity.BB.bottom;
                 if (between ||
-                    below && that.BB.top > entity.BB.top - 20 * that.scale ||
-                    above && that.BB.bottom < entity.BB.bottom + 20 * that.scale) {
+                    below && self.BB.top > entity.BB.top - 20 * self.scale ||
+                    above && self.BB.bottom < entity.BB.bottom + 20 * self.scale) {
                     if (right) {
-                        that.collisions.right = true;
-                        dist.x = entity.BB.left - that.BB.right;
+                        self.collisions.right = true;
+                        dist.x = entity.BB.left - self.BB.right;
                     } else {
-                        that.collisions.left = true;
-                        dist.x = entity.BB.right - that.BB.left;
+                        self.collisions.left = true;
+                        dist.x = entity.BB.right - self.BB.left;
                     }
                 }
                 if (below) {
-                    if (left && Math.abs(that.BB.left - entity.BB.right) <= Math.abs(that.BB.bottom - entity.BB.top)) {
-                        that.collisions.left = true;
-                        dist.x = entity.BB.right - that.BB.left;
-                    } else if (right && Math.abs(that.BB.right - entity.BB.left) <= Math.abs(that.BB.bottom - entity.BB.top)) {
-                        that.collisions.right = true;
-                        dist.x = entity.BB.left - that.BB.right;
+                    if (left && Math.abs(self.BB.left - entity.BB.right) <= Math.abs(self.BB.bottom - entity.BB.top)) {
+                        self.collisions.left = true;
+                        dist.x = entity.BB.right - self.BB.left;
+                    } else if (right && Math.abs(self.BB.right - entity.BB.left) <= Math.abs(self.BB.bottom - entity.BB.top)) {
+                        self.collisions.right = true;
+                        dist.x = entity.BB.left - self.BB.right;
                     } else {
-                        dist.y = entity.BB.top - that.BB.bottom;
-                        that.collisions.bottom = true;
+                        dist.y = entity.BB.top - self.BB.bottom;
+                        self.collisions.bottom = true;
                     }
                 }
-                that.updateBoxes();
+                self.updateBoxes();
             }
         });
+
+        return dist;
+    }
+
+    /**
+     * Checks interactions with entities.
+     * Also controls how the entity will move/act 
+     * 
+     * @param {} dist 
+     * @param {*} TICK 
+     * @returns 
+     */
+    checkEntityInteractions(dist, TICK) {
+        let self = this;
+        /**
+          * Interactions with entities
+          */
+        this.game.entities.forEach(function (entity) {
+
+            //player interactions
+            if (entity instanceof AbstractPlayer) {
+                // knight is in the vision box
+                let playerInVB = entity.BB && self.VB.collide(entity.BB);
+                let playerAtkInVB = entity.HB && self.VB.collide(entity.HB);
+                if (playerInVB || playerAtkInVB) {
+                    self.playerInSight = true;
+                    // knight is in the vision box and not in the attack range
+                    if (!self.AR.collide(entity.BB)) {
+                        // move towards the knight
+                        self.state = self.states.move;
+                        self.direction = entity.BB.right < self.BB.left ? self.directions.left : self.directions.right;
+                        self.velocity.x = self.direction == self.directions.right ? self.velocity.x + MAX_RUN : self.velocity.x - MAX_RUN;
+
+                        //reset action states
+                        self.setAttackState(false);
+                        self.setBlockState(false);
+                    }
+                }
+
+                // knight is in attack range
+                let inAttackRange = entity.BB && self.AR.collide(entity.BB);
+                if (inAttackRange) {
+                    self.velocity.x = 0;
+
+                    self.switchTimer += TICK;
+
+                    //switch the combat phase after reaching time
+                    if (self.switchTimer >= self.phaseSwitchTime && self.state != self.states.damaged) {
+                        self.switchTimer = 0; //reset timer
+                        self.switchPhase();
+
+                    }
+
+                    //do an attack or block
+                    if (!self.state != self.states.damaged) self.setCombatPhase();
+
+                }
+
+                // skeleton hit by something switch the state to damaged
+                let isHit = entity.HB && self.BB.collide(entity.HB) && !self.HB;
+                if (isHit) {
+                    //entity.doDamage(self);
+                    if (!self.blocking) {
+                        self.setDamagedState();
+                    } else {
+                        //console.log("hit skeleton's shield");
+                    }
+                }
+            }
+
+            //projectile interactions
+            if (entity instanceof Arrow) {
+                if (entity.BB && self.BB.collide(entity.BB) && !self.HB) {
+                    self.setDamagedState();
+                }
+            }
+
+
+        });
+
+        return dist;
+    }
+
+    /**
+     * Updates the cooldowns of entity actions
+     * based on ticks
+     * @param {*} TICK 
+     */
+    checkCooldowns(TICK) {
+        // skeleton attack cooldown
+        if (!this.canAttack) {
+            this.attackCooldown += TICK;
+            if (this.attackCooldown >= 1.7) {
+                this.resetAnimationTimers(this.states.attack);
+                this.attackCooldown = 0;
+                this.canAttack = true;
+                this.runAway = false;
+            }
+        }
+
+        // skeleton hit cooldown
+        if (!this.vulnerable) {
+            this.damagedCooldown += TICK;
+            if (this.damagedCooldown >= PARAMS.DMG_COOLDOWN) {
+                this.resetAnimationTimers(this.states.damaged);
+                this.damagedCooldown = 0;
+                this.canAttack = true;
+                this.runAway = false;
+                this.vulnerable = true;
+            }
+        }
+    }
+
+    /**
+     * Do random movement like switching directions or walking
+     * UNIQUE: overrides behavior so skeleton shields at low hp
+     */
+    doRandomMovement() {
+        this.velocity.x = 0;
+        //while hp is at half keep shield up to block projectiles
+        if ((this.hp / this.max_hp) <= PARAMS.MID_HP) {
+            this.setBlockState(true);
+            this.setAttackState(false);
+        } else { //do random movement
+            if (this.seconds >= this.doRandom) {
+
+                this.direction = Math.floor(Math.random() * 2);
+                this.event = Math.floor(Math.random() * 6);
+                if (this.event <= 0) {
+                    this.doRandom = this.seconds + Math.floor(Math.random() * 3);
+                    this.state = this.states.move;
+                    this.velocity.x = 0;
+                    if (this.direction == 0) this.velocity.x -= MAX_RUN;
+                    else this.velocity.x += MAX_RUN;
+                }
+                else {
+                    this.doRandom = this.seconds + Math.floor(Math.random() * 10);
+                    this.state = this.states.idle;
+                    this.velocity.x = 0
+                }
+            }
+            //reset action states
+            this.setAttackState(false);
+            this.setBlockState(false);
+        }
+
     }
 
 
@@ -427,8 +490,6 @@ class Skeleton extends AbstractEnemy {
     };
 
     draw(ctx) {
-
-
         if (this.dead) {
             if (this.flickerFlag) {
                 this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
