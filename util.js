@@ -53,7 +53,7 @@ const STATS = {
         HEIGHT: 80,
         DMG_SLASH1: 10,
         DMG_SLASH2: 15,
-        DMG_CROUCHATK: 8
+        DMG_CROUCHATK: 5
     },
 
     ARROW: {
@@ -141,6 +141,14 @@ const SFX = {
 
 
 };
+
+/** Global music paths */
+const MUSIC = {
+    CHASING_DAYBREAK: "./sound/music/FE3H_Chasing_Daybreak.mp3",
+    FODLAN_WINDS: "./sound/music/FE3H_Fodlan_Winds.mp3",
+    BETWEEN_HEAVEN_AND_EARTH: "./sound/music/FE3H_Between_Heaven_And_Earth.mp3",
+
+}
 
 /** HELPER FUNCTIONS */
 

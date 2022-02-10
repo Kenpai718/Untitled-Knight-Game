@@ -8,6 +8,9 @@ class SceneManager {
         this.game.camera = this; //add scene manager as an entity to game engine
         this.x = 0;
         this.y = 0;
+        this.defaultMusic = MUSIC.CHASING_DAYBREAK;
+
+
         //game status
         this.title = false;
         this.gameOver = false;
@@ -16,7 +19,7 @@ class SceneManager {
         this.levelW = 0;
 
         //levels array to load levels by calling levels[0], levels[1], etc
-        this.currentLevel = 0;
+        this.currentLevel = 2;
         this.setupAllLevels();
         this.loadLevel(this.currentLevel, false);
     };
@@ -174,15 +177,27 @@ class SceneManager {
      * @param {*} spawnY player's spawn y
      */
     loadScene(scene, spawnX, spawnY) {
+        //initialize scene and player
         this.level = scene;
         this.levelH = scene.height;
         this.levelW = scene.width;
         let h = scene.height;
-
         this.game.addEntity(new Background(this.game));
         this.makePlayer(spawnX, h - spawnY);
 
+        //play music
+        if (scene.music && !this.title) { //level music when not on title
+            ASSET_MANAGER.pauseBackgroundMusic();
+            //ASSET_MANAGER.playAsset(scene.music);
+            ASSET_MANAGER.forcePlayMusic(scene.music);
+        } else if (!scene.music) { //no music set play default music
+            ASSET_MANAGER.pauseBackgroundMusic();
+            //ASSET_MANAGER.playAsset(this.defaultMusic);
+            ASSET_MANAGER.forcePlayMusic(this.defaultMusic);
+        }
 
+
+        //load environment entities
         if (this.level.ground) {
             for (var i = 0; i < this.level.ground.length; i++) {
                 let ground = this.level.ground[i];
@@ -207,6 +222,8 @@ class SceneManager {
                 this.game.addEntity(new Walls(this.game, walls.x * PARAMS.BLOCKDIM, (h - walls.y - 1) * PARAMS.BLOCKDIM, PARAMS.BLOCKDIM, walls.height * PARAMS.BLOCKDIM, walls.type));
             }
         }
+
+        //load enemy entities
         if (this.level.shrooms) {
             for (var i = 0; i < scene.shrooms.length; i++) {
                 let shroom = scene.shrooms[i];
@@ -231,6 +248,8 @@ class SceneManager {
                 this.game.addEntity(e);
             }
         }
+
+        //load backgroound assets
         if (this.level.backgroundWalls) {
             for (var i = 0; i < this.level.backgroundWalls.length; i++) {
                 let bw = this.level.backgroundWalls[i];
@@ -279,6 +298,7 @@ class SceneManager {
                 this.game.addEntity(new Chain(this.game, chain.x * PARAMS.BLOCKDIM, (h - chain.y - 1) * PARAMS.BLOCKDIM));
             }
         }
+
     }
 
     /**

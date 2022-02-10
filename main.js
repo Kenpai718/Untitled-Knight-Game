@@ -24,7 +24,10 @@ ASSET_MANAGER.queueDownload("./sprites/environment/moonlit_sky.png");
 ASSET_MANAGER.queueDownload("./sprites/vignette.png");
 
 //music
-ASSET_MANAGER.queueDownload("./sound/music/FE3H-Chasing-Daybreak.mp3");
+ASSET_MANAGER.queueDownload(MUSIC.CHASING_DAYBREAK);
+ASSET_MANAGER.queueDownload(MUSIC.FODLAN_WINDS);
+ASSET_MANAGER.queueDownload(MUSIC.BETWEEN_HEAVEN_AND_EARTH);
+
 
 //sfx
 ASSET_MANAGER.queueDownload(SFX.ARROW_HIT);
@@ -63,7 +66,7 @@ ASSET_MANAGER.downloadAll(() => {
 	 * It pings the webpage to play every few seconds until it can and
 	 * sets the song to play on auto repeat
 	*/
-	ASSET_MANAGER.forcePlayMusic("./sound/music/FE3H-Chasing-Daybreak.mp3");
+	//ASSET_MANAGER.forcePlayMusic(MUSIC.CHASING_DAYBREAK);
 
 	gameEngine.init(ctx);
 	new SceneManager(gameEngine);

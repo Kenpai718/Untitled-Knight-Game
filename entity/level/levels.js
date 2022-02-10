@@ -11,9 +11,10 @@
  * 
  * 
  * Each level variable MUST HAVE:
- *      ID: 0,1,2...    (level number)
+ *      ID: 0,1,2...    (level number and this id must be an index in scene manager's level array)
  *      width, height   (converted into PARAMS.BLOCKDIM)
  *      player: {x, y}  (starting pos)
+ *      music: MUSIC.TRACK_NAME (found in utils class)
  * 
  * The rest will be entities or environment objects. Probably have ground below player or you will fall yo your death.
  * doors must be in the format of door: { x : 1, y : 3 , canEnter : true,  exitLocation: {x: 1, y: 1, levelNum: 1}},
@@ -24,6 +25,7 @@ var testLevel = {
     ID: 0,
     width: 24, height: 14,
     player: {x: 1, y: 1},
+    music: MUSIC.FODLAN_WINDS,
     doors: [
         { x : 1, y : 3 , canEnter : true,  exitLocation: {x: 1, y: 1, levelNum: 1}}, //door to level 3
         { x : 6, y : 6 , canEnter : true, exitLocation: {x: 1, y: 1, levelNum: 2}}, //door to level 2
@@ -35,7 +37,7 @@ var testLevel = {
     ground: [
         { x : 0, y : 0, width: 30, height : 1, type : 1 },
         { x : 4, y : 3, width: 5, height : 1, type : 2},
-        { x : 10, y : 6, width: 3, height : 1, type : 2}
+        { x : 10, y : 6, width: 5, height : 1, type : 2}
 
     ],
 
@@ -53,7 +55,7 @@ var testLevel = {
         { x : 10, y : 1}
     ],
     skeletons : [
-        { x : 10, y : 6}
+        { x : 12, y : 7}
     ],
 }
 
@@ -62,11 +64,11 @@ var testLevel = {
  * Levels below
  */
 var level1_1 = {
-    //music:
-    //label:
     ID: 1,
     width: 120, height: 15,
     player: {x: 0, y: 1},
+    music: MUSIC.FODLAN_WINDS,
+
     doors: [
         { x : 116, y : 12 , canEnter : true, exitLocation: {x: 1, y: 1, levelNum: 2}}, //door to level 2
         { x : 2, y : 3 , canEnter : true, exitLocation: {x: 1, y: 1, levelNum: 0}} //debugging room, DELETE THIS BEFORE SUBMISSION!
@@ -147,6 +149,8 @@ var level1_2 = {
     ID: 2,
     width : 120, height : 36,
     player: {x: 1, y: 1},
+    music: MUSIC.CHASING_DAYBREAK,
+
     doors : [
         { x : 116, y : 3, canEnter : true, exitLocation: {x: 1, y: 1, levelNum: 3}}, //next level to 3
         { x : 0, y : 3, canEnter : true, exitLocation: {x: 116, y: 10, levelNum: 1} } //go back to level 1
@@ -177,7 +181,7 @@ var level1_2 = {
         { x : 25, y : 28, width : 1, height : 1 },
         { x : 10, y : 26, width : 5, height : 1 },
         { x : 35, y : 24, width : 25, height : 2 },
-        { x : 41, y : 22, width : 19, height : 4 },
+        //{ x : 41, y : 22, width : 19, height : 4 },
         { x : 65, y : 36, width : 55, height : 14 },
         { x : 65, y : 19, width : 55, height : 8 },
         { x : 85, y : 22, width : 35, height : 3 },
@@ -276,6 +280,8 @@ var level1_3 = {
     ID: 3,
     width : 120, height : 42,
     player: {x: 1, y: 1},
+    music: MUSIC.BETWEEN_HEAVEN_AND_EARTH,
+
     doors : [
         { x : 1, y : 3, canEnter : true, exitLocation: {x: 116, y: 3, levelNum: 2}}, //go back to level 2
     ],
