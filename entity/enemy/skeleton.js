@@ -115,7 +115,7 @@ class Skeleton extends AbstractEnemy {
             /**UPDATING BEHAVIOR*/
             let dist = { x: 0, y: 0 }; //the displacement needed between entities
             this.playerInSight = false; //set to true in environment collisions
-            dist = this.checkEnvironmentCollisions(dist); //check if colliding with environment and adjust entity accordingly
+            this.collisionWall(); //check if colliding with environment and adjust entity accordingly
             dist = this.checkEntityInteractions(dist, TICK); //move entity according to other entities
             this.updatePositionAndVelocity(dist); //set where entity is based on interactions/collisions put on dist
             this.checkCooldowns(TICK); //check and reset the cooldowns of its actions
