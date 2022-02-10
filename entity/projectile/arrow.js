@@ -71,6 +71,7 @@ class Arrow extends AbstractEntity {
                     self.removeFromWorld = true;
                     self.hit = true;
                     entity.takeDamage(self.getDamageValue(), self.critical);
+                    if (!entity.aggro) entity.aggro = true;
                 }
 
 
@@ -80,7 +81,7 @@ class Arrow extends AbstractEntity {
         let h = this.game.surfaceHeight;
         //remove from world if outside the canvas
         if (this.x > 3/2*w + this.game.camera.x || this.x + w / 2 < this.game.camera.x ||
-            this.y > h + w / 2 + this.game.camera.y || this.y + w / 2 < this.game.camera.y) 
+            this.y > h + w / 2 + this.game.camera.y || this.y + w / 2 < this.game.camera.y)
         this.removeFromWorld = true;
 
 
