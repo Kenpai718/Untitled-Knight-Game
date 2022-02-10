@@ -112,44 +112,10 @@ class Mushroom extends AbstractEnemy {
             this.y += this.velocity.y * TICK;
             this.updateBoxes();
 
-            let dist = { x: 0, y: 0 };
-            let that = this;
             let knightInSight = false;
-            this.collisions = { left: false, right: false, top: false, bottom: false };
-            this.game.foreground2.forEach(function (entity) {
-                // collision with environment
-                if (entity.BB && that.BB.collide(entity.BB)) {
-                    const below = that.lastBB.top <= entity.BB.top && that.BB.bottom >= entity.BB.top;
-                    const above = that.lastBB.bottom >= entity.BB.bottom && that.BB.top <= entity.BB.bottom;
-                    const right = that.lastBB.right <= entity.BB.right && that.BB.right >= entity.BB.left;
-                    const left = that.lastBB.left >= entity.BB.left && that.BB.left <= entity.BB.right;
-                    const between = that.lastBB.top >= entity.BB.top && that.lastBB.bottom <= entity.BB.bottom;
-                    if (between ||
-                        below && that.BB.top > entity.BB.top - 20 * that.scale ||
-                        above && that.BB.bottom < entity.BB.bottom + 20 * that.scale) {
-                            if (right) {
-                                that.collisions.right = true;
-                                dist.x = entity.BB.left - that.BB.right;
-                            } else {
-                                that.collisions.left = true;
-                                dist.x = entity.BB.right - that.BB.left;
-                            }
-                    }
-                    if (below) {
-                        if (left && Math.abs(that.BB.left - entity.BB.right) <= Math.abs(that.BB.bottom - entity.BB.top)) {
-                            that.collisions.left = true;
-                            dist.x = entity.BB.right - that.BB.left;
-                        } else if (right && Math.abs(that.BB.right - entity.BB.left) <= Math.abs(that.BB.bottom - entity.BB.top)) {
-                            that.collisions.right = true;
-                            dist.x = entity.BB.left - that.BB.right;
-                        } else {
-                            dist.y = entity.BB.top - that.BB.bottom;
-                            that.collisions.bottom = true;
-                        }
-                    }
-                    that.updateBoxes();
-                }
-            });
+            let that = this;
+
+            this.collisionWall();
 
             this.game.entities.forEach(function (entity) {
                 // knight is in the vision box
@@ -185,10 +151,6 @@ class Mushroom extends AbstractEnemy {
                 }
             });
 
-            // update positions based on environment collisions
-            this.x += dist.x;
-            this.y += dist.y;
-            this.updateBoxes();
             // set respective velocities to 0 for environment collisions
             if (this.collisions.bottom && this.velocity.y > 0) this.velocity.y = 0;
             if (this.collisions.left && this.velocity.x < 0) this.velocity.x = 0;
