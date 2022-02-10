@@ -645,7 +645,7 @@ class Knight extends AbstractPlayer {
                         dist.x = entity.BB.right - that.BB.left;
                         if (high > entity.BB.top) high = entity.BB.top;
                     }
-                    else if (coll.right) { // certaintly right
+                    else if (coll.right) { // certzyyntly right
                         that.collisions.lo_right = true;
                         that.collisions.hi_right = true;
                         dist.x = entity.BB.left - that.BB.right;
@@ -992,15 +992,21 @@ class Knight extends AbstractPlayer {
                 break;
             // crouch attack HB offsets
             case this.states.crouch_atk:
-                this.offsetxHB = 20 * this.scale;
+                //this.offsetxHB = 20 * this.scale;
+                this.widthHB = 80 * this.scale;
                 this.offsetyHB = 53 * this.scale;
                 this.heightHB = 27 * this.scale;
+                if (frame > 0) {    
+                    if (frame > 1) this.widthHB = 70 * this.scale;
+                    this.offsetxHB = this.facing == 1 ? 25 * this.scale : this.width - 25 * this.scale - this.widthHB;
+                }
+                else this.HB = null;
                 break;
             // attack combo HB offsets
             case this.states.attack1:
                 if (frame > 0 && frame < 3) {
                     this.offsetyHB = 37 * this.scale;
-                    this.offsetxHB = this.facing == 1 ? 38 * this.scale : 14 * this.scale;
+                    this.offsetxHB = this.facing == 1 ? 43 * this.scale : 9 * this.scale;
                     this.widthHB = 68 * this.scale;
                     this.heightHB = 44 * this.scale;
                 }
@@ -1014,7 +1020,7 @@ class Knight extends AbstractPlayer {
                     if (frame > 2) {
                         this.widthHB = 62 * this.scale;
                     }
-                    this.offsetxHB = this.facing == 1 ? 25 * this.scale : this.width - 25 * this.scale - this.widthHB;
+                    this.offsetxHB = this.facing == 1 ? 30 * this.scale : this.width - 30 * this.scale - this.widthHB;
                 }
                 else this.HB = null;
                 break;
