@@ -12,7 +12,9 @@ const rgb = (r, g, b) => `rgba(${r}, ${g}, ${b})`;
 const PARAMS = {
     DEBUG: false,      //for showing debug settings on canvas when ticked
     BLOCKDIM: 81,      //dimensions of blocks
-    DMG_COOLDOWN: .5,  //how long the cooldown is for an entity to take damage
+    DMG_COOLDOWN: .5,  //how long the cooldown is for an entity to take damage,
+    DEATHZONE: 200,    //deathzone = canvasH + DEATHZONE; (area below the canvas height)
+
 
     //GUI
     BIG_FONT: '20px "Press Start 2P"',       //font used for big moments like damage numbers
@@ -39,7 +41,7 @@ const PARAMS = {
     MID_HP: .5,
     HIGH_HP: .8,
 
-    POTION_HEAL: 50
+    POTION_HEAL: 50,
 };
 
 /**Global stats that define an entity */
@@ -53,7 +55,7 @@ const STATS = {
         HEIGHT: 80,
         DMG_SLASH1: 10,
         DMG_SLASH2: 15,
-        DMG_CROUCHATK: 5
+        DMG_CROUCHATK: 7
     },
 
     ARROW: {
@@ -124,6 +126,7 @@ const SFX = {
     SLASH1: "./sound/sfx/slash1.wav",
     SLASH2: "./sound/sfx/slash2.wav",
     JUMP: "./sound/sfx/jump.wav",
+    JUMP2: "./sound/sfx/jump2.wav",
     DOUBLEJUMP: "./sound/sfx/double_jump.wav",
     WALLJUMP: "./sound/sfx/walljump.wav",
     CRITICAL: "./sound/sfx/critical.wav",

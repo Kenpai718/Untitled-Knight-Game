@@ -19,7 +19,7 @@ class SceneManager {
         this.levelW = 0;
 
         //levels array to load levels by calling levels[0], levels[1], etc
-        this.currentLevel = 2;
+        this.currentLevel = 0;
         this.setupAllLevels();
         this.loadLevel(this.currentLevel, false);
     };
@@ -196,6 +196,9 @@ class SceneManager {
             ASSET_MANAGER.forcePlayMusic(this.defaultMusic);
         }
 
+        //play an entrance sound effect upon loading a level
+        ASSET_MANAGER.playAsset(SFX.DOOR_ENTER);
+
 
         //load environment entities
         if (this.level.ground) {
@@ -220,6 +223,13 @@ class SceneManager {
             for (var i = 0; i < this.level.walls.length; i++) {
                 let walls = this.level.walls[i];
                 this.game.addEntity(new Walls(this.game, walls.x * PARAMS.BLOCKDIM, (h - walls.y - 1) * PARAMS.BLOCKDIM, PARAMS.BLOCKDIM, walls.height * PARAMS.BLOCKDIM, walls.type));
+            }
+        }
+
+        if (this.level.chests) {
+            for (var i = 0; i < this.level.chests.length; i++) {
+                let chest = this.level.chests[i];
+                this.game.addEntity(new Chest(this.game, chest.x * PARAMS.BLOCKDIM, (h - (chest.y) - 1) * PARAMS.BLOCKDIM));
             }
         }
 

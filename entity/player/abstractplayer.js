@@ -107,7 +107,7 @@ class AbstractPlayer extends AbstractEntity {
      * Dead if too far below the initial canvas height
      */
     checkInDeathZone() {
-        if (this.y >= (this.game.surfaceHeight + this.game.camera.y + 200)) {
+        if (this.y >= (this.game.surfaceHeight + this.game.camera.y + PARAMS.DEATHZONE)) {
             this.takeDamage(this.max_hp, false);
             this.restartGame();
         }

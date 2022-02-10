@@ -158,6 +158,15 @@ class AbstractEntity {
         return isCritical;
     }
 
+    /**
+    * Dead if too far below the initial canvas height
+    */
+    checkInDeathZone() {
+        if (this.y >= (this.game.surfaceHeight + this.game.camera.y + PARAMS.DEATHZONE)) {
+            this.takeDamage(this.max_hp, false);
+        }
+    }
+
 
     drawDebug(ctx) {
         this.healthbar.drawDebug(ctx);
