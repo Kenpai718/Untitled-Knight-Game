@@ -30,8 +30,9 @@ class Score {
                     ctx.fillStyle = "Black";
                     ctx.fillText(this.score, (this.x - offset + 1) - this.game.camera.x, this.y - this.game.camera.y + 1);
                     ctx.fillStyle = PARAMS.CRITICAL_COLOR;
-                    ctx.fillText(this.score, (this.x - offset) - this.game.camera.x - this.game.camera.y, this.y);
+                    ctx.fillText(this.score, (this.x - offset) - this.game.camera.x, this.y - this.game.camera.y);
                 } else {
+                    
                     ctx.font = PARAMS.BIG_FONT;
                     ctx.fillStyle = "Black";
                     ctx.fillText(this.score, (this.x - offset + 1) - this.game.camera.x, this.y - this.game.camera.y + 1);
