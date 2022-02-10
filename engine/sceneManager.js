@@ -51,9 +51,7 @@ class SceneManager {
 
         this.player = new Knight(this.game, 0, 0);
         this.player.x = spawnX - this.player.BB.left;
-        this.player.y = spawnY - this.player.height - PARAMS.BLOCKDIM;
-
-
+        this.player.y = spawnY - this.player.BB.bottom;
         //this.player.updateBB();
         this.inventory = this.player.myInventory;
         this.heartsbar = new HeartBar(this.game, this.player);
@@ -182,7 +180,7 @@ class SceneManager {
         let h = scene.height;
 
         this.game.addEntity(new Background(this.game));
-        this.makePlayer(spawnX, h - spawnY + 1);
+        this.makePlayer(spawnX, h - spawnY);
 
 
         if (this.level.ground) {
@@ -291,7 +289,7 @@ class SceneManager {
      */
     positionEntity(entity, x, y) {
         entity.x = x * PARAMS.BLOCKDIM - entity.BB.left;
-        entity.y = y * PARAMS.BLOCKDIM - entity.height;
+        entity.y = y * PARAMS.BLOCKDIM - entity.BB.bottom;
         entity.updateBoxes();
     }
 
