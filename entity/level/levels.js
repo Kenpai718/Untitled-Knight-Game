@@ -1,8 +1,76 @@
+/**
+ * JSON file to store level data.
+ * This file contains global vaiables that store objects data used to build
+ * environment or entities in a level. Used by scenemanager.
+ * 
+ * IMPORTANT DEVELOPER NOTES:
+ * Levels are built in 1st quadrant of cordinate plane.
+ * Height is drawn from up to down.
+ * Width is drawn from left to right.
+ * Build levels above y = 0 because below that is the death zone!
+ * 
+ * 
+ * Each level variable MUST HAVE:
+ *      ID: 0,1,2...    (level number)
+ *      width, height   (converted into PARAMS.BLOCKDIM)
+ *      player: {x, y}  (starting pos)
+ * 
+ * The rest will be entities or environment objects. Probably have ground below player or you will fall yo your death.
+ * doors must be in the format of door: { x : 1, y : 3 , canEnter : true,  exitLocation: {x: 1, y: 1, levelNum: 1}},
+ */
+
+/**TEST LEVEL = Debugging/testing room aka LEVEL 0 */
+var testLevel = {
+    ID: 0,
+    width: 24, height: 14,
+    player: {x: 1, y: 1},
+    doors: [
+        { x : 1, y : 3 , canEnter : true,  exitLocation: {x: 1, y: 1, levelNum: 1}}, //door to level 3
+        { x : 6, y : 6 , canEnter : true, exitLocation: {x: 1, y: 1, levelNum: 2}}, //door to level 2
+        { x : 21, y : 3 , canEnter : true,  exitLocation: {x: 1, y: 1, levelNum: 3}}, //door to level 1
+    ],
+    backgroundWalls: [
+        { x : 0, y : 14, width : 24, height : 14 }
+    ],
+    ground: [
+        { x : 0, y : 0, width: 30, height : 1, type : 1 },
+        { x : 4, y : 3, width: 5, height : 1, type : 2},
+        { x : 10, y : 6, width: 3, height : 1, type : 2}
+
+    ],
+
+    walls: [
+        { x : -1, y : 14, height : 14, type : 2 },
+        { x : 15, y : 14, height : 13, type : 2 },
+        { x : 25, y : 14, height : 14, type : 2 },
+    ],
+
+    shrooms: [
+        { x : 16, y : 1 },
+
+    ],
+    goblins : [
+        { x : 10, y : 1}
+    ],
+    skeletons : [
+        { x : 10, y : 6}
+    ],
+}
+
+
+/**
+ * Levels below
+ */
 var level1_1 = {
     //music:
     //label:
+    ID: 1,
     width: 120, height: 15,
     player: {x: 0, y: 1},
+    doors: [
+        { x : 116, y : 12 , canEnter : true, exitLocation: {x: 1, y: 1, levelNum: 2}}, //door to level 2
+        { x : 2, y : 3 , canEnter : true, exitLocation: {x: 1, y: 1, levelNum: 0}} //debugging room, DELETE THIS BEFORE SUBMISSION!
+    ],
     ground: [
         { x : 0, y : 0, width: 15, height : 1, type : 1 },
         { x : 60, y : 0, width: 34, height : 1, type : 1 },
@@ -47,7 +115,8 @@ var level1_1 = {
         { x : 94, y : 8, height : 8, type : 0 },
         { x : 30, y : 3, height : 1, type : 0 },
         { x : 59, y : 3, height : 3, type : 2 },
-        { x : 20, y : 1, height : 1, type : 0 }
+        { x : 20, y : 1, height : 1, type : 0 },
+        { x : 120, y : 15, height : 1, type : 0 }
     ],
     backgroundWalls: [
         { x : 30, y : 12, width : 90, height : 12 }
@@ -67,19 +136,22 @@ var level1_1 = {
 
     ],
     goblins : [
-        { x : 10, y : 1}
+        { x : 112, y : 12}
     ],
     skeletons : [
-        { x : 10, y : 1}
+        { x : 57, y : 7}
     ],
-    doors: [
-        { x : 116, y : 12 , canEnter : true }
-    ]
 }
 
 var level1_2 = {
+    ID: 2,
     width : 120, height : 36,
     player: {x: 1, y: 1},
+    doors : [
+        { x : 116, y : 3, canEnter : true, exitLocation: {x: 1, y: 1, levelNum: 3}}, //next level to 3
+        { x : 0, y : 3, canEnter : true, exitLocation: {x: 116, y: 10, levelNum: 1} } //go back to level 1
+    ],
+
     ground : [
         { x : 0, y : 0, width : 120, height: 1, type : 1 },
         { x : 45, y : 6, width : 1, height: 1, type : 0 },
@@ -160,10 +232,6 @@ var level1_2 = {
         { x : 101, y : 4 },
         { x : 106, y : 4 }
     ],
-    doors : [
-        { x : 116, y : 3, canEnter : true},
-        { x : 0, y : 3, canEnter : false }
-    ],
     torches : [
         { x : 10, y : 3 },
         { x : 20, y : 3 },
@@ -205,8 +273,12 @@ var level1_2 = {
 }
 
 var level1_3 = {
+    ID: 3,
     width : 120, height : 42,
     player: {x: 1, y: 1},
+    doors : [
+        { x : 1, y : 3, canEnter : true, exitLocation: {x: 116, y: 3, levelNum: 2}}, //go back to level 2
+    ],
     ground : [
         { x : 0, y : 0, width : 10, type : 1}
     ],
@@ -271,4 +343,5 @@ var level1_3 = {
         { x : 26, y : 11, height : 11},
         { x : 35, y : 9, height : 9}
     ]
+    
 }

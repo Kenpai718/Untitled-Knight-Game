@@ -82,7 +82,7 @@ const STATS = {
         SCALE: 2.5,
         WIDTH: 33,
         HEIGHT: 36,
-        DAMAGE: 15
+        DAMAGE: 8
     },
 
     SKELETON: {
@@ -136,6 +136,8 @@ const SFX = {
     PLAYER_GRUNT: "./sound/sfx/player_grunt.wav",
     PLAYER_GRUNT2: "./sound/sfx/player_grunt2.wav",
     PLAYER_GRUNT3: "./sound/sfx/player_grunt3.wav",
+    SHIELD_BLOCK: "./sound/sfx/shield_block.mp3",
+    DOOR_ENTER: "./sound/sfx/door_enter.wav",
 
 
 };

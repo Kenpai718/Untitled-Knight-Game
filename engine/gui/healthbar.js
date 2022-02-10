@@ -13,11 +13,19 @@ class HealthBar {
         //var x = this.agent.x;
         //var y = this.agent.y;
         var widthRatio = (3 / 2);
-        var widthDivisor = 4;
+        var widthDivisor = 3;
 
         var newX = box.x - this.game.camera.x;
         var newY = box.y - this.game.camera.y;
-        var width = this.agent.width / widthDivisor;
+        var width;
+
+        //set healthbar width for player because it's BB changes frequently
+        if(this.agent instanceof AbstractPlayer) {
+            width = this.agent.width / widthDivisor;
+        } else { //set width to size of bounding box
+            width = (this.agent.BB.width);
+        }
+        
         var height = 10;
         var offsetX = (width / (widthDivisor * widthRatio));
         var offsetY = 30;
@@ -45,25 +53,37 @@ class HealthBar {
 
         var newX = box.x - this.game.camera.x;
         var newY = box.y - this.game.camera.y;
-        var width = this.agent.width / widthDivisor;
+
+        var width = (this.agent.BB.width * this.agent.scale);
         var height = 10;
         var offsetX = (width / (widthDivisor * widthRatio));
         var offsetY = 30;
         var ratio = this.agent.hp / this.agent.max_hp;
         let yBuffer = 12;
 
+        //speed 
         let velX = (this.agent.velocity.x).toFixed(2);
         let velY = (this.agent.velocity.y).toFixed(2);
+        //canvas cordinates
         let cordX = (this.agent.x).toFixed(2);
-        let cordY = (this.agent.y).toFixed(2);ctx.font = PARAMS.DEFAULT_FONT;
+        let cordY = (this.agent.y).toFixed(2);
+        //game cordinates as seen by levels
+        let levelWidth = this.game.camera.levelW;
+        let levelHeight = this.game.camera.levelH;
+        let blockX = Math.round(((this.agent.x + this.agent.BB.right)/ PARAMS.BLOCKDIM));
+        let blockY = Math.round(levelHeight - (this.agent.y / PARAMS.BLOCKDIM));
+
+        
+        ctx.font = PARAMS.DEFAULT_FONT;
         ctx.strokeStyle = "Black";
         ctx.fillStyle = ratio < PARAMS.LOW_HP ? "Red" : ratio < PARAMS.MID_HP ? "Yellow" : "SpringGreen";
 
         //print info specific to the agent object above the healthbar for debugging
-        ctx.fillText(this.agent.name, newX - offsetX, newY - (yBuffer * 5) - offsetY);
-        ctx.fillText("HP:" + this.agent.hp + "/" + this.agent.max_hp, newX - offsetX, newY - (yBuffer * 4) - offsetY);
-        ctx.fillText("Cords:[x:" + cordX + ",y:" + cordY + "]", newX - offsetX, newY - (yBuffer * 3) - offsetY);
-        ctx.fillText("Velocity:{x:" + velX + ",y:" + velY + "}", newX - offsetX, newY - (yBuffer * 2) - offsetY);
+        ctx.fillText(this.agent.name, newX - offsetX, newY - (yBuffer * 6) - offsetY);
+        ctx.fillText("HP:" + this.agent.hp + "/" + this.agent.max_hp, newX - offsetX, newY - (yBuffer * 5) - offsetY);
+        ctx.fillText("Canvas Cords:[x:" + cordX + ",y:" + cordY + "]", newX - offsetX, newY - (yBuffer * 4) - offsetY);
+        ctx.fillText("Game Cords:  [x:" + blockX + ",y:" + blockY + "]", newX - offsetX, newY - (yBuffer * 3) - offsetY);
+        ctx.fillText("Velocity:    {x:" + velX + ",y:" + velY + "}", newX - offsetX, newY - (yBuffer * 2) - offsetY);
 
 
         (this.agent.vulnerable) ? ctx.fillStyle = "GhostWhite" : ctx.fillStyle = "DimGray";
