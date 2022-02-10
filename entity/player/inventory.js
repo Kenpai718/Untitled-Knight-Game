@@ -24,6 +24,7 @@ class Inventory {
 
     draw(ctx) {
         ctx.font = PARAMS.BIG_FONT;
+        ctx.fillStyle = "White";
         ctx.fillText("🏹 x" + this.arrows, 5, (PARAMS.HEART_DIM * PARAMS.GUI_SCALE) * 2 + 10);
         ctx.fillText("⚗️ x" + this.potions, 130, (PARAMS.HEART_DIM * PARAMS.GUI_SCALE) * 2 + 10);
         ctx.font = PARAMS.DEFAULT_FONT;

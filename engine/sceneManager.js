@@ -1,3 +1,7 @@
+/**
+ * Controls GUI elements and placing entities onto the canvas by loading them
+ * from a level file. Also used as the game's camera that follows the player.
+ */
 class SceneManager {
     constructor(game) {
         this.game = game;
@@ -8,28 +12,48 @@ class SceneManager {
         this.title = false;
         this.gameOver = false;
 
+        this.levelH = 0;
+        this.levelW = 0;
+
         //levels array to load levels by calling levels[0], levels[1], etc
         this.currentLevel = 0;
         this.setupAllLevels();
-        this.loadLevel(this.currentLevel);
+        this.loadLevel(this.currentLevel, false);
     };
 
+    /**
+     * MUST BE CALLED BEFORE LOADING A LEVEL!!!
+     * Initialize all levels into levels array
+     */
     setupAllLevels() {
         var self = this;
-        let levelZero = function() {self.loadScene(testLevel)};
-        let levelOne = function() {self.loadScene(level1_1)};
-        let levelTwo = function() {self.loadScene(level1_2)};
-        let levelThree = function() {self.loadScene(level1_3)};
-        this.levels = [levelZero, levelOne, levelTwo, levelThree]; 
+        // let levelZero = function() {self.loadScene(testLevel)};
+        // let levelOne = function() {self.loadScene(level1_1)};
+        // let levelTwo = function() {self.loadScene(level1_2)};
+        // let levelThree = function() {self.loadScene(level1_3)};
+        let levelZero = testLevel;
+        let levelOne = level1_1;
+        let levelTwo = level1_2;
+        let levelThree = level1_3;
+        this.levels = [levelZero, levelOne, levelTwo, levelThree];
     }
 
-    /*
-    * Make sure this is called before a level is made
+    /** 
+     * MAKE SURE THIS IS CALLED BEFORE LOADING IN A LEVELS COMPONENTS!!!
+     * This instantiates a player and places them appropriately on a level.
+     * 
+     * @param theX x of Player
+     * @param theY y of Player
     */
-    makePlayer(x, y) {
+    makePlayer(theX, theY) {
+        let spawnX = theX * PARAMS.BLOCKDIM;
+        let spawnY = theY * PARAMS.BLOCKDIM;
+
         this.player = new Knight(this.game, 0, 0);
-        this.player.x = x * PARAMS.BLOCKDIM - this.player.BB.left;
-        this.player.y = y * PARAMS.BLOCKDIM - this.player.height - PARAMS.BLOCKDIM;
+        this.player.x = spawnX - this.player.BB.left;
+        this.player.y = spawnY - this.player.height - PARAMS.BLOCKDIM;
+
+
         //this.player.updateBB();
         this.inventory = this.player.myInventory;
         this.heartsbar = new HeartBar(this.game, this.player);
@@ -37,16 +61,35 @@ class SceneManager {
         this.game.addEntity(this.player);
     }
 
-    loadLevel(number) {
+    /**
+     * Loads a valid level
+     * Throws an error if that level has not been made yet
+     * @param {*} number level number found in levels array
+     * @param {*} usedDoor true/false if a door was used to load the leel
+     * @param {*} doorExitX x spawn location if a door was used
+     * @param {*} doorExitY y spawn location if a door was used
+     */
+    loadLevel(number, usedDoor, doorExitX, doorExitY) {
         this.clearEntities();
-        if(number < 0 || number > this.levels.length - 1) {
+        if (number < 0 || number > this.levels.length - 1) {
             throw "Invalid load level number";
         } else {
             console.log("Loading level " + number);
-            this.levels[number]();
+            let lvlData = this.levels[number];
+            if (usedDoor) {
+                //console.log("Entering door to Level#" + number + "| Exit Location = (x:" + doorExitX + ", Y:" + doorExitY + ")")
+                this.loadScene(lvlData, doorExitX, doorExitY);
+            } else {
+                this.loadScene(lvlData, lvlData.player.x, lvlData.player.y);
+            }
+
+            this.currentLevel = number;
         }
     }
 
+    /**
+     * Clear the entities list
+     */
     clearEntities() {
         this.clearLayer(this.game.background1);
         this.clearLayer(this.game.background2);
@@ -57,12 +100,19 @@ class SceneManager {
         this.clearLayer(this.game.information);
     };
 
+    /**
+     * Clear a layer from entities list
+     * @param {} layer 
+     */
     clearLayer(layer) {
         layer.forEach(function (entity) {
             entity.removeFromWorld = true;
         });
     }
 
+    /**
+     * Update the camera and gui elements
+     */
     update() {
         PARAMS.DEBUG = document.getElementById("debug").checked;
         this.updateAudio();
@@ -106,18 +156,35 @@ class SceneManager {
         this.inventory.draw(ctx);
         this.heartsbar.draw(ctx);
 
+        //current level
+        ctx.font = PARAMS.BIG_FONT;
+        let xOffset;
+        (this.currentLevel >= 10) ? xOffset = 175 : xOffset = 150;
+        ctx.fillText("Level " + this.currentLevel, this.game.surfaceWidth - xOffset, 30);
+
 
         if (PARAMS.DEBUG) {
             this.viewDebug(ctx);
         }
     };
 
-    loadScene(scene) {
+    /**
+     * Reads a level json and builds the level to the canvas
+     * based on passed in info.
+     * @param {} scene JSON object from levels.js
+     * @param {*} spawnX player's spawn x
+     * @param {*} spawnY player's spawn y
+     */
+    loadScene(scene, spawnX, spawnY) {
         this.level = scene;
+        this.levelH = scene.height;
+        this.levelW = scene.width;
         let h = scene.height;
-        
+
         this.game.addEntity(new Background(this.game));
-        this.makePlayer(scene.player.x, h - scene.player.y + 1);
+        this.makePlayer(spawnX, h - spawnY + 1);
+
+
         if (this.level.ground) {
             for (var i = 0; i < this.level.ground.length; i++) {
                 let ground = this.level.ground[i];
@@ -193,7 +260,7 @@ class SceneManager {
         if (this.level.doors) {
             for (var i = 0; i < this.level.doors.length; i++) {
                 let door = this.level.doors[i];
-                this.game.addEntity(new Door(this.game, door.x * PARAMS.BLOCKDIM, (h - door.y - 1) * PARAMS.BLOCKDIM, door.canEnter));
+                this.game.addEntity(new Door(this.game, door.x * PARAMS.BLOCKDIM, (h - door.y - 1) * PARAMS.BLOCKDIM, door.canEnter, door.exitLocation));
             }
         }
         if (this.level.columns) {
@@ -216,47 +283,17 @@ class SceneManager {
         }
     }
 
+    /**
+     * Position an entity based through BB and block dimensions
+     * @param {} entity 
+     * @param {*} x 
+     * @param {*} y 
+     */
     positionEntity(entity, x, y) {
         entity.x = x * PARAMS.BLOCKDIM - entity.BB.left;
         entity.y = y * PARAMS.BLOCKDIM - entity.height;
         entity.updateBoxes();
     }
-
-    //demo of entities for prototshowcase
-    loadPrototypeLevel() {
-        this.makePlayer(0, 500);
-        //ground
-        let bg = new Background(this.game);
-        let ground = new Ground(this.game, 0, 12 * PARAMS.BLOCKDIM, this.game.surfaceWidth, PARAMS.BLOCKDIM);
-        let plat = new Brick(this.game, 70, this.game.surfaceHeight - 340, PARAMS.BLOCKDIM * 4, PARAMS.BLOCKDIM);
-        let plat2 = new Platform(this.game, this.game.surfaceWidth - 570, this.game.surfaceHeight - 340, PARAMS.BLOCKDIM * 4, PARAMS.BLOCKDIM);
-        let plat3 = new Platform(this.game, this.game.surfaceWidth - 1150, 10 * PARAMS.BLOCKDIM, PARAMS.BLOCKDIM * 4, PARAMS.BLOCKDIM);
-
-        //show animations
-        let skel = new Skeleton(this.game, 190, 927);
-        let gob = new Goblin(this.game, 1065, 565 - 90);
-        let mush = new Mushroom(this.game, 1505, 740 - 90);
-        let wiz = new Wizard(this.game, 50, 75);
-        let eye = new FlyingEye(this.game, 1570, 45);
-
-
-        //add entities
-        this.game.addEntity(ground);
-
-        this.game.addEntity(plat);
-        this.game.addEntity(plat2);
-        this.game.addEntity(plat3);
-
-        //enemies
-        this.game.addEntity(skel);
-        this.game.addEntity(gob);
-        this.game.addEntity(mush);
-        this.game.addEntity(wiz);
-        this.game.addEntity(eye);
-
-        //background always last
-        this.game.addEntity(bg);
-    };
 
     //keyboard input
     viewDebug(ctx) {

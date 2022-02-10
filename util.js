@@ -137,6 +137,7 @@ const SFX = {
     PLAYER_GRUNT2: "./sound/sfx/player_grunt2.wav",
     PLAYER_GRUNT3: "./sound/sfx/player_grunt3.wav",
     SHIELD_BLOCK: "./sound/sfx/shield_block.mp3",
+    DOOR_ENTER: "./sound/sfx/door_enter.wav",
 
 
 };
