@@ -238,7 +238,7 @@ class AbstractEnemy extends AbstractEntity {
         }
 
         this.lastXCord = Math.round(this.x);
-        console.log(this.lastXCord == Math.round(this.x) && this.state == this.states.move && this.velocity.x == 0);
+        //console.log(this.lastXCord == Math.round(this.x) && this.state == this.states.move && this.velocity.x == 0);
 
     }
 

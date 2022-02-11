@@ -14,6 +14,18 @@ class AbstractBarrier {
         if (this.BB)
             ctx.strokeRect(this.BB.x-this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
     }
+
+    /**
+     * Draws the tile in a minimap. Expected all parameters are translated beforehand.
+     * @param {} ctx 
+     * @param {*} mmX 
+     * @param {*} mmY 
+     * @param {*} mmW 
+     * @param {*} mmH 
+     */
+    drawMinimap(ctx, mmX, mmY) {
+        
+    }
 }
 
 class Ground extends AbstractBarrier {
@@ -56,6 +68,32 @@ class Ground extends AbstractBarrier {
             ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcWidth, this.srcHeight, this.x + (i * this.scale) - this.game.camera.x, this.y - this.game.camera.y, this.scale, this.scale);
         }
     };
+
+    /**
+     * Draw minimap for ground
+     * @param {} ctx 
+     * @param {*} mmX minimap x cord
+     * @param {*} mmY minimap y cord
+     * @param {*} mmY minimap's level width
+     * @param {*} mmY minimap's level height
+     */
+    drawMinimap(ctx, mmX, mmY, levelW, levelH) {
+        let blockCount = this.w / PARAMS.BLOCKDIM; 
+        ctx.fillStyle = "brown";
+        //let print = true;
+
+        for (let i = 0; i < blockCount; i++) {
+            let myX = ( mmX + Math.round(this.x / PARAMS.BLOCKDIM));
+            let myY = mmY + (levelH - Math.round(this.y / PARAMS.BLOCKDIM)  - 1);
+            let myW = PARAMS.SCALE;
+            let myH = PARAMS.SCALE;
+
+            ctx.fillRect(myX + (i * PARAMS.SCALE), myY, myW, myH);
+            //ctx.drawImage(this.srcX, this.srcY, this.srcWidth, this.srcHeight, 
+            //this.x + (i * this.scale) - this.game.camera.x, this.y - this.game.camera.y, this.scale, this.scale);
+        }
+
+    }
 };
 
 class Walls extends AbstractBarrier {

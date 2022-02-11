@@ -166,6 +166,7 @@ class SceneManager {
 
         if (PARAMS.DEBUG) {
             this.viewDebug(ctx);
+            this.minimap.draw(ctx);
         }
     };
 
@@ -184,6 +185,9 @@ class SceneManager {
         let h = scene.height;
         this.game.addEntity(new Background(this.game));
         this.makePlayer(spawnX, h - spawnY);
+
+        //make a minimap for the level
+        this.setupMinimap();
 
         //play music
         if (scene.music && !this.title) { //level music when not on title
@@ -390,5 +394,42 @@ class SceneManager {
         ctx.fillStyle = ctx.strokeStyle;
         ctx.strokeRect(215, this.game.surfaceHeight - 40, 45, 30);
         ctx.fillText("ATK", 220, this.game.surfaceHeight - 20);
+    };
+
+    /**
+     * Initialize a minimap
+     */
+    setupMinimap() {
+        let blockwidth = PARAMS.BLOCKDIM * PARAMS.SCALE;
+        this.minimap = new Minimap(this.game, PARAMS.BLOCKDIM, PARAMS.BLOCKDIM,
+            this.levelW, this.levelH);
+
+    }
+};
+
+/**
+ *  Draws a minimap based on current level
+ *  x, y are minimap cordinates
+ *  w, h are level dimensions in terms of blockdims so 1 = blockdim width
+ */
+class Minimap {
+    constructor(game, x, y, w, h) {
+        Object.assign(this, { game, x, y, w, h });
+
+    };
+
+    draw(ctx) {
+        ctx.strokeStyle = "White";
+        ctx.strokeRect(this.x, this.y, this.w * PARAMS.SCALE, this.h * PARAMS.SCALE);
+
+        //draw environment
+        for (var i = 0; i < this.game.foreground2.length; i++) {
+            let environment = this.game.foreground2[i];
+            environment.drawMinimap(ctx, this.x, this.y, this.w, this.h);
+        }
+    };
+
+    update() {
+
     };
 };
