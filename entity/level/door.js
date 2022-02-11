@@ -25,7 +25,7 @@ class Door extends AbstractBackFeature {
             if (entity.BB && that.BB.collide(entity.BB)) {
                 if (entity instanceof AbstractPlayer && that.canEnter) {
                     if (that.game.up) {
-                        ASSET_MANAGER.playAsset(SFX.DOOR_ENTER);
+                        //ASSET_MANAGER.playAsset(SFX.DOOR_ENTER);
                         let scene = that.game.camera;
                         let spawnX = that.exitLocation.x;
                         let spawnY = that.exitLocation.y;

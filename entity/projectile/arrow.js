@@ -71,6 +71,7 @@ class Arrow extends AbstractEntity {
                     self.removeFromWorld = true;
                     self.hit = true;
                     entity.takeDamage(self.getDamageValue(), self.critical);
+                    if(entity instanceof AbstractEnemy) entity.setDamagedState();
                     if (!entity.aggro) entity.aggro = true;
                 }
 

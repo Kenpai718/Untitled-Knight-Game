@@ -70,7 +70,7 @@ class HealthBar {
         //game cordinates as seen by levels
         let levelWidth = this.game.camera.levelW;
         let levelHeight = this.game.camera.levelH;
-        let blockX = Math.round(((this.agent.x + this.agent.BB.right)/ PARAMS.BLOCKDIM));
+        let blockX = Math.round(this.agent.x/ PARAMS.BLOCKDIM);
         let blockY = Math.round(levelHeight - (this.agent.y / PARAMS.BLOCKDIM));
 
         
