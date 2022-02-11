@@ -23,7 +23,7 @@ class Skeleton extends AbstractEnemy {
         // Physics
         this.fallAcc = 1500;
         this.collisions = { left: false, right: false, top: false, bottom: false };
-        this.JUMP_HEIGHT = 500;
+        this.JUMP_HEIGHT = 535;
 
         //variables to control behavior
         this.canAttack = true;
@@ -99,7 +99,6 @@ class Skeleton extends AbstractEnemy {
             }
 
         } else { // not dead keep moving
-
             this.velocity.y += this.fallAcc * TICK; //constant falling
 
             //set maximum speeds
@@ -116,8 +115,9 @@ class Skeleton extends AbstractEnemy {
             /**UPDATING BEHAVIOR*/
             let dist = { x: 0, y: 0 }; //the displacement needed between entities
             this.playerInSight = false; //set to true in environment collisions
-            super.collisionWall(); //check if colliding with environment and adjust entity accordingly
+            dist = this.checkEnvironmentCollisions(dist); //check if colliding with environment and adjust entity accordingly
             dist = this.checkEntityInteractions(dist, TICK); //move entity according to other entities
+            this.updatePositionAndVelocity(dist); //set where entity is based on interactions/collisions put on dist
             this.checkCooldowns(TICK); //check and reset the cooldowns of its actions
 
             //set the attack hitbox if in an attack state and the attack frame is out
@@ -141,54 +141,6 @@ class Skeleton extends AbstractEnemy {
 
 
     };
-
-
-    /**
-     * Checks collisions with environment.
-     * Returns distance needed to be displaced.
-     * @param {*} dist 
-     * @returns dist 
-     */
-    checkEnvironmentCollisions(dist) {
-        let self = this;
-        this.collisions = { left: false, right: false, top: false, bottom: false };
-        this.game.foreground2.forEach(function (entity) {
-            // collision with environment
-            if (entity.BB && self.BB.collide(entity.BB)) {
-                const below = self.lastBB.top <= entity.BB.top && self.BB.bottom >= entity.BB.top;
-                const above = self.lastBB.bottom >= entity.BB.bottom && self.BB.top <= entity.BB.bottom;
-                const right = self.lastBB.right <= entity.BB.right && self.BB.right >= entity.BB.left;
-                const left = self.lastBB.left >= entity.BB.left && self.BB.left <= entity.BB.right;
-                const between = self.lastBB.top >= entity.BB.top && self.lastBB.bottom <= entity.BB.bottom;
-                if (between ||
-                    below && self.BB.top > entity.BB.top - 20 * self.scale ||
-                    above && self.BB.bottom < entity.BB.bottom + 20 * self.scale) {
-                    if (right) {
-                        self.collisions.right = true;
-                        dist.x = entity.BB.left - self.BB.right;
-                    } else {
-                        self.collisions.left = true;
-                        dist.x = entity.BB.right - self.BB.left;
-                    }
-                }
-                if (below) {
-                    if (left && Math.abs(self.BB.left - entity.BB.right) <= Math.abs(self.BB.bottom - entity.BB.top)) {
-                        self.collisions.left = true;
-                        dist.x = entity.BB.right - self.BB.left;
-                    } else if (right && Math.abs(self.BB.right - entity.BB.left) <= Math.abs(self.BB.bottom - entity.BB.top)) {
-                        self.collisions.right = true;
-                        dist.x = entity.BB.left - self.BB.right;
-                    } else {
-                        dist.y = entity.BB.top - self.BB.bottom;
-                        self.collisions.bottom = true;
-                    }
-                }
-                self.updateBoxes();
-            }
-        });
-
-        return dist;
-    }
 
     /**
      * Checks interactions with entities.

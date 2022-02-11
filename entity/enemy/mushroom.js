@@ -81,11 +81,14 @@ class Mushroom extends AbstractEnemy {
             this.x += this.velocity.x * TICK;
             this.y += this.velocity.y * TICK;
             this.updateBoxes();
+            let dist = {x: 0, y:0};
             // environment collision check
-            super.collisionWall();
+            dist = this.checkEnvironmentCollisions(dist);
             // entity collision check
             this.knightInSight = false;
             this.checkEntityInteractions();
+
+            this.updatePositionAndVelocity(dist); //set where entity is based on interactions/collisions put on dist
             // cooldown check
             this.checkCooldowns(TICK);
             // attack hitbox timing
