@@ -229,7 +229,7 @@ class SceneManager {
         if (this.level.chests) {
             for (var i = 0; i < this.level.chests.length; i++) {
                 let chest = this.level.chests[i];
-                this.game.addEntity(new Chest(this.game, chest.x * PARAMS.BLOCKDIM, (h - (chest.y) - 1) * PARAMS.BLOCKDIM));
+                this.game.addEntity(new Chest(this.game, chest.x * PARAMS.BLOCKDIM, (h - (chest.y) - 1) * PARAMS.BLOCKDIM, chest.direction));
             }
         }
 
@@ -284,6 +284,13 @@ class SceneManager {
                 this.game.addEntity(new Banner(this.game, banner.x * PARAMS.BLOCKDIM, (h - banner.y - 1) * PARAMS.BLOCKDIM));
             }
         }
+
+        if (this.level.spikes) {
+            for (var i = 0; i < this.level.spikes.length; i++) {
+                let spike = this.level.spikes[i];
+                this.game.addEntity(new Spike(this.game, spike.x * PARAMS.BLOCKDIM, (h - spike.y - 1) * PARAMS.BLOCKDIM, spike.width * PARAMS.BLOCKDIM, PARAMS.BLOCKDIM));
+            }
+        }
         if (this.level.doors) {
             for (var i = 0; i < this.level.doors.length; i++) {
                 let door = this.level.doors[i];
@@ -308,14 +315,20 @@ class SceneManager {
                 this.game.addEntity(new Chain(this.game, chain.x * PARAMS.BLOCKDIM, (h - chain.y - 1) * PARAMS.BLOCKDIM));
             }
         }
+        if (this.level.ceilingChains) {
+            for (var i = 0; i < this.level.ceilingChains.length; i++) {
+                let ceilingChain = this.level.ceilingChains[i];
+                this.game.addEntity(new CeilingChain(this.game, ceilingChain.x * PARAMS.BLOCKDIM, (h - ceilingChain.y - 1) * PARAMS.BLOCKDIM, ceilingChain.height));
+            }
+        }
 
     }
 
     /**
      * Position an entity based through BB and block dimensions
-     * @param {} entity 
-     * @param {*} x 
-     * @param {*} y 
+     * @param {} entity
+     * @param {*} x
+     * @param {*} y
      */
     positionEntity(entity, x, y) {
         entity.x = x * PARAMS.BLOCKDIM - entity.BB.left;

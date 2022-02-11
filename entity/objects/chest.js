@@ -1,5 +1,5 @@
 class Chest extends AbstractBackFeature {
-    constructor(game, x, y) {
+    constructor(game, x, y, direction) {
 
         super(game, x, y);
         //Object.assign(this, { game, x, y });
@@ -22,9 +22,11 @@ class Chest extends AbstractBackFeature {
 
         // Mapping animations and states
         this.states = { closed: 0, opened: 1 };
+        this.directions = { left : 0, right : 1};
         this.animations = []; // [state][direction]
 
         this.state = 0;
+        this.direction = direction;
         this.opened = false;
         this.collected = false;
 
@@ -74,16 +76,23 @@ class Chest extends AbstractBackFeature {
     loadAnimations() {
 
         let numStates = 2;
+        let numDir = 2;
         for (var i = 0; i < numStates; i++) { //defines state
             this.animations.push([]);
+            for (var j = 0; j < numDir; j++) {
+                this.animations[i].push([]);
+            }
         }
 
         // Animations  [state]
 
         // Closed state
-        this.animations[0] = new Animator(this.spritesheet, 19, 147, 21, 12, 1, 0, 0, 0, 0, 0);
+        this.animations[0][0] = new Animator(this.spritesheet, 19, 147, 21, 12, 1, 0, 0, 0, 0, 0);
         // Opened state
-        this.animations[1] = new Animator(this.spritesheet, 51, 147, 21, 12, 1, 0, 0, 0, 0, 0);
+        this.animations[1][0] = new Animator(this.spritesheet, 51, 147, 21, 12, 1, 0, 0, 0, 0, 0);
+        this.animations[0][1] = new Animator(this.spritesheet, 120, 147, 21, 12, 1, 0, 0, 0, 0, 0);
+        // Opened state
+        this.animations[1][1] = new Animator(this.spritesheet, 83, 147, 21, 12, 1, 0, 0, 0, 0, 0);
 
     };
 
@@ -93,12 +102,18 @@ class Chest extends AbstractBackFeature {
 
         switch (this.state) {
             case 0: // Closed chest
-                //this.animations[this.state].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
-                ctx.drawImage(this.spritesheet, 19, 147, 21, 12, this.x - this.game.camera.x, this.y - this.game.camera.y, this.width, this.height);
+                if (this.direction == this.directions.left) {
+                    ctx.drawImage(this.spritesheet, 19, 147, 21, 12, this.x - this.game.camera.x, this.y - this.game.camera.y, this.width, this.height);
+                } else {
+                    ctx.drawImage(this.spritesheet, 120, 147, 21, 12, this.x - this.game.camera.x, this.y - this.game.camera.y, this.width, this.height);
+                }
                 break;
             case 1: // Opened chest
-                //this.animations[this.state].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
-                ctx.drawImage(this.spritesheet, 51, 147, 21, 12, this.x - this.game.camera.x, this.y - this.game.camera.y, this.width, this.height);
+                if (this.direction == this.directions.left) {
+                    ctx.drawImage(this.spritesheet, 51, 147, 21, 12, this.x - this.game.camera.x, this.y - this.game.camera.y, this.width, this.height);
+                } else {
+                    ctx.drawImage(this.spritesheet, 83, 147, 21, 12, this.x - this.game.camera.x, this.y - this.game.camera.y, this.width, this.height);
+                }
                 break;
         }
 

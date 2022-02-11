@@ -106,14 +106,14 @@ class Goblin extends AbstractEnemy {
             //entity can jump if it is on floor
             super.setAggro();
             super.doJumpIfStuck(TICK); //jump if stuck horizontally
-            super.checkInDeathZone();  //die if below blastzone
+            //super.checkInDeathZone();  //die if below blastzone
         }
     };
 
     /**
     * Based on distance {x, y} displace
     * the entity by the given amount.
-    * 
+    *
     * Set velocities based on positioning
     * @param {} dist {x, y}
     */

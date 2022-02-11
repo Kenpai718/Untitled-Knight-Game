@@ -108,7 +108,7 @@ class Mushroom extends AbstractEnemy {
             super.updateVelocity();
             super.setAggro();
             super.doJumpIfStuck(TICK); //jump if stuck horizontally
-            super.checkInDeathZone();  //die if below blastzone
+            //super.checkInDeathZone();  //die if below blastzone
         }
     };
 
