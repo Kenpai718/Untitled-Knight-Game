@@ -356,6 +356,27 @@ class Chain extends AbstractBackFeature {
     };
 };
 
+class CeilingChain extends AbstractBackFeature {
+    constructor(game, x, y, h) {
+        super(game, x, y);
+        this.h = h;
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
+        this.srcX = 256;
+        this.srcY = 7;
+        this.srcW = 3;
+        this.srcH = 18;
+        this.w = PARAMS.BLOCKDIM / 4;
+        this.x += this.w;
+    };
+
+    draw(ctx) {
+        let blockcount = this.w / PARAMS.BLOCKDIM;
+        for (var i = 0; i < blockcount; i++) {
+            ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x - this.game.camera.x, this.y - (i * 2 * PARAMS.BLOCKDIM) - this.game.camera.y, this.w, PARAMS.BLOCKDIM * this.h);
+        }
+    };
+};
+
 class Column extends AbstractBackFeature {
     constructor(game, x, y, h) {
         super(game, x, y);

@@ -136,7 +136,7 @@ class AbstractEnemy extends AbstractEntity {
 
 
         //check to see if entity hit the bottom blastzone
-        super.checkInDeathZone();
+        //super.checkInDeathZone();
     }
 
     /**
