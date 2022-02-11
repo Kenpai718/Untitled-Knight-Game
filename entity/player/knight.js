@@ -645,7 +645,7 @@ class Knight extends AbstractPlayer {
                         dist.x = entity.BB.right - that.BB.left;
                         if (high > entity.BB.top) high = entity.BB.top;
                     }
-                    else if (coll.right) { // certzyyntly right
+                    else if (coll.right) { // certaintly right
                         that.collisions.lo_right = true;
                         that.collisions.hi_right = true;
                         dist.x = entity.BB.left - that.BB.right;

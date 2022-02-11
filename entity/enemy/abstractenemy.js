@@ -84,36 +84,36 @@ class AbstractEnemy extends AbstractEntity {
                             dist.y = entity.BB.top - that.BB.bottom;
                     }
                 }
-                else if (coll.top && !coll.bottom) { // somewhere below
+                else if (coll.ceil && !coll.floor) { // somewhere below
                     const y = Math.abs(entity.BB.bottom - that.BB.top);
                     const xL = Math.abs(entity.BB.right - that.BB.left);
                     const xR = Math.abs(entity.BB.left - that.BB.right);
-                    if (coll.left && !coll.right && xL < w / 2) { // somwehere left
-                        if (xL < y && y > h / 8) { // certaintly left
+                    if (coll.left && !coll.right) { // somwehere left
+                        if (xL < y && y > h / 16) { // certaintly left
                             that.collisions.left = true;
                             dist.x = entity.BB.right - that.BB.left;
                         }
-                        else { // certaintly below
+                        else if (xL > w / 16) { // certaintly below
                             that.collisions.top = true;
-                            if (Math.abs(entity.BB.top - that.BB.bottom) > Math.abs(dist.y) || dist.y > 0)
-                                dist.y = entity.BB.top - that.BB.bottom;
+                            if (Math.abs(entity.BB.bottom - that.BB.top && !that.collisions.floor) > Math.abs(dist.y))
+                                dist.y = entity.BB.bottom - that.BB.top;
                         }
                     }
                     else if (coll.right && !coll.left && xR < w / 2) { // somewhere right
-                        if (xR < y && y > h / 8) { // certaintly right
+                        if (xR < y && y > h / 16) { // certaintly right
                             that.collisions.right = true;
                             dist.x = entity.BB.left - that.BB.right;
                         }
-                        else { // certaintly below
-                            that.collisions.bottom = true;
-                            if (Math.abs(entity.BB.top - that.BB.bottom) > Math.abs(dist.y) || dist.y > 0)
-                                dist.y = entity.BB.top - that.BB.bottom;
+                        else if (xR > w / 16) { // certaintly below
+                            that.collisions.top = true;
+                            if (Math.abs(entity.BB.bottom - that.BB.top && !that.collisions.floor) > Math.abs(dist.y))
+                                dist.y = entity.BB.bottom - that.BB.top;
                         }
                     }
                     else { // certaintly below
                         that.collisions.top = true;
                         if (Math.abs(entity.BB.top - that.BB.bottom) > Math.abs(dist.y) || dist.y > 0)
-                            dist.y = entity.BB.top - that.BB.bottom;
+                            dist.y = entity.BB.bottom - that.BB.top;
                     }
                 }
                 else { // neither above nor below
