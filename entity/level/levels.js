@@ -2,20 +2,20 @@
  * JSON file to store level data.
  * This file contains global vaiables that store objects data used to build
  * environment or entities in a level. Used by scenemanager.
- * 
+ *
  * IMPORTANT DEVELOPER NOTES:
  * Levels are built in 1st quadrant of cordinate plane.
  * Height is drawn from up to down.
  * Width is drawn from left to right.
  * Build levels above y = 0 because below that is the death zone!
- * 
- * 
+ *
+ *
  * Each level variable MUST HAVE:
  *      ID: 0,1,2...    (level number and this id must be an index in scene manager's level array)
  *      width, height   (converted into PARAMS.BLOCKDIM)
  *      player: {x, y}  (starting pos)
  *      music: MUSIC.TRACK_NAME (found in utils class)
- * 
+ *
  * The rest will be entities or environment objects. Probably have ground below player or you will fall yo your death.
  * doors must be in the format of door: { x : 1, y : 3 , canEnter : true,  exitLocation: {x: 1, y: 1, levelNum: 1}},
  */
@@ -368,10 +368,12 @@ var level1_3 = {
         { x: 13, y: 0, width: 20, height: 1 },
         { x: 33, y: 2, width: 3, height: 3 },
         { x: 36, y: 0, width: 48, height: 1 },
-        { x: 77, y: 17, width: 7, height: 17 },
-        { x: 71, y: 25, width: 13, height: 5 },
+        { x: 77, y: 14, width: 7, height: 14 },
+        { x: 71, y: 25, width: 13, height: 8 },
+        { x : 71, y : 17, width : 2, height : 1},
+        { x : 71, y : 16, width : 1, height : 1},
         { x: 84, y: 12, width: 15, height: 13 },
-        { x: 99, y: 22, width: 21, height: 22 },
+        { x: 99, y: 22, width: 21, height: 23 },
         { x: 30, y: 32, width: 13, height: 2 },
         { x: 28, y: 42, width: 2, height: 12 },
         { x: 30, y: 42, width: 13, height: 5 },
@@ -408,6 +410,7 @@ var level1_3 = {
         { x: 59, y: 22, width: 5, height: 1 },
         { x: 69, y: 12, width: 5, height: 1 },
         { x: 89, y: 17, width: 3, height: 1 },
+        { x : 95, y : 21, width : 1, height : 1},
         { x: 45, y: 30, width: 2, height: 1 }
     ],
     walls: [
