@@ -20,7 +20,7 @@
  * doors must be in the format of door: { x : 1, y : 3 , canEnter : true,  exitLocation: {x: 1, y: 1, levelNum: 1}},
  */
 
-/**TEST LEVEL = Debugging/testing room aka LEVEL 0 */
+/**TEST LEVEL = Debugging/testing rom aka LEVEL 0 */
 var testLevel = {
     ID: 0,
     width: 24, height: 14,

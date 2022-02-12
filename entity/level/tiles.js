@@ -84,7 +84,7 @@ class Ground extends AbstractBarrier {
 
         for (let i = 0; i < blockCount; i++) {
             let myX = ( mmX + Math.round(this.x / PARAMS.BLOCKDIM));
-            let myY = mmY + (levelH - Math.round(this.y / PARAMS.BLOCKDIM)  - 1);
+            let myY = mmY - (levelH - Math.round(this.y / PARAMS.BLOCKDIM)  - 1);
             let myW = PARAMS.SCALE;
             let myH = PARAMS.SCALE;
 

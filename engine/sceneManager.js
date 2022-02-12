@@ -401,8 +401,10 @@ class SceneManager {
      */
     setupMinimap() {
         let blockwidth = PARAMS.BLOCKDIM * PARAMS.SCALE;
-        this.minimap = new Minimap(this.game, PARAMS.BLOCKDIM, PARAMS.BLOCKDIM,
-            this.levelW, this.levelH);
+        let x = (this.game.surfaceWidth) - (this.levelW * PARAMS.SCALE);
+        let y = 0 + (this.levelH * PARAMS.SCALE);
+        this.minimap = new Minimap(this.game, x - 100, y + 40,
+            this.level);
 
     }
 };
@@ -413,19 +415,220 @@ class SceneManager {
  *  w, h are level dimensions in terms of blockdims so 1 = blockdim width
  */
 class Minimap {
-    constructor(game, x, y, w, h) {
-        Object.assign(this, { game, x, y, w, h });
+    constructor(game, x, y, level) {
+        this.xOffset = PARAMS.SCALE * 10;
+        this.yOffset = PARAMS.SCALE * 4
+
+        this.game = game;
+        this.x = x;
+        this.y = y;
+        this.level = level;
+        this.w = this.level.width;
+        this.h = this.level.height;
+
+        this.colors = {
+            ground: "slategray",
+            brick: "gray",
+            wall: "mintcream",
+            platform: "purple",
+            spike: "orange",
+            player: "blue",
+            enemy: "red",
+            chest: "yellow",
+            door: "SpringGreen",
+        }
+
 
     };
 
+    /**
+     * Builds a box of same length and width of length to a smaller scale
+     * Makes a represntation of the level and entities
+     * 
+     * @param {*} ctx 
+     */
     draw(ctx) {
-        ctx.strokeStyle = "White";
+        this.buildMinimapBox(ctx);
+        this.loadEnvironmentScene(ctx);
+        this.traceEntities(ctx);
+
+    }
+
+    traceEntities(ctx) {
+        let myEntities = this.game.entities;
+        for (var i = 0; i < myEntities.length; i++) {
+            let entity = myEntities[i];
+
+            (entity instanceof AbstractPlayer) ? ctx.fillStyle = this.colors.player : ctx.fillStyle = this.colors.enemy;
+
+            let convertX = Math.round(entity.x / PARAMS.BLOCKDIM);
+            let convertY = Math.round(entity.y / PARAMS.BLOCKDIM);
+
+            let myX = convertX * PARAMS.SCALE;
+            let myY = convertY * PARAMS.SCALE;
+            let myW = PARAMS.SCALE;
+            let myH = PARAMS.SCALE;
+
+            ctx.fillRect(this.x + myX, (this.y + (this.h - myY)), myW, myH);
+        }
+    }
+
+
+    positionEntity(x, y) {
+        entity.x = x * PARAMS.BLOCKDIM - entity.BB.left;
+        entity.y = y * PARAMS.BLOCKDIM - entity.BB.bottom;
+        entity.updateBoxes();
+    }
+
+    /**
+     * Build a minimap
+     * @param {} ctx 
+     */
+    buildMinimapBox(ctx) {
+        ctx.fillStyle = "SpringGreen";
+        let miniX = this.x;
+        let miniY = this.y - (this.h * PARAMS.SCALE);
+        let miniW = (this.w * PARAMS.SCALE) + this.xOffset;
+        let miniH = (this.h * PARAMS.SCALE) + this.yOffset;
+
+        ctx.fillText("Minimap", miniX, miniY - 10);
+        ctx.fillStyle = rgba(41, 41, 41, 0.5);
+        ctx.fillRect(miniX, miniY, miniW, miniH);
+        ctx.strokeStyle = "GhostWhite";
+        ctx.strokeRect(miniX, miniY, miniW, miniH);
+    }
+
+    /**
+     * Build the level at a smaller scale onto the minimap
+     * @param {} ctx 
+     */
+    loadEnvironmentScene(ctx) {
+        /* build environment blocks */
+        //ground
+        ctx.fillStyle = this.colors.ground;
+        if (this.level.ground) {
+            for (var i = 0; i < this.level.ground.length; i++) {
+                let ground = this.level.ground[i];
+                let myX = ground.x * PARAMS.SCALE;
+                let myY = ground.y * PARAMS.SCALE;
+                let myW = ground.width * PARAMS.SCALE;
+                let myH = ground.height * PARAMS.SCALE;
+
+                ctx.fillRect(this.x + myX, this.y + (this.h - myY - PARAMS.SCALE), myW, myH);
+            }
+        }
+
+        //wall
+        ctx.fillStyle = this.colors.wall;
+        if (this.level.walls) {
+            for (var i = 0; i < this.level.walls.length; i++) {
+                let wall = this.level.walls[i];
+                let myX = wall.x * PARAMS.SCALE;
+                let myY = wall.y * PARAMS.SCALE;
+                let myW = PARAMS.SCALE;
+                let myH = wall.height * PARAMS.SCALE;
+
+                ctx.fillRect(this.x + myX, this.y + (this.h - myY - PARAMS.SCALE), myW, myH);
+            }
+        }
+
+        //brick
+        ctx.fillStyle = this.colors.brick;
+        if (this.level.bricks) {
+            for (var i = 0; i < this.level.bricks.length; i++) {
+                let brick = this.level.bricks[i];
+                let myX = brick.x * PARAMS.SCALE;
+                let myY = brick.y * PARAMS.SCALE;
+                let myW = brick.width * PARAMS.SCALE;
+                let myH = brick.height * PARAMS.SCALE;
+
+                ctx.fillRect(this.x + myX, this.y + (this.h - myY - PARAMS.SCALE), myW, myH);
+            }
+        }
+
+        //spike
+        ctx.fillStyle = this.colors.spike;
+        if (this.level.spikes) {
+            for (var i = 0; i < this.level.spikes.length; i++) {
+                let spike = this.level.spikes[i];
+                let myX = spike.x * PARAMS.SCALE;
+                let myY = spike.y * PARAMS.SCALE;
+                let myW = spike.width * PARAMS.SCALE;
+                let myH = PARAMS.SCALE / 2;
+
+                ctx.fillRect(this.x + myX, this.y + (this.h - myY - PARAMS.SCALE / 2), myW, myH);
+            }
+        }
+
+        //platform
+        ctx.fillStyle = this.colors.platform;
+        if (this.level.platforms) {
+            for (var i = 0; i < this.level.platforms.length; i++) {
+                let platform = this.level.platforms[i];
+                let myX = platform.x * PARAMS.SCALE;
+                let myY = platform.y * PARAMS.SCALE;
+                let myW = platform.width * PARAMS.SCALE;
+                let myH = platform.height * PARAMS.SCALE;
+
+                ctx.fillRect(this.x + myX, this.y + (this.h - myY - PARAMS.SCALE), myW, myH);
+            }
+        }
+
+        //door
+        ctx.fillStyle = this.colors.door;
+        if (this.level.doors) {
+            for (var i = 0; i < this.level.doors.length; i++) {
+                let door = this.level.doors[i];
+                let myX = door.x * PARAMS.SCALE;
+                let myY = door.y * PARAMS.SCALE;
+                let myW = PARAMS.SCALE;
+                let myH = PARAMS.SCALE * 2;
+
+                ctx.fillRect(this.x + myX, this.y + (this.h - myY), myW, myH);
+            }
+        }
+
+        //chest
+        ctx.fillStyle = this.colors.chest;
+        if (this.level.chests) {
+            for (var i = 0; i < this.level.chests.length; i++) {
+                let chest = this.level.chests[i];
+                let myX = chest.x * PARAMS.SCALE;
+                let myY = chest.y * PARAMS.SCALE;
+                let myW = PARAMS.SCALE;
+                let myH = PARAMS.SCALE;
+
+                ctx.fillRect(this.x + myX, this.y + (this.h - myY - PARAMS.SCALE), myW, myH);
+            }
+        }
+
+    }
+
+
+
+    /**Old attempt to draw minimap through their classes */
+    draw2(ctx) {
+        ctx.fillStyle = "GhostWhite";
+        ctx.fillText("Minimap", this.x, this.y - 10);
+        ctx.fillStyle = rgba(41, 41, 41, 0.5);
+        ctx.fillRect(this.x, this.y, this.w * PARAMS.SCALE, this.h * PARAMS.SCALE);
+        ctx.strokeStyle = "GhostWhite";
         ctx.strokeRect(this.x, this.y, this.w * PARAMS.SCALE, this.h * PARAMS.SCALE);
+        let blockwidth = PARAMS.BLOCKDIM * PARAMS.SCALE;
+
+        let lastY = 0;
 
         //draw environment
         for (var i = 0; i < this.game.foreground2.length; i++) {
             let environment = this.game.foreground2[i];
-            environment.drawMinimap(ctx, this.x, this.y, this.w, this.h);
+
+
+            let diff = Math.round((environment.y - lastY) / PARAMS.BLOCKDIM) * 2;
+            if (environment instanceof Ground) console.log(i, diff);
+
+            environment.drawMinimap(ctx, this.x, this.y + diff, this.w, this.h);
+
+            if (lastY != environment.y) { lastY = environment.y }
         }
     };
 
