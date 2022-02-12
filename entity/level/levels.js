@@ -59,7 +59,7 @@ var testLevel = {
     ],
     obelisks : [
         { x : 8, y : 1, brickX : 15, brickY: 1, brickWidth : 1, brickHeight : 1}
-    ]
+    ],
 
     shrooms: [
         { x: 16, y: 1 },
