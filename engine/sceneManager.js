@@ -536,6 +536,18 @@ class Minimap {
             }
         }
 
+        if (this.level.obelisks) {
+            for (var i = 0; i < this.level.obelisks.length; i++) {
+                let obelisk = this.level.obelisks[i];
+                let myX = obelisk.brickX * PARAMS.SCALE;
+                let myY = obelisk.brickY * PARAMS.SCALE;
+                let myW = obelisk.brickWidth * PARAMS.SCALE;
+                let myH = obelisk.brickHeight * PARAMS.SCALE;
+
+                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);
+            }
+        }
+
         //spike
         ctx.fillStyle = this.colors.spike;
         if (this.level.spikes) {
