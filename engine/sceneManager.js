@@ -41,10 +41,10 @@ class SceneManager {
         this.levels = [levelZero, levelOne, levelTwo, levelThree];
     }
 
-    /** 
+    /**
      * MAKE SURE THIS IS CALLED BEFORE LOADING IN A LEVELS COMPONENTS!!!
      * This instantiates a player and places them appropriately on a level.
-     * 
+     *
      * @param theX x of Player
      * @param theY y of Player
     */
@@ -103,7 +103,7 @@ class SceneManager {
 
     /**
      * Clear a layer from entities list
-     * @param {} layer 
+     * @param {} layer
      */
     clearLayer(layer) {
         layer.forEach(function (entity) {
@@ -297,7 +297,7 @@ class SceneManager {
         if (this.level.spikes) {
             for (var i = 0; i < this.level.spikes.length; i++) {
                 let spike = this.level.spikes[i];
-                this.game.addEntity(new Spike(this.game, spike.x, h - spike.y - 1, spike.width, 1));
+                this.game.addEntity(new Spike(this.game, spike.x, h - spike.y - 1, spike.width, 0.5));
             }
         }
         if (this.level.doors) {
@@ -315,7 +315,7 @@ class SceneManager {
         if (this.level.supports) {
             for (var i = 0; i < this.level.supports.length; i++) {
                 let support = this.level.supports[i];
-                this.game.addEntity(new Support(this.game, support.x, h - support.y - 1, support.width));
+                this.game.addEntity(new Support(this.game, support.x * PARAMS.BLOCKDIM, (h - support.y - 1) * PARAMS.BLOCKDIM, support.width * PARAMS.BLOCKDIM));
             }
         }
         if (this.level.chains) {
@@ -446,8 +446,8 @@ class Minimap {
     /**
      * Builds a box of same length and width of level to a smaller scale
      * Makes a represntation of the level and entities
-     * 
-     * @param {*} ctx 
+     *
+     * @param {*} ctx
      */
     draw(ctx) {
         this.buildMinimapBox(ctx);
@@ -481,7 +481,7 @@ class Minimap {
 
     /**
      * Draws the level at a smaller scale onto the minimap
-     * @param {} ctx 
+     * @param {} ctx
      */
     loadEnvironmentScene(ctx) {
         /* build environment blocks */
@@ -583,7 +583,7 @@ class Minimap {
                 let myW = PARAMS.SCALE;
                 let myH = PARAMS.SCALE;
 
-                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);   
+                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);
             }
         }
 
@@ -591,7 +591,7 @@ class Minimap {
 
     /**
      * Build a minimap
-     * @param {} ctx 
+     * @param {} ctx
      */
      buildMinimapBox(ctx) {
         //ctx.fillStyle = "SpringGreen";

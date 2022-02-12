@@ -27,14 +27,14 @@ class AbstractBarrier {
 
     /**
      * Draws the tile in a minimap. Expected all parameters are translated beforehand.
-     * @param {} ctx 
-     * @param {*} mmX 
-     * @param {*} mmY 
-     * @param {*} mmW 
-     * @param {*} mmH 
+     * @param {} ctx
+     * @param {*} mmX
+     * @param {*} mmY
+     * @param {*} mmW
+     * @param {*} mmH
      */
     drawMinimap(ctx, mmX, mmY) {
-        
+
     }
 }
 
@@ -337,13 +337,13 @@ class Chain extends AbstractBackFeature {
         this.srcY = 7;
         this.srcW = 7;
         this.srcH = 26;
-        this.w = 1 / 2;
-        this.h = 2;
+        this.w = PARAMS.BLOCKDIM / 2;
+        this.h = 2 * PARAMS.BLOCKDIM;
         this.x += this.w;
     };
 
     draw(ctx) {
-        ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.w * PARAMS.BLOCKDIM, this.h * PARAMS.BLOCKDIM);
+        ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x - this.game.camera.x, this.y - this.game.camera.y, this.w, this.h);
     };
 };
 
@@ -356,14 +356,14 @@ class CeilingChain extends AbstractBackFeature {
         this.srcY = 7;
         this.srcW = 3;
         this.srcH = 18;
-        this.w = 4;
+        this.w = PARAMS.BLOCKDIM / 4;
         this.x += this.w;
     };
 
     draw(ctx) {
         let blockcount = this.w / PARAMS.BLOCKDIM;
         for (var i = 0; i < blockcount; i++) {
-            ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x  * PARAMS.BLOCKDIM - this.game.camera.x, (this.y - i * 2) * PARAMS.BLOCKDIM - this.game.camera.y, this.w, PARAMS.BLOCKDIM * this.h);
+            ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x - this.game.camera.x, (this.y - i * 2) - this.game.camera.y, this.w, PARAMS.BLOCKDIM * this.h);
         }
     };
 };
@@ -405,7 +405,7 @@ class Support extends AbstractBackFeature {
     draw(ctx) {
         let blockcount = this.w / PARAMS.BLOCKDIM;
         for (var i = 0; i < blockcount; i++) {
-            ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, (this.x + i) * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.w * PARAMS.BLOCKDIM, this.h * PARAMS.BLOCKDIM);
+            ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x + (i * PARAMS.BLOCKDIM) - this.game.camera.x, this.y - this.game.camera.y, PARAMS.BLOCKDIM, PARAMS.BLOCKDIM);
         }
     };
 }
