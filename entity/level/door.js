@@ -4,13 +4,13 @@ class Door extends AbstractBackFeature {
         this.canEnter = canEnter;
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
         this.scale = PARAMS.BLOCKDIM;
-        this.w = 2 * PARAMS.BLOCKDIM;
-        this.h = 3 * PARAMS.BLOCKDIM;
+        this.w = 2;
+        this.h = 3;
         this.srcX = 274;
         this.srcY = 28;
         this.srcW = 28;
         this.srcH = 36;
-        this.BB = new BoundingBox(this.x, this.y, this.w, this.h);
+        this.BB = new BoundingBox(this.x * this.scale, this.y * this.scale, this.w * this.scale, this.h * this.scale);
 
         if (exitLocation == null) {
             throw "Exit location not defined for door! Needs {x: , y:, levelNum: }"
@@ -43,7 +43,7 @@ class Door extends AbstractBackFeature {
     };
 
     draw(ctx) {
-        ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x - this.game.camera.x, this.y - this.game.camera.y, this.w, this.h);
+        ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x * this.scale - this.game.camera.x, this.y * this.scale - this.game.camera.y, this.w * this.scale, this.h * this.scale);
     
         //what level it is going to
         ctx.font = PARAMS.DEFAULT_FONT;

@@ -11,9 +11,19 @@ class AbstractBarrier {
 
     drawDebug(ctx) {
         ctx.strokeStyle = "Red";
-        if (this.BB)
-            ctx.strokeRect(this.BB.x-this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
+        if (this.BB) {
+            ctx.strokeRect(this.BB.x-this.game.camera.x, this.BB.y - this.game.camera.y, this.w * PARAMS.BLOCKDIM, this.h * PARAMS.BLOCKDIM);
+        }
     }
+
+    updateBB() {
+        const scale = this.scale;
+        this.BB = new BoundingBox(this.x * scale, this.y * scale, this.w * scale, this.h * scale);
+        this.leftBB = new BoundingBox(this.x * scale, this.y * scale, this.w / 2 * scale, this.h * scale);
+        this.rightBB = new BoundingBox(this.x * scale + (this.w / 2) * scale, this.y * scale, this.w / 2 * scale, this.h * scale);
+        this.topBB = new BoundingBox(this.x * scale, this.y * scale, this.w * scale, this.h / 2 * scale);
+        this.bottomBB = new BoundingBox(this.x * scale, this.y + this.h / 2 * scale, this.w * scale, this.h / 2 * scale);
+    };
 
     /**
      * Draws the tile in a minimap. Expected all parameters are translated beforehand.
@@ -54,46 +64,13 @@ class Ground extends AbstractBarrier {
         this.updateBB();
     };
 
-    updateBB() {
-        this.BB = new BoundingBox(this.x, this.y, this.w, this.h);
-        this.leftBB = new BoundingBox(this.x, this.y, this.w / 2, this.h);
-        this.rightBB = new BoundingBox(this.x + (this.w / 2), this.y, this.w / 2, this.h);
-        this.topBB = new BoundingBox(this.x, this.y, this.w, this.h / 2);
-        this.bottomBB = new BoundingBox(this.x, this.y + this.h / 2, this.w, this.h / 2);
-    };
-
     draw(ctx) {
-        let blockCount = this.w / this.scale; // number of blocks to draw
+        let blockCount = this.w; // number of blocks to draw
         for (let i = 0; i < blockCount; i++) {
-            ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcWidth, this.srcHeight, this.x + (i * this.scale) - this.game.camera.x, this.y - this.game.camera.y, this.scale, this.scale);
+            ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcWidth, this.srcHeight, (this.x+i) * this.scale - this.game.camera.x, this.y * this.scale - this.game.camera.y, this.scale, this.scale);
         }
     };
 
-    /**
-     * Draw minimap for ground
-     * @param {} ctx 
-     * @param {*} mmX minimap x cord
-     * @param {*} mmY minimap y cord
-     * @param {*} mmY minimap's level width
-     * @param {*} mmY minimap's level height
-     */
-    drawMinimap(ctx, mmX, mmY, levelW, levelH) {
-        let blockCount = this.w / PARAMS.BLOCKDIM; 
-        ctx.fillStyle = "brown";
-        //let print = true;
-
-        for (let i = 0; i < blockCount; i++) {
-            let myX = ( mmX + Math.round(this.x / PARAMS.BLOCKDIM));
-            let myY = mmY - (levelH - Math.round(this.y / PARAMS.BLOCKDIM)  - 1);
-            let myW = PARAMS.SCALE;
-            let myH = PARAMS.SCALE;
-
-            ctx.fillRect(myX + (i * PARAMS.SCALE), myY, myW, myH);
-            //ctx.drawImage(this.srcX, this.srcY, this.srcWidth, this.srcHeight, 
-            //this.x + (i * this.scale) - this.game.camera.x, this.y - this.game.camera.y, this.scale, this.scale);
-        }
-
-    }
 };
 
 class Walls extends AbstractBarrier {
@@ -128,18 +105,10 @@ class Walls extends AbstractBarrier {
         this.updateBB();
     };
 
-    updateBB() {
-        this.BB = new BoundingBox(this.x, this.y, this.w, this.h);
-        this.leftBB = new BoundingBox(this.x, this.y, this.w / 2, this.h);
-        this.rightBB = new BoundingBox(this.x + (this.w / 2), this.y, this.w / 2, this.h);
-        this.topBB = new BoundingBox(this.x, this.y, this.w, this.h / 2);
-        this.bottomBB = new BoundingBox(this.x, this.y + this.h / 2, this.w, this.h / 2);
-    };
-
     draw(ctx) {
-        let blockcount = this.h / this.scale;
+        let blockcount = this.h;
         for (var i = 0; i < blockcount; i++) {
-            ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcWidth, this.srcHeight, this.x - this.game.camera.x, this.y + (i * this.scale) - this.game.camera.y, this.scale, this.scale);
+            ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcWidth, this.srcHeight, this.x * this.scale - this.game.camera.x, (this.y + i) * this.scale - this.game.camera.y, this.scale, this.scale);
         }
     };
 };
@@ -160,8 +129,8 @@ class Brick extends AbstractBarrier {
 
     // generates a random 2d array of brick types
     loadBricks() {
-        let blocksY = this.h / this.scale;
-        let blocksX = this.w / this.scale;
+        let blocksY = this.h;
+        let blocksX = this.w;
         for (let i = 0; i < blocksY; i++) {
             this.bricks.push([]);
             for (let j = 0; j < blocksX; j++) {
@@ -215,20 +184,12 @@ class Brick extends AbstractBarrier {
         }
     };
 
-    updateBB() {
-        this.BB = new BoundingBox(this.x, this.y, this.w, this.h);
-        this.leftBB = new BoundingBox(this.x, this.y, this.w / 2, this.h);
-        this.rightBB = new BoundingBox(this.x + (this.w / 2), this.y, this.w / 2, this.h);
-        this.topBB = new BoundingBox(this.x, this.y, this.w, this.h / 2);
-        this.bottomBB = new BoundingBox(this.x, this.y + this.h / 2, this.w, this.h / 2);
-    };
-
     draw(ctx) {
-        let blocksY = this.h / this.scale; // number of rows of blocks
-        let blocksX = this.w / this.scale; // number of columns of blocks
+        let blocksY = this.h; // number of rows of blocks
+        let blocksX = this.w; // number of columns of blocks
         for (var i = 0; i < blocksY; i++) {
             for (var j = 0; j < blocksX; j++) {
-                ctx.drawImage(this.spritesheet, this.bricks[i][j].x, this.bricks[i][j].y, this.srcWidth, this.srcHeight, this.x + (j * this.scale) - this.game.camera.x, this.y + (i * this.scale) - this.game.camera.y, this.scale, this.scale);
+                ctx.drawImage(this.spritesheet, this.bricks[i][j].x, this.bricks[i][j].y, this.srcWidth, this.srcHeight, (this.x + j) * this.scale - this.game.camera.x, (this.y + i) * this.scale - this.game.camera.y, this.scale, this.scale);
             }
         }
     };
@@ -246,18 +207,10 @@ class Platform extends AbstractBarrier {
         this.updateBB();
     };
 
-    updateBB() {
-        this.BB = new BoundingBox(this.x, this.y, this.w, this.h);
-        this.leftBB = new BoundingBox(this.x, this.y, this.w / 2, this.h);
-        this.rightBB = new BoundingBox(this.x + (this.w / 2), this.y, this.w / 2, this.h);
-        this.topBB = new BoundingBox(this.x, this.y, this.w, this.h / 2);
-        this.bottomBB = new BoundingBox(this.x, this.y + this.h / 2, this.w, this.h / 2);
-    };
-
     draw(ctx) {
-        let blockCount = this.w / this.scale;
+        let blockCount = this.w;
         for (let i = 0; i < blockCount; i++) {
-            ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcWidth, this.srcHeight, this.x + (i * this.scale) - this.game.camera.x, this.y - this.game.camera.y, this.scale, this.scale);
+            ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcWidth, this.srcHeight, (this.x+i) * this.scale - this.game.camera.x, this.y * this.scale - this.game.camera.y, this.scale, this.scale);
         }
     };
 };
@@ -275,8 +228,8 @@ class BackgroundWalls {
 
     // generates a random array of brick types
     loadBricks() {
-        let blockCountY = this.h / this.scale;
-        let blockCountX = this.w / this.scale;
+        let blockCountY = this.h;
+        let blockCountX = this.w;
         for (let i = 0; i < blockCountY; i++) {
             this.bricks.push([]);
             for (let j = 0; j < blockCountX; j++) {
@@ -309,11 +262,11 @@ class BackgroundWalls {
     };
 
     draw(ctx) {
-        let blockCountY = this.h / this.scale;
-        let blockCountX = this.w / this.scale;
+        let blockCountY = this.h;
+        let blockCountX = this.w;
         for (let i = 0; i < blockCountY; i++) {
             for (let j = 0; j < blockCountX; j++) {
-                ctx.drawImage(this.spritesheet, this.bricks[i][j].x, this.bricks[i][j].y, this.srcWidth, this.srcHeight, this.x + (j * this.scale) - this.game.camera.x, this.y + (i * this.scale) - this.game.camera.y, this.scale, this.scale);
+                ctx.drawImage(this.spritesheet, this.bricks[i][j].x, this.bricks[i][j].y, this.srcWidth, this.srcHeight, (this.x + j) * this.scale - this.game.camera.x, (this.y + i) * this.scale - this.game.camera.y, this.scale, this.scale);
             }
         }
 
@@ -338,7 +291,7 @@ class Torch extends AbstractBackFeature {
     };
 
     draw(ctx) {
-        this.animation.drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
+        this.animation.drawFrame(this.game.clockTick, ctx, this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.scale);
     };
 };
 
@@ -355,7 +308,7 @@ class Window extends AbstractBackFeature {
     };
 
     draw(ctx) {
-        ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x - this.game.camera.x, this.y - this.game.camera.y, this.w, this.h);
+        ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.w * PARAMS.BLOCKDIM, this.h * PARAMS.BLOCKDIM);
     };
 };
 
@@ -367,12 +320,12 @@ class Banner extends AbstractBackFeature {
         this.srcY = 7;
         this.srcW = 18;
         this.srcH = 23;
-        this.w = 1 * PARAMS.BLOCKDIM;
-        this.h = 3 * PARAMS.BLOCKDIM;
+        this.w = 1;
+        this.h = 3;
     };
 
     draw(ctx) {
-        ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x - this.game.camera.x, this.y - this.game.camera.y, this.w, this.h);
+        ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.w * PARAMS.BLOCKDIM, this.h * PARAMS.BLOCKDIM);
     };
 };
 
@@ -384,13 +337,13 @@ class Chain extends AbstractBackFeature {
         this.srcY = 7;
         this.srcW = 7;
         this.srcH = 26;
-        this.w = PARAMS.BLOCKDIM / 2;
-        this.h = 2 * PARAMS.BLOCKDIM;
+        this.w = 1 / 2;
+        this.h = 2;
         this.x += this.w;
     };
 
     draw(ctx) {
-        ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x - this.game.camera.x, this.y - this.game.camera.y, this.w, this.h);
+        ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.w * PARAMS.BLOCKDIM, this.h * PARAMS.BLOCKDIM);
     };
 };
 
@@ -403,14 +356,14 @@ class CeilingChain extends AbstractBackFeature {
         this.srcY = 7;
         this.srcW = 3;
         this.srcH = 18;
-        this.w = PARAMS.BLOCKDIM / 4;
+        this.w = 4;
         this.x += this.w;
     };
 
     draw(ctx) {
         let blockcount = this.w / PARAMS.BLOCKDIM;
         for (var i = 0; i < blockcount; i++) {
-            ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x - this.game.camera.x, this.y - (i * 2 * PARAMS.BLOCKDIM) - this.game.camera.y, this.w, PARAMS.BLOCKDIM * this.h);
+            ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x  * PARAMS.BLOCKDIM - this.game.camera.x, (this.y - i * 2) * PARAMS.BLOCKDIM - this.game.camera.y, this.w, PARAMS.BLOCKDIM * this.h);
         }
     };
 };
@@ -428,12 +381,12 @@ class Column extends AbstractBackFeature {
         this.baseY = 55;
         this.baseW = 16;
         this.baseH = 9;
-        this.w = 1 * PARAMS.BLOCKDIM;
+        this.w = 1;
     };
 
     draw(ctx) {
-        ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x - this.game.camera.x, this.y - this.game.camera.y, this.w, this.h);
-        ctx.drawImage(this.spritesheet, this.baseX, this.baseY, this.baseW, this.baseH, this.x - this.game.camera.x, this.y - this.game.camera.y + this.h - PARAMS.BLOCKDIM, this.w, PARAMS.BLOCKDIM);
+        ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.w * PARAMS.BLOCKDIM, this.h * PARAMS.BLOCKDIM);
+        ctx.drawImage(this.spritesheet, this.baseX, this.baseY, this.baseW, this.baseH, this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y + this.h * PARAMS.BLOCKDIM - PARAMS.BLOCKDIM, this.w * PARAMS.BLOCKDIM, PARAMS.BLOCKDIM);
     };
 };
 
@@ -446,13 +399,13 @@ class Support extends AbstractBackFeature {
         this.srcY = 0;
         this.srcW = 32;
         this.srcH = 13;
-        this.h = 1 * PARAMS.BLOCKDIM;
+        this.h = 1;
     };
 
     draw(ctx) {
         let blockcount = this.w / PARAMS.BLOCKDIM;
         for (var i = 0; i < blockcount; i++) {
-            ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x + (i * PARAMS.BLOCKDIM) - this.game.camera.x, this.y - this.game.camera.y, PARAMS.BLOCKDIM, this.h);
+            ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, (this.x + i) * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.w * PARAMS.BLOCKDIM, this.h * PARAMS.BLOCKDIM);
         }
     };
 }

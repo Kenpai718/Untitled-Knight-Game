@@ -7,7 +7,7 @@ class Spike extends AbstractBarrier{
         this.srcY = 48;
         this.srcW = 15;
         this.srcH = 16;
-        this.BB = new BoundingBox(this.x, this.y + (this.scale / 2), this.w, this.scale / 2);
+        this.BB = new BoundingBox(this.x * this.scale, (this.y + 1 / 2) * this.scale, this.w * this.scale, this.scale / 2);
     };
 
     update() {
@@ -15,9 +15,9 @@ class Spike extends AbstractBarrier{
     };
 
     draw(ctx) {
-        let blockcount = this.w / this.scale;
+        let blockcount = this.w;
         for (var i = 0; i < blockcount; i++) {
-            ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x + (i * this.scale) - this.game.camera.x, this.y - this.game.camera.y, this.scale, this.scale);
+            ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, (this.x + i) * this.scale - this.game.camera.x, this.y * this.scale - this.game.camera.y, this.scale, this.scale);
         }
     };
 

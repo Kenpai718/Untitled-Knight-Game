@@ -208,32 +208,32 @@ class SceneManager {
         if (this.level.ground) {
             for (var i = 0; i < this.level.ground.length; i++) {
                 let ground = this.level.ground[i];
-                this.game.addEntity(new Ground(this.game, ground.x * PARAMS.BLOCKDIM, (h - ground.y - 1) * PARAMS.BLOCKDIM, ground.width * PARAMS.BLOCKDIM, PARAMS.BLOCKDIM, ground.type));
+                this.game.addEntity(new Ground(this.game, ground.x, h - ground.y - 1, ground.width, 1, ground.type));
             }
         }
         if (this.level.bricks) {
             for (var i = 0; i < this.level.bricks.length; i++) {
                 let bricks = this.level.bricks[i];
-                this.game.addEntity(new Brick(this.game, bricks.x * PARAMS.BLOCKDIM, (h - bricks.y - 1) * PARAMS.BLOCKDIM, bricks.width * PARAMS.BLOCKDIM, bricks.height * PARAMS.BLOCKDIM));
+                this.game.addEntity(new Brick(this.game, bricks.x, h - bricks.y - 1, bricks.width, bricks.height));
             }
         }
         if (this.level.platforms) {
             for (var i = 0; i < this.level.platforms.length; i++) {
                 let platforms = this.level.platforms[i];
-                this.game.addEntity(new Platform(this.game, platforms.x * PARAMS.BLOCKDIM, (h - platforms.y - 1) * PARAMS.BLOCKDIM, platforms.width * PARAMS.BLOCKDIM, platforms.height * PARAMS.BLOCKDIM));
+                this.game.addEntity(new Platform(this.game, platforms.x, h - platforms.y - 1, platforms.width, platforms.height));
             }
         }
         if (this.level.walls) {
             for (var i = 0; i < this.level.walls.length; i++) {
                 let walls = this.level.walls[i];
-                this.game.addEntity(new Walls(this.game, walls.x * PARAMS.BLOCKDIM, (h - walls.y - 1) * PARAMS.BLOCKDIM, PARAMS.BLOCKDIM, walls.height * PARAMS.BLOCKDIM, walls.type));
+                this.game.addEntity(new Walls(this.game, walls.x, h - walls.y - 1, 1, walls.height, walls.type));
             }
         }
 
         if (this.level.chests) {
             for (var i = 0; i < this.level.chests.length; i++) {
                 let chest = this.level.chests[i];
-                this.game.addEntity(new Chest(this.game, chest.x * PARAMS.BLOCKDIM, (h - (chest.y) - 1) * PARAMS.BLOCKDIM, chest.direction));
+                this.game.addEntity(new Chest(this.game, chest.x, h - chest.y - 1, chest.direction));
             }
         }
 
@@ -267,50 +267,50 @@ class SceneManager {
         if (this.level.backgroundWalls) {
             for (var i = 0; i < this.level.backgroundWalls.length; i++) {
                 let bw = this.level.backgroundWalls[i];
-                this.game.addEntity(new BackgroundWalls(this.game, bw.x * PARAMS.BLOCKDIM, (h - bw.y - 1) * PARAMS.BLOCKDIM, bw.width * PARAMS.BLOCKDIM, bw.height * PARAMS.BLOCKDIM));
+                this.game.addEntity(new BackgroundWalls(this.game, bw.x, h - bw.y - 1, bw.width, bw.height));
             }
         }
         if (this.level.torches) {
             for (var i = 0; i < this.level.torches.length; i++) {
                 let torch = this.level.torches[i];
-                this.game.addEntity(new Torch(this.game, torch.x * PARAMS.BLOCKDIM, (h - torch.y - 1) * PARAMS.BLOCKDIM));
+                this.game.addEntity(new Torch(this.game, torch.x, h - torch.y - 1));
             }
         }
         if (this.level.windows) {
             for (var i = 0; i < this.level.windows.length; i++) {
                 let w = this.level.windows[i];
-                this.game.addEntity(new Window(this.game, w.x * PARAMS.BLOCKDIM, (h - w.y - 1) * PARAMS.BLOCKDIM, w.width * PARAMS.BLOCKDIM, w.height * PARAMS.BLOCKDIM));
+                this.game.addEntity(new Window(this.game, w.x, h - w.y - 1, w.width, w.height));
             }
         }
         if (this.level.banners) {
             for (var i = 0; i < this.level.banners.length; i++) {
                 let banner = this.level.banners[i];
-                this.game.addEntity(new Banner(this.game, banner.x * PARAMS.BLOCKDIM, (h - banner.y - 1) * PARAMS.BLOCKDIM));
+                this.game.addEntity(new Banner(this.game, banner.x, h - banner.y - 1));
             }
         }
 
         if (this.level.spikes) {
             for (var i = 0; i < this.level.spikes.length; i++) {
                 let spike = this.level.spikes[i];
-                this.game.addEntity(new Spike(this.game, spike.x * PARAMS.BLOCKDIM, (h - spike.y - 1) * PARAMS.BLOCKDIM, spike.width * PARAMS.BLOCKDIM, PARAMS.BLOCKDIM));
+                this.game.addEntity(new Spike(this.game, spike.x, h - spike.y - 1, spike.width, 1));
             }
         }
         if (this.level.doors) {
             for (var i = 0; i < this.level.doors.length; i++) {
                 let door = this.level.doors[i];
-                this.game.addEntity(new Door(this.game, door.x * PARAMS.BLOCKDIM, (h - door.y - 1) * PARAMS.BLOCKDIM, door.canEnter, door.exitLocation));
+                this.game.addEntity(new Door(this.game, door.x, h - door.y - 1, door.canEnter, door.exitLocation));
             }
         }
         if (this.level.columns) {
             for (var i = 0; i < this.level.columns.length; i++) {
                 let column = this.level.columns[i];
-                this.game.addEntity(new Column(this.game, column.x * PARAMS.BLOCKDIM, (h - column.y - 1) * PARAMS.BLOCKDIM, column.height * PARAMS.BLOCKDIM));
+                this.game.addEntity(new Column(this.game, column.x, h - column.y - 1, column.height));
             }
         }
         if (this.level.supports) {
             for (var i = 0; i < this.level.supports.length; i++) {
                 let support = this.level.supports[i];
-                this.game.addEntity(new Support(this.game, support.x * PARAMS.BLOCKDIM, (h - support.y - 1) * PARAMS.BLOCKDIM, support.width * PARAMS.BLOCKDIM));
+                this.game.addEntity(new Support(this.game, support.x, h - support.y - 1, support.width));
             }
         }
         if (this.level.chains) {
@@ -402,9 +402,7 @@ class SceneManager {
     setupMinimap() {
         let blockwidth = PARAMS.BLOCKDIM * PARAMS.SCALE;
         let x = (this.game.surfaceWidth) - (this.levelW * PARAMS.SCALE);
-        let y = 0 + (this.levelH * PARAMS.SCALE);
-        this.minimap = new Minimap(this.game, x - 100, y + 40,
-            this.level);
+        this.minimap = new Minimap(this.game, x - 100, 40, this.level);
 
     }
 };
@@ -461,42 +459,20 @@ class Minimap {
 
             (entity instanceof AbstractPlayer) ? ctx.fillStyle = this.colors.player : ctx.fillStyle = this.colors.enemy;
 
-            let convertX = Math.round(entity.x / PARAMS.BLOCKDIM);
-            let convertY = Math.round(entity.y / PARAMS.BLOCKDIM);
+            let convertX = entity.BB.left / PARAMS.BLOCKDIM;
+            let convertY = entity.BB.top / PARAMS.BLOCKDIM;
+            let convertW = entity.BB.width / PARAMS.BLOCKDIM;
+            let convertH = entity.BB.height / PARAMS.BLOCKDIM;
 
             let myX = convertX * PARAMS.SCALE;
             let myY = convertY * PARAMS.SCALE;
-            let myW = PARAMS.SCALE;
-            let myH = PARAMS.SCALE;
+            let myW = convertW * PARAMS.SCALE;
+            let myH = convertH * PARAMS.SCALE;
 
-            ctx.fillRect(this.x + myX, (this.y + (this.h - myY)), myW, myH);
+            ctx.fillRect(this.x + myX, this.y + myY + 4 * PARAMS.SCALE, myW, myH);
         }
     }
 
-
-    positionEntity(x, y) {
-        entity.x = x * PARAMS.BLOCKDIM - entity.BB.left;
-        entity.y = y * PARAMS.BLOCKDIM - entity.BB.bottom;
-        entity.updateBoxes();
-    }
-
-    /**
-     * Build a minimap
-     * @param {} ctx 
-     */
-    buildMinimapBox(ctx) {
-        ctx.fillStyle = "SpringGreen";
-        let miniX = this.x;
-        let miniY = this.y - (this.h * PARAMS.SCALE);
-        let miniW = (this.w * PARAMS.SCALE) + this.xOffset;
-        let miniH = (this.h * PARAMS.SCALE) + this.yOffset;
-
-        ctx.fillText("Minimap", miniX, miniY - 10);
-        ctx.fillStyle = rgba(41, 41, 41, 0.5);
-        ctx.fillRect(miniX, miniY, miniW, miniH);
-        ctx.strokeStyle = "GhostWhite";
-        ctx.strokeRect(miniX, miniY, miniW, miniH);
-    }
 
     /**
      * Build the level at a smaller scale onto the minimap
@@ -514,7 +490,8 @@ class Minimap {
                 let myW = ground.width * PARAMS.SCALE;
                 let myH = ground.height * PARAMS.SCALE;
 
-                ctx.fillRect(this.x + myX, this.y + (this.h - myY - PARAMS.SCALE), myW, myH);
+                //ctx.fillRect(this.x + myX, this.y + (this.h - myY + 3/2 * PARAMS.SCALE), myW, myH);
+                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);
             }
         }
 
@@ -528,7 +505,8 @@ class Minimap {
                 let myW = PARAMS.SCALE;
                 let myH = wall.height * PARAMS.SCALE;
 
-                ctx.fillRect(this.x + myX, this.y + (this.h - myY - PARAMS.SCALE), myW, myH);
+                //ctx.fillRect(this.x + myX, this.y + (this.h - myY + 3/2 * PARAMS.SCALE), myW, myH);
+                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);
             }
         }
 
@@ -542,7 +520,8 @@ class Minimap {
                 let myW = brick.width * PARAMS.SCALE;
                 let myH = brick.height * PARAMS.SCALE;
 
-                ctx.fillRect(this.x + myX, this.y + (this.h - myY - PARAMS.SCALE), myW, myH);
+                //ctx.fillRect(this.x + myX, this.y + (this.h - myY + 3/2 * PARAMS.SCALE), myW, myH);
+                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);
             }
         }
 
@@ -556,7 +535,7 @@ class Minimap {
                 let myW = spike.width * PARAMS.SCALE;
                 let myH = PARAMS.SCALE / 2;
 
-                ctx.fillRect(this.x + myX, this.y + (this.h - myY - PARAMS.SCALE / 2), myW, myH);
+                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3 + 1/2) * PARAMS.SCALE, myW, myH);
             }
         }
 
@@ -570,7 +549,8 @@ class Minimap {
                 let myW = platform.width * PARAMS.SCALE;
                 let myH = platform.height * PARAMS.SCALE;
 
-                ctx.fillRect(this.x + myX, this.y + (this.h - myY - PARAMS.SCALE), myW, myH);
+                //ctx.fillRect(this.x + myX, this.y + (this.h - myY + 3/2 * PARAMS.SCALE), myW, myH);
+                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);
             }
         }
 
@@ -581,10 +561,10 @@ class Minimap {
                 let door = this.level.doors[i];
                 let myX = door.x * PARAMS.SCALE;
                 let myY = door.y * PARAMS.SCALE;
-                let myW = PARAMS.SCALE;
-                let myH = PARAMS.SCALE * 2;
+                let myW = door.w * PARAMS.SCALE;
+                let myH = door.h * PARAMS.SCALE;
 
-                ctx.fillRect(this.x + myX, this.y + (this.h - myY), myW, myH);
+                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, 2 * PARAMS.SCALE, 3 * PARAMS.SCALE);
             }
         }
 
@@ -598,7 +578,7 @@ class Minimap {
                 let myW = PARAMS.SCALE;
                 let myH = PARAMS.SCALE;
 
-                ctx.fillRect(this.x + myX, this.y + (this.h - myY - PARAMS.SCALE), myW, myH);
+                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);   
             }
         }
 
@@ -609,11 +589,11 @@ class Minimap {
     /**Old attempt to draw minimap through their classes */
     draw2(ctx) {
         ctx.fillStyle = "GhostWhite";
-        ctx.fillText("Minimap", this.x, this.y - 10);
+        //ctx.fillText("Minimap", this.x, this.y - 10);
         ctx.fillStyle = rgba(41, 41, 41, 0.5);
-        ctx.fillRect(this.x, this.y, this.w * PARAMS.SCALE, this.h * PARAMS.SCALE);
+        //ctx.fillRect(this.x, this.y, this.w * PARAMS.SCALE, this.h * PARAMS.SCALE);
         ctx.strokeStyle = "GhostWhite";
-        ctx.strokeRect(this.x, this.y, this.w * PARAMS.SCALE, this.h * PARAMS.SCALE);
+        //ctx.strokeRect(this.x, this.y, this.w * PARAMS.SCALE, this.h * PARAMS.SCALE);
         let blockwidth = PARAMS.BLOCKDIM * PARAMS.SCALE;
 
         let lastY = 0;
@@ -621,16 +601,27 @@ class Minimap {
         //draw environment
         for (var i = 0; i < this.game.foreground2.length; i++) {
             let environment = this.game.foreground2[i];
-
-
-            let diff = Math.round((environment.y - lastY) / PARAMS.BLOCKDIM) * 2;
-            if (environment instanceof Ground) console.log(i, diff);
-
-            environment.drawMinimap(ctx, this.x, this.y + diff, this.w, this.h);
-
-            if (lastY != environment.y) { lastY = environment.y }
+            environment.drawMinimap(ctx, this.x, this.y,  PARAMS.SCALE,  PARAMS.SCALE);
         }
     };
+
+    /**
+     * Build a minimap
+     * @param {} ctx 
+     */
+     buildMinimapBox(ctx) {
+        ctx.fillStyle = "SpringGreen";
+        let miniX = this.x;
+        let miniY = this.y;
+        let miniW = (this.w * PARAMS.SCALE) + this.xOffset;
+        let miniH = (this.h * PARAMS.SCALE) + this.yOffset;
+
+        ctx.fillText("Minimap", miniX, miniY - 10);
+        ctx.fillStyle = rgba(41, 41, 41, 0.5);
+        ctx.fillRect(miniX, miniY, miniW, miniH);
+        ctx.strokeStyle = "GhostWhite";
+        ctx.strokeRect(miniX, miniY, miniW, miniH);
+    }
 
     update() {
 

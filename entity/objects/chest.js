@@ -13,8 +13,8 @@ class Chest extends AbstractBackFeature {
         this.scale = 5; // 4
         // this.width = 21 * this.scale;
         // this.height = 12 * this.scale;
-        this.width = PARAMS.BLOCKDIM * 1.5;
-        this.height = PARAMS.BLOCKDIM;
+        this.width = 1.5;
+        this.height = 1;
 
         // Update settings
         this.timerGUI = 0;
@@ -41,7 +41,7 @@ class Chest extends AbstractBackFeature {
 
     updateBB() {
         this.lastBoundingBox = this.BB;
-        this.BB = new BoundingBox(this.x, this.y, this.width, this.height)
+        this.BB = new BoundingBox(this.x * PARAMS.BLOCKDIM, this.y * PARAMS.BLOCKDIM, this.width * PARAMS.BLOCKDIM, this.height * PARAMS.BLOCKDIM)
     };
 
     viewBoundingBox(ctx) {
@@ -103,16 +103,16 @@ class Chest extends AbstractBackFeature {
         switch (this.state) {
             case 0: // Closed chest
                 if (this.direction == this.directions.left) {
-                    ctx.drawImage(this.spritesheet, 19, 147, 21, 12, this.x - this.game.camera.x, this.y - this.game.camera.y, this.width, this.height);
+                    ctx.drawImage(this.spritesheet, 19, 147, 21, 12, this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.width * PARAMS.BLOCKDIM, this.height * PARAMS.BLOCKDIM);
                 } else {
-                    ctx.drawImage(this.spritesheet, 120, 147, 21, 12, this.x - this.game.camera.x, this.y - this.game.camera.y, this.width, this.height);
+                    ctx.drawImage(this.spritesheet, 120, 147, 21, 12, this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.width * PARAMS.BLOCKDIM, this.height * PARAMS.BLOCKDIM);
                 }
                 break;
             case 1: // Opened chest
                 if (this.direction == this.directions.left) {
-                    ctx.drawImage(this.spritesheet, 51, 147, 21, 12, this.x - this.game.camera.x, this.y - this.game.camera.y, this.width, this.height);
+                    ctx.drawImage(this.spritesheet, 51, 147, 21, 12, this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.width * PARAMS.BLOCKDIM, this.height * PARAMS.BLOCKDIM);
                 } else {
-                    ctx.drawImage(this.spritesheet, 83, 147, 21, 12, this.x - this.game.camera.x, this.y - this.game.camera.y, this.width, this.height);
+                    ctx.drawImage(this.spritesheet, 83, 147, 21, 12, this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.width * PARAMS.BLOCKDIM, this.height * PARAMS.BLOCKDIM);
                 }
                 break;
         }
@@ -131,8 +131,8 @@ class Chest extends AbstractBackFeature {
                 ctx.globalAlpha = that.timerGUI / that.timerGUI2;
 
 
-            ctx.fillText("🏹 x" + that.arrowStorage, that.x - this.game.camera.x, that.y - 5 - this.game.camera.y);
-            ctx.fillText("⚗️ x" + that.potionStorage, that.x - this.game.camera.x, that.y - 40 - this.game.camera.y);
+            ctx.fillText("🏹 x" + that.arrowStorage, that.x * PARAMS.BLOCKDIM - this.game.camera.x, that.y * PARAMS.BLOCKDIM - 5 - this.game.camera.y);
+            ctx.fillText("⚗️ x" + that.potionStorage, that.x * PARAMS.BLOCKDIM - this.game.camera.x, that.y * PARAMS.BLOCKDIM - 40 - this.game.camera.y);
 
 
             ctx.font = PARAMS.DEFAULT_FONT;
@@ -143,7 +143,7 @@ class Chest extends AbstractBackFeature {
 
     drawDebug(ctx) {
         ctx.strokeStyle = "Red";
-        ctx.strokeRect(this.x - this.game.camera.x, this.y - this.game.camera.y, this.width, this.height);
+        ctx.strokeRect(this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.width * PARAMS.BLOCKDIM, this.height * PARAMS.BLOCKDIM);
 
         //     ctx.fillStyle = "White"
         //     ctx.fillText("Chest", this.x - this.game.camera.x, this.y - this.game.camera.y + 20);
