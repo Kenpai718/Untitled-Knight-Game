@@ -57,17 +57,20 @@ var testLevel = {
         { x: 15, y: 14, height: 13, type: 2 },
         { x: 25, y: 14, height: 14, type: 2 },
     ],
+    obelisks : [
+        { x : 8, y : 1, brickX : 15, brickY: 1, brickWidth : 1, brickHeight : 1}
+    ]
 
-    shrooms: [
-        { x: 16, y: 1 },
-
-    ],
-    goblins: [
-        { x: 10, y: 1 }
-    ],
-    skeletons: [
-        { x: 12, y: 7 }
-    ],
+    // shrooms: [
+    //     { x: 16, y: 1 },
+    //
+    // ],
+    // goblins: [
+    //     { x: 10, y: 1 }
+    // ],
+    // skeletons: [
+    //     { x: 12, y: 7 }
+    // ],
 }
 
 

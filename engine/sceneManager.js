@@ -241,6 +241,12 @@ class SceneManager {
                 this.game.addEntity(new Chest(this.game, chest.x, h - chest.y - 1, chest.direction));
             }
         }
+        if (this.level.obelisks) {
+            for (var i = 0; i < this.level.obelisks.length; i++) {
+                let obelisk = this.level.obelisks[i];
+                this.game.addEntity(new Obelisk(this.game, obelisk.x, h - obelisk.y - 1 - 3, obelisk.brickX, obelisk.brickY, obelisk.brickWidth, obelisk.brickHeight));
+            }
+        }
 
         //load enemy entities
         if (this.level.shrooms) {
