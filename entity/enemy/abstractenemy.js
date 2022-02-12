@@ -253,6 +253,8 @@ class AbstractEnemy extends AbstractEntity {
         }
     }
 
+    
+
 
 
 }

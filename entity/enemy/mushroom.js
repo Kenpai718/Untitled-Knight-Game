@@ -83,7 +83,7 @@ class Mushroom extends AbstractEnemy {
             this.updateBoxes();
             let dist = {x: 0, y:0};
             // environment collision check
-            dist = this.checkEnvironmentCollisions(dist);
+            dist = super.checkEnvironmentCollisions(dist);
             // entity collision check
             this.knightInSight = false;
             this.checkEntityInteractions();
@@ -108,7 +108,7 @@ class Mushroom extends AbstractEnemy {
             super.updateVelocity();
             super.setAggro();
             super.doJumpIfStuck(TICK); //jump if stuck horizontally
-            //super.checkInDeathZone();  //die if below blastzone
+            super.checkInDeathZone();  //die if below blastzone
         }
     };
 

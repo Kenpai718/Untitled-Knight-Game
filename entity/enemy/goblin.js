@@ -82,7 +82,7 @@ class Goblin extends AbstractEnemy {
             /**UPDATING BEHAVIOR*/
             let dist = { x: 0, y: 0 }; //the displacement needed between entities
             this.playerInSight = false; //set to true in environment collisions
-            dist = this.checkEnvironmentCollisions(dist); //check if colliding with environment and adjust entity accordingly
+            dist = super.checkEnvironmentCollisions(dist); //check if colliding with environment and adjust entity accordingly
             if (this.touchHole()) {
                 dist.x = 0;
             }
@@ -106,7 +106,7 @@ class Goblin extends AbstractEnemy {
             //entity can jump if it is on floor
             super.setAggro();
             super.doJumpIfStuck(TICK); //jump if stuck horizontally
-            //super.checkInDeathZone();  //die if below blastzone
+            super.checkInDeathZone();  //die if below blastzone
         }
     };
 

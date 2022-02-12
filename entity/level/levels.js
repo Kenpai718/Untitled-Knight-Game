@@ -12,6 +12,7 @@
  * 
  * Each level variable MUST HAVE:
  *      ID: 0,1,2...    (level number and this id must be an index in scene manager's level array)
+ *      Label: "1-1"    level-sublevel
  *      width, height   (converted into PARAMS.BLOCKDIM)
  *      player: {x, y}  (starting pos)
  *      music: MUSIC.TRACK_NAME (found in utils class)
@@ -23,6 +24,7 @@
 /**TEST LEVEL = Debugging/testing rom aka LEVEL 0 */
 var testLevel = {
     ID: 0,
+    label: "Testing Room",
     width: 24, height: 14,
     player: { x: 1, y: 1 },
     music: MUSIC.FODLAN_WINDS,
@@ -74,6 +76,7 @@ var testLevel = {
  */
 var level1_1 = {
     ID: 1,
+    label: "1-1",
     width: 120, height: 15,
     player: { x: 0, y: 1 },
     music: MUSIC.FODLAN_WINDS,
@@ -121,13 +124,14 @@ var level1_1 = {
         { x: 94, y: 0, width: 1, height: 1 }
     ],
     walls: [
+        { x: -1, y: 15, height: 16, type: 0 },
         { x: 90, y: 12, height: 8, type: 2 },
         { x: 90, y: 4, height: 1, type: 3 },
         { x: 94, y: 8, height: 8, type: 0 },
         { x: 30, y: 3, height: 1, type: 0 },
         { x: 59, y: 3, height: 3, type: 2 },
         { x: 20, y: 1, height: 1, type: 0 },
-        { x: 120, y: 15, height: 1, type: 0 }
+        { x: 120, y: 15, height: 16, type: 0 }
     ],
     backgroundWalls: [
         { x: 30, y: 12, width: 90, height: 12 }
@@ -156,6 +160,7 @@ var level1_1 = {
 
 var level1_2 = {
     ID: 2,
+    label: "1-2",
     width: 120, height: 36,
     player: { x: 1, y: 1 },
     music: MUSIC.CHASING_DAYBREAK,
@@ -210,7 +215,8 @@ var level1_2 = {
         { x: 0, y: 28, height: 4, type: 2 },
         { x: 30, y: 24, height: 2, type: 2 },
         { x: 34, y: 24, height: 3, type: 0 },
-        { x: 84, y: 22, height: 3, type: 0 }
+        { x: 84, y: 22, height: 3, type: 0 },
+        { x: 120, y: 36, height: 37, type: 0 },
 
     ],
     backgroundWalls: [
@@ -353,6 +359,7 @@ var level1_2 = {
 
 var level1_3 = {
     ID: 3,
+    label: "1-3",
     width: 120, height: 42,
     player: { x: 1, y: 1 },
     music: MUSIC.BETWEEN_HEAVEN_AND_EARTH,

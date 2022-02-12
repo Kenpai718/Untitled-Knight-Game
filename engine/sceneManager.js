@@ -115,6 +115,11 @@ class SceneManager {
      * Update the camera and gui elements
      */
     update() {
+        //debug key toggle, flip state of debug checkbox
+        if(this.game.debug) {
+            this.game.debug = false;
+            document.getElementById("debug").checked = !document.getElementById("debug").checked;
+        }
         PARAMS.DEBUG = document.getElementById("debug").checked;
         this.updateAudio();
         this.updateGUI();
@@ -160,8 +165,8 @@ class SceneManager {
         //current level
         ctx.font = PARAMS.BIG_FONT;
         let xOffset;
-        (this.currentLevel >= 10) ? xOffset = 175 : xOffset = 150;
-        ctx.fillText("Level " + this.currentLevel, this.game.surfaceWidth - xOffset, 30);
+        (this.level.label.length <= 4) ? xOffset = this.level.label.length * 70 : xOffset = this.level.label.length * 31;
+        ctx.fillText("Level:" + this.level.label, this.game.surfaceWidth - xOffset, 30);
 
 
         if (PARAMS.DEBUG) {
@@ -400,7 +405,6 @@ class SceneManager {
      * Initialize a minimap
      */
     setupMinimap() {
-        let blockwidth = PARAMS.BLOCKDIM * PARAMS.SCALE;
         let x = (this.game.surfaceWidth) - (this.levelW * PARAMS.SCALE);
         this.minimap = new Minimap(this.game, x - 100, 40, this.level);
 
@@ -425,9 +429,9 @@ class Minimap {
         this.h = this.level.height;
 
         this.colors = {
-            ground: "slategray",
-            brick: "gray",
-            wall: "mintcream",
+            ground: "dimgray",
+            brick: "silver",
+            wall: "maroon",
             platform: "purple",
             spike: "orange",
             player: "blue",
@@ -440,7 +444,7 @@ class Minimap {
     };
 
     /**
-     * Builds a box of same length and width of length to a smaller scale
+     * Builds a box of same length and width of level to a smaller scale
      * Makes a represntation of the level and entities
      * 
      * @param {*} ctx 
@@ -452,6 +456,7 @@ class Minimap {
 
     }
 
+    /**Track current entity positions and draws them to canvas */
     traceEntities(ctx) {
         let myEntities = this.game.entities;
         for (var i = 0; i < myEntities.length; i++) {
@@ -475,7 +480,7 @@ class Minimap {
 
 
     /**
-     * Build the level at a smaller scale onto the minimap
+     * Draws the level at a smaller scale onto the minimap
      * @param {} ctx 
      */
     loadEnvironmentScene(ctx) {
@@ -584,39 +589,18 @@ class Minimap {
 
     }
 
-
-
-    /**Old attempt to draw minimap through their classes */
-    draw2(ctx) {
-        ctx.fillStyle = "GhostWhite";
-        //ctx.fillText("Minimap", this.x, this.y - 10);
-        ctx.fillStyle = rgba(41, 41, 41, 0.5);
-        //ctx.fillRect(this.x, this.y, this.w * PARAMS.SCALE, this.h * PARAMS.SCALE);
-        ctx.strokeStyle = "GhostWhite";
-        //ctx.strokeRect(this.x, this.y, this.w * PARAMS.SCALE, this.h * PARAMS.SCALE);
-        let blockwidth = PARAMS.BLOCKDIM * PARAMS.SCALE;
-
-        let lastY = 0;
-
-        //draw environment
-        for (var i = 0; i < this.game.foreground2.length; i++) {
-            let environment = this.game.foreground2[i];
-            environment.drawMinimap(ctx, this.x, this.y,  PARAMS.SCALE,  PARAMS.SCALE);
-        }
-    };
-
     /**
      * Build a minimap
      * @param {} ctx 
      */
      buildMinimapBox(ctx) {
-        ctx.fillStyle = "SpringGreen";
+        //ctx.fillStyle = "SpringGreen";
         let miniX = this.x;
         let miniY = this.y;
         let miniW = (this.w * PARAMS.SCALE) + this.xOffset;
         let miniH = (this.h * PARAMS.SCALE) + this.yOffset;
 
-        ctx.fillText("Minimap", miniX, miniY - 10);
+        //ctx.fillText("Minimap", miniX, miniY - 10);
         ctx.fillStyle = rgba(41, 41, 41, 0.5);
         ctx.fillRect(miniX, miniY, miniW, miniH);
         ctx.strokeStyle = "GhostWhite";

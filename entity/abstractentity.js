@@ -159,14 +159,14 @@ class AbstractEntity {
     }
 
     /**
-    * Dead if too far below the initial canvas height
+    * Dead if too far below the initial level height
     */
     checkInDeathZone() {
-        if (this.y >= (this.game.surfaceHeight + this.game.camera.y + PARAMS.DEATHZONE)) {
+        let lvlHeight = this.game.camera.levelH * PARAMS.BLOCKDIM;
+        if (this.y >= (lvlHeight + this.game.camera.y * 1.5)) {
             this.takeDamage(this.max_hp, false);
         }
     }
-
 
     drawDebug(ctx) {
         this.healthbar.drawDebug(ctx);

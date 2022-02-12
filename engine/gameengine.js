@@ -22,15 +22,16 @@ class GameEngine {
         this.wheel = null;
 
         //controls
-        this.left = null; //A
-        this.right = null; //D
-        this.down = null; //S
-        this.up = null; //W
-        this.jump = null; //space
+        this.left = null;   //A
+        this.right = null;  //D
+        this.down = null;   //S
+        this.up = null;     //W
+        this.jump = null;   //space
         this.attack = null; //left click
-        this.roll = null; //left shift
-        this.shoot = null; //right click
-        this.heal = null;
+        this.roll = null;   //left shift
+        this.shoot = null;  //right click
+        this.heal = null;   //h
+        this.debug = null;  //ctrl left
 
         //counter for an attack chain corresponding to attack presses
         this.comboCounter = 0;
@@ -193,6 +194,10 @@ class GameEngine {
                     break;
                 case "KeyH":
                     that.heal = true;
+                    break;
+                case "ControlLeft":
+                case "ControlRight":
+                    that.debug = true;
                     break;
             }
         }, false);
