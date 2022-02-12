@@ -414,7 +414,8 @@ class SceneManager {
 /**
  *  Draws a minimap based on current level
  *  x, y are minimap cordinates
- *  w, h are level dimensions in terms of blockdims so 1 = blockdim width
+ *  level parameter must contain the level's json information
+ *  such as w, h which are level dimensions in terms of blockdims so 1 = blockdim width
  */
 class Minimap {
     constructor(game, x, y, level) {
@@ -446,13 +447,17 @@ class Minimap {
     /**
      * Builds a box of same length and width of level to a smaller scale
      * Makes a represntation of the level and entities
+     * 
+     * Minimap will be slightly transparent so it does obstruct the game.
      *
      * @param {*} ctx
      */
     draw(ctx) {
+        ctx.globalAlpha = 0.7;
         this.buildMinimapBox(ctx);
         this.loadEnvironmentScene(ctx);
         this.traceEntities(ctx);
+        ctx.globalAlpha = 1;
 
     }
 
