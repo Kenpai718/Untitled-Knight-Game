@@ -81,16 +81,16 @@ class Mushroom extends AbstractEnemy {
             this.x += this.velocity.x * TICK;
             this.y += this.velocity.y * TICK;
             this.updateBoxes();
-            let dist = {x: 0, y:0};
-            // environment collision check
-            dist = super.checkEnvironmentCollisions(dist);
-            // entity collision check
-            this.knightInSight = false;
-            this.checkEntityInteractions();
 
+
+            /**UPDATING BEHAVIOR*/
+            let dist = { x: 0, y: 0 }; //the displacement needed between entities
+            this.playerInSight = false; //set to true in environment collisions
+            dist = super.checkEnvironmentCollisions(dist); //check if colliding with environment and adjust entity accordingly
+            this.checkEntityInteractions(); //move entity according to other entities
             this.updatePositionAndVelocity(dist); //set where entity is based on interactions/collisions put on dist
-            // cooldown check
-            this.checkCooldowns(TICK);
+            this.checkCooldowns(TICK); //check and reset the cooldowns of its actions
+
             // attack hitbox timing
             if (this.state == this.states.attack) {
                 this.attackFrame = this.animations[this.state][this.direction].currentFrame();
@@ -100,13 +100,13 @@ class Mushroom extends AbstractEnemy {
             }
 
             // what the mushroom does on its free time
-            if (!this.knightInSight) {
+            if (!this.playerInSight) {
                 this.state = this.states.idle;
                 this.velocity.x = 0;
             }
 
+            super.setAggro(this.playerInSight);
             super.updateVelocity();
-            super.setAggro(this.knightInSight);
             super.doJumpIfStuck(TICK); //jump if stuck horizontally
             super.checkInDeathZone();  //die if below blastzone
         }
@@ -153,7 +153,7 @@ class Mushroom extends AbstractEnemy {
                 let playerInVB = entity.BB && self.VB.collide(entity.BB);
                 let playerAtkInVB = entity.HB != null && self.VB.collide(entity.HB);
                 if (playerInVB || playerAtkInVB || self.aggro) {
-                    self.knightInSight = true;
+                    self.playerInSight = playerInVB;
                     self.aggro = true;
                     // knight is in the vision box and not in the attack range
                     if (!self.AR.collide(entity.BB)) {

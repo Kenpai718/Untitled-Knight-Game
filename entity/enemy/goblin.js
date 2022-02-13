@@ -104,7 +104,7 @@ class Goblin extends AbstractEnemy {
             if (!this.playerInSight) this.doRandomMovement();
 
             //entity can jump if it is on floor
-            super.setAggro(this.knightInSight);
+            super.setAggro(this.playerInSight);
             super.doJumpIfStuck(TICK); //jump if stuck horizontally
             super.checkInDeathZone();  //die if below blastzone
         }
@@ -155,7 +155,7 @@ class Goblin extends AbstractEnemy {
                 let playerInVB = entity.BB && self.VB.collide(entity.BB);
                 let playerAtkInVB = entity.HB != null && self.VB.collide(entity.HB);
                 if (playerInVB || playerAtkInVB || self.aggro) {
-                    self.playerInSight = true;
+                    self.playerInSight = playerInVB;
                     self.aggro = true;
                     // knight is in the vision box and not in the attack range
                     if (!self.AR.collide(entity.BB)) {
