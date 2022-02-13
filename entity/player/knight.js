@@ -202,20 +202,21 @@ class Knight extends AbstractPlayer {
     draw(ctx) {
         //flicker if the knight was damaged
         if (!this.vulnerable && !this.game.roll) {
-            ctx.filter = "drop-shadow(0 0 0.2rem crimson)"; //red border to indicate damaged
-            //drop the opacity a bit every time it is drawn to create a bit of a flicker effect
+            ctx.filter = "drop-shadow(0 0 0.2rem crimson) opacity(100%)"; //red border to indicate damaged
+            //drop the opacity a bit each flicker to create an effect of switching between 100% opaque
             if(this.flickerFlag) {
-                ctx.filter = "drop-shadow(0 0 0.2rem crimson) opacity(65%)";
+                ctx.filter = "drop-shadow(0 0 0.2rem crimson) opacity(85%)";
             }
             this.animations[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
             this.flickerFlag = !this.flickerFlag;
-            ctx.filter = "none"; //set this to none so the rest of the canvas is not affected!
         } else {
             //white border to indicate roll invincibility
             //if(this.game.roll) ctx.filter = "drop-shadow(0 0 0.15rem ghostwhite)";
             this.animations[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
             //ctx.filter = "none";
         }
+
+        ctx.filter = "none"; //set this to none so the rest of the canvas is not affected!
         //this.viewAllAnimations(ctx);
         if (!this.dead) this.healthbar.draw(ctx);
     };
