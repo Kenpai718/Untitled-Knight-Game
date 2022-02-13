@@ -20,6 +20,7 @@ class AbstractEnemy extends AbstractEntity {
 
         //aggro will chase player for a certain amount of time
         this.aggro = false; //toggled by being hit by a projectile
+        this.myAlert = false;
         this.aggroTimer = 0;
         this.aggroCooldown = 3; //after 5 seconds turn off the aggro
     }
@@ -183,15 +184,27 @@ class AbstractEnemy extends AbstractEntity {
     /**
      * Reset aggro after a certain amount of time
      * Aggro means the enemy will chase the player around
+     * 
+     * @param inPlayerVision boolean so the aggro is kept as long as the player is in their sight
+     *                       otherwise start counting the aggro timer
      */
-    setAggro() {
+    setAggro(playerInVision) {
         if(this.aggro) {
+            if(!this.myAlert) {
+                this.myAlert = true;
+                this.game.addEntityToFront(new Alert(this.game, this));
+            } 
             this.aggroTimer += this.game.clockTick;
 
-            if(this.aggroTimer >= this.aggroCooldown) {
-                this.aggro = false;
-                this.aggroTimer = 0;
+            //only reset the timer if player is no longer in vision
+            if(!playerInVision) {
+                if(this.aggroTimer >= this.aggroCooldown) {
+                    this.aggro = false;
+                    this.aggroTimer = 0;
+                }
             }
+        } else {
+            this.myAlert = false;
         }
     }
 

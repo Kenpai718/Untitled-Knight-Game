@@ -22,7 +22,7 @@ class Chest extends AbstractBackFeature {
 
         // Mapping animations and states
         this.states = { closed: 0, opened: 1 };
-        this.directions = { left : 0, right : 1};
+        this.directions = { left: 0, right: 1 };
         this.animations = []; // [state][direction]
 
         this.state = 0;
@@ -33,6 +33,11 @@ class Chest extends AbstractBackFeature {
 
         // When Debug box is true, select boundary box to display
         this.displayBoundingbox = true;
+
+        //fade out logic
+        this.myOpacity = 100;
+        this.openElapsed = 0;
+        this.fadeOutTime = 1;
 
         // Other
         this.loadAnimations();
@@ -69,8 +74,7 @@ class Chest extends AbstractBackFeature {
                 that.timerGUI = that.timerGUI2 + 1;
             }
         }); // Allows timer to start when open, used for fade effect
-        if (that.opened && that.timerGUI2 < 5)
-            that.timerGUI2 += that.game.clockTick * 3;
+        if (this.opened) this.openElapsed += this.game.clockTick;
     };
 
     loadAnimations() {
@@ -125,19 +129,20 @@ class Chest extends AbstractBackFeature {
             let tempColor = ctx.fillStyle;
             ctx.fillStyle = "White"
 
-            if (that.timerGUI2 >= 5) // Fading effect for chest GUI
-                ctx.globalAlpha = 0;
-            else
-                ctx.globalAlpha = that.timerGUI / that.timerGUI2;
+            //fade out after .5 seconds
+            if (this.openElapsed >= this.fadeOutTime && this.myOpacity > 0) {
+                this.myOpacity--;
+            }
 
+            ctx.filter = "opacity(" + this.myOpacity + "%)";
 
             ctx.fillText("🏹 x" + that.arrowStorage, that.x * PARAMS.BLOCKDIM - this.game.camera.x, that.y * PARAMS.BLOCKDIM - 5 - this.game.camera.y);
             ctx.fillText("⚗️ x" + that.potionStorage, that.x * PARAMS.BLOCKDIM - this.game.camera.x, that.y * PARAMS.BLOCKDIM - 40 - this.game.camera.y);
 
+            ctx.filter = "none";
 
             ctx.font = PARAMS.DEFAULT_FONT;
             ctx.fillStyle = tempColor;
-            ctx.globalAlpha = 1;
         }
     };
 

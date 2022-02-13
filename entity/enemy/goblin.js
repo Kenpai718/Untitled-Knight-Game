@@ -104,7 +104,7 @@ class Goblin extends AbstractEnemy {
             if (!this.playerInSight) this.doRandomMovement();
 
             //entity can jump if it is on floor
-            super.setAggro();
+            super.setAggro(this.knightInSight);
             super.doJumpIfStuck(TICK); //jump if stuck horizontally
             super.checkInDeathZone();  //die if below blastzone
         }
@@ -406,10 +406,7 @@ class Goblin extends AbstractEnemy {
     draw(ctx) {
 
         if (this.dead) {
-            if (this.flickerFlag) {
-                this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
-            }
-            this.flickerFlag = !this.flickerFlag;
+            super.drawWithFadeOut(ctx, this.animations[this.state][this.direction]);
         } else {
             this.healthbar.draw(ctx); //only show healthbar when not dead
 

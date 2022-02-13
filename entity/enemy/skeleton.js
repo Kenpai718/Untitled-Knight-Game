@@ -123,7 +123,7 @@ class Skeleton extends AbstractEnemy {
             //set the attack hitbox if in an attack state and the attack frame is out
             if (this.state == this.states.attack) {
                 const frame = this.animations[this.state][this.direction].currentFrame();
-                if(frame >= 6 && frame <= 8) this.updateHB();
+                if (frame >= 6 && frame <= 8) this.updateHB();
                 else this.HB = null;
             } else {
                 this.HB = null;
@@ -132,7 +132,7 @@ class Skeleton extends AbstractEnemy {
             //do random movement while the player is not in sight
             if (!this.playerInSight) this.doRandomMovement();
 
-            super.setAggro();
+            super.setAggro(this.knightInSight);
             super.updateVelocity();
             super.doJumpIfStuck(TICK); //jump if stuck horizontally
             super.checkInDeathZone();  //die if below blastzone
@@ -425,10 +425,7 @@ class Skeleton extends AbstractEnemy {
 
     draw(ctx) {
         if (this.dead) {
-            if (this.flickerFlag) {
-                this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
-            }
-            this.flickerFlag = !this.flickerFlag;
+            super.drawWithFadeOut(ctx, this.animations[this.state][this.direction]);
         } else {
             this.healthbar.draw(ctx); //only show healthbar when not dead
 

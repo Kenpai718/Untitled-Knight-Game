@@ -43,8 +43,8 @@ class Mushroom extends AbstractEnemy {
         this.animations[this.states.idle][this.directions.left] = new Animator(this.spritesheet, 0, 0, 150, 150, 4, 0.2, 0, true, true, false);
         this.animations[this.states.idle][this.directions.right] = new Animator(this.spritesheet, 600, 0, 150, 150, 4, 0.2, 0, false, true, false);
         // Death
-        this.animations[this.states.death][this.directions.left] = new Animator(this.spritesheet, 0, 150, 150, 150, 4, 0.35, 0, true, false, false);
-        this.animations[this.states.death][this.directions.right] = new Animator(this.spritesheet, 600, 150, 150, 150, 4, 0.35, 0, false, false, false);
+        this.animations[this.states.death][this.directions.left] = new Animator(this.spritesheet, 0, 150, 150, 150, 4, 0.2, 0, true, false, false);
+        this.animations[this.states.death][this.directions.right] = new Animator(this.spritesheet, 600, 150, 150, 150, 4, 0.2, 0, false, false, false);
         // Damaged
         this.animations[this.states.damaged][this.directions.left] = new Animator(this.spritesheet, 0, 300, 150, 150, 4, 0.15, 0, true, true, false);
         this.animations[this.states.damaged][this.directions.right] = new Animator(this.spritesheet, 600, 300, 150, 150, 4, 0.15, 0, false, true, false);
@@ -106,7 +106,7 @@ class Mushroom extends AbstractEnemy {
             }
 
             super.updateVelocity();
-            super.setAggro();
+            super.setAggro(this.knightInSight);
             super.doJumpIfStuck(TICK); //jump if stuck horizontally
             super.checkInDeathZone();  //die if below blastzone
         }
@@ -114,10 +114,7 @@ class Mushroom extends AbstractEnemy {
 
     draw(ctx) {
         if (this.dead) {
-            if (this.flickerFlag) {
-                this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
-            }
-            this.flickerFlag = !this.flickerFlag;
+            super.drawWithFadeOut(ctx, this.animations[this.state][this.direction]);
         } else {
             this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
             this.healthbar.draw(ctx); //only show healthbar when not dead

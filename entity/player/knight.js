@@ -27,7 +27,7 @@ const MAX_SLIDE = 150 * SCALER;
 class Knight extends AbstractPlayer {
     //game = engine, (x, y) = spawn cords
     constructor(game, x, y) {
-        super(game, x, y, STATS.PLAYER.NAME,  STATS.PLAYER.MAX_HP,  STATS.PLAYER.WIDTH,  STATS.PLAYER.HEIGHT,  STATS.PLAYER.SCALE);
+        super(game, x, y, STATS.PLAYER.NAME, STATS.PLAYER.MAX_HP, STATS.PLAYER.WIDTH, STATS.PLAYER.HEIGHT, STATS.PLAYER.SCALE);
 
         // get spritesheets
         this.spritesheetRight = ASSET_MANAGER.getAsset("./sprites/knight/knightRight.png");
@@ -44,6 +44,7 @@ class Knight extends AbstractPlayer {
             attack1: 14, attack2: 15,
             death: 16
         };
+
 
         //default starting values
         this.DEFAULT_DIRECTION = this.dir.right;
@@ -201,12 +202,19 @@ class Knight extends AbstractPlayer {
     draw(ctx) {
         //flicker if the knight was damaged
         if (!this.vulnerable && !this.game.roll) {
-            if (this.flickerFlag) {
-                this.animations[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
+            ctx.filter = "drop-shadow(0 0 0.2rem crimson)"; //red border to indicate damaged
+            //drop the opacity a bit every time it is drawn to create a bit of a flicker effect
+            if(this.flickerFlag) {
+                ctx.filter = "drop-shadow(0 0 0.2rem crimson) opacity(65%)";
             }
-            this.flickerFlag = !this.flickerFlag;
-        } else {
             this.animations[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
+            this.flickerFlag = !this.flickerFlag;
+            ctx.filter = "none"; //set this to none so the rest of the canvas is not affected!
+        } else {
+            //white border to indicate roll invincibility
+            //if(this.game.roll) ctx.filter = "drop-shadow(0 0 0.15rem ghostwhite)";
+            this.animations[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
+            //ctx.filter = "none";
         }
         //this.viewAllAnimations(ctx);
         if (!this.dead) this.healthbar.draw(ctx);
@@ -331,7 +339,7 @@ class Knight extends AbstractPlayer {
                         if (this.action != this.states.wall_climb) {
                             if (this.diffy.hi > 0 * this.scale && this.diffy.hi <= 12 * this.scale) {
                                 if ((this.collisions.lo_left || this.collisions.hi_left) && this.facing == this.dir.left ||
-                                (this.collisions.lo_right || this.collisions.hi_right) && this.facing == this.dir.right) {
+                                    (this.collisions.lo_right || this.collisions.hi_right) && this.facing == this.dir.right) {
                                     this.action = this.states.wall_hang;
                                     this.y = this.y + this.diffy.hi - 8 * this.scale;
                                     this.velocity.x = 0;
@@ -417,8 +425,8 @@ class Knight extends AbstractPlayer {
                 }
             }
             if (this.action == this.states.wall_climb) {
-                this.velocity.x = (this.facing == 1? 50 : -50) * this.scale;
-                if (this.animations[this.facing][this.action].isDone()){
+                this.velocity.x = (this.facing == 1 ? 50 : -50) * this.scale;
+                if (this.animations[this.facing][this.action].isDone()) {
                     if (this.touchHole()) {
                         this.action = this.states.crouch;
                     }
@@ -548,10 +556,11 @@ class Knight extends AbstractPlayer {
         };
         const w = this.BB.right - this.BB.left;
         const h = this.BB.bottom - this.BB.top;
-        const BB = {top: new BoundingBox(this.BB.left, this.BB.top, w, h / 2), 
-                bottom: new BoundingBox(this.BB.left, this.BB.top + h / 2, w, h / 2),
-                left: new BoundingBox(this.BB.left, this.BB.top, w / 2, h),
-                right: new BoundingBox(this.BB.left + w / 2, this.BB.top, w / 2, h),
+        const BB = {
+            top: new BoundingBox(this.BB.left, this.BB.top, w, h / 2),
+            bottom: new BoundingBox(this.BB.left, this.BB.top + h / 2, w, h / 2),
+            left: new BoundingBox(this.BB.left, this.BB.top, w / 2, h),
+            right: new BoundingBox(this.BB.left + w / 2, this.BB.top, w / 2, h),
         };
         let dist = { x: 0, y: 0 };
         this.diffy = { hi: 0, lo: 0 };
@@ -821,7 +830,7 @@ class Knight extends AbstractPlayer {
     viewCollisionsBox(ctx) { // debug
         ctx.strokeStyle = "Gray";
         const x = 20;
-        const y = 20+this.height - this.heightBB;
+        const y = 20 + this.height - this.heightBB;
         ctx.lineWidth = 4;
         ctx.strokeRect(x, y, this.widthBB, this.heightBB);
         const coll = this.collisions;
@@ -829,43 +838,43 @@ class Knight extends AbstractPlayer {
         ctx.beginPath();
         if (coll.ceil) {
             ctx.moveTo(x, y);
-            ctx.lineTo(x+this.widthBB, y);
+            ctx.lineTo(x + this.widthBB, y);
         }
         if (coll.ceil_left) {
             ctx.moveTo(x, y);
-            ctx.lineTo(x+this.widthBB / 2, y);
+            ctx.lineTo(x + this.widthBB / 2, y);
         }
         if (coll.ceil_right) {
-            ctx.moveTo(x+this.widthBB / 2, y);
-            ctx.lineTo(x+this.widthBB, y);
+            ctx.moveTo(x + this.widthBB / 2, y);
+            ctx.lineTo(x + this.widthBB, y);
         }
         if (coll.floor) {
-            ctx.moveTo(x, y+this.heightBB);
-            ctx.lineTo(x+this.widthBB, y+this.heightBB);
+            ctx.moveTo(x, y + this.heightBB);
+            ctx.lineTo(x + this.widthBB, y + this.heightBB);
         }
         if (coll.floor_left) {
-            ctx.moveTo(x, y+this.heightBB);
-            ctx.lineTo(x+this.widthBB / 2, y+this.heightBB);
+            ctx.moveTo(x, y + this.heightBB);
+            ctx.lineTo(x + this.widthBB / 2, y + this.heightBB);
         }
         if (coll.floor_right) {
-            ctx.moveTo(x+this.widthBB / 2, y+this.heightBB);
-            ctx.lineTo(x+this.widthBB, y+this.heightBB);
+            ctx.moveTo(x + this.widthBB / 2, y + this.heightBB);
+            ctx.lineTo(x + this.widthBB, y + this.heightBB);
         }
         if (coll.hi_left) {
             ctx.moveTo(x, y);
-            ctx.lineTo(x, y + this.heightBB/2);
+            ctx.lineTo(x, y + this.heightBB / 2);
         }
         if (coll.lo_left) {
-            ctx.moveTo(x, y + this.heightBB/2);
+            ctx.moveTo(x, y + this.heightBB / 2);
             ctx.lineTo(x, y + this.heightBB);
         }
         if (coll.hi_right) {
-            ctx.moveTo(x+this.widthBB, y);
-            ctx.lineTo(x+this.widthBB, y + this.heightBB/2);
+            ctx.moveTo(x + this.widthBB, y);
+            ctx.lineTo(x + this.widthBB, y + this.heightBB / 2);
         }
         if (coll.lo_right) {
-            ctx.moveTo(x+this.widthBB, y + this.heightBB/2);
-            ctx.lineTo(x+this.widthBB, y + this.heightBB);
+            ctx.moveTo(x + this.widthBB, y + this.heightBB / 2);
+            ctx.lineTo(x + this.widthBB, y + this.heightBB);
         }
         ctx.stroke();
         ctx.lineWidth = 2;
@@ -996,7 +1005,7 @@ class Knight extends AbstractPlayer {
                 this.widthHB = 80 * this.scale;
                 this.offsetyHB = 53 * this.scale;
                 this.heightHB = 27 * this.scale;
-                if (frame > 0) {    
+                if (frame > 0) {
                     if (frame > 1) this.widthHB = 70 * this.scale;
                     this.offsetxHB = this.facing == 1 ? 25 * this.scale : this.width - 25 * this.scale - this.widthHB;
                 }
