@@ -4,6 +4,7 @@
  * Its attacks are slow but pack a punch.
  *
  * Unique behavior: runs away after an attack like a coward
+ * First couple frames of an attack cannot be interrupted
  */
 class Mushroom extends AbstractEnemy {
     constructor(game, x, y) {
@@ -18,7 +19,6 @@ class Mushroom extends AbstractEnemy {
         // variables to control behavior
         this.canAttack = true;
         this.vulnerable = true;
-        this.aggro = false;
         this.runAway = false;
         this.damagedCooldown = 0;
         this.attackCooldown = 0;
@@ -76,15 +76,19 @@ class Mushroom extends AbstractEnemy {
             if (this.velocity.y <= -MAX_FALL) this.velocity.y = -MAX_FALL;
             if (this.velocity.x >= MAX_RUN) this.velocity.x = MAX_RUN;
             if (this.velocity.x <= -MAX_RUN) this.velocity.x = -MAX_RUN;
+
             // update position and boxes
             this.x += this.velocity.x * TICK;
             this.y += this.velocity.y * TICK;
             this.updateBoxes();
+            let dist = {x: 0, y:0};
             // environment collision check
-            this.collisionWall();
+            dist = super.checkEnvironmentCollisions(dist);
             // entity collision check
             this.knightInSight = false;
             this.checkEntityInteractions();
+
+            this.updatePositionAndVelocity(dist); //set where entity is based on interactions/collisions put on dist
             // cooldown check
             this.checkCooldowns(TICK);
             // attack hitbox timing
@@ -94,11 +98,17 @@ class Mushroom extends AbstractEnemy {
             } else {
                 this.HB = null;
             }
+
             // what the mushroom does on its free time
             if (!this.knightInSight) {
                 this.state = this.states.idle;
                 this.velocity.x = 0;
             }
+
+            super.updateVelocity();
+            super.setAggro();
+            super.doJumpIfStuck(TICK); //jump if stuck horizontally
+            super.checkInDeathZone();  //die if below blastzone
         }
     };
 
@@ -139,34 +149,40 @@ class Mushroom extends AbstractEnemy {
     };
 
     checkEntityInteractions() {
-        let that = this;
+        let self = this;
         this.game.entities.forEach(function (entity) {
             // knight is in the vision box or was hit by an arrow
-            if (entity.BB && entity instanceof Knight && (that.VB.collide(entity.BB) || that.aggro)) {
-                that.knightInSight = true;
-                // knight is in the vision box and not in the attack range
-                if (!that.AR.collide(entity.BB)) {
-                    // move towards the knight
-                    that.state = that.states.move;
-                    that.direction = entity.BB.right < that.BB.left ? that.directions.left : that.directions.right;
-                    that.velocity.x = that.direction == that.directions.right ? that.velocity.x + MAX_RUN : that.velocity.x - MAX_RUN;
+            if (entity instanceof AbstractPlayer) {
+                let playerInVB = entity.BB && self.VB.collide(entity.BB);
+                let playerAtkInVB = entity.HB != null && self.VB.collide(entity.HB);
+                if (playerInVB || playerAtkInVB || self.aggro) {
+                    self.knightInSight = true;
+                    self.aggro = true;
+                    // knight is in the vision box and not in the attack range
+                    if (!self.AR.collide(entity.BB)) {
+                        // move towards the knight
+                        self.state = self.states.move;
+                        self.direction = entity.BB.right < self.BB.left ? self.directions.left : self.directions.right;
+                        self.velocity.x = self.direction == self.directions.right ? self.velocity.x + MAX_RUN : self.velocity.x - MAX_RUN;
+                    }
                 }
-            }
-            // knight is in attack range
-            if (entity.BB && entity instanceof Knight && that.AR.collide(entity.BB) && that.vulnerable) {
-                that.aggro = false;
-                that.velocity.x = 0;
-                if (that.canAttack || !that.animations[that.states.attack][that.direction].isDone()) {
-                    that.runAway = true;
-                    that.canAttack = false;
-                    that.state = that.states.attack;
+                // knight is in attack range
+                if (entity.BB && self.AR.collide(entity.BB) && self.vulnerable) {
+                    self.velocity.x = 0;
+                    if (self.canAttack || !self.animations[self.states.attack][self.direction].isDone()) {
+                        self.runAway = true;
+                        self.canAttack = false;
+                        self.state = self.states.attack;
+                    }
                 }
-            }
-            // mushroom hit by something switch the state to damaged
-            if (entity.HB && that.BB.collide(entity.HB) && entity instanceof AbstractPlayer && that.attackFrame <= 2) {
-                that.setDamagedState();
+                // mushroom hit by something switch the state to damaged
+                // mushroom cannot be stunned during attack startup
+                if (entity.HB && self.BB.collide(entity.HB) && self.attackFrame <= 2) {
+                    self.setDamagedState();
+                }
             }
         });
+
         // mushroom runs away after attacking
         // this must be with the collsion detection or it breaks for some reason
         if (this.runAway && (this.animations[this.states.attack][this.directions.left].isDone() || this.animations[this.states.attack][this.directions.right].isDone())) {

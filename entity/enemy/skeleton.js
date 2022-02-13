@@ -23,6 +23,7 @@ class Skeleton extends AbstractEnemy {
         // Physics
         this.fallAcc = 1500;
         this.collisions = { left: false, right: false, top: false, bottom: false };
+        this.JUMP_HEIGHT = 535;
 
         //variables to control behavior
         this.canAttack = true;
@@ -98,7 +99,6 @@ class Skeleton extends AbstractEnemy {
             }
 
         } else { // not dead keep moving
-
             this.velocity.y += this.fallAcc * TICK; //constant falling
 
             //set maximum speeds
@@ -115,7 +115,7 @@ class Skeleton extends AbstractEnemy {
             /**UPDATING BEHAVIOR*/
             let dist = { x: 0, y: 0 }; //the displacement needed between entities
             this.playerInSight = false; //set to true in environment collisions
-            this.collisionWall(); //check if colliding with environment and adjust entity accordingly
+            dist = super.checkEnvironmentCollisions(dist); //check if colliding with environment and adjust entity accordingly
             dist = this.checkEntityInteractions(dist, TICK); //move entity according to other entities
             this.updatePositionAndVelocity(dist); //set where entity is based on interactions/collisions put on dist
             this.checkCooldowns(TICK); //check and reset the cooldowns of its actions
@@ -132,77 +132,15 @@ class Skeleton extends AbstractEnemy {
             //do random movement while the player is not in sight
             if (!this.playerInSight) this.doRandomMovement();
 
+            super.setAggro();
+            super.updateVelocity();
+            super.doJumpIfStuck(TICK); //jump if stuck horizontally
+            super.checkInDeathZone();  //die if below blastzone
+
         }
 
 
     };
-
-    /**
-     * Based on distance {x, y} displace
-     * the entity by the givven amount.
-     * 
-     * Set velocities based on positioning
-     * @param {} dist {x, y}
-     */
-    updatePositionAndVelocity(dist) {
-        // update positions based on environment collisions
-        this.x += dist.x;
-        this.y += dist.y;
-        this.updateBoxes();
-        // set respective velocities to 0 for environment collisions
-        if (this.collisions.bottom && this.velocity.y > 0) this.velocity.y = 0;
-        if (this.collisions.left && this.velocity.x < 0) this.velocity.x = 0;
-        if (this.collisions.right && this.velocity.x > 0) this.velocity.x = 0;
-
-    }
-
-
-    /**
-     * Checks collisions with environment.
-     * Returns distance needed to be displaced.
-     * @param {*} dist 
-     * @returns dist 
-     */
-    checkEnvironmentCollisions(dist) {
-        let self = this;
-        this.collisions = { left: false, right: false, top: false, bottom: false };
-        this.game.foreground2.forEach(function (entity) {
-            // collision with environment
-            if (entity.BB && self.BB.collide(entity.BB)) {
-                const below = self.lastBB.top <= entity.BB.top && self.BB.bottom >= entity.BB.top;
-                const above = self.lastBB.bottom >= entity.BB.bottom && self.BB.top <= entity.BB.bottom;
-                const right = self.lastBB.right <= entity.BB.right && self.BB.right >= entity.BB.left;
-                const left = self.lastBB.left >= entity.BB.left && self.BB.left <= entity.BB.right;
-                const between = self.lastBB.top >= entity.BB.top && self.lastBB.bottom <= entity.BB.bottom;
-                if (between ||
-                    below && self.BB.top > entity.BB.top - 20 * self.scale ||
-                    above && self.BB.bottom < entity.BB.bottom + 20 * self.scale) {
-                    if (right) {
-                        self.collisions.right = true;
-                        dist.x = entity.BB.left - self.BB.right;
-                    } else {
-                        self.collisions.left = true;
-                        dist.x = entity.BB.right - self.BB.left;
-                    }
-                }
-                if (below) {
-                    if (left && Math.abs(self.BB.left - entity.BB.right) <= Math.abs(self.BB.bottom - entity.BB.top)) {
-                        self.collisions.left = true;
-                        dist.x = entity.BB.right - self.BB.left;
-                    } else if (right && Math.abs(self.BB.right - entity.BB.left) <= Math.abs(self.BB.bottom - entity.BB.top)) {
-                        self.collisions.right = true;
-                        dist.x = entity.BB.left - self.BB.right;
-                    } else {
-                        dist.y = entity.BB.top - self.BB.bottom;
-                        self.collisions.bottom = true;
-                    }
-                }
-                self.updateBoxes();
-            }
-        });
-
-        return dist;
-    }
 
     /**
      * Checks interactions with entities.
@@ -221,11 +159,12 @@ class Skeleton extends AbstractEnemy {
 
             //player interactions
             if (entity instanceof AbstractPlayer) {
-                // knight is in the vision box
+                // knight is in the vision box or hit by an arrow 
                 let playerInVB = entity.BB && self.VB.collide(entity.BB);
                 let playerAtkInVB = entity.HB && self.VB.collide(entity.HB);
-                if (playerInVB || playerAtkInVB) {
+                if (playerInVB || playerAtkInVB || self.aggro) {
                     self.playerInSight = true;
+                    self.aggro = true;
                     // knight is in the vision box and not in the attack range
                     if (!self.AR.collide(entity.BB)) {
                         // move towards the knight
@@ -270,14 +209,6 @@ class Skeleton extends AbstractEnemy {
                 }
             }
 
-            //projectile interactions
-            if (entity instanceof Arrow) {
-                if (entity.BB && self.BB.collide(entity.BB) && !self.HB) {
-                    self.setDamagedState();
-                }
-            }
-
-
         });
 
         return dist;
@@ -318,9 +249,11 @@ class Skeleton extends AbstractEnemy {
      * UNIQUE: overrides behavior so skeleton shields at low hp
      */
     doRandomMovement() {
-        this.velocity.x = 0;
+        const MAX_RUN = 123 * SCALER;
         //while hp is at half keep shield up to block projectiles
         if ((this.hp / this.max_hp) <= PARAMS.MID_HP) {
+            this.velocity.x = 0;
+            this.velocity.y = 0;
             this.setBlockState(true);
             this.setAttackState(false);
         } else { //do random movement
@@ -328,7 +261,8 @@ class Skeleton extends AbstractEnemy {
 
                 this.direction = Math.floor(Math.random() * 2);
                 this.event = Math.floor(Math.random() * 6);
-                if (this.event <= 0) {
+                let moveTrigger = 1; //0-6, higher the number the more often it moves
+                if (this.event <= moveTrigger) {
                     this.doRandom = this.seconds + Math.floor(Math.random() * 3);
                     this.state = this.states.move;
                     this.velocity.x = 0;
@@ -414,7 +348,7 @@ class Skeleton extends AbstractEnemy {
         } else {
             this.blocking = false;
             this.shieldCooldown = 0;
-            this.canAttack = false;
+            this.canAttack = true;
         }
     }
 

@@ -8,6 +8,9 @@ class SceneManager {
         this.game.camera = this; //add scene manager as an entity to game engine
         this.x = 0;
         this.y = 0;
+        this.defaultMusic = MUSIC.CHASING_DAYBREAK;
+
+
         //game status
         this.title = false;
         this.gameOver = false;
@@ -38,10 +41,10 @@ class SceneManager {
         this.levels = [levelZero, levelOne, levelTwo, levelThree];
     }
 
-    /** 
+    /**
      * MAKE SURE THIS IS CALLED BEFORE LOADING IN A LEVELS COMPONENTS!!!
      * This instantiates a player and places them appropriately on a level.
-     * 
+     *
      * @param theX x of Player
      * @param theY y of Player
     */
@@ -100,7 +103,7 @@ class SceneManager {
 
     /**
      * Clear a layer from entities list
-     * @param {} layer 
+     * @param {} layer
      */
     clearLayer(layer) {
         layer.forEach(function (entity) {
@@ -112,6 +115,11 @@ class SceneManager {
      * Update the camera and gui elements
      */
     update() {
+        //debug key toggle, flip state of debug checkbox
+        if(this.game.debug) {
+            this.game.debug = false;
+            document.getElementById("debug").checked = !document.getElementById("debug").checked;
+        }
         PARAMS.DEBUG = document.getElementById("debug").checked;
         this.updateAudio();
         this.updateGUI();
@@ -157,12 +165,13 @@ class SceneManager {
         //current level
         ctx.font = PARAMS.BIG_FONT;
         let xOffset;
-        (this.currentLevel >= 10) ? xOffset = 175 : xOffset = 150;
-        ctx.fillText("Level " + this.currentLevel, this.game.surfaceWidth - xOffset, 30);
+        (this.level.label.length <= 4) ? xOffset = this.level.label.length * 70 : xOffset = this.level.label.length * 31;
+        ctx.fillText("Level:" + this.level.label, this.game.surfaceWidth - xOffset, 30);
 
 
         if (PARAMS.DEBUG) {
             this.viewDebug(ctx);
+            this.minimap.draw(ctx);
         }
     };
 
@@ -174,39 +183,72 @@ class SceneManager {
      * @param {*} spawnY player's spawn y
      */
     loadScene(scene, spawnX, spawnY) {
+        //initialize scene and player
         this.level = scene;
         this.levelH = scene.height;
         this.levelW = scene.width;
         let h = scene.height;
-
         this.game.addEntity(new Background(this.game));
         this.makePlayer(spawnX, h - spawnY);
 
+        //make a minimap for the level
+        this.setupMinimap();
 
+        //play music
+        if (scene.music && !this.title) { //level music when not on title
+            ASSET_MANAGER.pauseBackgroundMusic();
+            //ASSET_MANAGER.playAsset(scene.music);
+            ASSET_MANAGER.forcePlayMusic(scene.music);
+        } else if (!scene.music) { //no music set play default music
+            ASSET_MANAGER.pauseBackgroundMusic();
+            //ASSET_MANAGER.playAsset(this.defaultMusic);
+            ASSET_MANAGER.forcePlayMusic(this.defaultMusic);
+        }
+
+        //play an entrance sound effect upon loading a level
+        ASSET_MANAGER.playAsset(SFX.DOOR_ENTER);
+
+
+        //load environment entities
         if (this.level.ground) {
             for (var i = 0; i < this.level.ground.length; i++) {
                 let ground = this.level.ground[i];
-                this.game.addEntity(new Ground(this.game, ground.x * PARAMS.BLOCKDIM, (h - ground.y - 1) * PARAMS.BLOCKDIM, ground.width * PARAMS.BLOCKDIM, PARAMS.BLOCKDIM, ground.type));
+                this.game.addEntity(new Ground(this.game, ground.x, h - ground.y - 1, ground.width, 1, ground.type));
             }
         }
         if (this.level.bricks) {
             for (var i = 0; i < this.level.bricks.length; i++) {
                 let bricks = this.level.bricks[i];
-                this.game.addEntity(new Brick(this.game, bricks.x * PARAMS.BLOCKDIM, (h - bricks.y - 1) * PARAMS.BLOCKDIM, bricks.width * PARAMS.BLOCKDIM, bricks.height * PARAMS.BLOCKDIM));
+                this.game.addEntity(new Brick(this.game, bricks.x, h - bricks.y - 1, bricks.width, bricks.height));
             }
         }
         if (this.level.platforms) {
             for (var i = 0; i < this.level.platforms.length; i++) {
                 let platforms = this.level.platforms[i];
-                this.game.addEntity(new Platform(this.game, platforms.x * PARAMS.BLOCKDIM, (h - platforms.y - 1) * PARAMS.BLOCKDIM, platforms.width * PARAMS.BLOCKDIM, platforms.height * PARAMS.BLOCKDIM));
+                this.game.addEntity(new Platform(this.game, platforms.x, h - platforms.y - 1, platforms.width, platforms.height));
             }
         }
         if (this.level.walls) {
             for (var i = 0; i < this.level.walls.length; i++) {
                 let walls = this.level.walls[i];
-                this.game.addEntity(new Walls(this.game, walls.x * PARAMS.BLOCKDIM, (h - walls.y - 1) * PARAMS.BLOCKDIM, PARAMS.BLOCKDIM, walls.height * PARAMS.BLOCKDIM, walls.type));
+                this.game.addEntity(new Walls(this.game, walls.x, h - walls.y - 1, 1, walls.height, walls.type));
             }
         }
+
+        if (this.level.chests) {
+            for (var i = 0; i < this.level.chests.length; i++) {
+                let chest = this.level.chests[i];
+                this.game.addEntity(new Chest(this.game, chest.x, h - chest.y - 1, chest.direction));
+            }
+        }
+        if (this.level.obelisks) {
+            for (var i = 0; i < this.level.obelisks.length; i++) {
+                let obelisk = this.level.obelisks[i];
+                this.game.addEntity(new Obelisk(this.game, obelisk.x, h - obelisk.y - 1 - 3, obelisk.brickX, obelisk.brickY, obelisk.brickWidth, obelisk.brickHeight));
+            }
+        }
+
+        //load enemy entities
         if (this.level.shrooms) {
             for (var i = 0; i < scene.shrooms.length; i++) {
                 let shroom = scene.shrooms[i];
@@ -231,40 +273,49 @@ class SceneManager {
                 this.game.addEntity(e);
             }
         }
+
+        //load backgroound assets
         if (this.level.backgroundWalls) {
             for (var i = 0; i < this.level.backgroundWalls.length; i++) {
                 let bw = this.level.backgroundWalls[i];
-                this.game.addEntity(new BackgroundWalls(this.game, bw.x * PARAMS.BLOCKDIM, (h - bw.y - 1) * PARAMS.BLOCKDIM, bw.width * PARAMS.BLOCKDIM, bw.height * PARAMS.BLOCKDIM));
+                this.game.addEntity(new BackgroundWalls(this.game, bw.x, h - bw.y - 1, bw.width, bw.height));
             }
         }
         if (this.level.torches) {
             for (var i = 0; i < this.level.torches.length; i++) {
                 let torch = this.level.torches[i];
-                this.game.addEntity(new Torch(this.game, torch.x * PARAMS.BLOCKDIM, (h - torch.y - 1) * PARAMS.BLOCKDIM));
+                this.game.addEntity(new Torch(this.game, torch.x, h - torch.y - 1));
             }
         }
         if (this.level.windows) {
             for (var i = 0; i < this.level.windows.length; i++) {
                 let w = this.level.windows[i];
-                this.game.addEntity(new Window(this.game, w.x * PARAMS.BLOCKDIM, (h - w.y - 1) * PARAMS.BLOCKDIM, w.width * PARAMS.BLOCKDIM, w.height * PARAMS.BLOCKDIM));
+                this.game.addEntity(new Window(this.game, w.x, h - w.y - 1, w.width, w.height));
             }
         }
         if (this.level.banners) {
             for (var i = 0; i < this.level.banners.length; i++) {
                 let banner = this.level.banners[i];
-                this.game.addEntity(new Banner(this.game, banner.x * PARAMS.BLOCKDIM, (h - banner.y - 1) * PARAMS.BLOCKDIM));
+                this.game.addEntity(new Banner(this.game, banner.x, h - banner.y - 1));
+            }
+        }
+
+        if (this.level.spikes) {
+            for (var i = 0; i < this.level.spikes.length; i++) {
+                let spike = this.level.spikes[i];
+                this.game.addEntity(new Spike(this.game, spike.x, h - spike.y - 1, spike.width, 0.5));
             }
         }
         if (this.level.doors) {
             for (var i = 0; i < this.level.doors.length; i++) {
                 let door = this.level.doors[i];
-                this.game.addEntity(new Door(this.game, door.x * PARAMS.BLOCKDIM, (h - door.y - 1) * PARAMS.BLOCKDIM, door.canEnter, door.exitLocation));
+                this.game.addEntity(new Door(this.game, door.x, h - door.y - 1, door.canEnter, door.exitLocation));
             }
         }
         if (this.level.columns) {
             for (var i = 0; i < this.level.columns.length; i++) {
                 let column = this.level.columns[i];
-                this.game.addEntity(new Column(this.game, column.x * PARAMS.BLOCKDIM, (h - column.y - 1) * PARAMS.BLOCKDIM, column.height * PARAMS.BLOCKDIM));
+                this.game.addEntity(new Column(this.game, column.x, h - column.y - 1, column.height));
             }
         }
         if (this.level.supports) {
@@ -279,13 +330,20 @@ class SceneManager {
                 this.game.addEntity(new Chain(this.game, chain.x * PARAMS.BLOCKDIM, (h - chain.y - 1) * PARAMS.BLOCKDIM));
             }
         }
+        if (this.level.ceilingChains) {
+            for (var i = 0; i < this.level.ceilingChains.length; i++) {
+                let ceilingChain = this.level.ceilingChains[i];
+                this.game.addEntity(new CeilingChain(this.game, ceilingChain.x * PARAMS.BLOCKDIM, (h - ceilingChain.y - 1) * PARAMS.BLOCKDIM, ceilingChain.height));
+            }
+        }
+
     }
 
     /**
      * Position an entity based through BB and block dimensions
-     * @param {} entity 
-     * @param {*} x 
-     * @param {*} y 
+     * @param {} entity
+     * @param {*} x
+     * @param {*} y
      */
     positionEntity(entity, x, y) {
         entity.x = x * PARAMS.BLOCKDIM - entity.BB.left;
@@ -347,5 +405,232 @@ class SceneManager {
         ctx.fillStyle = ctx.strokeStyle;
         ctx.strokeRect(215, this.game.surfaceHeight - 40, 45, 30);
         ctx.fillText("ATK", 220, this.game.surfaceHeight - 20);
+    };
+
+    /**
+     * Initialize a minimap
+     */
+    setupMinimap() {
+        let x = (this.game.surfaceWidth) - (this.levelW * PARAMS.SCALE);
+        this.minimap = new Minimap(this.game, x - 100, 40, this.level);
+
+    }
+};
+
+/**
+ *  Draws a minimap based on current level
+ *  x, y are minimap cordinates
+ *  level parameter must contain the level's json information
+ *  such as w, h which are level dimensions in terms of blockdims so 1 = blockdim width
+ */
+class Minimap {
+    constructor(game, x, y, level) {
+        this.xOffset = PARAMS.SCALE * 10;
+        this.yOffset = PARAMS.SCALE * 4
+
+        this.game = game;
+        this.x = x;
+        this.y = y;
+        this.level = level;
+        this.w = this.level.width;
+        this.h = this.level.height;
+
+        this.colors = {
+            ground: "dimgray",
+            brick: "silver",
+            wall: "maroon",
+            platform: "purple",
+            spike: "orange",
+            player: "blue",
+            enemy: "red",
+            chest: "yellow",
+            door: "SpringGreen",
+        }
+
+
+    };
+
+    /**
+     * Builds a box of same length and width of level to a smaller scale
+     * Makes a represntation of the level and entities
+     * 
+     * Minimap will be slightly transparent so it does obstruct the game.
+     *
+     * @param {*} ctx
+     */
+    draw(ctx) {
+        ctx.globalAlpha = 0.7;
+        this.buildMinimapBox(ctx);
+        this.loadEnvironmentScene(ctx);
+        this.traceEntities(ctx);
+        ctx.globalAlpha = 1;
+
+    }
+
+    /**Track current entity positions and draws them to canvas */
+    traceEntities(ctx) {
+        let myEntities = this.game.entities;
+        for (var i = 0; i < myEntities.length; i++) {
+            let entity = myEntities[i];
+
+            (entity instanceof AbstractPlayer) ? ctx.fillStyle = this.colors.player : ctx.fillStyle = this.colors.enemy;
+
+            let convertX = entity.BB.left / PARAMS.BLOCKDIM;
+            let convertY = entity.BB.top / PARAMS.BLOCKDIM;
+            let convertW = entity.BB.width / PARAMS.BLOCKDIM;
+            let convertH = entity.BB.height / PARAMS.BLOCKDIM;
+
+            let myX = convertX * PARAMS.SCALE;
+            let myY = convertY * PARAMS.SCALE;
+            let myW = convertW * PARAMS.SCALE;
+            let myH = convertH * PARAMS.SCALE;
+
+            ctx.fillRect(this.x + myX, this.y + myY + 4 * PARAMS.SCALE, myW, myH);
+        }
+    }
+
+
+    /**
+     * Draws the level at a smaller scale onto the minimap
+     * @param {} ctx
+     */
+    loadEnvironmentScene(ctx) {
+        /* build environment blocks */
+        //ground
+        ctx.fillStyle = this.colors.ground;
+        if (this.level.ground) {
+            for (var i = 0; i < this.level.ground.length; i++) {
+                let ground = this.level.ground[i];
+                let myX = ground.x * PARAMS.SCALE;
+                let myY = ground.y * PARAMS.SCALE;
+                let myW = ground.width * PARAMS.SCALE;
+                let myH = ground.height * PARAMS.SCALE;
+
+                //ctx.fillRect(this.x + myX, this.y + (this.h - myY + 3/2 * PARAMS.SCALE), myW, myH);
+                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);
+            }
+        }
+
+        //wall
+        ctx.fillStyle = this.colors.wall;
+        if (this.level.walls) {
+            for (var i = 0; i < this.level.walls.length; i++) {
+                let wall = this.level.walls[i];
+                let myX = wall.x * PARAMS.SCALE;
+                let myY = wall.y * PARAMS.SCALE;
+                let myW = PARAMS.SCALE;
+                let myH = wall.height * PARAMS.SCALE;
+
+                //ctx.fillRect(this.x + myX, this.y + (this.h - myY + 3/2 * PARAMS.SCALE), myW, myH);
+                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);
+            }
+        }
+
+        //brick
+        ctx.fillStyle = this.colors.brick;
+        if (this.level.bricks) {
+            for (var i = 0; i < this.level.bricks.length; i++) {
+                let brick = this.level.bricks[i];
+                let myX = brick.x * PARAMS.SCALE;
+                let myY = brick.y * PARAMS.SCALE;
+                let myW = brick.width * PARAMS.SCALE;
+                let myH = brick.height * PARAMS.SCALE;
+
+                //ctx.fillRect(this.x + myX, this.y + (this.h - myY + 3/2 * PARAMS.SCALE), myW, myH);
+                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);
+            }
+        }
+
+        if (this.level.obelisks) {
+            for (var i = 0; i < this.level.obelisks.length; i++) {
+                let obelisk = this.level.obelisks[i];
+                let myX = obelisk.brickX * PARAMS.SCALE;
+                let myY = obelisk.brickY * PARAMS.SCALE;
+                let myW = obelisk.brickWidth * PARAMS.SCALE;
+                let myH = obelisk.brickHeight * PARAMS.SCALE;
+
+                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);
+            }
+        }
+
+        //spike
+        ctx.fillStyle = this.colors.spike;
+        if (this.level.spikes) {
+            for (var i = 0; i < this.level.spikes.length; i++) {
+                let spike = this.level.spikes[i];
+                let myX = spike.x * PARAMS.SCALE;
+                let myY = spike.y * PARAMS.SCALE;
+                let myW = spike.width * PARAMS.SCALE;
+                let myH = PARAMS.SCALE / 2;
+
+                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3 + 1/2) * PARAMS.SCALE, myW, myH);
+            }
+        }
+
+        //platform
+        ctx.fillStyle = this.colors.platform;
+        if (this.level.platforms) {
+            for (var i = 0; i < this.level.platforms.length; i++) {
+                let platform = this.level.platforms[i];
+                let myX = platform.x * PARAMS.SCALE;
+                let myY = platform.y * PARAMS.SCALE;
+                let myW = platform.width * PARAMS.SCALE;
+                let myH = platform.height * PARAMS.SCALE;
+
+                //ctx.fillRect(this.x + myX, this.y + (this.h - myY + 3/2 * PARAMS.SCALE), myW, myH);
+                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);
+            }
+        }
+
+        //door
+        ctx.fillStyle = this.colors.door;
+        if (this.level.doors) {
+            for (var i = 0; i < this.level.doors.length; i++) {
+                let door = this.level.doors[i];
+                let myX = door.x * PARAMS.SCALE;
+                let myY = door.y * PARAMS.SCALE;
+                let myW = door.w * PARAMS.SCALE;
+                let myH = door.h * PARAMS.SCALE;
+
+                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, 2 * PARAMS.SCALE, 3 * PARAMS.SCALE);
+            }
+        }
+
+        //chest
+        ctx.fillStyle = this.colors.chest;
+        if (this.level.chests) {
+            for (var i = 0; i < this.level.chests.length; i++) {
+                let chest = this.level.chests[i];
+                let myX = chest.x * PARAMS.SCALE;
+                let myY = chest.y * PARAMS.SCALE;
+                let myW = PARAMS.SCALE;
+                let myH = PARAMS.SCALE;
+
+                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);
+            }
+        }
+
+    }
+
+    /**
+     * Build a minimap
+     * @param {} ctx
+     */
+     buildMinimapBox(ctx) {
+        //ctx.fillStyle = "SpringGreen";
+        let miniX = this.x;
+        let miniY = this.y;
+        let miniW = (this.w * PARAMS.SCALE) + this.xOffset;
+        let miniH = (this.h * PARAMS.SCALE) + this.yOffset;
+
+        //ctx.fillText("Minimap", miniX, miniY - 10);
+        ctx.fillStyle = rgba(41, 41, 41, 0.5);
+        ctx.fillRect(miniX, miniY, miniW, miniH);
+        ctx.strokeStyle = "GhostWhite";
+        ctx.strokeRect(miniX, miniY, miniW, miniH);
+    }
+
+    update() {
+
     };
 };

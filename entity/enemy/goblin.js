@@ -82,10 +82,11 @@ class Goblin extends AbstractEnemy {
             /**UPDATING BEHAVIOR*/
             let dist = { x: 0, y: 0 }; //the displacement needed between entities
             this.playerInSight = false; //set to true in environment collisions
-            dist = this.checkEnvironmentCollisions(dist); //check if colliding with environment and adjust entity accordingly
+            dist = super.checkEnvironmentCollisions(dist); //check if colliding with environment and adjust entity accordingly
+            if (this.touchHole()) {
+                dist.x = 0;
+            }
             dist = this.checkEntityInteractions(dist, TICK); //move entity according to other entities
-
-
             this.updatePositionAndVelocity(dist); //set where entity is based on interactions/collisions put on dist
             this.checkCooldowns(TICK); //check and reset the cooldowns of its actions
 
@@ -93,7 +94,7 @@ class Goblin extends AbstractEnemy {
             //set the attack hitbox if in an attack state and the attack frame is out
             if (this.state == this.states.attack) {
                 const frame = this.animations[this.state][this.direction].currentFrame();
-                if(frame >= 6 && frame <= 8) this.updateHB();
+                if (frame >= 6 && frame <= 8) this.updateHB();
                 else this.HB = null;
             } else {
                 this.HB = null;
@@ -101,13 +102,18 @@ class Goblin extends AbstractEnemy {
 
             //do random movement while the player is not in sight
             if (!this.playerInSight) this.doRandomMovement();
+
+            //entity can jump if it is on floor
+            super.setAggro();
+            super.doJumpIfStuck(TICK); //jump if stuck horizontally
+            super.checkInDeathZone();  //die if below blastzone
         }
     };
 
     /**
     * Based on distance {x, y} displace
     * the entity by the given amount.
-    * 
+    *
     * Set velocities based on positioning
     * @param {} dist {x, y}
     */
@@ -117,57 +123,15 @@ class Goblin extends AbstractEnemy {
         this.y += dist.y;
         this.updateBoxes();
         // set respective velocities to 0 for environment collisions
-        if (this.collisions.bottom && this.velocity.y > 0) this.velocity.y = 0;
-        if (this.collisions.left && this.velocity.x < 0) this.velocity.x = 0;
-        if (this.collisions.right && this.velocity.x > 0) this.velocity.x = 0;
+        if (this.touchFloor() && this.velocity.y > 0) {
+            this.jumped = false;
+            this.velocity.y = 0;
+        }
+        if(this.collisions.top) this.velocity.y = 0; //bonk on ceiling halt momentum
+        if (this.collisions.lo_left && this.velocity.x < 0) this.velocity.x = 0;
+        if (this.collisions.lo_right && this.velocity.x > 0) this.velocity.x = 0;
+        
 
-    }
-
-    /**
-     * Checks collisions with environment.
-     * Returns distance needed to be displaced.
-     * @param {*} dist 
-     * @returns dist 
-     */
-    checkEnvironmentCollisions(dist) {
-        let self = this;
-        this.collisions = { left: false, right: false, top: false, bottom: false };
-        this.game.foreground2.forEach(function (entity) {
-            // collision with environment
-            if (entity.BB && self.BB.collide(entity.BB)) {
-                const below = self.lastBB.top <= entity.BB.top && self.BB.bottom >= entity.BB.top;
-                const above = self.lastBB.bottom >= entity.BB.bottom && self.BB.top <= entity.BB.bottom;
-                const right = self.lastBB.right <= entity.BB.right && self.BB.right >= entity.BB.left;
-                const left = self.lastBB.left >= entity.BB.left && self.BB.left <= entity.BB.right;
-                const between = self.lastBB.top >= entity.BB.top && self.lastBB.bottom <= entity.BB.bottom;
-                if (between ||
-                    below && self.BB.top > entity.BB.top - 20 * self.scale ||
-                    above && self.BB.bottom < entity.BB.bottom + 20 * self.scale) {
-                    if (right) {
-                        self.collisions.right = true;
-                        dist.x = entity.BB.left - self.BB.right;
-                    } else {
-                        self.collisions.left = true;
-                        dist.x = entity.BB.right - self.BB.left;
-                    }
-                }
-                if (below) {
-                    if (left && Math.abs(self.BB.left - entity.BB.right) <= Math.abs(self.BB.bottom - entity.BB.top)) {
-                        self.collisions.left = true;
-                        dist.x = entity.BB.right - self.BB.left;
-                    } else if (right && Math.abs(self.BB.right - entity.BB.left) <= Math.abs(self.BB.bottom - entity.BB.top)) {
-                        self.collisions.right = true;
-                        dist.x = entity.BB.left - self.BB.right;
-                    } else {
-                        dist.y = entity.BB.top - self.BB.bottom;
-                        self.collisions.bottom = true;
-                    }
-                }
-                self.updateBoxes();
-            }
-        });
-
-        return dist;
     }
 
     /**
@@ -187,11 +151,12 @@ class Goblin extends AbstractEnemy {
                 //set flag to see if the goblin is currently behind the knight
                 self.behindPlayer = self.isBehindPlayer(entity);
 
-                // knight is in the vision box
+                // knight is in the vision box or was hit by an arrow
                 let playerInVB = entity.BB && self.VB.collide(entity.BB);
                 let playerAtkInVB = entity.HB != null && self.VB.collide(entity.HB);
-                if (playerInVB || playerAtkInVB) {
+                if (playerInVB || playerAtkInVB || self.aggro) {
                     self.playerInSight = true;
+                    self.aggro = true;
                     // knight is in the vision box and not in the attack range
                     if (!self.AR.collide(entity.BB)) {
                         // move towards the knight
@@ -205,6 +170,7 @@ class Goblin extends AbstractEnemy {
 
                 //knight within attack range
                 if (entity.BB && self.AR.collide(entity.BB)) {
+
                     /**
                      * Until low hp prioritize attacking from the back
                      */
@@ -238,15 +204,6 @@ class Goblin extends AbstractEnemy {
                         self.setDamagedState();
                         self.resetAttack();
 
-                    }
-                }
-
-
-                //projectile interaction
-                if (entity instanceof Arrow) {
-                    if (entity.BB && self.BB.collide(entity.BB) && !self.HB) {
-                        self.setDamagedState();
-                        self.resetAttack();
                     }
                 }
             }
@@ -284,7 +241,8 @@ class Goblin extends AbstractEnemy {
 
             this.direction = Math.floor(Math.random() * 2);
             this.event = Math.floor(Math.random() * 6);
-            if (this.event <= 0) {
+            let moveTrigger = 3; //0-6, higher the number the more often it moves
+            if (this.event <= moveTrigger) {
                 this.doRandom = this.seconds + Math.floor(Math.random() * 3);
                 this.state = this.states.move;
                 this.velocity.x = 0;
