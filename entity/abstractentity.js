@@ -178,7 +178,7 @@ class AbstractEntity {
      * @param {*} theAnim the animator to drawframe of
      */
     drawWithFadeOut(ctx, theAnim) {
-        if(theAnim.isHalfwayDone()) {
+        if(theAnim.isHalfwayDone() && this.myOpacity > 0) {
             this.myOpacity -= 1;
             ctx.filter = "opacity(" + this.myOpacity + "%)";
             theAnim.drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
