@@ -57,6 +57,9 @@ var testLevel = {
         { x: 15, y: 14, height: 13, type: 2 },
         { x: 25, y: 14, height: 14, type: 2 },
     ],
+    obelisks : [
+        { x : 8, y : 1, brickX : 15, brickY: 1, brickWidth : 1, brickHeight : 1}
+    ],
 
     shrooms: [
         { x: 16, y: 1 },
@@ -366,11 +369,34 @@ var level1_3 = {
 
     doors: [
         { x: 1, y: 3, canEnter: true, exitLocation: { x: 116, y: 3, levelNum: 2 } }, //go back to level 2
+        { x : 117, y : 25, canEnter: false, exitLocation: { x : 1, y : 3, levelNum: 3}}, // change to level 4 once theres a level 4
+        { x : 34, y : 35, canEnter: false, exitLocation: { x : 1, y : 3, levelNum: 3}} // change to treasure room
     ],
     ground: [
         { x: 0, y: 0, width: 10, type: 1 }
     ],
+    obelisks : [
+        { x: 79, y : 15, brickX : 81, brickY : 17, brickWidth : 3, brickHeight : 3},
+        { x : 100, y : 23, brickX : 105, brickY : 30, brickWidth : 11, brickHeight : 8}
+    ],
+    shrooms: [
+        { x: 107, y: 32 },
+        { x : 36, y : 35},
+        { x : 77, y : 27}
+    ],
+    goblins: [
+        { x: 110, y: 32 }
+    ],
+    skeletons: [
+        { x: 112, y: 32 }
+    ],
+    chests: [
+        { x : 77, y : 15, direction : 0}
+    ],
     bricks: [
+        { x : 120, y : 42, width : 1, height : 43},
+        { x : 105, y : 42, width : 1, height : 12},
+        { x : 115, y : 42, width : 1, height : 12},
         { x: 10, y: 2, width: 3, height: 3 },
         { x: 13, y: 0, width: 20, height: 1 },
         { x: 33, y: 2, width: 3, height: 3 },
