@@ -241,6 +241,12 @@ class SceneManager {
                 this.game.addEntity(new Chest(this.game, chest.x, h - chest.y - 1, chest.direction));
             }
         }
+        if (this.level.obelisks) {
+            for (var i = 0; i < this.level.obelisks.length; i++) {
+                let obelisk = this.level.obelisks[i];
+                this.game.addEntity(new Obelisk(this.game, obelisk.x, h - obelisk.y - 1 - 3, obelisk.brickX, obelisk.brickY, obelisk.brickWidth, obelisk.brickHeight));
+            }
+        }
 
         //load enemy entities
         if (this.level.shrooms) {
@@ -531,6 +537,18 @@ class Minimap {
                 let myH = brick.height * PARAMS.SCALE;
 
                 //ctx.fillRect(this.x + myX, this.y + (this.h - myY + 3/2 * PARAMS.SCALE), myW, myH);
+                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);
+            }
+        }
+
+        if (this.level.obelisks) {
+            for (var i = 0; i < this.level.obelisks.length; i++) {
+                let obelisk = this.level.obelisks[i];
+                let myX = obelisk.brickX * PARAMS.SCALE;
+                let myY = obelisk.brickY * PARAMS.SCALE;
+                let myW = obelisk.brickWidth * PARAMS.SCALE;
+                let myH = obelisk.brickHeight * PARAMS.SCALE;
+
                 ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);
             }
         }

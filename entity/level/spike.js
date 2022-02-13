@@ -1,6 +1,8 @@
-class Spike extends AbstractBarrier{
+class Spike extends AbstractBackFeature {
     constructor(game, x, y, w, h) {
-        super(game, x, y, w, h);
+        super(game, x, y);
+        this.w = w;
+        this.h = h;
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
         this.scale = PARAMS.BLOCKDIM;
         this.srcX = 240;
@@ -11,7 +13,12 @@ class Spike extends AbstractBarrier{
     };
 
     update() {
-
+        var self = this;
+        this.game.entities.forEach(function (entity) {
+            if (entity.BB && self.BB.collide(entity.BB) && entity instanceof AbstractPlayer) {
+                entity.takeDamage(4, false);
+            }
+        });
     };
 
     draw(ctx) {
@@ -21,4 +28,9 @@ class Spike extends AbstractBarrier{
         }
     };
 
-}
+    drawDebug(ctx) {
+        ctx.strokeStyle = "Red";
+        ctx.strokeRect(this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM + (PARAMS.BLOCKDIM / 2) - this.game.camera.y, this.w * PARAMS.BLOCKDIM, this.h * PARAMS.BLOCKDIM);
+    };
+
+};
