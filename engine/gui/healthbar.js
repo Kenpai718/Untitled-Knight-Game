@@ -2,6 +2,15 @@ class HealthBar {
     constructor(game, agent) {
         Object.assign(this, { game, agent });
 
+        //show healthbar for a certain amount of time after taking damage
+        this.show = true;
+        this.isPlayer = this.agent instanceof AbstractPlayer;
+        this.showElapsed = 0; //time spent showing healthbar
+        this.maxShowTime = 5; //max time to show the healthbar
+        this.fadeTime = 3; //time it takes to fade out the healthbar
+        this.myOpacity = 100; //opacity 
+        this.currHP = this.agent.hp; //current agent hp
+
     };
 
     update() {
@@ -9,40 +18,66 @@ class HealthBar {
     };
 
     draw(ctx) {
-        var box = this.agent.BB;
-        //var x = this.agent.x;
-        //var y = this.agent.y;
-        var widthRatio = (3 / 2);
-        var widthDivisor = 3;
-
-        var newX = box.x - this.game.camera.x;
-        var newY = box.y - this.game.camera.y;
-        var width;
-
-        //set healthbar width for player because it's BB changes frequently
-        if(this.agent instanceof AbstractPlayer) {
-            width = this.agent.width / widthDivisor;
-        } else { //set width to size of bounding box
-            width = (this.agent.BB.width);
-        }
+        this.setShowAndFade();
+        ctx.filter = "opacity(" + this.myOpacity + "%)";
         
-        var height = 10;
-        var offsetX = (width / (widthDivisor * widthRatio));
-        var offsetY = 30;
-        var ratio = this.agent.hp / this.agent.max_hp;
+        if (this.show) {
+            var box = this.agent.BB;
+            //var x = this.agent.x;
+            //var y = this.agent.y;
+            var widthRatio = (3 / 2);
+            var widthDivisor = 3;
 
-        if (this.agent.hp < this.agent.max_hp) {
-            ctx.strokeStyle = "Black"; //border
-            //transparent gray as hp fill
-            ctx.fillStyle = rgba(41,41,41, 0.5); 
-            ctx.fillRect(newX - offsetX, newY - offsetY, width, height);
-            //hp ratio color
-            ctx.fillStyle = ratio < PARAMS.LOW_HP ? "Red" : ratio < PARAMS.MID_HP ? "Yellow" : "Green"; 
-            ctx.fillRect(newX - offsetX, newY - offsetY, width * ratio, height); 
-            ctx.strokeRect(newX - offsetX, newY - offsetY, width, height);
+            var newX = box.x - this.game.camera.x;
+            var newY = box.y - this.game.camera.y;
+            var width;
+
+            //set healthbar width for player because it's BB changes frequently
+            if (this.isPlayer) {
+                width = this.agent.width / widthDivisor;
+            } else { //set width to size of bounding box
+                width = (this.agent.BB.width);
+            }
+
+            var height = 10;
+            var offsetX = (width / (widthDivisor * widthRatio));
+            var offsetY = 30;
+            var ratio = this.agent.hp / this.agent.max_hp;
+
+            if (this.agent.hp < this.agent.max_hp) {
+                ctx.strokeStyle = "Black"; //border
+                //transparent gray as hp fill
+                ctx.fillStyle = rgba(41, 41, 41, 0.5);
+                ctx.fillRect(newX - offsetX, newY - offsetY, width, height);
+                //hp ratio color
+                ctx.fillStyle = ratio < PARAMS.LOW_HP ? "Red" : ratio < PARAMS.MID_HP ? "Yellow" : "Green";
+                ctx.fillRect(newX - offsetX, newY - offsetY, width * ratio, height);
+                ctx.strokeRect(newX - offsetX, newY - offsetY, width, height);
+            }
         }
-        
+
+        ctx.filter = "none";
+
     };
+
+    /**
+     * Set visibility of healthbar
+     * Show for certain duration after taking damage
+     */
+    setShowAndFade() {
+        if (this.currHP == this.agent.hp) {
+            this.showElapsed += this.game.clockTick;
+        } else {
+            this.showElapsed = 0;
+            this.myOpacity = 100;
+        }
+
+        if (this.showElapsed > this.maxShowTime) {
+            if (this.myOpacity > 0) this.myOpacity -= 1;
+        }
+        this.show = (this.showElapsed < this.maxShowTime + this.fadeTime);
+        this.currHP = this.agent.hp;
+    }
 
     drawDebug(ctx) {
         var box = this.agent.BB;
@@ -70,10 +105,10 @@ class HealthBar {
         //game cordinates as seen by levels
         let levelWidth = this.game.camera.levelW;
         let levelHeight = this.game.camera.levelH;
-        let blockX = Math.round(this.agent.x/ PARAMS.BLOCKDIM);
+        let blockX = Math.round(this.agent.x / PARAMS.BLOCKDIM);
         let blockY = Math.round(levelHeight - (this.agent.y / PARAMS.BLOCKDIM));
 
-        
+
         ctx.font = PARAMS.DEFAULT_FONT;
         ctx.strokeStyle = "Black";
         ctx.fillStyle = ratio < PARAMS.LOW_HP ? "Red" : ratio < PARAMS.MID_HP ? "Yellow" : "SpringGreen";
