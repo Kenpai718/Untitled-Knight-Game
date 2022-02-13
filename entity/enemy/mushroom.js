@@ -100,7 +100,7 @@ class Mushroom extends AbstractEnemy {
             }
 
             // what the mushroom does on its free time
-            if (!this.playerInSight) {
+            if (!this.playerInSight && !this.aggro) {
                 this.state = this.states.idle;
                 this.velocity.x = 0;
             }
