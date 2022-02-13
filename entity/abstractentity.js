@@ -16,6 +16,7 @@ class AbstractEntity {
         this.width = width * scale;
         this.height = height * scale;
         this.scale = scale;
+        this.myOpacity = 100;
 
         //define variables for a healthbar
         this.hp = this.max_hp;
@@ -165,6 +166,25 @@ class AbstractEntity {
         let lvlHeight = this.game.camera.levelH * PARAMS.BLOCKDIM;
         if (this.y >= (lvlHeight + this.game.camera.y * 1.5)) {
             this.takeDamage(this.max_hp, false);
+        }
+    }
+
+    /**
+     * Lowers the opacity each time it is called
+     * and draw the entity with that opacity.
+     * 
+     * Mainly used as a dead fade out animation.
+     * @param ctx canvas to draw on
+     * @param {*} theAnim the animator to drawframe of
+     */
+    drawWithFadeOut(ctx, theAnim) {
+        if(theAnim.isHalfwayDone()) {
+            this.myOpacity -= 1;
+            ctx.filter = "opacity(" + this.myOpacity + "%)";
+            theAnim.drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
+            ctx.filter = "none";
+        } else {
+            theAnim.drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
         }
     }
 

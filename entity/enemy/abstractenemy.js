@@ -19,8 +19,10 @@ class AbstractEnemy extends AbstractEntity {
         this.lastXCord = Math.round(this.x);
 
         //aggro will chase player for a certain amount of time
-        this.aggro = false; //toggled by being hit by a projectile
-        this.aggroTimer = 0;
+        this.aggro = false; //toggled by player entering vb or attacking
+        this.playerInSight = false; //player is in the vb
+        this.myAlert = false; //show alert icon or not (when entering vb for first time)
+        this.aggroTimer = 0; //cool down for aggro
         this.aggroCooldown = 3; //after 5 seconds turn off the aggro
     }
 
@@ -31,7 +33,7 @@ class AbstractEnemy extends AbstractEntity {
     * Set velocities based on positioning
     * @param {} dist {x, y}
     */
-     updatePositionAndVelocity(dist) {
+    updatePositionAndVelocity(dist) {
         // update positions based on environment collisions
         this.x += dist.x;
         this.y += dist.y;
@@ -41,10 +43,10 @@ class AbstractEnemy extends AbstractEntity {
             this.jumped = false;
             this.velocity.y = 0;
         }
-        if(this.collisions.top) this.velocity.y = 0; //bonk on ceiling halt momentum
+        if (this.collisions.top) this.velocity.y = 0; //bonk on ceiling halt momentum
         if (this.collisions.lo_left && this.velocity.x < 0) this.velocity.x = 0;
         if (this.collisions.lo_right && this.velocity.x > 0) this.velocity.x = 0;
-        
+
 
     }
 
@@ -54,7 +56,7 @@ class AbstractEnemy extends AbstractEntity {
      * @param {*} dist 
      * @returns dist 
      */
-     checkEnvironmentCollisions(dist) {
+    checkEnvironmentCollisions(dist) {
         //do collisions detection here
         this.collisions = {
             lo_left: false, hi_left: false, lo_right: false, hi_right: false,
@@ -69,7 +71,7 @@ class AbstractEnemy extends AbstractEntity {
             left: new BoundingBox(this.BB.left, this.BB.top, w / 2, h),
             right: new BoundingBox(this.BB.left + w / 2, this.BB.top, w / 2, h),
         };
-        
+
         let that = this;
         this.game.foreground2.forEach(function (entity) {
             const coll = {
@@ -160,7 +162,7 @@ class AbstractEnemy extends AbstractEntity {
                 }
             }
             that.updateBoxes();
-            
+
         });
         return dist;
     }
@@ -183,15 +185,28 @@ class AbstractEnemy extends AbstractEntity {
     /**
      * Reset aggro after a certain amount of time
      * Aggro means the enemy will chase the player around
+     * 
+     * @param inPlayerVision boolean so the aggro is kept as long as the player is in their sight
+     *                       otherwise start counting the aggro timer
      */
-    setAggro() {
-        if(this.aggro) {
+    setAggro(playerInVision) {
+        if (this.aggro) {
+            if (!this.myAlert) {
+                this.myAlert = true;
+                this.game.addEntityToFront(new Alert(this.game, this));
+            }
             this.aggroTimer += this.game.clockTick;
 
-            if(this.aggroTimer >= this.aggroCooldown) {
-                this.aggro = false;
-                this.aggroTimer = 0;
+            //only reset the timer if player is no longer in vision
+            if (!playerInVision) {
+                if (this.aggroTimer >= this.aggroCooldown) {
+                    this.aggro = false;
+                    this.aggroTimer = 0;
+                }
             }
+
+        } else {
+            this.myAlert = false;
         }
     }
 
@@ -205,11 +220,11 @@ class AbstractEnemy extends AbstractEntity {
             this.velocity.y = 0;
             this.jumped = false;
         }
-        if(this.collisions.top && this.velocity.y > 0) {
+        if (this.collisions.top && this.velocity.y > 0) {
             //B O N K on ceiling halt momentum
             this.y -= this.velocity.y * TICK;
-            this.velocity.y = 0; 
-        } 
+            this.velocity.y = 0;
+        }
         if (this.collisions.left && this.velocity.x < 0) this.velocity.x = 0;
         if (this.collisions.right && this.velocity.x > 0) this.velocity.x = 0;
     }
@@ -224,7 +239,7 @@ class AbstractEnemy extends AbstractEntity {
 
         //if it it has the same x cord as last time it might be stuck so check
         if (this.lastXCord == Math.round(this.x)) {
-            if(this.state == this.states.move && this.velocity.x == 0 && !this.touchHole()) {
+            if (this.state == this.states.move && this.velocity.x == 0 && !this.touchHole()) {
                 this.stuckTimer += TICK;
             }
 
@@ -253,7 +268,7 @@ class AbstractEnemy extends AbstractEntity {
         }
     }
 
-    
+
 
 
 
