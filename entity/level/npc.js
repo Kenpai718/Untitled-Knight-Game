@@ -43,13 +43,17 @@ class Npc {
                     }
                 }
             }
-            if(that.states.active && !that.shopActive){ // If NPC is active, allow for shop access
+            if(that.states.active && !that.shopActive){ // Activates shop once player in range, NPC is active and player click w key
                 if (entity.BB && that.BB.collide(entity.BB) && entity instanceof AbstractPlayer) {
                     if (that.game.up) {
                         console.log("Opening Shop...");
-                        that.shopActive = !that.shopActive;
+                        that.shopActive = true;
                     }
                 }
+            }
+            else if(that.shopActive && entity.BB && !that.BB.collide(entity.BB) && entity instanceof AbstractPlayer){ // Deactivates shop when player NOT in range, and shop is active
+                that.shopActive = false;
+                console.log("Closing Shop...");
             }
         });
 
