@@ -40,6 +40,10 @@ class Goblin extends AbstractEnemy {
         this.direction = this.directions.left;
         this.state = this.states.idle;
 
+        // Enemy drop
+        this.dropDiamonds = false;
+        this.dropAmount = randomInt(3) + 1;
+
         // Other
         this.loadAnimations();
         this.updateBoxes();
@@ -61,6 +65,13 @@ class Goblin extends AbstractEnemy {
             this.healthbar.removeFromWorld = true;
             this.state = this.states.death;
             this.HB = null; // so it cant attack while dead
+
+            // Drops random # of diamond upon death
+            if(!this.dropDiamonds) {
+                this.game.addEntityToFront(new Diamond(this.game,this.x, this.y, this.dropAmount));
+                this.dropDiamonds = true;
+            }
+
             if (this.animations[this.state][this.direction].isDone()) {
                 this.removeFromWorld = true;
             }
