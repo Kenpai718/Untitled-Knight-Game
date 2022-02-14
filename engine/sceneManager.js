@@ -174,6 +174,7 @@ class SceneManager {
                 } else if (this.creditsBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     console.log("credits");
                 }
+                this.game.click = null;
             }
         }
     };
