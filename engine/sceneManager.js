@@ -170,10 +170,13 @@ class SceneManager {
                     this.title = false;
                     this.loadLevel(this.currentLevel, false);
                 } else if (this.controlsBB.collideMouse(this.game.click.x, this.game.click.y)) {
-                    this.controls = true;
+                    this.credits = false;
+                    this.controls = !this.controls;
                 } else if (this.creditsBB.collideMouse(this.game.click.x, this.game.click.y)) {
-                    console.log("credits");
+                    this.controls = false;
+                    this.credits = !this.credits;
                 }
+                this.game.click = null;
             }
         }
     };
@@ -223,7 +226,26 @@ class SceneManager {
             ctx.fillText("Credits", this.creditsBB.x, this.creditsBB.y);
             ctx.strokeStyle = "Red";
             if (this.controls) {
-                
+                ctx.font = '30px "Press Start 2P"';
+                ctx.fillStyle = "White";
+                ctx.fillText("A : Move Left", 30, 30 * 6 * 2);
+                ctx.fillText("D : Move Right", 30, 30 * 7 * 2);
+                ctx.fillText("S : Crouch", 30, 30 * 8 * 2);
+                ctx.fillText("W : Interact", 30, 30 * 9 * 2);
+                ctx.fillText("Space : Jump", 30, 30 * 10 * 2);
+                ctx.fillText("A : Move Left", 30, 30 * 11 * 2);
+                ctx.fillText("Left Click : Melee Attack", 30, 30 * 12 * 2);
+                ctx.fillText("Right Click : Shoot Arrow", 30, 30 * 13 * 2);
+                ctx.fillText("H : Heal", 30, 30 * 14 * 2);
+            }
+            if (this.credits) {
+                ctx.font = '30px "Press Start 2P"';
+                ctx.fillStyle = "White";
+                ctx.fillText("Developed by:", 30, 30 * 6 * 2);
+                ctx.fillText("Kenneth Ahrens", 30, 30 * 7 * 2);
+                ctx.fillText("Andre Larson", 30, 30 * 8 * 2);
+                ctx.fillText("Embert Pezzali", 30, 30 * 9 * 2);
+                ctx.fillText("David Shcherbina", 30, 30 * 10 * 2);
             }
         }
     };
