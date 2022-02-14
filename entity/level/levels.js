@@ -49,7 +49,7 @@ var testLevel = {
     ],
 
     bricks: [
-        { x: 5, y: 1, width: 1, height: 1 },
+        { x: 10, y: 1, width: 1, height: 1 },
     ],
 
     walls: [
@@ -66,7 +66,7 @@ var testLevel = {
 
     ],
     goblins: [
-        { x: 10, y: 1 }
+        { x: 12, y: 1 }
     ],
     skeletons: [
         { x: 12, y: 7 }

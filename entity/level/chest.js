@@ -27,6 +27,7 @@ class Chest extends AbstractBackFeature {
 
         this.state = 0;
         this.direction = direction;
+        this.playOpenSFX = true;
         this.opened = false;
         this.collected = false;
 
@@ -57,12 +58,16 @@ class Chest extends AbstractBackFeature {
 
     update() {
 
+
         // If Chest is hit by player, change to Opened state
         let that = this;
         this.game.entities.forEach(function (entity) {
-            if (entity.HB && that.BB.collide(entity.HB) && entity instanceof AbstractPlayer && that.state != 1) {
+            let playerNextToChest = entity.BB && that.BB.collide(entity.BB) && entity instanceof AbstractPlayer && that.state != 1;
+            let playerHitChest = entity.HB && that.BB.collide(entity.HB) && entity instanceof AbstractPlayer && that.state != 1;
+            if (playerNextToChest && that.game.up || playerHitChest) {
                 that.state = 1;
                 that.opened = true;
+                ASSET_MANAGER.playAsset(SFX.CHEST_OPEN);
 
                 // varaibles needed for GUI to display amount
                 that.potionStorage = 1 + Math.floor(Math.random() * 3);      // Gives random amount of hp potions 1-3
@@ -74,7 +79,9 @@ class Chest extends AbstractBackFeature {
                 that.timerGUI = that.timerGUI2 + 1;
             }
         }); // Allows timer to start when open, used for fade effect
+
         if (this.opened) this.openElapsed += this.game.clockTick;
+
     };
 
     loadAnimations() {

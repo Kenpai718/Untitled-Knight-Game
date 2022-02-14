@@ -24,6 +24,10 @@ class AbstractEnemy extends AbstractEntity {
         this.myAlert = false; //show alert icon or not (when entering vb for first time)
         this.aggroTimer = 0; //cool down for aggro
         this.aggroCooldown = 3; //after 5 seconds turn off the aggro
+
+        //loot
+        this.dropDiamonds = false;
+        this.dropAmount = randomInt(3) + 1;
     }
 
     /**
@@ -268,6 +272,16 @@ class AbstractEnemy extends AbstractEntity {
         }
     }
 
+    /**
+     * Spawnds a diamond upon death of an enemy
+     */
+    dropLoot() {
+        // Drops random # of diamond upon death
+        if (!this.dropDiamonds) {
+            this.game.addEntityToFront(new Diamond(this.game, this.BB.x, this.BB.y, this.dropAmount));
+            this.dropDiamonds = true;
+        }
+    }
 
 
 

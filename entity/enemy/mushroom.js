@@ -26,6 +26,10 @@ class Mushroom extends AbstractEnemy {
         // gravity
         this.fallAcc = 1500;
 
+        // Enemy drop
+        this.dropDiamonds = false;
+        this.dropAmount = randomInt(5) + 1;
+
         this.loadAnimations();
         this.updateBoxes();
     };
@@ -67,6 +71,10 @@ class Mushroom extends AbstractEnemy {
             this.healthbar.removeFromWorld = true;
             this.state = this.states.death;
             this.HB = null;
+
+            // Drops random # of diamond upon death
+            super.dropLoot();
+
             if (this.animations[this.state][this.direction].isDone()) this.removeFromWorld = true;
         } else { // not dead keep moving
             // gravity

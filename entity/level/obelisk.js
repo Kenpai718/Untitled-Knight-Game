@@ -13,6 +13,7 @@ class Obelisk extends AbstractBackFeature {
         this.x *= PARAMS.BLOCKDIM;
         this.y *= PARAMS.BLOCKDIM;
         this.activated = false;
+        this.playSound = false;
         this.loadAnimations();
         this.updateBB();
     };
@@ -24,13 +25,21 @@ class Obelisk extends AbstractBackFeature {
                 if (entity.BB && self.BB.collide(entity.BB) && entity instanceof Knight) {
                     self.state = self.states.notIdle;
                     self.activated = true;
+                    self.playSound = true;
                 }
             });
         } else if (this.animations[this.states.notIdle].isDone()) {
             this.state = this.states.idle;
             this.bricks.removeFromWorld = true;
+
+        }
+
+        if(this.playSound) {
+            this.playSound = false;
+            ASSET_MANAGER.playAsset(SFX.OBELISK_ON);
         }
     };
+    
 
     draw(ctx) {
         this.animations[this.state].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, 1);

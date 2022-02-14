@@ -141,6 +141,8 @@ const SFX = {
     PLAYER_GRUNT3: "./sound/sfx/player_grunt3.wav",
     SHIELD_BLOCK: "./sound/sfx/shield_block.mp3",
     DOOR_ENTER: "./sound/sfx/door_enter.wav",
+    CHEST_OPEN: "./sound/sfx/minecraft_chest_open.wav",
+    OBELISK_ON: "./sound/sfx/loz_secret.mp3",
 
 
 };
