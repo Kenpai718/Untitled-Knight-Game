@@ -168,6 +168,7 @@ class SceneManager {
             if (this.game.click) {
                 if (this.startGameBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     this.title = false;
+                    this.game.attack = false;
                     this.loadLevel(this.currentLevel, false);
                 } else if (this.controlsBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     this.credits = false;
@@ -233,7 +234,7 @@ class SceneManager {
                 ctx.fillText("S : Crouch", 30, 30 * 8 * 2);
                 ctx.fillText("W : Interact", 30, 30 * 9 * 2);
                 ctx.fillText("Space : Jump", 30, 30 * 10 * 2);
-                ctx.fillText("A : Move Left", 30, 30 * 11 * 2);
+                ctx.fillText("LShift : Roll", 30, 30 * 11 * 2);
                 ctx.fillText("Left Click : Melee Attack", 30, 30 * 12 * 2);
                 ctx.fillText("Right Click : Shoot Arrow", 30, 30 * 13 * 2);
                 ctx.fillText("H : Heal", 30, 30 * 14 * 2);
