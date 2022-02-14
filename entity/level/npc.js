@@ -20,6 +20,7 @@ class Npc {
 
         // Shop
         this.shopActive = false;
+        this.shopGUI = null;
 
 
         
@@ -48,12 +49,16 @@ class Npc {
                     if (that.game.up) {
                         console.log("Opening Shop...");
                         that.shopActive = true;
+                        that.shopGUI = new Shop(that.game);
+                        that.game.addEntityToFront(that.shopGUI);
+                        
                     }
                 }
             }
             else if(that.shopActive && entity.BB && !that.BB.collide(entity.BB) && entity instanceof AbstractPlayer){ // Deactivates shop when player NOT in range, and shop is active
                 that.shopActive = false;
                 console.log("Closing Shop...");
+                that.shopGUI.removeFromWorld = true;
             }
         });
 
