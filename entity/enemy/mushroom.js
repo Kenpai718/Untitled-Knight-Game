@@ -73,10 +73,7 @@ class Mushroom extends AbstractEnemy {
             this.HB = null;
 
             // Drops random # of diamond upon death
-            if(!this.dropDiamonds) {
-                this.game.addEntityToFront(new Diamond(this.game,this.x + this.offsetxBB, this.y + this.offsetyBB, this.dropAmount));
-                this.dropDiamonds = true;
-            }
+            super.dropLoot();
 
             if (this.animations[this.state][this.direction].isDone()) this.removeFromWorld = true;
         } else { // not dead keep moving

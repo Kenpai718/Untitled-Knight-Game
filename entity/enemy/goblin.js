@@ -67,11 +67,8 @@ class Goblin extends AbstractEnemy {
             this.HB = null; // so it cant attack while dead
 
             // Drops random # of diamond upon death
-            if(!this.dropDiamonds) {
-                this.game.addEntityToFront(new Diamond(this.game,this.x, this.y, this.dropAmount));
-                this.dropDiamonds = true;
-            }
-
+            super.dropLoot();
+            
             if (this.animations[this.state][this.direction].isDone()) {
                 this.removeFromWorld = true;
             }

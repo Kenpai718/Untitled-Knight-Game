@@ -36,6 +36,7 @@ class Diamond  {
                 entity.myInventory.diamonds += that.amount;
                 that.amount -= that.amount;
                 that.removeFromWorld = true;
+                ASSET_MANAGER.playAsset(SFX.ITEM_PICKUP);
             }
         });
         // If collides with ground, stop

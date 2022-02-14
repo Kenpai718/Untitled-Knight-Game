@@ -100,11 +100,8 @@ class Skeleton extends AbstractEnemy {
             this.HB = null; // so it cant attack while dead
 
             // Drops random # of diamond upon death
-            if(!this.dropDiamonds) {
-                this.game.addEntityToFront(new Diamond(this.game,this.x, this.y, this.dropAmount));
-                this.dropDiamonds = true;
-            }
-
+            super.dropLoot();
+            
             if (this.animations[this.state][this.direction].isDone()) {
                 this.removeFromWorld = true;
             }
@@ -264,7 +261,6 @@ class Skeleton extends AbstractEnemy {
         //while hp is at half keep shield up to block projectiles
         if ((this.hp / this.max_hp) <= PARAMS.MID_HP) {
             this.velocity.x = 0;
-            this.velocity.y = 0;
             this.setBlockState(true);
             this.setAttackState(false);
         } else { //do random movement
