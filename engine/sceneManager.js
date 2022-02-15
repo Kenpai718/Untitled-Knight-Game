@@ -10,6 +10,8 @@ class SceneManager {
         this.y = 0;
         this.defaultMusic = MUSIC.CHASING_DAYBREAK;
 
+
+
         //game status
         this.title = true;
         this.gameOver = false;
@@ -145,7 +147,7 @@ class SceneManager {
     update() {
         if (!this.title) {
             //debug key toggle, flip state of debug checkbox
-            if(this.game.debug) {
+            if (this.game.debug) {
                 this.game.debug = false;
                 document.getElementById("debug").checked = !document.getElementById("debug").checked;
             }
@@ -207,29 +209,32 @@ class SceneManager {
         ASSET_MANAGER.adjustVolume(volume);
     };
 
+    drawGUI(ctx){
+        ctx.fillStyle = "White";
+        this.vignette.draw(ctx);
+        this.inventory.draw(ctx);
+        this.heartsbar.draw(ctx);
+    }
+
     draw(ctx) {
         if (!this.title) {
-            //gui
-            ctx.fillStyle = "White";
-            this.vignette.draw(ctx);
-            this.inventory.draw(ctx);
-            this.heartsbar.draw(ctx);
-
             //current level
             ctx.font = PARAMS.BIG_FONT;
+            ctx.fillStyle = "White";
             let xOffset;
             (this.level.label.length <= 4) ? xOffset = this.level.label.length * 70 : xOffset = this.level.label.length * 31;
             ctx.fillText("Level:" + this.level.label, this.game.surfaceWidth - xOffset, 30);
             // display kill quota message, i would do this in the door class but the text gets covered by other entites
             if (this.killQuotaMessage) {
                 ctx.font = PARAMS.BIG_FONT;
-                ctx.fillStyle = "White";
                 ctx.fillText("Must defeat " + this.remainingKills + " more enemies to advance", (this.game.surfaceWidth / 2) - ((20 * 35) / 2), 40);
             }
             if (PARAMS.DEBUG) {
                 this.viewDebug(ctx);
                 this.minimap.draw(ctx);
             }
+
+            this.drawGUI(ctx);
         } else {
             var fontSize = 60;
             ctx.font = fontSize + 'px "Press Start 2P"';
@@ -288,6 +293,7 @@ class SceneManager {
         let h = scene.height;
         this.game.addEntity(new Background(this.game));
         this.makePlayer(spawnX, h - spawnY);
+        this.myTextBox = null;
 
         //make a minimap for the level
         this.setupMinimap();
@@ -330,6 +336,14 @@ class SceneManager {
                 this.game.addEntity(new Walls(this.game, walls.x, h - walls.y - 1, 1, walls.height, walls.type));
             }
         }
+        
+        if (this.level.signs) {
+            for (var i = 0; i < this.level.signs.length; i++) {
+                let sign = this.level.signs[i];
+                this.game.addEntity(new Sign(this.game, sign.x, h - sign.y, sign.text, sign.title));
+            }
+        }
+
         // if the level being loaded hasnt been saved, load enemies and interactables like normal
         // ANY NEW ENEMIES MUST BE ADDED HERE
         if (!this.levelState[this.currentLevel]) {
@@ -553,6 +567,7 @@ class Minimap {
             enemy: "red",
             chest: "yellow",
             door: "SpringGreen",
+            sign: "bisque",
         }
 
 
@@ -671,7 +686,7 @@ class Minimap {
                 let myW = spike.width * PARAMS.SCALE;
                 let myH = PARAMS.SCALE / 2;
 
-                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3 + 1/2) * PARAMS.SCALE, myW, myH);
+                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3 + 1 / 2) * PARAMS.SCALE, myW, myH);
             }
         }
 
@@ -718,13 +733,27 @@ class Minimap {
             }
         }
 
+        //chest
+        ctx.fillStyle = this.colors.sign;
+        if (this.level.signs) {
+            for (var i = 0; i < this.level.signs.length; i++) {
+                let sign = this.level.signs[i];
+                let myX = sign.x * PARAMS.SCALE;
+                let myY = sign.y * PARAMS.SCALE;
+                let myW = PARAMS.SCALE / 2;
+                let myH = PARAMS.SCALE;
+
+                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 4) * PARAMS.SCALE, myW, myH);
+            }
+        }
+
     }
 
     /**
      * Build a minimap
      * @param {} ctx
      */
-     buildMinimapBox(ctx) {
+    buildMinimapBox(ctx) {
         //ctx.fillStyle = "SpringGreen";
         let miniX = this.x;
         let miniY = this.y;

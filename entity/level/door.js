@@ -15,6 +15,8 @@ class Door extends AbstractInteractable {
         this.srcH = 36;
         this.messageTimer = 0;
         this.BB = new BoundingBox(this.x * this.scale, this.y * this.scale, this.w * this.scale, this.h * this.scale);
+
+        this.nextLevelLabel = this.game.camera.levels[this.exitLocation.levelNum].label;
     };
 
     update() {
@@ -61,8 +63,9 @@ class Door extends AbstractInteractable {
         let theX = this.BB.x - this.game.camera.x;
         let theY = this.BB.y - this.game.camera.y;
         ctx.fillStyle = "GhostWhite";
+
         if (this.exitLocation.levelNum) {
-            ctx.fillText("Exit to Level " + this.exitLocation.levelNum, theX, theY - 50);
+            ctx.fillText("To Level " + this.nextLevelLabel, theX + 15, theY - 50);
         } else {
             ctx.fillText("ENTER DEBUG/TESTING ROOM", theX - 35, theY - 50);
         }
@@ -76,13 +79,12 @@ class Door extends AbstractInteractable {
         ctx.strokeRect(theX, theY, this.BB.width, this.BB.height);
 
         ctx.fillStyle = "GhostWhite";
+        ctx.font = PARAMS.DEFAULT_FONT;
         if (this.exitLocation.levelNum) {
-            ctx.fillText("Exit to Level " + this.exitLocation.levelNum, theX, theY - 50);
+            ctx.fillText("To Level " + this.nextLevelLabel, theX + 15, theY - 50);
         } else {
             ctx.fillText("ENTER DEBUG/TESTING ROOM", theX - 35, theY - 50);
-
         }
-        ctx.font = PARAMS.DEFAULT_FONT;
         (this.canEnter) ? ctx.fillStyle = "GhostWhite" : ctx.fillStyle = "DimGray";
         ctx.fillText("Can enter: " + this.canEnter, theX, theY - 30);
     };
