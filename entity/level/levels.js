@@ -34,6 +34,10 @@ var testLevel = {
         { x: 21, y: 3, killQuota: 0, exitLocation: { x: 4, y: 1, levelNum: 3 } } //door to level 1
     ],
 
+    npcs: [
+        { x: 3, y: 5}
+    ],
+
     signs: [
         {
             x: 6, y: 2,

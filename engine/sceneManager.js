@@ -354,6 +354,16 @@ class SceneManager {
             }
         }
 
+        //npc
+        if (this.level.npcs) {
+            for (var i = 0; i < this.level.npcs.length; i++) {
+                let npc = this.level.npcs[i];
+                let e = new NPC(this.game, 0, 0);
+                this.positionEntity(e, npc.x, h - npc.y);
+                this.game.addEntity(e);
+            }
+        }
+
         // if the level being loaded hasnt been saved, load enemies and interactables like normal
         // ANY NEW ENEMIES MUST BE ADDED HERE
         if (!this.levelState[this.currentLevel]) {
@@ -575,6 +585,7 @@ class Minimap {
             spike: "orange",
             player: "blue",
             enemy: "red",
+            npc: "green",
             chest: "yellow",
             door: "SpringGreen",
             sign: "bisque",
@@ -605,21 +616,42 @@ class Minimap {
         let myEntities = this.game.entities;
         for (var i = 0; i < myEntities.length; i++) {
             let entity = myEntities[i];
-
-            (entity instanceof AbstractPlayer) ? ctx.fillStyle = this.colors.player : ctx.fillStyle = this.colors.enemy;
-
-            let convertX = entity.BB.left / PARAMS.BLOCKDIM;
-            let convertY = entity.BB.top / PARAMS.BLOCKDIM;
-            let convertW = entity.BB.width / PARAMS.BLOCKDIM;
-            let convertH = entity.BB.height / PARAMS.BLOCKDIM;
-
-            let myX = convertX * PARAMS.SCALE;
-            let myY = convertY * PARAMS.SCALE;
-            let myW = convertW * PARAMS.SCALE;
-            let myH = convertH * PARAMS.SCALE;
-
-            ctx.fillRect(this.x + myX, this.y + myY + 4 * PARAMS.SCALE, myW, myH);
+            if(entity instanceof AbstractPlayer) {
+                ctx.fillStyle = this.colors.player;
+                this.drawEntity(ctx, entity);
+            } else if(entity instanceof NPC) {
+                ctx.fillStyle = this.colors.npc;
+                this.drawEntity(ctx, entity);
+            }
         }
+
+        let myEnemies = this.game.enemies;
+        for (var i = 0; i < myEnemies.length; i++) {
+            let entity = myEnemies[i];
+            if(entity instanceof AbstractEnemy) {
+                ctx.fillStyle = this.colors.enemy;
+                this.drawEntity(ctx, entity);
+            }
+        }
+    }
+
+    /**
+     * Draws a smaller scale of an entity on the minimap
+     * @param {} ctx 
+     * @param {*} entity 
+     */
+    drawEntity(ctx, entity) {
+        let convertX = entity.BB.left / PARAMS.BLOCKDIM;
+        let convertY = entity.BB.top / PARAMS.BLOCKDIM;
+        let convertW = entity.BB.width / PARAMS.BLOCKDIM;
+        let convertH = entity.BB.height / PARAMS.BLOCKDIM;
+
+        let myX = convertX * PARAMS.SCALE;
+        let myY = convertY * PARAMS.SCALE;
+        let myW = convertW * PARAMS.SCALE;
+        let myH = convertH * PARAMS.SCALE;
+
+        ctx.fillRect(this.x + myX, this.y + myY + 4 * PARAMS.SCALE, myW, myH);
     }
 
 
