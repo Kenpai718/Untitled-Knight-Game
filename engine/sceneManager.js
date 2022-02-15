@@ -283,14 +283,12 @@ class SceneManager {
         this.setupMinimap();
 
         //play music
-        if (scene.music && !this.title) { //level music when not on title
+        if (scene.music) { //level music when not on title
             ASSET_MANAGER.pauseBackgroundMusic();
-            //ASSET_MANAGER.playAsset(scene.music);
-            ASSET_MANAGER.forcePlayMusic(scene.music);
+            ASSET_MANAGER.playAsset(scene.music);
         } else if (!scene.music) { //no music set play default music
             ASSET_MANAGER.pauseBackgroundMusic();
-            //ASSET_MANAGER.playAsset(this.defaultMusic);
-            ASSET_MANAGER.forcePlayMusic(this.defaultMusic);
+            ASSET_MANAGER.playAsset(this.defaultMusic);
         }
 
         //play an entrance sound effect upon loading a level

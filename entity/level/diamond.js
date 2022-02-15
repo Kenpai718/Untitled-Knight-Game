@@ -42,7 +42,7 @@ class Diamond  {
         // If collides with ground, stop
         if(!this.collision){ // If statement prevents constant searching
             this.game.foreground2.forEach(function (entity) {
-                if(entity.BB && that.BB.collide(entity.BB) && entity instanceof Ground ){ // A poor attempt in collision detection
+                if(entity.BB && that.BB.collide(entity.BB) && entity instanceof AbstractBarrier){ // A poor attempt in collision detection
                     that.collision = true;
                 }
             });
@@ -71,7 +71,7 @@ class Diamond  {
         if(this.collisions.top) this.velocity.y = 0; //bonk on ceiling halt momentum
         if (this.collisions.lo_left && this.velocity.x < 0) this.velocity.x = 0;
         if (this.collisions.lo_right && this.velocity.x > 0) this.velocity.x = 0;
-        
+
 
     }
 
