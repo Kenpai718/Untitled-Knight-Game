@@ -309,9 +309,11 @@ class SceneManager {
         //play music
         if (scene.music) { //level music when not on title
             ASSET_MANAGER.pauseBackgroundMusic();
+            ASSET_MANAGER.autoRepeat(scene.music);
             ASSET_MANAGER.playAsset(scene.music);
         } else if (!scene.music) { //no music set play default music
             ASSET_MANAGER.pauseBackgroundMusic();
+            ASSET_MANAGER.autoRepeat(this.defaultMusic);
             ASSET_MANAGER.playAsset(this.defaultMusic);
         }
 
