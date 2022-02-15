@@ -379,7 +379,15 @@ class SceneManager {
             this.game.enemies = [...this.levelState[this.currentLevel].enemies];
             this.game.enemies.forEach(enemy => enemy.removeFromWorld = false);
             this.game.interactables = [...this.levelState[this.currentLevel].interactables];
-            this.game.interactables.forEach(interactable => interactable.removeFromWorld = false);
+            var that = this;
+            this.game.interactables.forEach(interactable => {
+                // if obelisk, add associated blocks as well
+                if (interactable instanceof Obelisk) {
+                    interactable.bricks.removeFromWorld = false;
+                    that.game.addEntity(interactable.bricks);
+                }
+                interactable.removeFromWorld = false
+            });
         }
         //load backgroound assets
         if (this.level.torches) {
