@@ -19,6 +19,10 @@ class Sign extends AbstractBackFeature {
         this.animationX = this.BB.x - this.scale / 4;
         this.animationY = this.BB.y - this.scale / 4;
 
+        //textbox specific to this sign
+        this.myTextBox = new TextBox(this.game, this.BB.x, this.BB.y, this.text);
+        this.msg = "Hold \'W\' to read";
+
     }
 
     updateBoxes() {
@@ -48,7 +52,6 @@ class Sign extends AbstractBackFeature {
                  */
                 if (entity.BB && self.BB.collide(entity.BB) && self.game.up) {
                     if (!self.read) self.read = true;
-                    console.log("player reading sign of " + self.title);
                     self.showText = true;
                 } else {
                     self.showText = false;
@@ -56,11 +59,10 @@ class Sign extends AbstractBackFeature {
             }
         });
 
-        //set the scenemanager's textbox if showing text
-        let scene = this.game.camera;
-        if(this.showText) {
-            scene.myTextBox = new TextBox(this.game, this.BB.x, this.BB.y, this.text);
-        }
+        //whether to draw the textbox or not
+        this.myTextBox.show = this.showText;
+
+
     }
 
 
@@ -78,14 +80,15 @@ class Sign extends AbstractBackFeature {
         //text hovering above sign
         //scene manager will handle drawing the textbox
         if (!this.showText) {
-            this.read ? ctx.fillStyle = "White" : ctx.fillStyle = "SpringGreen";
+            this.read ? ctx.fillStyle = "Silver" : ctx.fillStyle = "SpringGreen";
     
             let titleOffset = (this.fontSize * this.title.length) / 4.5;
+            let textOffset = (this.fontSize * this.msg.length) / 9;
             ctx.fillText(this.title,
                 (this.animationX) - this.game.camera.x - titleOffset,
                 (this.animationY) - this.game.camera.y - (this.fontSize * 1.5));
-            ctx.fillText("\'W\' to read",
-                (this.animationX) - this.game.camera.x,
+            ctx.fillText("Hold \'W\' to read",
+                (this.animationX) - this.game.camera.x - textOffset,
                 (this.animationY) - this.game.camera.y);
 
         }

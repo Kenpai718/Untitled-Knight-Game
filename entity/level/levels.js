@@ -54,16 +54,15 @@ var testLevel = {
     ],
     ground: [
         { x: 0, y: 0, width: 30, height: 1, type: 1 },
-        //{ x: 3, y: 4, width: 5, height: 1, type: 2 },
+        { x: 3, y: 4, width: 5, height: 1, type: 2 },
         { x: 10, y: 6, width: 5, height: 1, type: 2 }
     ],
     chests: [
         //{ x: 3, y: 1, direction : 1},
-        { x: 14, y: 7, direction: 0 }
+        { x: 13, y: 7, direction: 0 }
     ],
     bricks: [
         { x: 10, y: 1, width: 1, height: 1 },
-        { x: 3, y: 4, width: 5, height: 1, type: 2 },
     ],
     walls: [
         { x: -1, y: 14, height: 14, type: 2 },
@@ -77,10 +76,10 @@ var testLevel = {
         { x: 16, y: 1 }
     ],
     goblins: [
-        //{ x: 12, y: 1 }
+        { x: 12, y: 1 }
     ],
     skeletons: [
-        //{ x: 12, y: 7 }
+        { x: 12, y: 7 }
     ],
 }
 
@@ -100,62 +99,64 @@ var level1_1 = {
 
     signs: [
         {
-            x: 6, y: 2, 
-            title: "[TUTORIAL: COMBAT/BASIC-MOVEMENT]",
+            x: 6, y: 2,
+            title: "[TUTORIAL: BASIC COMBAT/MOVEMENT]",
             text: ["-[A] to move left, [D] to move right",
-                    "-[SPACE] to jump, double tap to double jump",
-                    "-[Left Click] to swing your sword. Double click to attack twice.",
-                    "              The second hit is slower, but deals more damage.",
-                    "-[MOUSE MOVE] to position cursor",
-                    "-[Right click] to shoot an arrow in cursor direction.",
-                    "-[SHIFT] to roll and dodge attacks."
-                ]
+                "-[SPACE] to jump and double tap to double jump",
+                "-[Left Click] to swing your sword. Double click to attack twice.",
+                "              The second hit is slower, but deals more damage.",
+                "-[MOUSE MOVE] to position cursor",
+                "-[Right click] to shoot an arrow in cursor direction.",
+                "-[SHIFT] to roll and dodge attacks."
+            ]
         },
         {
-            x: 36, y: 6, 
+            x: 36, y: 6,
             title: "[TUTORIAL: CROUCHING]",
             text: ["-Hold [S] to crouch.",
-                   "-While crouching you can move left or right.",
-                   "-You are still able to attack while crouching!",
-                   "-Use crouches to get through small spaces or attack fast."
+                "-While crouching you can move left or right.",
+                "-You are still able to attack while crouching!",
+                "-Use crouches to get through small spaces or attack fast."
             ]
         },
 
         {
-            x: 55, y: 6, 
+            x: 55, y: 6,
             title: "[TUTORIAL: HEALING/SHOP]",
             text: ["-[H] to heal if you have a potion in your inventory.",
-                   "-Potions will heal you for up to half your maximum hp.",
-                   "-Potions are limited so use them sparingly.",
-                   "-You can get more potions or other equipment by spending",
-                   " diamonds at the SHOP, which are found somewhere in each level.",
-                   "-Get diamonds from chests of as enemy loot."
+                "-Potions will heal you for up to half your maximum hp.",
+                "-Potions are limited so use them sparingly.",
+                "-You can get more potions or other equipment by spending",
+                " diamonds at the SHOP, which are found somewhere in each level.",
+                "-Get diamonds from chests or from enemy drops."
             ]
         },
 
-        
+
         {
-            x: 92, y: 2, 
+            x: 92, y: 2,
             title: "[TUTORIAL: WALLJUMP]",
-            text: ["-Hold a direction against a wall while falling to wallslide",
-                   "-[SPACE] to walljump while touching a wall.",
-                   "         chain together walljumps to scale heights!",
-                   "- If hanging on a ledge press [W] to get up"
+            text: ["-[SPACE] while touching a wall to walljump in the other direction.",
+                "         Chain together walljumps to scale vertical heights!",
+                "-Hold a direction against a wall while falling to wallslide",
+                "-If hanging on a ledge press [W] to get up"
             ]
         },
 
         {
-            x: 110, y: 11, 
+            x: 110, y: 11,
             title: "[TUTORIAL: CHESTS/DOORS]",
             text: ["-To open a chest get near it and press [W]",
-                   "-Chests contain valuable resources so search for them on each level!",
-                   "-To progress to the next level press [W] next to the door.",
-                   "-In general [W] is used to interact with the map."
+                "-In general [W] is used to interact with the map.",
+                "-Chests contain valuable resources so search for them on each level!",
+                "-To progress to the next level press [W] next to the door.",
+                "-There is a KILL QUOTA that must be met before progressing to the next floor!"
+                
             ]
         },
     ],
 
-    chests: [{x: 112, y: 10, direction: 0}],
+    chests: [{ x: 112, y: 10, direction: 0 }],
     ground: [
         { x: 0, y: 0, width: 15, height: 1, type: 1 },
         { x: 60, y: 0, width: 34, height: 1, type: 1 },
@@ -238,6 +239,18 @@ var level1_2 = {
         { x: 116, y: 3, killQuota: 7, exitLocation: { x: 4, y: 1, levelNum: 3 } }, //next level to 3
         { x: 0, y: 3, killQuota: 0, exitLocation: { x: 114, y: 10, levelNum: 1 } } //go back to level 1
     ],
+
+    signs: [{
+        x: 4, y: 2,
+        title: "[TUTORIAL: MORE COMBAT TIPS]",
+        text: ["-Each hit has a base 10% chance to CRIT and do x2 damage!",
+               "-Cancel an attack animation with a roll to do damage while staying evasive.",
+               "-After an enemy spots you they will chase you down for a certain amount of time.",
+               "-If you shoot an arrow and it got stuck then you can retrieve it.",
+        ]
+    }
+    ],
+
     ground: [
         { x: 0, y: 0, width: 45, height: 1, type: 1 },
         { x: 61, y: 0, width: 60, height: 1, type: 1 },

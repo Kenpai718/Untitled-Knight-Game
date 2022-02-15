@@ -14,6 +14,13 @@ class TextBox {
         this.boxColor = "BlueViolet";
         this.borderColor = "Azure";
         this.textColor = "GhostWhite";
+
+        //field to draw the textbox or not. It should be set by the class using the textbox
+        this.show = false;
+        
+
+        //this will add the textbox entity to the information tab
+        this.game.addEntityToFront(this);
     };
 
     update() {
@@ -21,7 +28,7 @@ class TextBox {
     };
 
     draw(ctx) {
-        this.drawTextBox(ctx);
+        if(this.show) this.drawTextBox(ctx);
     };
 
 
@@ -65,6 +72,10 @@ class TextBox {
         }
         ctx.align = "left";
 
+    }
+
+    drawDebug() {
+        
     }
 
 };

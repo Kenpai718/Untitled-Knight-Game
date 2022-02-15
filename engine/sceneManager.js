@@ -9,7 +9,6 @@ class SceneManager {
         this.x = 0;
         this.y = 0;
         this.defaultMusic = MUSIC.CHASING_DAYBREAK;
-        this.myTextBox = null;
 
 
 
@@ -205,12 +204,6 @@ class SceneManager {
         this.vignette.draw(ctx);
         this.inventory.draw(ctx);
         this.heartsbar.draw(ctx);
-
-        //draw a textbox if it is needed
-        if (this.myTextBox != null) {
-            console.log("scene manager drawing textbox");
-            this.myTextBox.draw(ctx);
-        }
     }
 
     draw(ctx) {
