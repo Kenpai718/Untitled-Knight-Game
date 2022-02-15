@@ -495,9 +495,10 @@ class Knight extends AbstractPlayer {
             }
 
         } else if (!this.game.attack && this.game.shoot) { //only shoot an arrow when not attacking
-            if (this.game.mouse.x < this.x + this.width / 2)
+            let x = this.game.mouse.x + this.game.camera.x
+            if (x < this.x + this.width / 2)
                 this.facing = this.dir.left;
-            if (this.game.mouse.x > this.x + this.width / 2)
+            if (x > this.x + this.width / 2)
                 this.facing = this.dir.right;
             if (this.myInventory.arrows > 0 || this.myInventory.arrows == 0 && this.arrow) {
                 if (this.crouch) {
