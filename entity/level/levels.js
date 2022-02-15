@@ -33,37 +33,54 @@ var testLevel = {
         { x: 6, y: 7, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 2 } }, //door to level 2
         { x: 21, y: 3, killQuota: 0, exitLocation: { x: 4, y: 1, levelNum: 3 } } //door to level 1
     ],
+
+    signs: [
+        {
+            x: 6, y: 2,
+            title: "IMPORTANT DISCLOSURE",
+            text: ["According to all known laws of aviation",
+                "there is no way a bee should be able to fly.",
+                "Its wings are too small to get",
+                "its fat little body off the ground.",
+                "The bee, of course, flies anyway",
+                "because bees don't care",
+                "what humans think is impossible."
+            ]
+        }
+    ],
+
     backgroundWalls: [
         { x: 0, y: 14, width: 24, height: 14 }
     ],
     ground: [
         { x: 0, y: 0, width: 30, height: 1, type: 1 },
-        { x: 3, y: 4, width: 5, height: 1, type: 2 },
+        //{ x: 3, y: 4, width: 5, height: 1, type: 2 },
         { x: 10, y: 6, width: 5, height: 1, type: 2 }
     ],
     chests: [
-        { x: 3, y: 1, direction : 1},
-        { x: 14, y: 7, direction : 0}
+        //{ x: 3, y: 1, direction : 1},
+        { x: 14, y: 7, direction: 0 }
     ],
     bricks: [
         { x: 10, y: 1, width: 1, height: 1 },
+        { x: 3, y: 4, width: 5, height: 1, type: 2 },
     ],
     walls: [
         { x: -1, y: 14, height: 14, type: 2 },
         { x: 15, y: 14, height: 13, type: 2 },
         { x: 25, y: 14, height: 14, type: 2 }
     ],
-    obelisks : [
-        { x: 8, y: 1, brickX: 15, brickY: 1, brickWidth: 1, brickHeight: 1}
+    obelisks: [
+        { x: 8, y: 1, brickX: 15, brickY: 1, brickWidth: 1, brickHeight: 1 }
     ],
     shrooms: [
         { x: 16, y: 1 }
     ],
     goblins: [
-        { x: 12, y: 1 }
+        //{ x: 12, y: 1 }
     ],
     skeletons: [
-        { x: 12, y: 7 }
+        //{ x: 12, y: 7 }
     ],
 }
 
@@ -80,6 +97,65 @@ var level1_1 = {
         { x: 116, y: 12, killQuota: 3, exitLocation: { x: 3, y: 1, levelNum: 2 } }, //door to level 2
         { x: 2, y: 3, killQuota: 0, exitLocation: { x: 1, y: 1, levelNum: 0 } } //debugging room, DELETE THIS BEFORE SUBMISSION!
     ],
+
+    signs: [
+        {
+            x: 6, y: 2, 
+            title: "[TUTORIAL: COMBAT/BASIC-MOVEMENT]",
+            text: ["-[A] to move left, [D] to move right",
+                    "-[SPACE] to jump, double tap to double jump",
+                    "-[Left Click] to swing your sword. Double click to attack twice.",
+                    "              The second hit is slower, but deals more damage.",
+                    "-[MOUSE MOVE] to position cursor",
+                    "-[Right click] to shoot an arrow in cursor direction.",
+                    "-[SHIFT] to roll and dodge attacks."
+                ]
+        },
+        {
+            x: 36, y: 6, 
+            title: "[TUTORIAL: CROUCHING]",
+            text: ["-Hold [S] to crouch.",
+                   "-While crouching you can move left or right.",
+                   "-You are still able to attack while crouching!",
+                   "-Use crouches to get through small spaces or attack fast."
+            ]
+        },
+
+        {
+            x: 55, y: 6, 
+            title: "[TUTORIAL: HEALING/SHOP]",
+            text: ["-[H] to heal if you have a potion in your inventory.",
+                   "-Potions will heal you for up to half your maximum hp.",
+                   "-Potions are limited so use them sparingly.",
+                   "-You can get more potions or other equipment by spending",
+                   " diamonds at the SHOP, which are found somewhere in each level.",
+                   "-Get diamonds from chests of as enemy loot."
+            ]
+        },
+
+        
+        {
+            x: 92, y: 2, 
+            title: "[TUTORIAL: WALLJUMP]",
+            text: ["-Hold a direction against a wall while falling to wallslide",
+                   "-[SPACE] to walljump while touching a wall.",
+                   "         chain together walljumps to scale heights!",
+                   "- If hanging on a ledge press [W] to get up"
+            ]
+        },
+
+        {
+            x: 110, y: 11, 
+            title: "[TUTORIAL: CHESTS/DOORS]",
+            text: ["-To open a chest get near it and press [W]",
+                   "-Chests contain valuable resources so search for them on each level!",
+                   "-To progress to the next level press [W] next to the door.",
+                   "-In general [W] is used to interact with the map."
+            ]
+        },
+    ],
+
+    chests: [{x: 112, y: 10, direction: 0}],
     ground: [
         { x: 0, y: 0, width: 15, height: 1, type: 1 },
         { x: 60, y: 0, width: 34, height: 1, type: 1 },
@@ -164,7 +240,7 @@ var level1_2 = {
     ],
     ground: [
         { x: 0, y: 0, width: 45, height: 1, type: 1 },
-        { x: 61, y: 0, width: 60, height: 1, type: 1},
+        { x: 61, y: 0, width: 60, height: 1, type: 1 },
         { x: 45, y: 6, width: 1, height: 1, type: 0 },
         { x: 46, y: 6, width: 14, height: 1, type: 1 },
         { x: 1, y: 6, width: 41, height: 1, type: 1 },
@@ -172,7 +248,7 @@ var level1_2 = {
         { x: 4, y: 19, width: 1, height: 1, type: 0 }
     ],
     bricks: [
-        { x: 45, y: 0, width: 16, height: 1},
+        { x: 45, y: 0, width: 16, height: 1 },
         { x: 46, y: 5, width: 14, height: 5 },
         { x: 0, y: 5, width: 41, height: 2 },
         { x: 5, y: 18, width: 55, height: 7 },
@@ -216,21 +292,21 @@ var level1_2 = {
     shrooms: [
         { x: 15, y: 20 },
         { x: 12, y: 1 },
-        { x: 40, y: 25},
-        { x: 47, y: 25},
-        { x: 102, y: 1}
+        { x: 40, y: 25 },
+        { x: 47, y: 25 },
+        { x: 102, y: 1 }
     ],
     goblins: [
-        { x: 10, y: 7},
-        { x: 8, y: 7},
-        { x: 17, y: 20},
-        { x: 72, y: 1},
-        { x: 105, y: 1}
+        { x: 10, y: 7 },
+        { x: 8, y: 7 },
+        { x: 17, y: 20 },
+        { x: 72, y: 1 },
+        { x: 105, y: 1 }
     ],
-    skeletons : [
+    skeletons: [
         { x: 70, y: 3 },
         { x: 75, y: 3 },
-        { x: 100, y: 3}
+        { x: 100, y: 3 }
     ],
     windows: [
         { x: 2, y: 9, width: 1, height: 1.5 },
@@ -242,16 +318,16 @@ var level1_2 = {
         { x: 87, y: 8, width: 4, height: 7 },
         { x: 97, y: 8, width: 4, height: 7 },
         { x: 107, y: 8, width: 4, height: 7 },
-        { x: 17, y: 10, width: 2, height: 3},
-        { x: 27, y: 10, width: 2, height: 3},
+        { x: 17, y: 10, width: 2, height: 3 },
+        { x: 27, y: 10, width: 2, height: 3 },
         { x: 37, y: 10, width: 2, height: 3 },
         { x: 47, y: 10, width: 2, height: 3 },
         { x: 39, y: 28, width: 2, height: 3 },
         { x: 46, y: 28, width: 2, height: 3 }
     ],
-    chests : [
-        { x: 2, y: 25, direction: 1},
-        { x: 80, y: 20, direction: 0}
+    chests: [
+        { x: 2, y: 25, direction: 1 },
+        { x: 80, y: 20, direction: 0 }
     ],
     banners: [
         { x: 71, y: 4 },
@@ -262,12 +338,12 @@ var level1_2 = {
         { x: 96, y: 4 },
         { x: 101, y: 4 },
         { x: 106, y: 4 },
-        { x: 2, y: 3},
-        { x: 19, y: 3}
+        { x: 2, y: 3 },
+        { x: 19, y: 3 }
     ],
     torches: [
         { x: 10, y: 3 },
-        { x: 8, y: 9},
+        { x: 8, y: 9 },
         { x: 20, y: 3 },
         { x: 30, y: 3 },
         { x: 40, y: 3 },
@@ -280,8 +356,8 @@ var level1_2 = {
         { x: 77, y: 21 },
         { x: 71, y: 22 },
         { x: 1, y: 27 },
-        { x: 7, y: 21},
-        { x: 17, y: 22}
+        { x: 7, y: 21 },
+        { x: 17, y: 22 }
     ],
     chains: [
         { x: 16, y: 9 },
@@ -296,41 +372,41 @@ var level1_2 = {
         { x: 47.5, y: 27 }
     ],
     ceilingChains: [
-        { x: 4, y: 3, height: 1.5},
-        { x: 4.5, y: 3, height: 2},
-        { x: 11, y: 3, height: 1.2},
-        { x: 11.5, y: 3, height: 2.2},
-        { x: 12, y: 3, height: 1.5},
-        { x: 15, y: 3, height: 2},
-        { x: 21, y: 3, height: 1.5},
-        { x: 27, y: 3, height: 1.5},
-        { x: 27.5, y: 4, height: 2},
-        { x: 37, y: 3, height: 1.5},
-        { x: 37.5, y: 3, height: 2},
-        { x: 38, y: 4, height: 2},
-        { x: 58, y: 9, height: 2},
-        { x: 6, y: 9, height: 1.5},
-        { x: 6.5, y: 10, height: 2},
-        { x: 1, y: 22, height: 1.5},
-        { x: 1.3, y: 22, height: 2},
-        { x: 1.6, y: 23, height: 2},
-        { x: 3, y: 22, height: 1.5},
-        { x: 3.3, y: 22, height: 2},
-        { x: 3.6, y: 23, height: 2},
-        { x: 12, y: 22, height: 2},
-        { x: 12.3, y: 22, height: 1.5},
-        { x: 12.6, y: 23, height: 2},
-        { x: 20, y: 22, height: 2},
-        { x: 22, y: 22, height: 2},
-        { x: 22.3, y: 22, height: 1.5},
-        { x: 22.6, y: 23, height: 2},
-        { x: 24, y: 22, height: 2},
-        { x: 67, y: 22, height: 2},
-        { x: 67.3, y: 22, height: 1.5},
-        { x: 67.6, y: 23, height: 2},
-        { x: 78, y: 22, height: 1.5},
-        { x: 78.3, y: 22, height: 2},
-        { x: 78.6, y: 23, height: 2}
+        { x: 4, y: 3, height: 1.5 },
+        { x: 4.5, y: 3, height: 2 },
+        { x: 11, y: 3, height: 1.2 },
+        { x: 11.5, y: 3, height: 2.2 },
+        { x: 12, y: 3, height: 1.5 },
+        { x: 15, y: 3, height: 2 },
+        { x: 21, y: 3, height: 1.5 },
+        { x: 27, y: 3, height: 1.5 },
+        { x: 27.5, y: 4, height: 2 },
+        { x: 37, y: 3, height: 1.5 },
+        { x: 37.5, y: 3, height: 2 },
+        { x: 38, y: 4, height: 2 },
+        { x: 58, y: 9, height: 2 },
+        { x: 6, y: 9, height: 1.5 },
+        { x: 6.5, y: 10, height: 2 },
+        { x: 1, y: 22, height: 1.5 },
+        { x: 1.3, y: 22, height: 2 },
+        { x: 1.6, y: 23, height: 2 },
+        { x: 3, y: 22, height: 1.5 },
+        { x: 3.3, y: 22, height: 2 },
+        { x: 3.6, y: 23, height: 2 },
+        { x: 12, y: 22, height: 2 },
+        { x: 12.3, y: 22, height: 1.5 },
+        { x: 12.6, y: 23, height: 2 },
+        { x: 20, y: 22, height: 2 },
+        { x: 22, y: 22, height: 2 },
+        { x: 22.3, y: 22, height: 1.5 },
+        { x: 22.6, y: 23, height: 2 },
+        { x: 24, y: 22, height: 2 },
+        { x: 67, y: 22, height: 2 },
+        { x: 67.3, y: 22, height: 1.5 },
+        { x: 67.6, y: 23, height: 2 },
+        { x: 78, y: 22, height: 1.5 },
+        { x: 78.3, y: 22, height: 2 },
+        { x: 78.6, y: 23, height: 2 }
     ],
     columns: [
         { x: 74, y: 11, height: 11 },
@@ -356,20 +432,20 @@ var level1_3 = {
     music: MUSIC.BETWEEN_HEAVEN_AND_EARTH,
     doors: [
         { x: 1, y: 3, killQuota: 0, exitLocation: { x: 114, y: 1, levelNum: 2 } }, //go back to level 2
-        { x: 117, y: 25, killQuota: 4, exitLocation: { x: 1, y: 3, levelNum: 3} }, // change to level 4 once theres a level 4
-        { x: 34, y: 35, killQuota: 1, exitLocation: { x: 1, y: 3, levelNum: 3} } // change to treasure room
+        { x: 117, y: 25, killQuota: 4, exitLocation: { x: 1, y: 3, levelNum: 3 } }, // change to level 4 once theres a level 4
+        { x: 34, y: 35, killQuota: 1, exitLocation: { x: 1, y: 3, levelNum: 3 } } // change to treasure room
     ],
     ground: [
         { x: 0, y: 0, width: 10, type: 1 }
     ],
-    obelisks : [
-        { x: 79, y: 15, brickX: 81, brickY: 17, brickWidth: 3, brickHeight: 3},
-        { x: 100, y: 23, brickX: 105, brickY: 30, brickWidth: 11, brickHeight: 8}
+    obelisks: [
+        { x: 79, y: 15, brickX: 81, brickY: 17, brickWidth: 3, brickHeight: 3 },
+        { x: 100, y: 23, brickX: 105, brickY: 30, brickWidth: 11, brickHeight: 8 }
     ],
     shrooms: [
         { x: 107, y: 32 },
-        { x: 36, y: 35},
-        { x: 77, y: 27}
+        { x: 36, y: 35 },
+        { x: 77, y: 27 }
     ],
     goblins: [
         { x: 110, y: 32 }
@@ -378,20 +454,20 @@ var level1_3 = {
         { x: 112, y: 32 }
     ],
     chests: [
-        { x: 77, y: 15, direction: 0}
+        { x: 77, y: 15, direction: 0 }
     ],
     bricks: [
-        { x: 120, y: 42, width: 1, height: 43},
-        { x: 105, y: 42, width: 1, height: 12},
-        { x: 115, y: 42, width: 1, height: 12},
+        { x: 120, y: 42, width: 1, height: 43 },
+        { x: 105, y: 42, width: 1, height: 12 },
+        { x: 115, y: 42, width: 1, height: 12 },
         { x: 10, y: 2, width: 3, height: 3 },
         { x: 13, y: 0, width: 20, height: 1 },
         { x: 33, y: 2, width: 3, height: 3 },
         { x: 36, y: 0, width: 48, height: 1 },
         { x: 77, y: 14, width: 7, height: 14 },
         { x: 71, y: 25, width: 13, height: 8 },
-        { x: 71, y: 17, width: 2, height: 1},
-        { x: 71, y: 16, width: 1, height: 1},
+        { x: 71, y: 17, width: 2, height: 1 },
+        { x: 71, y: 16, width: 1, height: 1 },
         { x: 84, y: 12, width: 15, height: 13 },
         { x: 99, y: 22, width: 21, height: 23 },
         { x: 30, y: 32, width: 13, height: 2 },
@@ -430,7 +506,7 @@ var level1_3 = {
         { x: 59, y: 22, width: 5, height: 1 },
         { x: 69, y: 12, width: 5, height: 1 },
         { x: 89, y: 17, width: 3, height: 1 },
-        { x: 95, y: 21, width: 1, height: 1},
+        { x: 95, y: 21, width: 1, height: 1 },
         { x: 45, y: 30, width: 2, height: 1 }
     ],
     walls: [
@@ -447,9 +523,9 @@ var level1_3 = {
         { x: 26, y: 11, height: 11 },
         { x: 35, y: 9, height: 9 }
     ],
-    spikes : [
-        { x : 13, y : 1, width : 20},
-        { x : 36, y : 1, width : 41},
-        { x : 84, y : 13, width : 15}
+    spikes: [
+        { x: 13, y: 1, width: 20 },
+        { x: 36, y: 1, width: 41 },
+        { x: 84, y: 13, width: 15 }
     ]
 }

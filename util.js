@@ -1,5 +1,5 @@
 /**This file holds helpful functions and global variables/objects used throughout the game */
-
+const DEFAULT_FONT_SIZE = 10;
 /**
  * @param {Number} r Red Value
  * @param {Number} g Green Value
@@ -17,14 +17,14 @@ const PARAMS = {
 
 
     //GUI
-    BIG_FONT: '20px "Press Start 2P"',       //font used for big moments like damage numbers
-    DEFAULT_FONT: '10px "Press Start 2P"',    //regular font
+    BIG_FONT: (DEFAULT_FONT_SIZE * 2) + 'px "Press Start 2P"',       //font used for big moments like damage numbers
+    DEFAULT_FONT: DEFAULT_FONT_SIZE + 'px "Press Start 2P"',    //regular font
     HEART_DIM: 17,                  //for hearts hp bar
     GUI_SCALE: 3,                   //gui scaling
 
     //critical
     CRITICAL_BONUS: 2,                  //multipler for a crit dmg
-    CRITICAL_FONT: '30px "Press Start 2P"',
+    CRITICAL_FONT: (DEFAULT_FONT_SIZE * 3) + 'px "Press Start 2P"',
     CRITICAL_CHANCE: 10,                //percentage 0-100
     CRITICAL_COLOR: rgb(255, 215, 0),   //yellow
 
