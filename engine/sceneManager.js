@@ -17,6 +17,8 @@ class SceneManager {
         this.levelH = 0;
         this.levelW = 0;
 
+        this.killCount = 0;
+
         //levels array to load levels by calling levels[0], levels[1], etc
         this.currentLevel = 0;
         this.setupAllLevels();
@@ -96,7 +98,7 @@ class SceneManager {
             } else {
                 this.loadScene(lvlData, lvlData.player.x, lvlData.player.y);
             }
-
+            this.killCount = 0;
             this.currentLevel = number;
         }
     }
@@ -208,6 +210,12 @@ class SceneManager {
             let xOffset;
             (this.level.label.length <= 4) ? xOffset = this.level.label.length * 70 : xOffset = this.level.label.length * 31;
             ctx.fillText("Level:" + this.level.label, this.game.surfaceWidth - xOffset, 30);
+            // display kill quota message, i would do this in the door class but the text gets covered by other entites
+            if (this.killQuotaMessage) {
+                ctx.font = PARAMS.BIG_FONT;
+                ctx.fillStyle = "White";
+                ctx.fillText("Must defeat " + this.remainingKills + " more enemies to advance", (this.game.surfaceWidth / 2) - ((20 * 35) / 2), 40);
+            }
             if (PARAMS.DEBUG) {
                 this.viewDebug(ctx);
                 this.minimap.draw(ctx);
@@ -249,6 +257,10 @@ class SceneManager {
                 ctx.fillText("David Shcherbina", 30, 30 * 10 * 2);
             }
         }
+    };
+
+    updateKillQuota(count) {
+        this.remainingKills = count;
     };
 
     /**
@@ -385,7 +397,7 @@ class SceneManager {
         if (this.level.doors) {
             for (var i = 0; i < this.level.doors.length; i++) {
                 let door = this.level.doors[i];
-                this.game.addEntity(new Door(this.game, door.x, h - door.y - 1, door.canEnter, door.exitLocation));
+                this.game.addEntity(new Door(this.game, door.x, h - door.y - 1, door.killQuota, door.exitLocation));
             }
         }
         if (this.level.columns) {

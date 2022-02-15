@@ -1,10 +1,10 @@
 /**
  * Skeleton is a entity about the size of the player. It's attacks are rather slow.
  * It doesn't have self much hp, but it has a shield to reduce damage.
- * 
+ *
  * Unique behavior: Switching between shield and attack mode when in range
  * At half HP it will keep its shield up during the idle.
- * 
+ *
  */
 
 class Skeleton extends AbstractEnemy {
@@ -101,9 +101,10 @@ class Skeleton extends AbstractEnemy {
 
             // Drops random # of diamond upon death
             super.dropLoot();
-            
+
             if (this.animations[this.state][this.direction].isDone()) {
                 this.removeFromWorld = true;
+                this.game.camera.killCount++;
             }
 
         } else { // not dead keep moving
@@ -152,11 +153,11 @@ class Skeleton extends AbstractEnemy {
 
     /**
      * Checks interactions with entities.
-     * Also controls how the entity will move/act 
-     * 
-     * @param {} dist 
-     * @param {*} TICK 
-     * @returns 
+     * Also controls how the entity will move/act
+     *
+     * @param {} dist
+     * @param {*} TICK
+     * @returns
      */
     checkEntityInteractions(dist, TICK) {
         let self = this;
@@ -167,7 +168,7 @@ class Skeleton extends AbstractEnemy {
 
             //player interactions
             if (entity instanceof AbstractPlayer) {
-                // knight is in the vision box or hit by an arrow 
+                // knight is in the vision box or hit by an arrow
                 let playerInVB = entity.BB && self.VB.collide(entity.BB);
                 let playerAtkInVB = entity.HB && self.VB.collide(entity.HB);
                 if (playerInVB || playerAtkInVB || self.aggro) {
@@ -225,7 +226,7 @@ class Skeleton extends AbstractEnemy {
     /**
      * Updates the cooldowns of entity actions
      * based on ticks
-     * @param {*} TICK 
+     * @param {*} TICK
      */
     checkCooldowns(TICK) {
         // skeleton attack cooldown
@@ -292,10 +293,10 @@ class Skeleton extends AbstractEnemy {
 
     /**
      * Override damage method from abstract entity.
-     * 
+     *
      * Reduce the damage when blocking.
-     * @param {*} damage 
-     * @param {*} isCritical 
+     * @param {*} damage
+     * @param {*} isCritical
      */
     takeDamage(damage, isCritical) {
         //reduce damage if shielding and pass to superclass
@@ -344,7 +345,7 @@ class Skeleton extends AbstractEnemy {
 
     /**
      * Toggle block state on or off
-     * @param {} isOn 
+     * @param {} isOn
      */
     setBlockState(isOn) {
         if (isOn) {
@@ -361,7 +362,7 @@ class Skeleton extends AbstractEnemy {
 
     /**
      * Toggle attack state on or off
-     * @param {} isOn 
+     * @param {} isOn
      */
     setAttackState(isOn) {
         if (isOn) {
