@@ -92,9 +92,7 @@ class SceneManager {
     loadLevel(number, usedDoor, doorExitX, doorExitY) {
         // save the state of the enemies and interactables for the current level
         if (!this.title && !this.restart) {
-            let lastEnemies = [...this.game.enemies]; // [...] syntax is to make a deep copy
-            let lastInteractables = [...this.game.interactables];
-            this.levelState[this.currentLevel] = { enemies : lastEnemies, interactables : lastInteractables };
+            this.levelState[this.currentLevel] = { enemies : [...this.game.enemies], interactables : [...this.game.interactables], killCount : this.killCount };
         } else {
             this.title = false;
             this.restart = false;
@@ -104,7 +102,7 @@ class SceneManager {
             throw "Invalid load level number";
         } else {
             console.log("Loading level " + number);
-            this.killCount = 0;
+            this.killCount = !this.levelState[number] ? 0 : this.levelState[number].killCount;
             this.currentLevel = number;
             let lvlData = this.levels[number];
             if (usedDoor) {
@@ -346,7 +344,7 @@ class SceneManager {
                 this.game.addEntity(new Walls(this.game, walls.x, h - walls.y - 1, 1, walls.height, walls.type));
             }
         }
-        
+
         if (this.level.signs) {
             for (var i = 0; i < this.level.signs.length; i++) {
                 let sign = this.level.signs[i];
