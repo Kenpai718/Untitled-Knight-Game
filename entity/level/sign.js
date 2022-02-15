@@ -21,7 +21,7 @@ class Sign extends AbstractBackFeature {
 
         //textbox specific to this sign
         this.myTextBox = new TextBox(this.game, this.BB.x, this.BB.y, this.text);
-        this.msg = "Hold \'W\' to read";
+        this.myHoverMsg = "Hold \'W\' to read";
 
     }
 
@@ -83,11 +83,11 @@ class Sign extends AbstractBackFeature {
             this.read ? ctx.fillStyle = "Silver" : ctx.fillStyle = "SpringGreen";
     
             let titleOffset = (this.fontSize * this.title.length) / 4.5;
-            let textOffset = (this.fontSize * this.msg.length) / 9;
+            let textOffset = (this.fontSize * this.myHoverMsg.length) / 9;
             ctx.fillText(this.title,
                 (this.animationX) - this.game.camera.x - titleOffset,
                 (this.animationY) - this.game.camera.y - (this.fontSize * 1.5));
-            ctx.fillText("Hold \'W\' to read",
+            ctx.fillText(this.myHoverMsg,
                 (this.animationX) - this.game.camera.x - textOffset,
                 (this.animationY) - this.game.camera.y);
 

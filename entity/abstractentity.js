@@ -178,7 +178,7 @@ class AbstractEntity {
      * @param {*} theAnim the animator to drawframe of
      */
     drawWithFadeOut(ctx, theAnim) {
-        if(theAnim.isHalfwayDone() && this.myOpacity > 0) {
+        if (theAnim.isHalfwayDone() && this.myOpacity > 0) {
             this.myOpacity -= 1;
             ctx.filter = "opacity(" + this.myOpacity + "%)";
             theAnim.drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
@@ -221,5 +221,235 @@ class AbstractEntity {
             ctx.strokeRect(this.x + 62 - this.visionwidth / 2, this.y - 37, this.visionwidth, this.height);
         }
     }
+
+    /**Collision Detection methods for use for all entities */
+
+    /**
+    * Based on distance {x, y} displace
+    * the entity by the given amount.
+    *
+    * Set velocities based on positioning
+    * @param {} dist {x, y}
+    */
+    updatePositionAndVelocity(dist) {
+        // update positions based on environment collisions
+        this.x += dist.x;
+        this.y += dist.y;
+        this.updateBoxes();
+        // set respective velocities to 0 for environment collisions
+        if (this.touchFloor() && this.velocity.y > 0) {
+            this.velocity.y = 0;
+        }
+        if (this.collisions.top) this.velocity.y = 0; //bonk on ceiling halt momentum
+        if (this.collisions.lo_left && this.velocity.x < 0) this.velocity.x = 0;
+        if (this.collisions.lo_right && this.velocity.x > 0) this.velocity.x = 0;
+
+
+    }
+
+    /**
+    * Call this at the end up the update
+    * to change velocities based on any collisions it might have had
+     */
+    updateVelocity(TICK) {
+        //if touching floor entity can jump again
+        if (this.collisions.bottom && this.velocity.y > 0) {
+            this.velocity.y = 0;
+            this.jumped = false;
+        }
+        if (this.collisions.top && this.velocity.y > 0) {
+            //B O N K on ceiling halt momentum
+            this.y -= this.velocity.y * TICK;
+            this.velocity.y = 0;
+        }
+        if (this.collisions.left && this.velocity.x < 0) this.velocity.x = 0;
+        if (this.collisions.right && this.velocity.x > 0) this.velocity.x = 0;
+    }
+
+    /**
+     * Used to set the gravity and collision detection for environments and nothing else
+     */
+    handleGravity() {
+        const TICK = this.game.clockTick;
+        const SCALER = 3;
+        const MAX_RUN = 123 * SCALER;
+        const ACC_RUN = 200.390625 * SCALER;
+        const MAX_FALL = 270 * SCALER;
+
+        // gravity
+        this.velocity.y += this.fallAcc * TICK;
+        // slow down bucko
+        if (this.velocity.y >= MAX_FALL) this.velocity.y = MAX_FALL;
+        if (this.velocity.y <= -MAX_FALL) this.velocity.y = -MAX_FALL;
+        if (this.velocity.x >= MAX_RUN) this.velocity.x = MAX_RUN;
+        if (this.velocity.x <= -MAX_RUN) this.velocity.x = -MAX_RUN;
+
+        // update position and boxes
+        this.x += this.velocity.x * TICK;
+        this.y += this.velocity.y * TICK;
+        this.updateBoxes();
+
+        let dist = { x: 0, y: 0 }; //the displacement needed between entities
+        dist = this.checkEnvironmentCollisions(dist); //check if colliding with environment and adjust entity accordingly
+        this.updatePositionAndVelocity(dist); //set where entity is based on interactions/collisions put on dist
+        this.updateVelocity();
+    }
+
+    /**
+    * Based on distance {x, y} displace
+    * the entity by the given amount.
+    * 
+    * Set velocities based on positioning
+    * @param {} dist {x, y}
+    */
+    updatePositionAndVelocity(dist) {
+        // update positions based on environment collisions
+        this.x += dist.x;
+        this.y += dist.y;
+        this.updateBoxes();
+        // set respective velocities to 0 for environment collisions
+        if (this.touchFloor() && this.velocity.y > 0) {
+            this.jumped = false;
+            this.velocity.y = 0;
+        }
+        if (this.collisions.top) this.velocity.y = 0; //bonk on ceiling halt momentum
+        if (this.collisions.lo_left && this.velocity.x < 0) this.velocity.x = 0;
+        if (this.collisions.lo_right && this.velocity.x > 0) this.velocity.x = 0;
+
+
+    }
+
+    /**
+     * Checks collisions with environment.
+     * Returns distance needed to be displaced.
+     * @param {*} dist 
+     * @returns dist 
+     */
+    checkEnvironmentCollisions(dist) {
+        //do collisions detection here
+        this.collisions = {
+            lo_left: false, hi_left: false, lo_right: false, hi_right: false,
+            ceil: false, ceil_left: false, ceil_right: false,
+            floor: false, floor_left: false, floor_right: false
+        };
+        const w = this.BB.right - this.BB.left;
+        const h = this.BB.bottom - this.BB.top;
+        const BB = {
+            top: new BoundingBox(this.BB.left, this.BB.top, w, h / 2),
+            bottom: new BoundingBox(this.BB.left, this.BB.top + h / 2, w, h / 2),
+            left: new BoundingBox(this.BB.left, this.BB.top, w / 2, h),
+            right: new BoundingBox(this.BB.left + w / 2, this.BB.top, w / 2, h),
+        };
+
+        let that = this;
+        this.game.foreground2.forEach(function (entity) {
+            const coll = {
+                left: false, right: false, ceil: false, floor: false
+            };
+            if (entity.BB && that.BB.collide(entity.BB)) {
+                // check which side collides
+                if (BB.bottom.collide(entity.BB)) coll.floor = true;
+                if (BB.top.collide(entity.BB)) coll.ceil = true;
+                if (BB.right.collide(entity.BB)) coll.right = true;
+                if (BB.left.collide(entity.BB)) coll.left = true;
+
+                // determine via elimination which side is actually colliding
+                if (coll.floor && !coll.ceil) { // somewhere below
+                    const y = Math.abs(entity.BB.top - that.BB.bottom);
+                    const xL = Math.abs(entity.BB.right - that.BB.left);
+                    const xR = Math.abs(entity.BB.left - that.BB.right);
+                    if (coll.left && !coll.right && xL < w / 2) { // somwehere left
+                        if (xL < y) { // certaintly left
+                            that.collisions.lo_left = true;
+                            dist.x = entity.BB.right - that.BB.left;
+                        }
+                        else { // certaintly below
+                            that.collisions.floor_left = true;
+                            if (Math.abs(entity.BB.top - that.BB.bottom) > Math.abs(dist.y) || dist.y > 0)
+                                dist.y = entity.BB.top - that.BB.bottom;
+                        }
+                    }
+                    else if (coll.right && !coll.left && xR < w / 2) { // somewhere right
+                        if (xR < y) { // certaintly right
+                            that.collisions.lo_right = true;
+                            dist.x = entity.BB.left - that.BB.right;
+                        }
+                        else { // certaintly below
+                            that.collisions.floor_right = true;
+                            if (Math.abs(entity.BB.top - that.BB.bottom) > Math.abs(dist.y) || dist.y > 0)
+                                dist.y = entity.BB.top - that.BB.bottom;
+                        }
+                    }
+                    else { // certaintly below
+                        that.collisions.floor = true;
+                        if (Math.abs(entity.BB.top - that.BB.bottom) > Math.abs(dist.y) || dist.y > 0)
+                            dist.y = entity.BB.top - that.BB.bottom;
+                    }
+                }
+                else if (coll.ceil && !coll.floor) { // somewhere above
+                    const y = Math.abs(entity.BB.bottom - that.BB.top);
+                    const xL = Math.abs(entity.BB.right - that.BB.left);
+                    const xR = Math.abs(entity.BB.left - that.BB.right);
+                    if (coll.left && !coll.right && xL < w / 2) { // somewhere left
+                        if (xL <= y) { // certaintly left
+                            that.collisions.hi_left = true;
+                            dist.x = entity.BB.right - that.BB.left;
+                        }
+                        else { // certaintly above
+                            that.collisions.ceil_left = true;
+                            if (Math.abs(entity.BB.bottom - that.BB.top && !that.collisions.floor) > Math.abs(dist.y));
+                        }
+                    }
+                    else if (coll.right && !coll.left && xR < w / 2) { // somewhere right
+                        if (xR <= y) { // certaintly right
+                            that.collisions.hi_right = true;
+                            dist.x = entity.BB.left - that.BB.right;
+                        }
+                        else { // certaintly above
+                            that.collisions.ceil_right = true;
+                            if (Math.abs(entity.BB.bottom - that.BB.top && !that.collisions.floor) > Math.abs(dist.y))
+                                dist.y = entity.BB.bottom - that.BB.top;
+                        }
+                    }
+                    else { // certaintly above
+                        that.collisions.ceil = true;
+                        if (Math.abs(entity.BB.bottom - that.BB.top && !that.collisions.floor) > Math.abs(dist.y))
+                            dist.y = entity.BB.bottom - that.BB.top;
+                    }
+                }
+                else { // neither above nor below
+                    if (coll.left) { // certaintly left
+                        that.collisions.lo_left = true;
+                        that.collisions.hi_left = true;
+                        dist.x = entity.BB.right - that.BB.left;
+                    }
+                    else if (coll.right) { // certaintly right
+                        that.collisions.lo_right = true;
+                        that.collisions.hi_right = true;
+                        dist.x = entity.BB.left - that.BB.right;
+                    }
+                }
+            }
+            that.updateBoxes();
+
+        });
+        return dist;
+    }
+
+    /**Collision helper methods */
+
+    touchFloor() {
+        return this.collisions.floor || (this.collisions.floor_right && this.collisions.floor_left) ||
+            (this.collisions.floor_right && !this.collisions.hi_right && !this.collisions.lo_right) ||
+            (this.collisions.floor_left && !this.collisions.hi_left && !this.collisions.lo_left);
+    }
+
+
+    touchHole() {
+        return this.collisions.ceil || this.collisions.ceil_right && !this.collisions.lo_right || this.collisions.ceil_left && !this.collisions.lo_left ||
+            (this.collisions.hi_right && !this.collisions.lo_right) ||
+            (this.collisions.hi_left && !this.collisions.lo_left);
+    }
+
 
 }

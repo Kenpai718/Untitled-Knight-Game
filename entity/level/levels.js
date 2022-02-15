@@ -34,6 +34,10 @@ var testLevel = {
         { x: 21, y: 3, killQuota: 0, exitLocation: { x: 4, y: 1, levelNum: 3 } } //door to level 1
     ],
 
+    npcs: [
+        { x: 3, y: 5}
+    ],
+
     signs: [
         {
             x: 6, y: 2,
@@ -97,6 +101,10 @@ var level1_1 = {
         { x: 2, y: 3, killQuota: 0, exitLocation: { x: 1, y: 1, levelNum: 0 } } //debugging room, DELETE THIS BEFORE SUBMISSION!
     ],
 
+    npcs: [
+        { x: 55, y: 6}
+    ],
+
     signs: [
         {
             x: 6, y: 2,
@@ -116,12 +124,13 @@ var level1_1 = {
             text: ["-Hold [S] to crouch.",
                 "-While crouching you can move left or right.",
                 "-You are still able to attack while crouching!",
-                "-Use crouches to get through small spaces or attack fast."
+                "-Use crouches to get through small spaces or attack quickly.",
+                "-You can still roll or shoot an arrow while crouching."
             ]
         },
 
         {
-            x: 55, y: 6,
+            x: 53, y: 6,
             title: "[TUTORIAL: HEALING/SHOP]",
             text: ["-[H] to heal if you have a potion in your inventory.",
                 "-Potions will heal you for up to half your maximum hp.",
@@ -136,9 +145,9 @@ var level1_1 = {
         {
             x: 92, y: 2,
             title: "[TUTORIAL: WALLJUMP]",
-            text: ["-[SPACE] while touching a wall to walljump in the other direction.",
+            text: ["-While falling hold a direction against a wall to wallslide",
+                "-While wallsliding tap [SPACE] to walljump in the other direction.",
                 "         Chain together walljumps to scale vertical heights!",
-                "-Hold a direction against a wall while falling to wallslide",
                 "-If hanging on a ledge press [W] to get up"
             ]
         },
@@ -225,7 +234,7 @@ var level1_1 = {
         { x: 112, y: 12 }
     ],
     skeletons: [
-        { x: 57, y: 7 }
+        { x: 47, y: 7 }
     ],
 }
 

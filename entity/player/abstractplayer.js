@@ -95,6 +95,36 @@ class AbstractPlayer extends AbstractEntity {
         }
     }
 
+    /**
+     * In dead state animation
+     * Restart the game after the animation finishes
+     */
+    setDead() {
+        this.action = this.states.death;
+
+        //slow down velocity of x if moving and dead
+        const TICK = this.game.clockTick;
+        let friction = 1000;
+        if (this.facing == this.dir.left) {
+            if (this.velocity.x < 0) {
+                this.velocity.x += friction * TICK;
+            }
+            else this.velocity.x = 0;
+        }
+        else if (this.facing == this.dir.right) {
+            if (this.velocity.x > 0) {
+                this.velocity.x -= friction * TICK;
+            }
+            else this.velocity.x = 0;
+        }
+
+        //falling collisions and gravity
+        super.handleGravity();
+        if (this.animations[this.facing][this.action].isDone()) {
+            this.restartGame();
+        }
+    }
+
 
     /**
      * Restarts the current level when called
