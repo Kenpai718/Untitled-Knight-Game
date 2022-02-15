@@ -280,8 +280,8 @@ class GameEngine {
         // Draw latest things first
         this.drawLayer(this.background1);
         this.drawLayer(this.background2);
-        this.drawLayer(this.interactables);
         this.drawLayer(this.foreground1);
+        this.drawLayer(this.interactables);
         this.drawLayer(this.foreground2);
         this.drawLayer(this.enemies);
         this.drawLayer(this.entities);
@@ -289,8 +289,8 @@ class GameEngine {
         this.drawLayer(this.information);
 
         if (PARAMS.DEBUG) {
-            this.drawDebug(this.interactables);
             this.drawDebug(this.foreground1);
+            this.drawDebug(this.interactables);
             this.drawDebug(this.foreground2);
             this.drawDebug(this.enemies);
             this.drawDebug(this.entities);
@@ -324,8 +324,8 @@ class GameEngine {
 
         this.removeFromLayer(this.background1);
         this.removeFromLayer(this.background2);
-        this.removeFromLayer(this.interactables);
         this.removeFromLayer(this.foreground1);
+        this.removeFromLayer(this.interactables);
         this.removeFromLayer(this.foreground2);
         this.removeFromLayer(this.enemies);
         this.removeFromLayer(this.entities);
