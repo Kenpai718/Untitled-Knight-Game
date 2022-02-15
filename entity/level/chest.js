@@ -1,4 +1,4 @@
-class Chest extends AbstractBackFeature {
+class Chest extends AbstractInteractable {
     constructor(game, x, y, direction) {
 
         super(game, x, y);

@@ -81,17 +81,17 @@ class Npc {
         }
 
         // inactive
-        this.animations[0][0] = new Animator(this.spritesheet, 640, 560, 80, 80, 2, 10, 0, false, true, false);
-        this.animations[0][1] = new Animator(this.spritesheet, 640, 560, 80, 80, 2, 10, 0, true, true, true);
+        this.animations[0][0] = new Animator(this.spritesheet, 640, 720, 80, 80, 2, 10, 0, false, true, false);
+        this.animations[0][1] = new Animator(this.spritesheet, 640, 720, 80, 80, 2, 10, 0, true, true, true);
         
 
         // awaking // 
-        this.animations[1][0] = new Animator(this.spritesheet, 0, 560, 80, 80, 10, 0.15, 0, true, false, false);
-        this.animations[1][1] = new Animator(this.spritesheet, 0, 480, 80, 80, 10, 0.15, 0, false, false, false);
+        this.animations[1][0] = new Animator(this.spritesheet, 0, 720, 80, 80, 10, 0.15, 0, true, false, false);
+        this.animations[1][1] = new Animator(this.spritesheet, 0, 640, 80, 80, 10, 0.15, 0, false, false, false);
         
         // active
-        this.animations[2][0] = new Animator(this.spritesheet, 640, 0, 80, 80, 2, 2, 0, true, true, true);
-        this.animations[2][1] = new Animator(this.spritesheet, 640, 0, 80, 80, 2, 2, 0, true, true, false);
+        this.animations[2][0] = new Animator(this.spritesheet, 0, 80, 80, 80, 4, 0.15, 0, false, true, false);
+        this.animations[2][1] = new Animator(this.spritesheet, 0, 0, 80, 80, 4, 0.15, 0, true, true, false);
         
     };
 

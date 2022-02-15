@@ -1,4 +1,4 @@
-class Door extends AbstractBackFeature {
+class Door extends AbstractInteractable {
     constructor(game, x, y, killQuota, exitLocation) {
         super(game, x, y);
         this.killQuota = killQuota;
@@ -32,7 +32,7 @@ class Door extends AbstractBackFeature {
         }
         // once player has killed enough mobs, set canEnter to true
         if (this.game.camera.killCount >= this.killQuota) this.canEnter = true;
-        
+
         var that = this;
         this.game.entities.forEach(function (entity) {
             if (entity.BB && that.BB.collide(entity.BB)) {

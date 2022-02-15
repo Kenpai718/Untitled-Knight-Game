@@ -29,7 +29,7 @@ var testLevel = {
     player: { x: 1, y: 1 },
     music: MUSIC.FODLAN_WINDS,
     doors: [
-        { x: 1, y: 3, killQuota: 0, exitLocation: { x: 5, y: 1, levelNum: 1 } }, //door to level 3
+        { x: 1, y: 3, killQuota: 0, exitLocation: { x: 5, y: 2, levelNum: 1 } }, //door to level 3
         { x: 6, y: 7, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 2 } }, //door to level 2
         { x: 21, y: 3, killQuota: 0, exitLocation: { x: 4, y: 1, levelNum: 3 } } //door to level 1
     ],

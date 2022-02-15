@@ -1,6 +1,6 @@
 // Note : the obelisk is halfway in the ground on purpose
 // Obelisk will act as a button. When activated the bricks associated to the obelisk will be removed from the world.
-class Obelisk extends AbstractBackFeature {
+class Obelisk extends AbstractInteractable {
     constructor(game, x, y, brickX, brickY, brickWidth, brickHeight) {
         super(game, x, y);
         this.bricks = new Brick (this.game, brickX, this.game.camera.level.height - brickY - 1, brickWidth, brickHeight);
@@ -39,7 +39,7 @@ class Obelisk extends AbstractBackFeature {
             ASSET_MANAGER.playAsset(SFX.OBELISK_ON);
         }
     };
-    
+
 
     draw(ctx) {
         this.animations[this.state].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, 1);
