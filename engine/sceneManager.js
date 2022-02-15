@@ -10,28 +10,35 @@ class SceneManager {
         this.y = 0;
         this.defaultMusic = MUSIC.CHASING_DAYBREAK;
 
-
-
         //game status
         this.title = true;
         this.gameOver = false;
-
-        this.levelState = [];
-
-        this.levelH = 0;
-        this.levelW = 0;
-
-        this.killCount = 0;
-
-        //levels array to load levels by calling levels[0], levels[1], etc
         this.currentLevel = 0;
+
         this.setupAllLevels();
         this.loadTitle();
-        //this.loadLevel(this.currentLevel, false);
     };
 
+    /**
+     * MUST BE CALLED BEFORE LOADING A LEVEL!!!
+     * Initialize all levels into levels array
+     */
+    setupAllLevels() {
+        var self = this;
+        let levelZero = testLevel;
+        let levelOne = level1_1;
+        let levelTwo = level1_2;
+        let levelThree = level1_3;
+        this.levels = [levelZero, levelOne, levelTwo, levelThree];
+    };
+
+    /**
+     * Loads the title screen
+     */
     loadTitle() {
         this.game.addEntity(new Background(this.game));
+        this.levelState = [];
+        this.killCount = 0;
         var x = (this.game.surfaceWidth / 2) - ((40 * 10) / 2);
         var y = (this.game.surfaceHeight / 2) - 40;
         this.startGameBB = new BoundingBox(x, y, 40 * 10, -40);
@@ -44,44 +51,6 @@ class SceneManager {
     };
 
     /**
-     * MUST BE CALLED BEFORE LOADING A LEVEL!!!
-     * Initialize all levels into levels array
-     */
-    setupAllLevels() {
-        var self = this;
-        // let levelZero = function() {self.loadScene(testLevel)};
-        // let levelOne = function() {self.loadScene(level1_1)};
-        // let levelTwo = function() {self.loadScene(level1_2)};
-        // let levelThree = function() {self.loadScene(level1_3)};
-        let levelZero = testLevel;
-        let levelOne = level1_1;
-        let levelTwo = level1_2;
-        let levelThree = level1_3;
-        this.levels = [levelZero, levelOne, levelTwo, levelThree];
-    }
-
-    /**
-     * MAKE SURE THIS IS CALLED BEFORE LOADING IN A LEVELS COMPONENTS!!!
-     * This instantiates a player and places them appropriately on a level.
-     *
-     * @param theX x of Player
-     * @param theY y of Player
-    */
-    makePlayer(theX, theY) {
-        let spawnX = theX * PARAMS.BLOCKDIM;
-        let spawnY = theY * PARAMS.BLOCKDIM;
-
-        this.player = new Knight(this.game, 0, 0);
-        this.player.x = spawnX - this.player.BB.left;
-        this.player.y = spawnY - this.player.BB.bottom;
-        //this.player.updateBB();
-        this.inventory = this.player.myInventory;
-        this.heartsbar = new HeartBar(this.game, this.player);
-        this.vignette = new Vignette(this.game);
-        this.game.addEntity(this.player);
-    }
-
-    /**
      * Loads a valid level
      * Throws an error if that level has not been made yet
      * @param {*} number level number found in levels array
@@ -92,9 +61,7 @@ class SceneManager {
     loadLevel(number, usedDoor, doorExitX, doorExitY) {
         // save the state of the enemies and interactables for the current level
         if (!this.title && !this.restart) {
-            let lastEnemies = [...this.game.enemies]; // [...] syntax is to make a deep copy
-            let lastInteractables = [...this.game.interactables];
-            this.levelState[this.currentLevel] = { enemies : lastEnemies, interactables : lastInteractables };
+            this.levelState[this.currentLevel] = { enemies : [...this.game.enemies], interactables : [...this.game.interactables], killCount : this.killCount };
         } else {
             this.title = false;
             this.restart = false;
@@ -104,7 +71,7 @@ class SceneManager {
             throw "Invalid load level number";
         } else {
             console.log("Loading level " + number);
-            this.killCount = 0;
+            this.killCount = this.levelState[number] ? this.levelState[number].killCount : 0;
             this.currentLevel = number;
             let lvlData = this.levels[number];
             if (usedDoor) {
@@ -114,7 +81,7 @@ class SceneManager {
                 this.loadScene(lvlData, lvlData.player.x, lvlData.player.y);
             }
         }
-    }
+    };
 
     /**
      * Clear the entities list
@@ -139,143 +106,6 @@ class SceneManager {
         layer.forEach(function (entity) {
             entity.removeFromWorld = true;
         });
-    }
-
-    /**
-     * Update the camera and gui elements
-     */
-    update() {
-        if (!this.title) {
-            //debug key toggle, flip state of debug checkbox
-            if (this.game.debug) {
-                this.game.debug = false;
-                document.getElementById("debug").checked = !document.getElementById("debug").checked;
-            }
-            PARAMS.DEBUG = document.getElementById("debug").checked;
-            this.updateAudio();
-            this.updateGUI();
-
-            if (this.player.BB.left < 0) this.player.x -= this.player.BB.left;
-            else if (this.player.BB.right > this.level.width * PARAMS.BLOCKDIM) this.player.x -= this.player.BB.right - this.level.width * PARAMS.BLOCKDIM;
-            if (this.x < this.player.x - this.game.surfaceWidth * 9 / 16 && this.x + this.game.surfaceWidth < this.level.width * PARAMS.BLOCKDIM) this.x = this.player.x - this.game.surfaceWidth * 9 / 16;
-            else if (this.x > this.player.x - this.game.surfaceWidth * 7 / 16 && this.x > 0) this.x = this.player.x - this.game.surfaceWidth * 7 / 16;
-
-            if (this.x < 0) this.x = 0;
-            else if (this.x + this.game.surfaceWidth > this.level.width * PARAMS.BLOCKDIM) this.x = this.level.width * PARAMS.BLOCKDIM - this.game.surfaceWidth;
-            if (this.y < this.player.y - this.game.surfaceHeight * 3 / 16 && this.y + this.game.surfaceHeight < this.level.height * PARAMS.BLOCKDIM) this.y = this.player.y - this.game.surfaceHeight * 3 / 16;
-            else if (this.y > this.player.y - this.game.surfaceHeight * 1 / 16 && this.y > 0) this.y = this.player.y - this.game.surfaceHeight * 1 / 16;
-            if (this.y < 0) this.y = 0;
-            else if (this.y + this.game.surfaceHeight > this.level.height * PARAMS.BLOCKDIM) this.y = this.level.height * PARAMS.BLOCKDIM - this.game.surfaceHeight;
-
-            this.x = Math.round(this.x);
-            this.y = Math.round(this.y);
-        } else {
-            this.textColor = 0;
-            if (this.game.mouse) {
-                if (this.startGameBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
-                    this.textColor = 1;
-                } else if (this.controlsBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
-                    this.textColor = 2;
-                } else if (this.creditsBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
-                    this.textColor = 3;
-                }
-            }
-            if (this.game.click) {
-                if (this.startGameBB.collideMouse(this.game.click.x, this.game.click.y)) {
-                    this.game.attack = false;
-                    this.loadLevel(this.currentLevel, false);
-                } else if (this.controlsBB.collideMouse(this.game.click.x, this.game.click.y)) {
-                    this.credits = false;
-                    this.controls = !this.controls;
-                } else if (this.creditsBB.collideMouse(this.game.click.x, this.game.click.y)) {
-                    this.controls = false;
-                    this.credits = !this.credits;
-                }
-                this.game.click = null;
-            }
-        }
-    };
-
-    updateGUI() {
-        this.vignette.update();
-        this.heartsbar.update();
-        this.inventory.update();
-    }
-
-    updateAudio() {
-        let mute = document.getElementById("mute").checked;
-        let volume = document.getElementById("volume").value;
-        ASSET_MANAGER.muteAudio(mute);
-        ASSET_MANAGER.adjustVolume(volume);
-    };
-
-    drawGUI(ctx){
-        ctx.fillStyle = "White";
-        this.vignette.draw(ctx);
-        this.inventory.draw(ctx);
-        this.heartsbar.draw(ctx);
-    }
-
-    draw(ctx) {
-        if (!this.title) {
-            //current level
-            ctx.font = PARAMS.BIG_FONT;
-            ctx.fillStyle = "White";
-            let xOffset;
-            (this.level.label.length <= 4) ? xOffset = this.level.label.length * 70 : xOffset = this.level.label.length * 31;
-            ctx.fillText("Level:" + this.level.label, this.game.surfaceWidth - xOffset, 30);
-            // display kill quota message, i would do this in the door class but the text gets covered by other entites
-            if (this.killQuotaMessage) {
-                ctx.font = PARAMS.BIG_FONT;
-                ctx.fillText("Must defeat " + this.remainingKills + " more enemies to advance", (this.game.surfaceWidth / 2) - ((20 * 35) / 2), 40);
-            }
-            if (PARAMS.DEBUG) {
-                this.viewDebug(ctx);
-                this.minimap.draw(ctx);
-            }
-
-            this.drawGUI(ctx);
-        } else {
-            var fontSize = 60;
-            ctx.font = fontSize + 'px "Press Start 2P"';
-            ctx.fillStyle = "White";
-            let gameTitle = "Untitled Webgame";
-            ctx.fillText("Untitled Webgame", (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 3);
-            ctx.font = '40px "Press Start 2P"';
-            ctx.fillStyle = this.textColor == 1 ? "Grey" : "White";
-            ctx.fillText("Start game", this.startGameBB.x, this.startGameBB.y);
-            ctx.fillStyle = this.textColor == 2 ? "Grey" : "White";
-            ctx.fillText("Controls", this.controlsBB.x, this.controlsBB.y);
-            ctx.fillStyle = this.textColor == 3 ? "Grey" : "White";
-            ctx.fillText("Credits", this.creditsBB.x, this.creditsBB.y);
-            ctx.strokeStyle = "Red";
-            if (this.controls) {
-                ctx.font = '30px "Press Start 2P"';
-                ctx.fillStyle = "White";
-                ctx.fillText("A : Move Left", 30, 30 * 6 * 2);
-                ctx.fillText("D : Move Right", 30, 30 * 7 * 2);
-                ctx.fillText("S : Crouch", 30, 30 * 8 * 2);
-                ctx.fillText("W : Interact", 30, 30 * 9 * 2);
-                ctx.fillText("Space : Jump", 30, 30 * 10 * 2);
-                ctx.fillText("LShift : Roll", 30, 30 * 11 * 2);
-                ctx.fillText("Left Click : Melee Attack", 30, 30 * 12 * 2);
-                ctx.fillText("Right Click : Shoot Arrow", 30, 30 * 13 * 2);
-                ctx.fillText("H : Heal", 30, 30 * 14 * 2);
-            }
-            if (this.credits) {
-                ctx.font = '30px "Press Start 2P"';
-                ctx.fillStyle = "White";
-                ctx.fillText("Developed by:", 30, 30 * 6 * 2);
-                ctx.fillText("Kenneth Ahrens", 30, 30 * 7 * 2);
-                ctx.fillText("Andre Larson", 30, 30 * 8 * 2);
-                ctx.fillText("Embert Pezzali", 30, 30 * 9 * 2);
-                ctx.fillText("David Shcherbina", 30, 30 * 10 * 2);
-            }
-        }
-    };
-
-    updateKillQuota(count) {
-        this.remainingKills = count;
     };
 
     /**
@@ -310,7 +140,6 @@ class SceneManager {
         //play an entrance sound effect upon loading a level
         ASSET_MANAGER.playAsset(SFX.DOOR_ENTER);
 
-
         //load environment entities
         if (this.level.ground) {
             for (var i = 0; i < this.level.ground.length; i++) {
@@ -336,7 +165,7 @@ class SceneManager {
                 this.game.addEntity(new Walls(this.game, walls.x, h - walls.y - 1, 1, walls.height, walls.type));
             }
         }
-        
+
         if (this.level.signs) {
             for (var i = 0; i < this.level.signs.length; i++) {
                 let sign = this.level.signs[i];
@@ -459,7 +288,27 @@ class SceneManager {
                 this.game.addEntity(new BackgroundWalls(this.game, bw.x, h - bw.y - 1, bw.width, bw.height));
             }
         }
-    }
+    };
+
+    /**
+     * MAKE SURE THIS IS CALLED BEFORE LOADING IN A LEVELS COMPONENTS!!!
+     * This instantiates a player and places them appropriately on a level.
+     *
+     * @param theX x of Player
+     * @param theY y of Player
+    */
+    makePlayer(theX, theY) {
+        let spawnX = theX * PARAMS.BLOCKDIM;
+        let spawnY = theY * PARAMS.BLOCKDIM;
+
+        this.player = new Knight(this.game, 0, 0);
+        this.player.x = spawnX - this.player.BB.left;
+        this.player.y = spawnY - this.player.BB.bottom;
+        this.inventory = this.player.myInventory;
+        this.heartsbar = new HeartBar(this.game, this.player);
+        this.vignette = new Vignette(this.game);
+        this.game.addEntity(this.player);
+    };
 
     /**
      * Position an entity based through BB and block dimensions
@@ -471,11 +320,146 @@ class SceneManager {
         entity.x = x * PARAMS.BLOCKDIM - entity.BB.left;
         entity.y = y * PARAMS.BLOCKDIM - entity.BB.bottom;
         entity.updateBoxes();
-    }
+    };
+
+    /**
+     * Update the camera and gui elements
+     */
+    update() {
+        if (!this.title) {
+            //debug key toggle, flip state of debug checkbox
+            if (this.game.debug) {
+                this.game.debug = false;
+                document.getElementById("debug").checked = !document.getElementById("debug").checked;
+            }
+            PARAMS.DEBUG = document.getElementById("debug").checked;
+            this.updateAudio();
+            this.updateGUI();
+
+            if (this.player.BB.left < 0) this.player.x -= this.player.BB.left;
+            else if (this.player.BB.right > this.level.width * PARAMS.BLOCKDIM) this.player.x -= this.player.BB.right - this.level.width * PARAMS.BLOCKDIM;
+            if (this.x < this.player.x - this.game.surfaceWidth * 9 / 16 && this.x + this.game.surfaceWidth < this.level.width * PARAMS.BLOCKDIM) this.x = this.player.x - this.game.surfaceWidth * 9 / 16;
+            else if (this.x > this.player.x - this.game.surfaceWidth * 7 / 16 && this.x > 0) this.x = this.player.x - this.game.surfaceWidth * 7 / 16;
+
+            if (this.x < 0) this.x = 0;
+            else if (this.x + this.game.surfaceWidth > this.level.width * PARAMS.BLOCKDIM) this.x = this.level.width * PARAMS.BLOCKDIM - this.game.surfaceWidth;
+            if (this.y < this.player.y - this.game.surfaceHeight * 3 / 16 && this.y + this.game.surfaceHeight < this.level.height * PARAMS.BLOCKDIM) this.y = this.player.y - this.game.surfaceHeight * 3 / 16;
+            else if (this.y > this.player.y - this.game.surfaceHeight * 1 / 16 && this.y > 0) this.y = this.player.y - this.game.surfaceHeight * 1 / 16;
+            if (this.y < 0) this.y = 0;
+            else if (this.y + this.game.surfaceHeight > this.level.height * PARAMS.BLOCKDIM) this.y = this.level.height * PARAMS.BLOCKDIM - this.game.surfaceHeight;
+
+            this.x = Math.round(this.x);
+            this.y = Math.round(this.y);
+        } else { // title screen logic
+            this.textColor = 0;
+            if (this.game.mouse) {
+                if (this.startGameBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
+                    this.textColor = 1;
+                } else if (this.controlsBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
+                    this.textColor = 2;
+                } else if (this.creditsBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
+                    this.textColor = 3;
+                }
+            }
+            if (this.game.click) {
+                if (this.startGameBB.collideMouse(this.game.click.x, this.game.click.y)) {
+                    this.game.attack = false;
+                    this.loadLevel(this.currentLevel, false);
+                } else if (this.controlsBB.collideMouse(this.game.click.x, this.game.click.y)) {
+                    this.credits = false;
+                    this.controls = !this.controls;
+                } else if (this.creditsBB.collideMouse(this.game.click.x, this.game.click.y)) {
+                    this.controls = false;
+                    this.credits = !this.credits;
+                }
+                this.game.click = null;
+            }
+        }
+    };
+
+    updateGUI() {
+        this.vignette.update();
+        this.heartsbar.update();
+        this.inventory.update();
+    };
+
+    updateAudio() {
+        let mute = document.getElementById("mute").checked;
+        let volume = document.getElementById("volume").value;
+        ASSET_MANAGER.muteAudio(mute);
+        ASSET_MANAGER.adjustVolume(volume);
+    };
+
+    draw(ctx) {
+        if (!this.title) {
+            //current level
+            ctx.font = PARAMS.BIG_FONT;
+            ctx.fillStyle = "White";
+            let xOffset;
+            (this.level.label.length <= 4) ? xOffset = this.level.label.length * 70 : xOffset = this.level.label.length * 31;
+            ctx.fillText("Level:" + this.level.label, this.game.surfaceWidth - xOffset, 30);
+            // display kill quota message, i would do this in the door class but the text gets covered by other entites
+            if (this.killQuotaMessage) {
+                ctx.font = PARAMS.BIG_FONT;
+                ctx.fillText("Must defeat " + this.remainingKills + " more enemies to advance", (this.game.surfaceWidth / 2) - ((20 * 35) / 2), 40);
+            }
+            if (PARAMS.DEBUG) {
+                this.viewDebug(ctx);
+                this.minimap.draw(ctx);
+            }
+            this.drawGUI(ctx);
+        } else {
+            var fontSize = 60;
+            ctx.font = fontSize + 'px "Press Start 2P"';
+            ctx.fillStyle = "White";
+            let gameTitle = "Untitled Webgame";
+            ctx.fillText("Untitled Webgame", (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 3);
+            ctx.font = '40px "Press Start 2P"';
+            ctx.fillStyle = this.textColor == 1 ? "Grey" : "White";
+            ctx.fillText("Start game", this.startGameBB.x, this.startGameBB.y);
+            ctx.fillStyle = this.textColor == 2 ? "Grey" : "White";
+            ctx.fillText("Controls", this.controlsBB.x, this.controlsBB.y);
+            ctx.fillStyle = this.textColor == 3 ? "Grey" : "White";
+            ctx.fillText("Credits", this.creditsBB.x, this.creditsBB.y);
+            ctx.strokeStyle = "Red";
+            if (this.controls) {
+                ctx.font = '30px "Press Start 2P"';
+                ctx.fillStyle = "White";
+                ctx.fillText("A : Move Left", 30, 30 * 6 * 2);
+                ctx.fillText("D : Move Right", 30, 30 * 7 * 2);
+                ctx.fillText("S : Crouch", 30, 30 * 8 * 2);
+                ctx.fillText("W : Interact", 30, 30 * 9 * 2);
+                ctx.fillText("Space : Jump", 30, 30 * 10 * 2);
+                ctx.fillText("LShift : Roll", 30, 30 * 11 * 2);
+                ctx.fillText("Left Click : Melee Attack", 30, 30 * 12 * 2);
+                ctx.fillText("Right Click : Shoot Arrow", 30, 30 * 13 * 2);
+                ctx.fillText("H : Heal", 30, 30 * 14 * 2);
+            }
+            if (this.credits) {
+                ctx.font = '30px "Press Start 2P"';
+                ctx.fillStyle = "White";
+                ctx.fillText("Developed by:", 30, 30 * 6 * 2);
+                ctx.fillText("Kenneth Ahrens", 30, 30 * 7 * 2);
+                ctx.fillText("Andre Larson", 30, 30 * 8 * 2);
+                ctx.fillText("Embert Pezzali", 30, 30 * 9 * 2);
+                ctx.fillText("David Shcherbina", 30, 30 * 10 * 2);
+            }
+        }
+    };
+
+    drawGUI(ctx){
+        ctx.fillStyle = "White";
+        this.vignette.draw(ctx);
+        this.inventory.draw(ctx);
+        this.heartsbar.draw(ctx);
+    };
+
+    updateKillQuota(count) {
+        this.remainingKills = count;
+    };
 
     //keyboard input
     viewDebug(ctx) {
-
         ctx.font = PARAMS.DEFAULT_FONT;
 
         // left debug
@@ -521,7 +505,6 @@ class SceneManager {
         ctx.fillText("LSHIFT", 140, this.game.surfaceHeight - 60);
 
         // attack debug
-
         ctx.lineWidth = 2;
         ctx.strokeStyle = this.game.attack ? "Red" : "SpringGreen";
         ctx.fillStyle = ctx.strokeStyle;
@@ -535,8 +518,7 @@ class SceneManager {
     setupMinimap() {
         let x = (this.game.surfaceWidth) - (this.levelW * PARAMS.SCALE);
         this.minimap = new Minimap(this.game, x - 100, 40, this.level);
-
-    }
+    };
 };
 
 /**
@@ -588,7 +570,7 @@ class Minimap {
         this.traceEntities(ctx);
         ctx.globalAlpha = 1;
 
-    }
+    };
 
     /**Track current entity positions and draws them to canvas */
     traceEntities(ctx) {
@@ -610,7 +592,7 @@ class Minimap {
 
             ctx.fillRect(this.x + myX, this.y + myY + 4 * PARAMS.SCALE, myW, myH);
         }
-    }
+    };
 
 
     /**
@@ -747,7 +729,7 @@ class Minimap {
             }
         }
 
-    }
+    };
 
     /**
      * Build a minimap
@@ -765,7 +747,7 @@ class Minimap {
         ctx.fillRect(miniX, miniY, miniW, miniH);
         ctx.strokeStyle = "GhostWhite";
         ctx.strokeRect(miniX, miniY, miniW, miniH);
-    }
+    };
 
     update() {
 
