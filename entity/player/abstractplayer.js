@@ -1,8 +1,8 @@
 /**
  * Abstract implementation of an player entity so polymorphism can be used
- * 
+ *
  * Mainly used for the "is-a" relationship
- * 
+ *
  * Has methods a player object should have access to such as healing, shooting, potions, and inventory
  */
 
@@ -47,7 +47,7 @@ class AbstractPlayer extends AbstractEntity {
             this.myInventory.arrows--;
             ASSET_MANAGER.playAsset(SFX.BOW_SHOT);
 
-        } else { //out of arrows 
+        } else { //out of arrows
             ASSET_MANAGER.playAsset(SFX.CLICK);
         }
     }
@@ -100,6 +100,10 @@ class AbstractPlayer extends AbstractEntity {
      * Restarts the current level when called
      */
     restartGame() {
+        // remove the current level from the level states
+        this.game.camera.levelState.splice(this.game.camera.levelState.indexOf(this.game.camera.currentLevel, 1));
+        // set restart flag to true so that the state isn't saved
+        this.game.camera.restart = true;
         this.game.camera.loadLevel(this.game.camera.currentLevel);
     }
 }

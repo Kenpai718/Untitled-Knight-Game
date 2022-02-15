@@ -715,7 +715,7 @@ class Knight extends AbstractPlayer {
             }
         });
 
-        this.game.entities.forEach(function (entity) {
+        this.game.enemies.forEach(function (entity) {
             //interactions with enemy
             if (entity instanceof AbstractEnemy) {
                 //attacked by an enemy

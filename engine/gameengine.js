@@ -12,6 +12,8 @@ class GameEngine {
         this.background2 = [];
         this.foreground1 = [];
         this.foreground2 = [];
+        this.enemies = [];
+        this.interactables = [];
         this.entities = [];
         this.projectiles = [];
         this.information = [];
@@ -225,22 +227,23 @@ class GameEngine {
                     break;
             }
         }, false);
-
-        // window.addEventListener("keydown", event => this.keys[event.key] = true);
-        // window.addEventListener("keyup", event => this.keys[event.key] = false);
     };
 
     addEntity(entity) {
         const e = entity;
         if (e instanceof Arrow || e instanceof FlyingEyeProjectile)
             this.projectiles.push(e);
+        else if (e instanceof AbstractEnemy)
+            this.enemies.push(e);
         else if (e instanceof AbstractEntity)
             this.entities.push(e);
         else if (e instanceof Background)
             this.background1.push(e);
         else if (e instanceof BackgroundWalls)
             this.background2.push(e);
-        else if (e instanceof AbstractBackFeature || e instanceof Door)
+        else if (e instanceof AbstractInteractable)
+            this.interactables.push(e);
+        else if (e instanceof AbstractBackFeature)
             this.foreground1.push(entity);
         else if (e instanceof AbstractBarrier)
             this.foreground2.push(entity);
@@ -252,15 +255,19 @@ class GameEngine {
         const e = entity;
         if (e instanceof Arrow || e instanceof FlyingEyeProjectile)
             this.projectiles.unshift(e);
+        else if (e instanceof AbstractEnemy)
+            this.enemies.unshift(e);
         else if (e instanceof AbstractEntity)
             this.entities.unshift(e);
         else if (e instanceof Background)
             this.background1.unshift(e);
         else if (e instanceof BackgroundWalls)
             this.background2.unshift(e);
-        else if (e instanceof Torch || e instanceof Window || e instanceof Banner || e instanceof Chain || e instanceof Door)
+        else if (e instanceof AbstractInteractable)
+            this.interactables.unshift(e);
+        else if (e instanceof AbstractBackFeature)
             this.foreground1.unshift(entity);
-        else if (e instanceof Ground || e instanceof Walls || e instanceof Platform || e instanceof Brick)
+        else if (e instanceof AbstractBarrier)
             this.foreground2.unshift(entity);
         else
             this.information.unshift(entity);
@@ -270,26 +277,26 @@ class GameEngine {
         // Clear the whole canvas with transparent color (rgba(0, 0, 0, 0))
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
-
         // Draw latest things first
         this.drawLayer(this.background1);
         this.drawLayer(this.background2);
         this.drawLayer(this.foreground1);
+        this.drawLayer(this.interactables);
         this.drawLayer(this.foreground2);
+        this.drawLayer(this.enemies);
         this.drawLayer(this.entities);
         this.drawLayer(this.projectiles);
         this.drawLayer(this.information);
 
         if (PARAMS.DEBUG) {
-            //this.drawDebug(this.background1);
-            //this.drawDebug(this.background2);
             this.drawDebug(this.foreground1);
+            this.drawDebug(this.interactables);
             this.drawDebug(this.foreground2);
+            this.drawDebug(this.enemies);
             this.drawDebug(this.entities);
             this.drawDebug(this.projectiles);
             this.drawDebug(this.information);
         }
-
 
         //update the camera (scene manager)
         this.camera.draw(this.ctx);
@@ -308,6 +315,8 @@ class GameEngine {
     }
 
     update() {
+        this.updateLayer(this.enemies);
+        this.updateLayer(this.interactables);
         this.updateLayer(this.entities);
         this.updateLayer(this.projectiles);
         this.updateLayer(this.foreground1);
@@ -316,7 +325,9 @@ class GameEngine {
         this.removeFromLayer(this.background1);
         this.removeFromLayer(this.background2);
         this.removeFromLayer(this.foreground1);
+        this.removeFromLayer(this.interactables);
         this.removeFromLayer(this.foreground2);
+        this.removeFromLayer(this.enemies);
         this.removeFromLayer(this.entities);
         this.removeFromLayer(this.projectiles);
         this.removeFromLayer(this.information);
