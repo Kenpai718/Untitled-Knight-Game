@@ -37,12 +37,12 @@ class Knight extends AbstractPlayer {
         this.dir = { left: 0, right: 1 }; //directions
         this.states = {
             idle: 0, run: 1,
-            crouch: 2, crouch_walk: 3, crouch_atk: 4, crouch_shoot: 5,
-            roll: 6, wall_climb: 7, wall_hang: 8, wall_slide: 9,
-            jump: 10, jump_to_fall: 11, falling: 12,
-            turn_around: 13, slide: 14,
-            attack1: 15, attack2: 16, shoot: 17,
-            death: 18
+            crouch: 2, crouch_walk: 3, crouch_atk: 4, crouch_shoot: 5, crouch_pluck: 6,
+            roll: 7, wall_climb: 8, wall_hang: 9, wall_slide: 10,
+            jump: 11, jump_to_fall: 12, falling: 13,
+            turn_around: 14, slide: 15,
+            attack1: 16, attack2: 17, shoot: 18, pluck : 19,
+            death: 20
         };
 
 
@@ -59,6 +59,7 @@ class Knight extends AbstractPlayer {
         this.combo = false;
         this.inAir = false;
         this.arrow = false;
+        this.crouch = false;
         this.doubleJump = true;
         this.flickerFlag = false;
         //these two audio variables control which sound effect is playing during the attack combo
@@ -187,7 +188,7 @@ class Knight extends AbstractPlayer {
 
             //set to falling state if needed
             if (!this.touchFloor() && (this.action < this.states.jump || this.action > this.states.falling) && 
-            this.action != this.states.attack1 && this.action != this.states.attack2 && this.action != this.states.shoot) {
+            this.action != this.states.attack1 && this.action != this.states.attack2 && this.action != this.states.shoot && this.action != this.states.pluck) {
                 if ((this.action != this.states.wall_slide && this.action != this.states.roll && this.action != this.states.wall_hang && this.action != this.states.wall_climb) ||
                     (this.action == this.states.wall_slide && !(this.collisions.lo_left || this.collisions.lo_right))) {
                     this.action = this.states.falling;
@@ -243,6 +244,7 @@ class Knight extends AbstractPlayer {
                 //horizontal movement
                 if (this.game.down || this.touchHole()) { //crouch
                     this.action = this.states.crouch;
+                    this.crouch = true;
                     //crouch left or right (move at half speed)
                     if (this.game.right && !this.game.attack && !this.game.shoot) { //run right
                         this.facing = this.dir.right;
@@ -277,6 +279,7 @@ class Knight extends AbstractPlayer {
                         this.action = this.states.run;
                         this.velocity.x += MAX_RUN;
                     }
+                    this.crouch = false;
                 } else if (this.game.left && !this.game.attack && !this.game.shoot) { //run left
                     if (this.facing == this.dir.right && this.velocity.x > 0) {
                         this.action = this.states.turn_around;
@@ -287,6 +290,7 @@ class Knight extends AbstractPlayer {
                         this.action = this.states.run;
                         this.velocity.x -= MAX_RUN;
                     }
+                    this.crouch = false;
                 } else { //idle
                     if (this.facing == this.dir.left) {
                         if (this.velocity.x < 0) {
@@ -301,6 +305,7 @@ class Knight extends AbstractPlayer {
                         else this.velocity.x = 0;
                     }
                     this.action = this.DEFAULT_ACTION;
+                    this.crouch = false;
                 }
                 //jump press
                 if (this.game.jump && !this.action.jump && !this.touchCeiling()) {
@@ -447,7 +452,7 @@ class Knight extends AbstractPlayer {
         let action = this.action;
         //attack logic (melee/ranged)
         if (this.game.attack) {
-            if (this.game.down || this.touchHole()) { //crouch attack
+            if (this.crouch) { //crouch attack
                 this.action = this.states.crouch_atk;
             } else { //standing or jumping attack
 
@@ -490,15 +495,28 @@ class Knight extends AbstractPlayer {
             }
 
         } else if (!this.game.attack && this.game.shoot) { //only shoot an arrow when not attacking
-            if (this.game.down || this.touchHole()) {
-                this.action = this.states.crouch_shoot;
+            if (this.game.mouse.x < this.x + this.width / 2)
+                this.facing = this.dir.left;
+            if (this.game.mouse.x > this.x + this.width / 2)
+                this.facing = this.dir.right;
+            if (this.myInventory.arrows > 0 || this.myInventory.arrows == 0 && this.arrow) {
+                if (this.crouch) {
+                    this.action = this.states.crouch_shoot;
+                }
+                else this.action = this.states.shoot;
             }
-            else this.action = this.states.shoot;
+            else {
+                if (this.game.down || this.touchHole()) {
+                    this.action = this.states.crouch_pluck;
+                }
+                else this.action = this.states.pluck;
+            }
             let done = this.animations[this.facing][this.action].isDone();
 
             if (this.animations[this.facing][this.action].currentFrame() == 2 && !this.arrow) {
+                if (this.myInventory.arrows > 0)
+                    this.arrow = true;
                 super.shootArrow();
-                this.arrow = true;
             }
             if (done) {
                 this.action = this.game.down || this.touchHole() ? this.states.crouch : this.DEFAULT_ACTION; //back to idle; added case for crouch attacks
@@ -516,6 +534,9 @@ class Knight extends AbstractPlayer {
             
             this.resetAnimationTimers(this.states.shoot);
             this.resetAnimationTimers(this.states.crouch_shoot);
+
+            this.resetAnimationTimers(this.states.pluck);
+            this.resetAnimationTimers(this.states.crouch_pluck);
 
             //reset shooting animation
         }
@@ -913,7 +934,7 @@ class Knight extends AbstractPlayer {
 
     loadAnimations() {
         let numDir = 2;
-        let numStates = 19;
+        let numStates = 21;
         for (var i = 0; i < numDir; i++) {
             this.animations.push([]);
             for (var j = 0; j < numStates; j++) {
@@ -937,51 +958,57 @@ class Knight extends AbstractPlayer {
         // crouch attack = 4
         this.animations[0][this.states.crouch_atk] = new Animator(this.spritesheetLeft, 965, 160, 120, 80, 4, 0.08, 0, true, false, false);
         this.animations[1][this.states.crouch_atk] = new Animator(this.spritesheetRight, -5, 160, 120, 80, 4, 0.08, 0, false, false, false);
-        // crouch shoot = 5
+        // crouch pluck = 6
         this.animations[0][this.states.crouch_shoot] = new Animator(this.spritesheetLeft, 965, 1440, 120, 80, 4, 0.1, 0, true, false, false);
         this.animations[1][this.states.crouch_shoot] = new Animator(this.spritesheetRight, -5, 1440, 120, 80, 4, 0.1, 0, false, false, false);
-        // roll = 6
+        // crouch shoot = 5
+        this.animations[0][this.states.crouch_pluck] = new Animator(this.spritesheetLeft, 965, 1600, 120, 80, 4, 0.1, 0, true, false, false);
+        this.animations[1][this.states.crouch_pluck] = new Animator(this.spritesheetRight, -5, 1600, 120, 80, 4, 0.1, 0, false, false, false);
+        // roll = 7
         this.animations[0][this.states.roll] = new Animator(this.spritesheetLeft, 0, 800, 120, 80, 12, 0.083, 0, true, false, false);
         this.animations[1][this.states.roll] = new Animator(this.spritesheetRight, 0, 800, 120, 80, 12, 0.083, 0, false, false, false);
-        // wall climb = 7
+        // wall climb = 8
         this.animations[0][this.states.wall_climb] = new Animator(this.spritesheetLeft, 608, 1120, 120, 80, 7, 0.1, 0, true, false, false);
         this.animations[1][this.states.wall_climb] = new Animator(this.spritesheetRight, -8, 1120, 120, 80, 7, 0.1, 0, false, false, false);
-        // wall hang = 8
+        // wall hang = 9
         this.animations[0][this.states.wall_hang] = new Animator(this.spritesheetLeft, 1323, 1200, 120, 80, 1, 0.2, 0, true, true, false);
         this.animations[1][this.states.wall_hang] = new Animator(this.spritesheetRight, -3, 1200, 120, 80, 1, 0.2, 0, false, true, false);
-        // wall slide = 9
+        // wall slide = 10
         this.animations[0][this.states.wall_slide] = new Animator(this.spritesheetLeft, 1081, 1280, 120, 80, 3, 0.1, 0, true, true, false);
         this.animations[1][this.states.wall_slide] = new Animator(this.spritesheetRight, -1, 1280, 120, 80, 3, 0.1, 0, false, true, false);
         // jump -> jump/fall inbetween -> fall
-        // jump = 10
+        // jump = 11
         this.animations[0][this.states.jump] = new Animator(this.spritesheetLeft, 1085, 640, 120, 80, 3, 0.1, 0, true, false, false);
         this.animations[1][this.states.jump] = new Animator(this.spritesheetRight, -5, 640, 120, 80, 3, 0.1, 0, false, false, false);
-        // jump/fall inbetween = 11
+        // jump/fall inbetween = 12
         this.animations[0][this.states.jump_to_fall] = new Animator(this.spritesheetLeft, 1205, 720, 120, 80, 2, 0.1, 0, true, false, false);
         this.animations[1][this.states.jump_to_fall] = new Animator(this.spritesheetRight, -5, 720, 120, 80, 2, 0.1, 0, false, false, false);
-        // fall = 12
+        // fall = 13
         this.animations[0][this.states.falling] = new Animator(this.spritesheetLeft, 1085, 480, 120, 80, 3, 0.1, 0, true, true, false);
         this.animations[1][this.states.falling] = new Animator(this.spritesheetRight, -5, 480, 120, 80, 3, 0.1, 0, false, true, false);
-        // turn around = 13
+        // turn around = 14
         this.animations[0][this.states.turn_around] = new Animator(this.spritesheetLeft, 1085, 1040, 120, 80, 3, 0.1, 0, true, false, false);
         this.animations[1][this.states.turn_around] = new Animator(this.spritesheetRight, -5, 1040, 120, 80, 3, 0.1, 0, false, false, false);
-        // slide = 14
+        // slide = 15
         this.animations[0][this.states.slide] = new Animator(this.spritesheetLeft, 960, 960, 120, 80, 4, 0.1, 0, true, true, false);
         this.animations[1][this.states.slide] = new Animator(this.spritesheetRight, 0, 960, 120, 80, 4, 0.1, 0, false, true, false);
 
         //attack combo (on ground or in air)
         //Note: Slash 1 is a faster attack but less damage. Slash 2 is slower but more damage
-        //slash 1 = 15
+        //slash 1 = 16
         this.animations[0][this.states.attack1] = new Animator(this.spritesheetLeft, 725, 0, 120, 80, 6, 0.09, 0, true, false, false);
         this.animations[1][this.states.attack1] = new Animator(this.spritesheetRight, -5, 0, 120, 80, 6, 0.09, 0, false, false, false);
-        //slash 2 = 16
+        //slash 2 = 17
         this.animations[0][this.states.attack2] = new Animator(this.spritesheetLeft, 245, 0, 120, 80, 6, 0.1, 0, true, false, false);
         this.animations[1][this.states.attack2] = new Animator(this.spritesheetRight, 475, 0, 120, 80, 6, 0.1, 0, false, false, false);
-        //shoot = 17
+        //shoot = 18
         this.animations[0][this.states.shoot] = new Animator(this.spritesheetLeft, 965, 1360, 120, 80, 4, 0.1, 0, true, false, false);
         this.animations[1][this.states.shoot] = new Animator(this.spritesheetRight, -5, 1360, 120, 80, 4, 0.1, 0, false, false, false);
+        // pluck = 19
+        this.animations[0][this.states.pluck] = new Animator(this.spritesheetLeft, 965, 1520, 120, 80, 4, 0.1, 0, true, false, false);
+        this.animations[1][this.states.pluck] = new Animator(this.spritesheetRight, -5, 1520, 120, 80, 4, 0.1, 0, false, false, false);
 
-        // death = 18 (special property so might be better to just have it called only when the player dies)
+        // death = 19 (special property so might be better to just have it called only when the player dies)
         this.animations[0][this.states.death] = new Animator(this.spritesheetLeft, 365, 400, 120, 80, 9, 0.1, 0, true, false, false);
         this.animations[1][this.states.death] = new Animator(this.spritesheetRight, -5, 400, 120, 80, 9, 0.1, 0, false, false, false);
     };
