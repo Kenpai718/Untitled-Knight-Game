@@ -68,17 +68,7 @@ class Mushroom extends AbstractEnemy {
         const MAX_FALL = 270 * SCALER;
 
         if (this.dead) { // mushroom is dead play death animation and remove
-            this.healthbar.removeFromWorld = true;
-            this.state = this.states.death;
-            this.HB = null;
-
-            // Drops random # of diamond upon death
-            super.dropLoot();
-
-            if (this.animations[this.state][this.direction].isDone()) {
-                this.removeFromWorld = true;
-                this.game.camera.killCount++;
-            }
+            super.setDead();
         } else { // not dead keep moving
             // gravity
             this.velocity.y += this.fallAcc * TICK;

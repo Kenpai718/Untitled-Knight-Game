@@ -1,26 +1,17 @@
 //constants used for physics
 const SCALER = 3;
 //currently using Chris Marriot's mario physics
-const MIN_WALK = 4.453125 * SCALER;
 const MAX_WALK = 93.75 * SCALER;
 const MAX_RUN = 153.75 * SCALER;
 const ACC_WALK = 133.59375 * SCALER;
 const ACC_RUN = 200.390625 * SCALER;
-const DEC_REL = 182.8125 * SCALER;
-const DEC_SKID = 365.625 * SCALER;
-const MIN_SKID = 33.75 * SCALER;
 const ROLL_SPD = 400 * SCALER;
-const ATTACK_SKID = 600;
+const SKID = 3000;
+const ATTACK_SKID = SKID * 0.75;
 const CROUCH_SPD = 50 * SCALER;
 const DOUBLE_JUMP_X_BOOST = 10;
-const STOP_FALL = 1575;
-const WALK_FALL = 1800;
-const RUN_FALL = 2025;
-const STOP_FALL_A = 450;
-const WALK_FALL_A = 421.875;
-const RUN_FALL_A = 562.5;
 const JUMP_HEIGHT = 1500;
-const DOUBLE_JUMP_HEIGHT = 650;
+const DOUBLE_JUMP_HEIGHT = JUMP_HEIGHT * .45;
 const MAX_FALL = 270 * SCALER;
 const MAX_SLIDE = 150 * SCALER;
 
@@ -90,6 +81,10 @@ class Knight extends AbstractPlayer {
 
     /** Update methods */
 
+    updateBoxes() {
+        this.updateBB()
+    }
+
     updateHB() {
         this.getOffsets();
         this.lastHB = this.HB;
@@ -111,10 +106,7 @@ class Knight extends AbstractPlayer {
 
         //NOTE: this.dead is set when the knight hp drops to 0.
         if (this.dead) {
-            this.action = this.states.death;
-            if (this.animations[this.facing][this.action].isDone()) {
-                super.restartGame();
-            }
+            super.setDead();
         } else {
             /**CONTROLS:
              * CheckAndDo..() checks user input and executs that action is possible
@@ -258,13 +250,13 @@ class Knight extends AbstractPlayer {
                     else {
                         if (this.facing == this.dir.left) {
                             if (this.velocity.x < 0) {
-                                this.velocity.x += 1000 * TICK;
+                                this.velocity.x += SKID * TICK;
                             }
                             else this.velocity.x = 0;
                         }
                         else if (this.facing == this.dir.right) {
                             if (this.velocity.x > 0) {
-                                this.velocity.x -= 1000 * TICK;
+                                this.velocity.x -= SKID * TICK;
                             }
                             else this.velocity.x = 0;
                         }
@@ -272,7 +264,7 @@ class Knight extends AbstractPlayer {
                 } else if (this.game.right && !this.game.attack && !this.game.shoot) { //run right
                     if (this.facing == this.dir.left && this.velocity.x < 0) {
                         this.action = this.states.turn_around;
-                        this.velocity.x += 1000 * TICK;
+                        this.velocity.x += SKID * TICK;
                     }
                     else {
                         this.facing = this.dir.right;
@@ -283,7 +275,7 @@ class Knight extends AbstractPlayer {
                 } else if (this.game.left && !this.game.attack && !this.game.shoot) { //run left
                     if (this.facing == this.dir.right && this.velocity.x > 0) {
                         this.action = this.states.turn_around;
-                        this.velocity.x -= 1000 * TICK;
+                        this.velocity.x -= SKID * TICK;
                     }
                     else {
                         this.facing = this.dir.left;
@@ -294,13 +286,13 @@ class Knight extends AbstractPlayer {
                 } else { //idle
                     if (this.facing == this.dir.left) {
                         if (this.velocity.x < 0) {
-                            this.velocity.x += 750 * TICK;
+                            this.velocity.x += (SKID) * TICK;
                         }
                         else this.velocity.x = 0;
                     }
                     else if (this.facing == this.dir.right) {
                         if (this.velocity.x > 0) {
-                            this.velocity.x -= 750 * TICK;
+                            this.velocity.x -= (SKID)  * TICK;
                         }
                         else this.velocity.x = 0;
                     }
@@ -1101,60 +1093,4 @@ class Knight extends AbstractPlayer {
                 break;
         }
     };
-
-    viewAllAnimations(ctx) { //for development purposes
-        this.animations[0][0].drawFrame(this.game.clockTick, ctx, 0 * this.scale, 0 * this.scale, this.scale);
-        this.animations[1][0].drawFrame(this.game.clockTick, ctx, 0 * this.scale, 80 * this.scale, this.scale);
-
-        this.animations[0][1].drawFrame(this.game.clockTick, ctx, 120 * this.scale, 0 * this.scale, this.scale);
-        this.animations[1][1].drawFrame(this.game.clockTick, ctx, 120 * this.scale, 80 * this.scale, this.scale);
-
-        this.animations[0][2].drawFrame(this.game.clockTick, ctx, 240 * this.scale, 0 * this.scale, this.scale);
-        this.animations[1][2].drawFrame(this.game.clockTick, ctx, 240 * this.scale, 80 * this.scale, this.scale);
-
-        this.animations[0][3].drawFrame(this.game.clockTick, ctx, 360 * this.scale, 0 * this.scale, this.scale);
-        this.animations[1][3].drawFrame(this.game.clockTick, ctx, 360 * this.scale, 80 * this.scale, this.scale);
-
-        this.animations[0][4].drawFrame(this.game.clockTick, ctx, 480 * this.scale, 0 * this.scale, this.scale);
-        this.animations[1][4].drawFrame(this.game.clockTick, ctx, 480 * this.scale, 80 * this.scale, this.scale);
-
-        this.animations[0][5].drawFrame(this.game.clockTick, ctx, 600 * this.scale, 0 * this.scale, this.scale);
-        this.animations[1][5].drawFrame(this.game.clockTick, ctx, 600 * this.scale, 80 * this.scale, this.scale);
-
-        this.animations[0][6].drawFrame(this.game.clockTick, ctx, 720 * this.scale, 0 * this.scale, this.scale);
-        this.animations[1][6].drawFrame(this.game.clockTick, ctx, 720 * this.scale, 80 * this.scale, this.scale);
-
-        this.animations[0][7].drawFrame(this.game.clockTick, ctx, 840 * this.scale, 0 * this.scale, this.scale);
-        this.animations[1][7].drawFrame(this.game.clockTick, ctx, 840 * this.scale, 80 * this.scale, this.scale);
-
-        this.animations[0][8].drawFrame(this.game.clockTick, ctx, 0 * this.scale, 160 * this.scale, this.scale);
-        this.animations[1][8].drawFrame(this.game.clockTick, ctx, 0 * this.scale, 240 * this.scale, this.scale);
-
-        this.animations[0][9].drawFrame(this.game.clockTick, ctx, 120 * this.scale, 160 * this.scale, this.scale);
-        this.animations[1][9].drawFrame(this.game.clockTick, ctx, 120 * this.scale, 240 * this.scale, this.scale);
-
-        this.animations[0][10].drawFrame(this.game.clockTick, ctx, 240 * this.scale, 160 * this.scale, this.scale);
-        this.animations[1][10].drawFrame(this.game.clockTick, ctx, 240 * this.scale, 240 * this.scale, this.scale);
-
-        this.animations[0][11].drawFrame(this.game.clockTick, ctx, 360 * this.scale, 160 * this.scale, this.scale);
-        this.animations[1][11].drawFrame(this.game.clockTick, ctx, 360 * this.scale, 240 * this.scale, this.scale);
-
-        this.animations[0][12].drawFrame(this.game.clockTick, ctx, 480 * this.scale, 160 * this.scale, this.scale);
-        this.animations[1][12].drawFrame(this.game.clockTick, ctx, 480 * this.scale, 240 * this.scale, this.scale);
-
-        this.animations[0][13].drawFrame(this.game.clockTick, ctx, 600 * this.scale, 160 * this.scale, this.scale);
-        this.animations[1][13].drawFrame(this.game.clockTick, ctx, 600 * this.scale, 240 * this.scale, this.scale);
-
-        this.animations[0][14].drawFrame(this.game.clockTick, ctx, 720 * this.scale, 160 * this.scale, this.scale);
-        this.animations[1][14].drawFrame(this.game.clockTick, ctx, 720 * this.scale, 240 * this.scale, this.scale);
-
-        this.animations[0][15].drawFrame(this.game.clockTick, ctx, 840 * this.scale, 160 * this.scale, this.scale);
-        this.animations[1][15].drawFrame(this.game.clockTick, ctx, 840 * this.scale, 240 * this.scale, this.scale);
-
-        this.animations[0][16].drawFrame(this.game.clockTick, ctx, 960 * this.scale, 160 * this.scale, this.scale);
-        this.animations[1][16].drawFrame(this.game.clockTick, ctx, 960 * this.scale, 240 * this.scale, this.scale);
-    }
-
-
-
 }
