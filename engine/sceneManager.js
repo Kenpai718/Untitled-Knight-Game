@@ -10,18 +10,33 @@ class SceneManager {
         this.y = 0;
         this.defaultMusic = MUSIC.CHASING_DAYBREAK;
 
-
         //game status
-        this.title = false;
+        this.title = true;
         this.gameOver = false;
 
         this.levelH = 0;
         this.levelW = 0;
 
+        this.killCount = 0;
+
         //levels array to load levels by calling levels[0], levels[1], etc
         this.currentLevel = 0;
         this.setupAllLevels();
-        this.loadLevel(this.currentLevel, false);
+        this.loadTitle();
+        //this.loadLevel(this.currentLevel, false);
+    };
+
+    loadTitle() {
+        this.game.addEntity(new Background(this.game));
+        var x = (this.game.surfaceWidth / 2) - ((40 * 10) / 2);
+        var y = (this.game.surfaceHeight / 2) - 40;
+        this.startGameBB = new BoundingBox(x, y, 40 * 10, -40);
+        x = (this.game.surfaceWidth / 2) - ((40 * 8) / 2);
+        y = (this.game.surfaceHeight / 2) + 40;
+        this.controlsBB = new BoundingBox(x, y, 40 * 8, -40);
+        x = (this.game.surfaceWidth / 2) - ((40 * 7) / 2);
+        y = (this.game.surfaceHeight / 2) + 40 * 3;
+        this.creditsBB = new BoundingBox(x, y, 40 * 7, -40);
     };
 
     /**
@@ -83,7 +98,7 @@ class SceneManager {
             } else {
                 this.loadScene(lvlData, lvlData.player.x, lvlData.player.y);
             }
-
+            this.killCount = 0;
             this.currentLevel = number;
         }
     }
@@ -115,31 +130,58 @@ class SceneManager {
      * Update the camera and gui elements
      */
     update() {
-        //debug key toggle, flip state of debug checkbox
-        if(this.game.debug) {
-            this.game.debug = false;
-            document.getElementById("debug").checked = !document.getElementById("debug").checked;
+        if (!this.title) {
+            //debug key toggle, flip state of debug checkbox
+            if(this.game.debug) {
+                this.game.debug = false;
+                document.getElementById("debug").checked = !document.getElementById("debug").checked;
+            }
+            PARAMS.DEBUG = document.getElementById("debug").checked;
+            this.updateAudio();
+            this.updateGUI();
+
+            if (this.player.BB.left < 0) this.player.x -= this.player.BB.left;
+            else if (this.player.BB.right > this.level.width * PARAMS.BLOCKDIM) this.player.x -= this.player.BB.right - this.level.width * PARAMS.BLOCKDIM;
+            if (this.x < this.player.x - this.game.surfaceWidth * 9 / 16 && this.x + this.game.surfaceWidth < this.level.width * PARAMS.BLOCKDIM) this.x = this.player.x - this.game.surfaceWidth * 9 / 16;
+            else if (this.x > this.player.x - this.game.surfaceWidth * 7 / 16 && this.x > 0) this.x = this.player.x - this.game.surfaceWidth * 7 / 16;
+
+            if (this.x < 0) this.x = 0;
+            else if (this.x + this.game.surfaceWidth > this.level.width * PARAMS.BLOCKDIM) this.x = this.level.width * PARAMS.BLOCKDIM - this.game.surfaceWidth;
+            //if (this.y > this.player.y - this.game.surfaceHeight * 1 / 16) this.y = this.player.y - this.game.surfaceHeight * 1 / 16;
+            //else if (this.y < this.player.y - this.game.surfaceHeight * 3 / 16 && this.y < 0) this.y = this.player.y - this.game.surfaceHeight * 3 / 16;
+            if (this.y < this.player.y - this.game.surfaceHeight * 3 / 16 && this.y + this.game.surfaceHeight < this.level.height * PARAMS.BLOCKDIM) this.y = this.player.y - this.game.surfaceHeight * 3 / 16;
+            else if (this.y > this.player.y - this.game.surfaceHeight * 1 / 16 && this.y > 0) this.y = this.player.y - this.game.surfaceHeight * 1 / 16;
+            if (this.y < 0) this.y = 0;
+            else if (this.y + this.game.surfaceHeight > this.level.height * PARAMS.BLOCKDIM) this.y = this.level.height * PARAMS.BLOCKDIM - this.game.surfaceHeight;
+
+            this.x = Math.round(this.x);
+            this.y = Math.round(this.y);
+        } else {
+            this.textColor = 0;
+            if (this.game.mouse) {
+                if (this.startGameBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
+                    this.textColor = 1;
+                } else if (this.controlsBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
+                    this.textColor = 2;
+                } else if (this.creditsBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
+                    this.textColor = 3;
+                }
+            }
+            if (this.game.click) {
+                if (this.startGameBB.collideMouse(this.game.click.x, this.game.click.y)) {
+                    this.title = false;
+                    this.game.attack = false;
+                    this.loadLevel(this.currentLevel, false);
+                } else if (this.controlsBB.collideMouse(this.game.click.x, this.game.click.y)) {
+                    this.credits = false;
+                    this.controls = !this.controls;
+                } else if (this.creditsBB.collideMouse(this.game.click.x, this.game.click.y)) {
+                    this.controls = false;
+                    this.credits = !this.credits;
+                }
+                this.game.click = null;
+            }
         }
-        PARAMS.DEBUG = document.getElementById("debug").checked;
-        this.updateAudio();
-        this.updateGUI();
-
-        if (this.player.BB.left < 0) this.player.x -= this.player.BB.left;
-        else if (this.player.BB.right > this.level.width * PARAMS.BLOCKDIM) this.player.x -= this.player.BB.right - this.level.width * PARAMS.BLOCKDIM;
-        if (this.x < this.player.x - this.game.surfaceWidth * 9 / 16 && this.x + this.game.surfaceWidth < this.level.width * PARAMS.BLOCKDIM) this.x = this.player.x - this.game.surfaceWidth * 9 / 16;
-        else if (this.x > this.player.x - this.game.surfaceWidth * 7 / 16 && this.x > 0) this.x = this.player.x - this.game.surfaceWidth * 7 / 16;
-
-        if (this.x < 0) this.x = 0;
-        else if (this.x + this.game.surfaceWidth > this.level.width * PARAMS.BLOCKDIM) this.x = this.level.width * PARAMS.BLOCKDIM - this.game.surfaceWidth;
-        //if (this.y > this.player.y - this.game.surfaceHeight * 1 / 16) this.y = this.player.y - this.game.surfaceHeight * 1 / 16;
-        //else if (this.y < this.player.y - this.game.surfaceHeight * 3 / 16 && this.y < 0) this.y = this.player.y - this.game.surfaceHeight * 3 / 16;
-        if (this.y < this.player.y - this.game.surfaceHeight * 3 / 16 && this.y + this.game.surfaceHeight < this.level.height * PARAMS.BLOCKDIM) this.y = this.player.y - this.game.surfaceHeight * 3 / 16;
-        else if (this.y > this.player.y - this.game.surfaceHeight * 1 / 16 && this.y > 0) this.y = this.player.y - this.game.surfaceHeight * 1 / 16;
-        if (this.y < 0) this.y = 0;
-        else if (this.y + this.game.surfaceHeight > this.level.height * PARAMS.BLOCKDIM) this.y = this.level.height * PARAMS.BLOCKDIM - this.game.surfaceHeight;
-
-        this.x = Math.round(this.x);
-        this.y = Math.round(this.y);
     };
 
     updateGUI() {
@@ -156,23 +198,69 @@ class SceneManager {
     };
 
     draw(ctx) {
-        //gui
-        ctx.fillStyle = "White";
-        this.vignette.draw(ctx);
-        this.inventory.draw(ctx);
-        this.heartsbar.draw(ctx);
+        if (!this.title) {
+            //gui
+            ctx.fillStyle = "White";
+            this.vignette.draw(ctx);
+            this.inventory.draw(ctx);
+            this.heartsbar.draw(ctx);
 
-        //current level
-        ctx.font = PARAMS.BIG_FONT;
-        let xOffset;
-        (this.level.label.length <= 4) ? xOffset = this.level.label.length * 70 : xOffset = this.level.label.length * 31;
-        ctx.fillText("Level:" + this.level.label, this.game.surfaceWidth - xOffset, 30);
-
-
-        if (PARAMS.DEBUG) {
-            this.viewDebug(ctx);
-            this.minimap.draw(ctx);
+            //current level
+            ctx.font = PARAMS.BIG_FONT;
+            let xOffset;
+            (this.level.label.length <= 4) ? xOffset = this.level.label.length * 70 : xOffset = this.level.label.length * 31;
+            ctx.fillText("Level:" + this.level.label, this.game.surfaceWidth - xOffset, 30);
+            // display kill quota message, i would do this in the door class but the text gets covered by other entites
+            if (this.killQuotaMessage) {
+                ctx.font = PARAMS.BIG_FONT;
+                ctx.fillStyle = "White";
+                ctx.fillText("Must defeat " + this.remainingKills + " more enemies to advance", (this.game.surfaceWidth / 2) - ((20 * 35) / 2), 40);
+            }
+            if (PARAMS.DEBUG) {
+                this.viewDebug(ctx);
+                this.minimap.draw(ctx);
+            }
+        } else {
+            var fontSize = 60;
+            ctx.font = fontSize + 'px "Press Start 2P"';
+            ctx.fillStyle = "White";
+            let gameTitle = "Untitled Webgame";
+            ctx.fillText("Untitled Webgame", (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 3);
+            ctx.font = '40px "Press Start 2P"';
+            ctx.fillStyle = this.textColor == 1 ? "Grey" : "White";
+            ctx.fillText("Start game", this.startGameBB.x, this.startGameBB.y);
+            ctx.fillStyle = this.textColor == 2 ? "Grey" : "White";
+            ctx.fillText("Controls", this.controlsBB.x, this.controlsBB.y);
+            ctx.fillStyle = this.textColor == 3 ? "Grey" : "White";
+            ctx.fillText("Credits", this.creditsBB.x, this.creditsBB.y);
+            ctx.strokeStyle = "Red";
+            if (this.controls) {
+                ctx.font = '30px "Press Start 2P"';
+                ctx.fillStyle = "White";
+                ctx.fillText("A : Move Left", 30, 30 * 6 * 2);
+                ctx.fillText("D : Move Right", 30, 30 * 7 * 2);
+                ctx.fillText("S : Crouch", 30, 30 * 8 * 2);
+                ctx.fillText("W : Interact", 30, 30 * 9 * 2);
+                ctx.fillText("Space : Jump", 30, 30 * 10 * 2);
+                ctx.fillText("LShift : Roll", 30, 30 * 11 * 2);
+                ctx.fillText("Left Click : Melee Attack", 30, 30 * 12 * 2);
+                ctx.fillText("Right Click : Shoot Arrow", 30, 30 * 13 * 2);
+                ctx.fillText("H : Heal", 30, 30 * 14 * 2);
+            }
+            if (this.credits) {
+                ctx.font = '30px "Press Start 2P"';
+                ctx.fillStyle = "White";
+                ctx.fillText("Developed by:", 30, 30 * 6 * 2);
+                ctx.fillText("Kenneth Ahrens", 30, 30 * 7 * 2);
+                ctx.fillText("Andre Larson", 30, 30 * 8 * 2);
+                ctx.fillText("Embert Pezzali", 30, 30 * 9 * 2);
+                ctx.fillText("David Shcherbina", 30, 30 * 10 * 2);
+            }
         }
+    };
+
+    updateKillQuota(count) {
+        this.remainingKills = count;
     };
 
     /**
@@ -309,7 +397,7 @@ class SceneManager {
         if (this.level.doors) {
             for (var i = 0; i < this.level.doors.length; i++) {
                 let door = this.level.doors[i];
-                this.game.addEntity(new Door(this.game, door.x, h - door.y - 1, door.canEnter, door.exitLocation));
+                this.game.addEntity(new Door(this.game, door.x, h - door.y - 1, door.killQuota, door.exitLocation));
             }
         }
         if (this.level.columns) {
@@ -453,7 +541,7 @@ class Minimap {
     /**
      * Builds a box of same length and width of level to a smaller scale
      * Makes a represntation of the level and entities
-     * 
+     *
      * Minimap will be slightly transparent so it does obstruct the game.
      *
      * @param {*} ctx

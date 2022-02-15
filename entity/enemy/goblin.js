@@ -1,7 +1,7 @@
 /**
  * Goblin is a small enemy entity self attacks fast. It has low hp and not much of a threat on its own.
  * However when in a group it becomes dangerous as it attacks your blindspot!
- * 
+ *
  * Special behavior: prioritizes attacking player from behind while they have half hp.
  * They do 1.5* more damage when attacking from behind.
  */
@@ -68,9 +68,10 @@ class Goblin extends AbstractEnemy {
 
             // Drops random # of diamond upon death
             super.dropLoot();
-            
+
             if (this.animations[this.state][this.direction].isDone()) {
                 this.removeFromWorld = true;
+                this.game.camera.killCount++;
             }
 
         } else { // not dead keep moving
@@ -138,7 +139,7 @@ class Goblin extends AbstractEnemy {
         if(this.collisions.top) this.velocity.y = 0; //bonk on ceiling halt momentum
         if (this.collisions.lo_left && this.velocity.x < 0) this.velocity.x = 0;
         if (this.collisions.lo_right && this.velocity.x > 0) this.velocity.x = 0;
-        
+
 
     }
 
@@ -146,8 +147,8 @@ class Goblin extends AbstractEnemy {
     * Checks interactions with entities.
     * Also controls how the entity will move/act.
     * Adds dist displacement if necessary
-    * @param {} dist 
-    * @param {*} TICK 
+    * @param {} dist
+    * @param {*} TICK
     * @returns dist
     */
     checkEntityInteractions(dist, TICK) {
@@ -197,7 +198,7 @@ class Goblin extends AbstractEnemy {
                                 self.state = self.states.attack;
                             }
                         }
-                    } else { //attack normally from wherever 
+                    } else { //attack normally from wherever
                         self.velocity.x = 0;
                         if (self.canAttack && !self.animations[self.states.attack][self.direction].isDone()) {
                             self.runAway = true;
@@ -267,10 +268,10 @@ class Goblin extends AbstractEnemy {
     }
 
     /**
-     * Uses bounding boxes to check if the goblin is 
+     * Uses bounding boxes to check if the goblin is
      * behind the player so it can attack
-     * @param {*} thePlayer 
-     * @returns 
+     * @param {*} thePlayer
+     * @returns
      */
     isBehindPlayer(thePlayer) {
         let isBehind = false;
@@ -292,8 +293,8 @@ class Goblin extends AbstractEnemy {
 
     /**
      * Checks if goblin is facing the same direction as the player
-     * @param {*} thePlayer 
-     * @returns 
+     * @param {*} thePlayer
+     * @returns
      */
     sameFacing(thePlayer) {
 

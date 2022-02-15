@@ -12,4 +12,9 @@ class BoundingBox {
         return false;
     };
 
+    collideMouse(x, y) {
+        if (x >= this.left && x <= this.right && y <= this.top && y >= this.bottom) return true;
+        return false;
+    }
+
 };
