@@ -1,6 +1,6 @@
-class Wizard {
+class Wizard extends AbstractEntity {
     constructor(game, x, y) {
-        Object.assign(this, { game, x, y });
+        super(game, x, y);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/wizard.png");
         this.animations = [];
         this.loadAnimations();
@@ -14,6 +14,34 @@ class Wizard {
         this.dir = this.directions.right;
         this.scale = 3;
         this.phase = Math.floor(Math.random() * 4);
+        this.updateBoxes();
+    }
+
+    // use after any change to this.x or this.y
+    updateBoxes() {
+        this.lastBB = this.BB;
+        this.getOffsets();
+        this.AR = new BoundingBox(this.x + (40 * this.scale), this.y + this.offsetyBB, this.width - (80 * this.scale), this.heightBB);
+        this.VB = new BoundingBox(this.x - (80 * this.scale), this.y, this.width + (160 * this.scale), this.height);
+        this.BB = new BoundingBox(this.x + this.offsetxBB, this.y + this.offsetyBB, this.widthBB, this.heightBB);
+    };
+
+    getDamageValue() {
+
+    }
+
+    setDamagedState() {
+
+    }
+
+    getOffsets() {
+        switch (this.state) {
+            default: 
+                this.offsetxBB = 0;
+                this.offsetyBB = 0;
+                this.widthBB = 80;
+                this.heightBB = 80;
+        }
     }
 
     loadAnimations() {
@@ -25,32 +53,32 @@ class Wizard {
         }
 
         // idle
-        this.animations[0][0] = new Animator(this.spritesheet, 720, 0, 80, 80, 1, 0.15, 0, true, true, false);
-        this.animations[1][0] = new Animator(this.spritesheet, 320, 0, 80, 80, 5, 0.15, 0, true, false, false);
-        this.animations[2][0] = new Animator(this.spritesheet, 0, 0, 80, 80, 4, 0.15, 0, true, true, false);
-        this.animations[3][0] = new Animator(this.spritesheet, 320, 0, 80, 80, 5, 0.15, 0, false, false, false);
-        this.animations[0][1] = new Animator(this.spritesheet, 0, 80, 80, 80, 1, 0.15, 0, false, true, false);
-        this.animations[1][1] = new Animator(this.spritesheet, 80, 80, 80, 80, 5, 0.15, 0, false, false, false);
-        this.animations[2][1] = new Animator(this.spritesheet, 480, 80, 80, 80, 4, 0.15, 0, false, true, false);
-        this.animations[3][1] = new Animator(this.spritesheet, 80, 80, 80, 80, 5, 0.15, 0, true, false, false);
+        this.animations[0][0] = new Animator(this.spritesheet, 0, 0, 80, 80, 4, 0.15, 0, true, true, false);
+        this.animations[1][0] = new Animator(this.spritesheet, 320, 160, 80, 80, 5, 0.15, 0, true, false, false);
+        this.animations[2][0] = new Animator(this.spritesheet, 0, 160, 80, 80, 4, 0.15, 0, true, true, false);
+        this.animations[3][0] = new Animator(this.spritesheet, 320, 160, 80, 80, 5, 0.15, 0, false, false, false);
+        this.animations[0][1] = new Animator(this.spritesheet, 0, 80, 80, 80, 4, 0.15, 0, false, true, false);
+        this.animations[1][1] = new Animator(this.spritesheet, 80, 240, 80, 80, 5, 0.15, 0, false, false, false);
+        this.animations[2][1] = new Animator(this.spritesheet, 480, 240, 80, 80, 4, 0.15, 0, false, true, false);
+        this.animations[3][1] = new Animator(this.spritesheet, 80, 240, 80, 80, 5, 0.15, 0, true, false, false);
 
         // fly forward
-        this.animations[4][0] = new Animator(this.spritesheet, 160, 160, 80, 80, 4, 0.15, 0, true, false, false);
-        this.animations[5][0] = new Animator(this.spritesheet, 0, 160, 80, 80, 3, 0.15, 0, false, true, false);
-        this.animations[6][0] = new Animator(this.spritesheet, 160, 160, 80, 80, 4, 0.15, 0, false, false, false);
-        this.animations[4][1] = new Animator(this.spritesheet, 0, 240, 80, 80, 4, 0.15, 0, false, false, false);
-        this.animations[5][1] = new Animator(this.spritesheet, 240, 240, 80, 80, 3, 0.15, 0, false, true, false);
-        this.animations[6][1] = new Animator(this.spritesheet, 0, 240, 80, 80, 4, 0.15, 0, true, false, false);
+        this.animations[4][0] = new Animator(this.spritesheet, 160, 320, 80, 80, 4, 0.15, 0, true, false, false);
+        this.animations[5][0] = new Animator(this.spritesheet, 0, 320, 80, 80, 3, 0.15, 0, false, true, false);
+        this.animations[6][0] = new Animator(this.spritesheet, 160, 320, 80, 80, 4, 0.15, 0, false, false, false);
+        this.animations[4][1] = new Animator(this.spritesheet, 0, 400, 80, 80, 4, 0.15, 0, false, false, false);
+        this.animations[5][1] = new Animator(this.spritesheet, 240, 400, 80, 80, 3, 0.15, 0, false, true, false);
+        this.animations[6][1] = new Animator(this.spritesheet, 0, 400, 80, 80, 4, 0.15, 0, true, false, false);
 
         // attack
-        this.animations[7][0] = new Animator(this.spritesheet, 0, 320, 80, 80, 9, 0.15, 0, true, false, false);
-        this.animations[8][0] = new Animator(this.spritesheet, 320, 320, 80, 80, 4, 0.15, 0, false, false, false);
-        this.animations[7][1] = new Animator(this.spritesheet, 0, 400, 80, 80, 9, 0.15, 0, false, false, false);
-        this.animations[8][1] = new Animator(this.spritesheet, 0, 400, 80, 80, 4, 0.15, 0, true, false, false);
+        this.animations[7][0] = new Animator(this.spritesheet, 0, 480, 80, 80, 9, 0.15, 0, true, false, false);
+        this.animations[8][0] = new Animator(this.spritesheet, 320, 480, 80, 80, 4, 0.15, 0, false, false, false);
+        this.animations[7][1] = new Animator(this.spritesheet, 0, 560, 80, 80, 9, 0.15, 0, false, false, false);
+        this.animations[8][1] = new Animator(this.spritesheet, 0, 560, 80, 80, 4, 0.15, 0, true, false, false);
 
         // death
-        this.animations[9][0] = new Animator(this.spritesheet, 0, 480, 80, 80, 10, 0.15, 0, true, false, false);
-        this.animations[9][1] = new Animator(this.spritesheet, 0, 560, 80, 80, 10, 0.15, 0, false, false, false);
+        this.animations[9][0] = new Animator(this.spritesheet, 0, 640, 80, 80, 10, 0.15, 0, true, false, false);
+        this.animations[9][1] = new Animator(this.spritesheet, 0, 720, 80, 80, 10, 0.15, 0, false, false, false);
     }
 
     update() {
