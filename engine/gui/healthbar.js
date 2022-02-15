@@ -100,13 +100,13 @@ class HealthBar {
         let velX = (this.agent.velocity.x).toFixed(2);
         let velY = (this.agent.velocity.y).toFixed(2);
         //canvas cordinates
-        let cordX = (this.agent.x).toFixed(2);
-        let cordY = (this.agent.y).toFixed(2);
+        let cordX = (box.x).toFixed(2);
+        let cordY = (box.y).toFixed(2);
         //game cordinates as seen by levels
         let levelWidth = this.game.camera.levelW;
         let levelHeight = this.game.camera.levelH;
-        let blockX = Math.round(this.agent.x / PARAMS.BLOCKDIM);
-        let blockY = Math.round(levelHeight - (this.agent.y / PARAMS.BLOCKDIM));
+        let blockX = Math.round(box.x / PARAMS.BLOCKDIM);
+        let blockY = Math.round(levelHeight - (box.y / PARAMS.BLOCKDIM));
 
 
         ctx.font = PARAMS.DEFAULT_FONT;

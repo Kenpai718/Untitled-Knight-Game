@@ -252,15 +252,15 @@ class SceneManager {
             if (this.controls) {
                 ctx.font = '30px "Press Start 2P"';
                 ctx.fillStyle = "White";
-                ctx.fillText("A : Move Left", 30, 30 * 6 * 2);
-                ctx.fillText("D : Move Right", 30, 30 * 7 * 2);
-                ctx.fillText("S : Crouch", 30, 30 * 8 * 2);
-                ctx.fillText("W : Interact", 30, 30 * 9 * 2);
-                ctx.fillText("Space : Jump", 30, 30 * 10 * 2);
-                ctx.fillText("LShift : Roll", 30, 30 * 11 * 2);
-                ctx.fillText("Left Click : Melee Attack", 30, 30 * 12 * 2);
-                ctx.fillText("Right Click : Shoot Arrow", 30, 30 * 13 * 2);
-                ctx.fillText("H : Heal", 30, 30 * 14 * 2);
+                ctx.fillText("A: Move Left", 30, 30 * 6 * 2);
+                ctx.fillText("D: Move Right", 30, 30 * 7 * 2);
+                ctx.fillText("S: Crouch", 30, 30 * 8 * 2);
+                ctx.fillText("W: Interact", 30, 30 * 9 * 2);
+                ctx.fillText("Space: Jump", 30, 30 * 10 * 2);
+                ctx.fillText("LShift: Roll", 30, 30 * 11 * 2);
+                ctx.fillText("Left Click: Melee Attack", 30, 30 * 12 * 2);
+                ctx.fillText("Right Click: Shoot Arrow", 30, 30 * 13 * 2);
+                ctx.fillText("H: Heal", 30, 30 * 14 * 2);
             }
             if (this.credits) {
                 ctx.font = '30px "Press Start 2P"';
@@ -286,6 +286,14 @@ class SceneManager {
      * @param {*} spawnY player's spawn y
      */
     loadScene(scene, spawnX, spawnY) {
+        //error checking for required level objects data
+        if(scene.ID === undefined) throw ("Level must have an ID number that represents its index in levels array.");
+        if(scene.label  === undefined) throw ("Level must have an label like \'1-1\'");
+        if(scene.width  === undefined) throw ("Level must have a level width in terms of blockdim. EX: 1 = 82 pixels");
+        if(scene.height  === undefined) throw ("Level must have a level height in terms of blockdim. EX: 1 = 82 pixels");
+        if(scene.player === undefined) throw ("Level must have a player with x and y cordinates.");
+
+
         //initialize scene and player
         this.level = scene;
         this.levelH = scene.height;
