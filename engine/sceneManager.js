@@ -14,6 +14,8 @@ class SceneManager {
         this.title = true;
         this.gameOver = false;
 
+        this.levelState = [];
+
         this.levelH = 0;
         this.levelW = 0;
 
@@ -86,11 +88,22 @@ class SceneManager {
      * @param {*} doorExitY y spawn location if a door was used
      */
     loadLevel(number, usedDoor, doorExitX, doorExitY) {
+        // save the state of the enemies and interactables for the current level
+        if (!this.title && !this.restart) {
+            let lastEnemies = [...this.game.enemies]; // [...] syntax is to make a deep copy
+            let lastInteractables = [...this.game.interactables];
+            this.levelState[this.currentLevel] = { enemies : lastEnemies, interactables : lastInteractables };
+        } else {
+            this.title = false;
+            this.restart = false;
+        }
         this.clearEntities();
         if (number < 0 || number > this.levels.length - 1) {
             throw "Invalid load level number";
         } else {
             console.log("Loading level " + number);
+            this.killCount = 0;
+            this.currentLevel = number;
             let lvlData = this.levels[number];
             if (usedDoor) {
                 //console.log("Entering door to Level#" + number + "| Exit Location = (x:" + doorExitX + ", Y:" + doorExitY + ")")
@@ -98,8 +111,6 @@ class SceneManager {
             } else {
                 this.loadScene(lvlData, lvlData.player.x, lvlData.player.y);
             }
-            this.killCount = 0;
-            this.currentLevel = number;
         }
     }
 
@@ -109,8 +120,10 @@ class SceneManager {
     clearEntities() {
         this.clearLayer(this.game.background1);
         this.clearLayer(this.game.background2);
+        this.clearLayer(this.game.interactables);
         this.clearLayer(this.game.foreground1);
         this.clearLayer(this.game.foreground2);
+        this.clearLayer(this.game.enemies);
         this.clearLayer(this.game.entities);
         this.clearLayer(this.game.projectiles);
         this.clearLayer(this.game.information);
@@ -147,8 +160,6 @@ class SceneManager {
 
             if (this.x < 0) this.x = 0;
             else if (this.x + this.game.surfaceWidth > this.level.width * PARAMS.BLOCKDIM) this.x = this.level.width * PARAMS.BLOCKDIM - this.game.surfaceWidth;
-            //if (this.y > this.player.y - this.game.surfaceHeight * 1 / 16) this.y = this.player.y - this.game.surfaceHeight * 1 / 16;
-            //else if (this.y < this.player.y - this.game.surfaceHeight * 3 / 16 && this.y < 0) this.y = this.player.y - this.game.surfaceHeight * 3 / 16;
             if (this.y < this.player.y - this.game.surfaceHeight * 3 / 16 && this.y + this.game.surfaceHeight < this.level.height * PARAMS.BLOCKDIM) this.y = this.player.y - this.game.surfaceHeight * 3 / 16;
             else if (this.y > this.player.y - this.game.surfaceHeight * 1 / 16 && this.y > 0) this.y = this.player.y - this.game.surfaceHeight * 1 / 16;
             if (this.y < 0) this.y = 0;
@@ -169,7 +180,6 @@ class SceneManager {
             }
             if (this.game.click) {
                 if (this.startGameBB.collideMouse(this.game.click.x, this.game.click.y)) {
-                    this.title = false;
                     this.game.attack = false;
                     this.loadLevel(this.currentLevel, false);
                 } else if (this.controlsBB.collideMouse(this.game.click.x, this.game.click.y)) {
@@ -320,53 +330,58 @@ class SceneManager {
                 this.game.addEntity(new Walls(this.game, walls.x, h - walls.y - 1, 1, walls.height, walls.type));
             }
         }
-
-        if (this.level.chests) {
-            for (var i = 0; i < this.level.chests.length; i++) {
-                let chest = this.level.chests[i];
-                this.game.addEntity(new Chest(this.game, chest.x, h - chest.y - 1, chest.direction));
+        // if the level being loaded hasnt been saved, load enemies and interactables like normal
+        // ANY NEW ENEMIES MUST BE ADDED HERE
+        if (!this.levelState[this.currentLevel]) {
+            if (this.level.chests) {
+                for (var i = 0; i < this.level.chests.length; i++) {
+                    let chest = this.level.chests[i];
+                    this.game.addEntity(new Chest(this.game, chest.x, h - chest.y - 1, chest.direction));
+                }
             }
-        }
-        if (this.level.obelisks) {
-            for (var i = 0; i < this.level.obelisks.length; i++) {
-                let obelisk = this.level.obelisks[i];
-                this.game.addEntity(new Obelisk(this.game, obelisk.x, h - obelisk.y - 1 - 3, obelisk.brickX, obelisk.brickY, obelisk.brickWidth, obelisk.brickHeight));
+            if (this.level.obelisks) {
+                for (var i = 0; i < this.level.obelisks.length; i++) {
+                    let obelisk = this.level.obelisks[i];
+                    this.game.addEntity(new Obelisk(this.game, obelisk.x, h - obelisk.y - 1 - 3, obelisk.brickX, obelisk.brickY, obelisk.brickWidth, obelisk.brickHeight));
+                }
             }
-        }
-
-        //load enemy entities
-        if (this.level.shrooms) {
-            for (var i = 0; i < scene.shrooms.length; i++) {
-                let shroom = scene.shrooms[i];
-                let e = new Mushroom(this.game, 0, 0);
-                this.positionEntity(e, shroom.x, h - shroom.y);
-                this.game.addEntity(e);
+            if (this.level.shrooms) {
+                for (var i = 0; i < scene.shrooms.length; i++) {
+                    let shroom = scene.shrooms[i];
+                    let e = new Mushroom(this.game, 0, 0);
+                    this.positionEntity(e, shroom.x, h - shroom.y);
+                    this.game.addEntity(e);
+                }
             }
-        }
-        if (this.level.goblins) {
-            for (var i = 0; i < scene.goblins.length; i++) {
-                let goblin = scene.goblins[i];
-                let e = new Goblin(this.game, 0, 0);
-                this.positionEntity(e, goblin.x, h - goblin.y);
-                this.game.addEntity(e);
+            if (this.level.goblins) {
+                for (var i = 0; i < scene.goblins.length; i++) {
+                    let goblin = scene.goblins[i];
+                    let e = new Goblin(this.game, 0, 0);
+                    this.positionEntity(e, goblin.x, h - goblin.y);
+                    this.game.addEntity(e);
+                }
             }
-        }
-        if (this.level.skeletons) {
-            for (var i = 0; i < scene.skeletons.length; i++) {
-                let skeleton = scene.skeletons[i];
-                let e = new Skeleton(this.game, 0, 0);
-                this.positionEntity(e, skeleton.x, h - skeleton.y);
-                this.game.addEntity(e);
+            if (this.level.skeletons) {
+                for (var i = 0; i < scene.skeletons.length; i++) {
+                    let skeleton = scene.skeletons[i];
+                    let e = new Skeleton(this.game, 0, 0);
+                    this.positionEntity(e, skeleton.x, h - skeleton.y);
+                    this.game.addEntity(e);
+                }
             }
+            if (this.level.doors) {
+                for (var i = 0; i < this.level.doors.length; i++) {
+                    let door = this.level.doors[i];
+                    this.game.addEntity(new Door(this.game, door.x, h - door.y - 1, door.killQuota, door.exitLocation));
+                }
+            }
+        } else { // load the enemies and interactables from their previous state
+            this.game.enemies = [...this.levelState[this.currentLevel].enemies];
+            this.game.enemies.forEach(enemy => enemy.removeFromWorld = false);
+            this.game.interactables = [...this.levelState[this.currentLevel].interactables];
+            this.game.interactables.forEach(interactable => interactable.removeFromWorld = false);
         }
-
         //load backgroound assets
-        if (this.level.backgroundWalls) {
-            for (var i = 0; i < this.level.backgroundWalls.length; i++) {
-                let bw = this.level.backgroundWalls[i];
-                this.game.addEntity(new BackgroundWalls(this.game, bw.x, h - bw.y - 1, bw.width, bw.height));
-            }
-        }
         if (this.level.torches) {
             for (var i = 0; i < this.level.torches.length; i++) {
                 let torch = this.level.torches[i];
@@ -390,12 +405,6 @@ class SceneManager {
             for (var i = 0; i < this.level.spikes.length; i++) {
                 let spike = this.level.spikes[i];
                 this.game.addEntity(new Spike(this.game, spike.x, h - spike.y - 1, spike.width, 0.5));
-            }
-        }
-        if (this.level.doors) {
-            for (var i = 0; i < this.level.doors.length; i++) {
-                let door = this.level.doors[i];
-                this.game.addEntity(new Door(this.game, door.x, h - door.y - 1, door.killQuota, door.exitLocation));
             }
         }
         if (this.level.columns) {
@@ -422,7 +431,12 @@ class SceneManager {
                 this.game.addEntity(new CeilingChain(this.game, ceilingChain.x * PARAMS.BLOCKDIM, (h - ceilingChain.y - 1) * PARAMS.BLOCKDIM, ceilingChain.height));
             }
         }
-
+        if (this.level.backgroundWalls) {
+            for (var i = 0; i < this.level.backgroundWalls.length; i++) {
+                let bw = this.level.backgroundWalls[i];
+                this.game.addEntity(new BackgroundWalls(this.game, bw.x, h - bw.y - 1, bw.width, bw.height));
+            }
+        }
     }
 
     /**

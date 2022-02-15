@@ -62,7 +62,7 @@ class Arrow extends AbstractEntity {
             }
         });
 
-        this.game.entities.forEach(function (entity) {
+        this.game.enemies.forEach(function (entity) {
             if (entity.BB && self.BB.collide(entity.BB)) {
                 //damage value against an enemy that was hit by an arrow
                 if (entity instanceof AbstractEnemy && !self.hit && !self.stuck && !entity.dead) {

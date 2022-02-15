@@ -1,7 +1,7 @@
-class Diamond  {
+class Diamond extends AbstractInteractable {
     constructor(game, x, y, amount) {
-
-        Object.assign(this, { game, x, y, amount});
+        super(game, x, y);
+        this.amount = amount;
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
 
         this.scale = 5;
