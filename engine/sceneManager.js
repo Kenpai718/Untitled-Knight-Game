@@ -72,7 +72,7 @@ class SceneManager {
 
     /**
      * Draws textbox to the canvas
-     * @param {*} ctx 
+     * @param {*} ctx
      */
     drawTextBox(ctx) {
         //initialize textbox here because this method could be called before constructor is done
@@ -247,7 +247,7 @@ class SceneManager {
         this.vignette.update();
         this.heartsbar.update();
         this.inventory.update();
-        if(this)
+        if(this.myTextBox)
         this.myTextBox.update();
     };
 
