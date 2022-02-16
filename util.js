@@ -44,6 +44,32 @@ const PARAMS = {
     POTION_HEAL: 50,
 };
 
+/**Physics of the player
+ * Inspired by Chris Marriott's Marriot Bros
+ * A jump is about 3.5 blocks and with a double jump its about 4.5
+ */
+const PHYSIC_SCALER = 3; //scalar for some physics
+const PLAYER_JUMP_HEIGHT = 1500; //players base jump height
+const FALL_GRAVITY = 1.2; //gravity put on player's fall acc
+const PLAYER_PHYSICS = {
+    MAX_WALK: 95 * PHYSIC_SCALER,   
+    MAX_RUN: 155 * PHYSIC_SCALER,   
+    ACC_WALK: 150 * PHYSIC_SCALER,  
+    ACC_RUN: 170 * PHYSIC_SCALER,
+    ROLL_SPD: 400 * PHYSIC_SCALER,
+    SKID: 3000,
+    ATTACK_SKID: 3000 * 0.75,
+    CROUCH_SPD: 50 * PHYSIC_SCALER,
+    DOUBLE_JUMP_X_BOOST: 10,
+    JUMP_HEIGHT: PLAYER_JUMP_HEIGHT,
+    DOUBLE_JUMP_HEIGHT: PLAYER_JUMP_HEIGHT * .5,
+    MAX_FALL: 270 * PHYSIC_SCALER,
+    ACC_FALL: PLAYER_JUMP_HEIGHT * FALL_GRAVITY,
+    MAX_SLIDE: 150 * PHYSIC_SCALER,
+    ACC_SLIDE: 750
+    
+};
+
 /**Global stats that define an entity */
 const STATS = {
     /*player stats*/

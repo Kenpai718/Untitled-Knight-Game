@@ -117,6 +117,18 @@ class AbstractPlayer extends AbstractEntity {
     }
 
     /**
+     * Basic jump execution
+     */
+    doJump() {
+            ASSET_MANAGER.playAsset(SFX.JUMP);
+            this.action = this.states.jump; //jump (9-11)
+            //set jump distance
+            this.velocity.y -= PLAYER_PHYSICS.JUMP_HEIGHT;
+            this.game.jump = false;
+            this.inAir = true;
+    }
+
+    /**
     * Player takes damages
     * Set dead if hp below 0
     * Overrides original method to play a different grunt sound
