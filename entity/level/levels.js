@@ -461,6 +461,13 @@ var level1_3 = {
                    "-To activate: hit them or press \'W'\ next to it."
             ]
         },
+        {
+            x: 34, y: 4,
+            title: "[TUTORIAL: ADVANCED JUMPS]",
+            text: ["-Delay your second jump to cover more distance.",
+                   "-Wait until you're at the peak of your first jump before doing your second jump."
+            ]
+        }
     ],
     doors: [
         { x: 1, y: 3, killQuota: 0, exitLocation: { x: 114, y: 1, levelNum: 2 }, transition : false }, //go back to level 2
@@ -546,7 +553,7 @@ var level1_3 = {
         { x: 89, y: 17, width: 3, height: 1 },
         { x: 95, y: 21, width: 1, height: 1 },
         { x: 45, y: 30, width: 2, height: 1 },
-        { x: 51, y: 4, width: 4, height: 1 },
+        { x: 51, y: 4, width: 5, height: 1 },
         { x: 60, y: 8, width: 3, height: 1 }
     ],
     walls: [
