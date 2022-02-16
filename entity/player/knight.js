@@ -165,16 +165,19 @@ class Knight extends AbstractPlayer {
         this.checkAndDoRoll();
 
         //vertical actions
-        this.checkAndDoVerticalActions(TICK);
+        this.checkAndDoAerialActions(TICK);
 
     }
 
 
     /**
      * Sets vertical action states like wall hang, wall slide, etc
+     * 
+     * If it is not a wallslide, hang or an aerial bow shot then flip the
+     * direction if needed depending on velocity
      * @param {*} TICK 
      */
-    checkAndDoVerticalActions(TICK) {
+    checkAndDoAerialActions(TICK) {
 
         let isWallAction = (this.action == this.states.wall_hang || this.action == this.states.wall_climb || this.action == this.states.wall_slide)
         if (isWallAction) {
@@ -197,7 +200,7 @@ class Knight extends AbstractPlayer {
                 else if (this.animations[this.facing][this.action].currentFrame() == 4)
                     this.velocity.y = -125;
             }
-        } else if (this.inAir) { //player is falling
+        } else if (this.inAir && this.action != this.states.shoot) { //player is falling and not shooting an arrow
             //adjust the direction depending on how the player is drifting
             let flip = (this.velocity.x < 0 && this.facing == this.dir.right) ||
                 (this.velocity.x > 0 && this.facing == this.dir.left);
