@@ -1,20 +1,6 @@
-//constants used for physics
-const SCALER = 3;
-//currently using Chris Marriot's mario physics
-const MAX_WALK = 93.75 * SCALER;
-const MAX_RUN = 153.75 * SCALER;
-const ACC_WALK = 133.59375 * SCALER;
-const ACC_RUN = 200.390625 * SCALER;
-const ROLL_SPD = 400 * SCALER;
-const SKID = 3000;
-const ATTACK_SKID = SKID * 0.75;
-const CROUCH_SPD = 50 * SCALER;
-const DOUBLE_JUMP_X_BOOST = 10;
-const JUMP_HEIGHT = 1500;
-const DOUBLE_JUMP_HEIGHT = JUMP_HEIGHT * .45;
-const MAX_FALL = 270 * SCALER;
-const MAX_SLIDE = 150 * SCALER;
-
+/**
+ * Player character of game
+ */
 class Knight extends AbstractPlayer {
     //game = engine, (x, y) = spawn cords
     constructor(game, x, y) {
@@ -32,7 +18,7 @@ class Knight extends AbstractPlayer {
             roll: 7, wall_climb: 8, wall_hang: 9, wall_slide: 10,
             jump: 11, jump_to_fall: 12, falling: 13,
             turn_around: 14, slide: 15,
-            attack1: 16, attack2: 17, shoot: 18, pluck : 19,
+            attack1: 16, attack2: 17, shoot: 18, pluck: 19,
             death: 20
         };
 
@@ -62,10 +48,10 @@ class Knight extends AbstractPlayer {
         this.offsetxBB = 0;
         this.offsetyBB = 0;
 
-        //physics
+        //PLAYER_PHYSICS
         this.velocity = { x: 0, y: 0 };
-        this.fallAcc = 1500;
-        this.slideAcc = 750;
+        this.fallAcc = PLAYER_PHYSICS.ACC_FALL;
+        this.slideAcc = PLAYER_PHYSICS.ACC_SLIDE;
         this.collisions = {
             lo_left: false, hi_left: false, lo_right: false, hi_right: false,
             ceil: false, ceil_left: false, ceil_right: false,
@@ -103,84 +89,19 @@ class Knight extends AbstractPlayer {
         if (this.action != this.states.roll) super.checkDamageCooldown(TICK); //check if can be hit
         super.checkInDeathZone(); //check if outside of canvas
 
-
         //NOTE: this.dead is set when the knight hp drops to 0.
         if (this.dead) {
             super.setDead();
-        } else {
+        } else { //not dead listen for player controls and do them
             /**CONTROLS:
-             * CheckAndDo..() checks user input and executs that action is possible
+             * CheckAndDo..() checks user input and executes that action if possible
             */
-            this.checkAndDoMovement(TICK);
-            this.checkAndDoAttack();
-            this.checkAndDoHeal();
-            //NOTE: Roll should be the last option checked because user should be able to cancel actions into roll
-            this.checkAndDoRoll();
-
-            if (this.action == this.states.wall_hang) {
-                if (this.game.up) {
-                    this.action = this.states.wall_climb;
-                    this.y -= 3 * this.scale;
-                    if (this.animations[this.facing][this.action].isDone()) {
-                        this.resetAnimationTimers(this.action);
-                    }
-                }
-                else if (this.game.down) {
-                    this.action = this.states.wall_slide;
-                    this.facing = this.facing == this.dir.right ? this.dir.left : this.dir.right;
-                }
-            }
-            if (this.action == this.states.wall_climb) {
-                if (this.animations[this.facing][this.action].currentFrame() < 4)
-                    this.velocity.y = -250;
-                else if (this.animations[this.facing][this.action].currentFrame() == 4)
-                    this.velocity.y = -125;
-            }
-
-            /**SET THE VELOCITY OF THE PLAYER */
-            //constant falling velocity
-            switch (this.action) {
-                case this.states.wall_slide:
-                    this.velocity.y += this.slideAcc * TICK;
-                    break;
-                case this.action == this.states.wall_climb:
-                    if (this.animations[this.facing][this.action].currentFrame() >= 3)
-                        this.velocity.y += this.fallAcc * TICK;
-                    break;
-                case this.states.wall_hang:
-                    this.velocity.y = 0;
-                    break;
-                default:
-                    this.velocity.y += this.fallAcc * TICK;
-                    break;
-            }
-
-            // max y velocity
-            if (this.velocity.y >= MAX_FALL) this.velocity.y = MAX_FALL;
-            if (this.velocity.y <= -MAX_FALL) this.velocity.y = -MAX_FALL;
-            if (this.action == this.states.wall_slide) {
-                if (this.velocity.y >= MAX_SLIDE) this.velocity.y = MAX_SLIDE;
-            }
-
-            //max x velocity
-            let doubleJumpBonus = 0;
-            if (!this.doubleJump) doubleJumpBonus = DOUBLE_JUMP_X_BOOST;
-            if (this.velocity.x >= MAX_RUN) this.velocity.x = MAX_RUN + doubleJumpBonus;
-            if (this.velocity.x <= -MAX_RUN) this.velocity.x = -MAX_RUN - doubleJumpBonus;
-            if (this.action == this.states.crouch_walk) {
-                if (this.velocity.x >= CROUCH_SPD) this.velocity.x = CROUCH_SPD;
-                if (this.velocity.x <= -CROUCH_SPD) this.velocity.x = -CROUCH_SPD;
-            }
-
-            /**UPDATE POSITIONING AND BOUNDING BOX */
-            this.x += this.velocity.x * TICK;
-            if (this.action != this.states.wall_hang || this.action != this.states.wall_climb)
-                this.y += this.velocity.y * TICK;
-            this.updateBB();
+            this.checkAndDoPlayerActions(TICK);
+            this.setVelocityAndPosition(TICK);
 
             //set to falling state if needed
-            if (!this.touchFloor() && (this.action < this.states.jump || this.action > this.states.falling) && 
-            this.action != this.states.attack1 && this.action != this.states.attack2 && this.action != this.states.shoot && this.action != this.states.pluck) {
+            if (!super.touchFloor() && (this.action < this.states.jump || this.action > this.states.falling) &&
+                this.action != this.states.attack1 && this.action != this.states.attack2 && this.action != this.states.shoot && this.action != this.states.pluck) {
                 if ((this.action != this.states.wall_slide && this.action != this.states.roll && this.action != this.states.wall_hang && this.action != this.states.wall_climb) ||
                     (this.action == this.states.wall_slide && !(this.collisions.lo_left || this.collisions.lo_right))) {
                     this.action = this.states.falling;
@@ -188,8 +109,11 @@ class Knight extends AbstractPlayer {
                 }
             }
 
-            /**COLLISION HANDLING */
-            this.handleCollisions(TICK);
+            /**COLLISION HANDLING
+             * All interactions like environment or entities
+             * are handled by the AbstractPlayer superclass
+             */
+            super.handleCollisions(TICK);
         }
     }
 
@@ -199,7 +123,7 @@ class Knight extends AbstractPlayer {
         if (!this.vulnerable && !this.game.roll) {
             ctx.filter = "drop-shadow(0 0 0.2rem crimson) opacity(100%)"; //red border to indicate damaged
             //drop the opacity a bit each flicker to create an effect of switching between 100% opaque
-            if(this.flickerFlag) {
+            if (this.flickerFlag) {
                 ctx.filter = "drop-shadow(0 0 0.2rem crimson) opacity(85%)";
             }
             this.animations[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
@@ -223,6 +147,70 @@ class Knight extends AbstractPlayer {
     }
 
     /**
+     * Checks all avaliable actions of a player
+     * and if the player's chosen action can be done it will
+     * be executed.
+     * @param {} TICK 
+     */
+    checkAndDoPlayerActions(TICK) {
+        //horizontal or vertical actions
+        this.checkAndDoMovement(TICK); //keyboard movement
+        this.checkAndDoAttack();       //attacking
+        this.checkAndDoHeal();         //healing
+
+        /**
+         * ROLLING SHOULD ALWAYS BE LAST
+         * This is so roll can cancel other animations
+         */
+        this.checkAndDoRoll();
+
+        //vertical actions
+        this.checkAndDoAerialActions(TICK);
+
+    }
+
+
+    /**
+     * Sets vertical action states like wall hang, wall slide, etc
+     * 
+     * If it is not a wallslide, hang or an aerial bow shot then flip the
+     * direction if needed depending on velocity
+     * @param {*} TICK 
+     */
+    checkAndDoAerialActions(TICK) {
+
+        let isWallAction = (this.action == this.states.wall_hang || this.action == this.states.wall_climb || this.action == this.states.wall_slide)
+        if (isWallAction) {
+            if (this.action == this.states.wall_hang) {
+                if (this.game.up) {
+                    this.action = this.states.wall_climb;
+                    this.y -= 3 * this.scale;
+                    if (this.animations[this.facing][this.action].isDone()) {
+                        this.resetAnimationTimers(this.action);
+                    }
+                }
+                else if (this.game.down) {
+                    this.action = this.states.wall_slide;
+                    this.facing = this.facing == this.dir.right ? this.dir.left : this.dir.right;
+                }
+            }
+            if (this.action == this.states.wall_climb) {
+                if (this.animations[this.facing][this.action].currentFrame() < 4)
+                    this.velocity.y = -250;
+                else if (this.animations[this.facing][this.action].currentFrame() == 4)
+                    this.velocity.y = -125;
+            }
+        } else if (this.inAir && this.action != this.states.shoot) { //player is falling and not shooting an arrow
+            //adjust the direction depending on how the player is drifting
+            let flip = (this.velocity.x < 0 && this.facing == this.dir.right) ||
+                (this.velocity.x > 0 && this.facing == this.dir.left);
+            if (flip) this.flipFacing();
+
+
+        }
+    }
+
+    /**
      * Checks/Executes horizontal and vertical movement
      * @params TICK = this.game.clocktick
      */
@@ -233,195 +221,18 @@ class Knight extends AbstractPlayer {
             (this.action == this.states.attack1 || this.action == this.states.attack2);
         if (!uninterruptibleAction) {
             if (this.action != this.states.jump && !this.inAir) { //not in the air
-                //horizontal movement
-                if (this.game.down || this.touchHole()) { //crouch
-                    this.action = this.states.crouch;
-                    this.crouch = true;
-                    //crouch left or right (move at half speed)
-                    if (this.game.right && !this.game.attack && !this.game.shoot) { //run right
-                        this.facing = this.dir.right;
-                        this.action = this.states.crouch_walk; //crouch walk
-                        this.velocity.x += CROUCH_SPD;
-                    } else if (this.game.left && !this.game.attack && !this.game.shoot) { //run left
-                        this.facing = this.dir.left;
-                        this.action = this.states.crouch_walk; //crouch walk
-                        this.velocity.x -= CROUCH_SPD;
-                    }
-                    else {
-                        if (this.facing == this.dir.left) {
-                            if (this.velocity.x < 0) {
-                                this.velocity.x += SKID * TICK;
-                            }
-                            else this.velocity.x = 0;
-                        }
-                        else if (this.facing == this.dir.right) {
-                            if (this.velocity.x > 0) {
-                                this.velocity.x -= SKID * TICK;
-                            }
-                            else this.velocity.x = 0;
-                        }
-                    }
-                } else if (this.game.right && !this.game.attack && !this.game.shoot) { //run right
-                    if (this.facing == this.dir.left && this.velocity.x < 0) {
-                        this.action = this.states.turn_around;
-                        this.velocity.x += SKID * TICK;
-                    }
-                    else {
-                        this.facing = this.dir.right;
-                        this.action = this.states.run;
-                        this.velocity.x += MAX_RUN;
-                    }
-                    this.crouch = false;
-                } else if (this.game.left && !this.game.attack && !this.game.shoot) { //run left
-                    if (this.facing == this.dir.right && this.velocity.x > 0) {
-                        this.action = this.states.turn_around;
-                        this.velocity.x -= SKID * TICK;
-                    }
-                    else {
-                        this.facing = this.dir.left;
-                        this.action = this.states.run;
-                        this.velocity.x -= MAX_RUN;
-                    }
-                    this.crouch = false;
-                } else { //idle
-                    if (this.facing == this.dir.left) {
-                        if (this.velocity.x < 0) {
-                            this.velocity.x += (SKID) * TICK;
-                        }
-                        else this.velocity.x = 0;
-                    }
-                    else if (this.facing == this.dir.right) {
-                        if (this.velocity.x > 0) {
-                            this.velocity.x -= (SKID)  * TICK;
-                        }
-                        else this.velocity.x = 0;
-                    }
-                    this.action = this.DEFAULT_ACTION;
-                    this.crouch = false;
-                }
-                //jump press
-                if (this.game.jump && !this.action.jump && !this.touchCeiling()) {
-                    ASSET_MANAGER.playAsset(SFX.JUMP);
-                    this.action = this.states.jump; //jump (9-11)
-                    //set jump distance
-                    this.velocity.y -= JUMP_HEIGHT;
-                    this.game.jump = false;
-                    this.inAir = true;
-                }
-                if (this.action != this.states.turn_around)
-                    this.resetAnimationTimers(this.states.turn_around);
+                this.checkAndDoGroundedMovement(TICK);
             } else { //in the air
-                // horizontal physics
-                if (this.action != this.states.wall_hang && this.action != this.states.wall_climb) {
-                    if (this.game.right && !this.game.left) {
-                        if (Math.abs(this.velocity.x) > MAX_WALK) {
-                            this.velocity.x += ACC_RUN * TICK;
-                        } else this.velocity.x += ACC_WALK * TICK;
-                    } else if (this.game.left && !this.game.right) {
-                        if (Math.abs(this.velocity.x) > MAX_WALK) {
-                            this.velocity.x -= ACC_RUN * TICK;
-                        } else this.velocity.x -= ACC_WALK * TICK;
-                    }
-                }
-
-                if (this.inAir) {
-                    // //logic to handle switching between jump animations
-                    // if (this.animations[this.facing][this.states.falling].isDone()) { //done falling
-                    //     //this.game.jump = false; //jump finished set to false
-                    if (this.animations[this.facing][this.states.jump_to_fall].isDone()) { //falling in between finished transition to falling
-                        //console.log("here fall");
-                        this.action = this.states.falling; //set to falling until reach ground
-                    } else if (this.animations[this.facing][this.states.jump].isDone()) { //jump finished transition to falling
-                        this.action = this.states.jump_to_fall; //set to falling-in-between
-                        //console.log("transition jump here");
-                    }
-
-                    if (this.action == this.states.falling) {
-                        if (this.action != this.states.wall_climb) {
-                            if (this.diffy.hi > 0 * this.scale && this.diffy.hi <= 12 * this.scale) {
-                                if ((this.collisions.lo_left || this.collisions.hi_left) && this.facing == this.dir.left ||
-                                    (this.collisions.lo_right || this.collisions.hi_right) && this.facing == this.dir.right) {
-                                    this.action = this.states.wall_hang;
-                                    this.y = this.y + this.diffy.hi - 8 * this.scale;
-                                    this.velocity.x = 0;
-                                }
-                            }
-                            else if (this.diffy.hi < 8) {
-                                if (this.collisions.lo_left) {
-                                    this.action = this.states.wall_slide;
-                                    this.facing = this.dir.right;
-                                }
-                                else if (this.collisions.lo_right) {
-                                    this.action = this.states.wall_slide;
-                                    this.facing = this.dir.left;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (this.game.jump) {
-                    // do a wall jump if touching a wall
-                    if (!this.touchFloor()) {
-                        if (this.collisions.lo_left) {
-                            ASSET_MANAGER.playAsset(SFX.WALLJUMP);
-                            this.game.jump = false;
-                            this.resetAnimationTimers(this.states.jump);
-                            this.resetAnimationTimers(this.states.jump_to_fall);
-                            if (this.action == this.states.wall_slide || this.action == this.states.wall_hang && this.game.left && this.facing == this.dir.right)
-                                this.velocity.y -= JUMP_HEIGHT;
-                            else
-                                this.velocity.y -= DOUBLE_JUMP_HEIGHT * 2;
-                            if (this.action != this.states.wall_hang || this.action == this.states.wall_hang && this.game.right) {
-                                this.velocity.x += MAX_WALK;
-                                this.facing = this.dir.right;
-                            }
-                            this.action = this.states.jump;
-                        }
-                        else if (this.collisions.lo_right) {
-                            ASSET_MANAGER.playAsset(SFX.WALLJUMP);
-                            this.game.jump = false;
-                            this.resetAnimationTimers(this.states.jump);
-                            this.resetAnimationTimers(this.states.jump_to_fall);
-                            if (this.action == this.states.wall_slide || this.action == this.states.wall_hang && this.game.right && this.facing == this.dir.right)
-                                this.velocity.y -= JUMP_HEIGHT;
-                            else
-                                this.velocity.y -= DOUBLE_JUMP_HEIGHT * 2;
-                            if (this.action != this.states.wall_hang || this.action == this.states.wall_hang && this.game.left) {
-                                this.velocity.x -= MAX_WALK;
-                                this.facing = this.dir.left;
-                            }
-                            this.action = this.states.jump;
-                        }
-                    }
-
-                    //do a double jump if the player is in the air and hasn't double jumped while in air
-                    if (this.doubleJump && this.inAir && this.action >= this.states.jump && this.action <= this.states.falling) {
-                        ASSET_MANAGER.playAsset(SFX.DOUBLEJUMP);
-                        this.doubleJump = false;
-                        this.game.jump = false;
-                        this.resetAnimationTimers(this.states.jump);
-                        this.resetAnimationTimers(this.states.jump_to_fall);
-                        if (this.action == this.states.jump) {
-                            this.velocity.y -= DOUBLE_JUMP_HEIGHT;
-                        }
-                        else {
-                            this.velocity.y = -JUMP_HEIGHT / 2;
-                        }
-                        this.action = this.states.jump;
-                        if (this.facing == this.states.right) this.velocity += DOUBLE_JUMP_X_BOOST;
-                        if (this.facing == this.states.left) this.velocity -= DOUBLE_JUMP_X_BOOST;
-                    }
-                }
+                this.checkAndDoAerialMovement(TICK);
             }
         } else { //player is in an uninteruptible action
             //if player was attacking slow down that momentum on the ground so there is a bit of a skid
             if ((this.game.attack || this.game.shoot) && !this.inAir) {
                 if (this.velocity.x > 0) { //right momentum
-                    this.velocity.x -= ATTACK_SKID * TICK;
+                    this.velocity.x -= PLAYER_PHYSICS.ATTACK_SKID * TICK;
                     if (this.velocity.x < 0) this.velocity.x = 0;
                 } else { //left momentum
-                    this.velocity.x += ATTACK_SKID * TICK;
+                    this.velocity.x += PLAYER_PHYSICS.ATTACK_SKID * TICK;
                     if (this.velocity.x > 0) this.velocity.x = 0;
                 }
             }
@@ -436,6 +247,219 @@ class Knight extends AbstractPlayer {
             }
         }
     }
+
+
+
+    /**
+     * Movement controls while grounded
+     * @param {} TICK 
+     */
+    checkAndDoGroundedMovement(TICK) {
+        //horizontal movement
+        if (this.game.down || this.touchHole()) { //crouch
+            this.action = this.states.crouch;
+            this.crouch = true;
+            //crouch left or right (move at half speed)
+            if (this.game.right && !this.game.attack && !this.game.shoot) { //run right
+                this.facing = this.dir.right;
+                this.action = this.states.crouch_walk; //crouch walk
+                this.velocity.x += PLAYER_PHYSICS.CROUCH_SPD;
+            } else if (this.game.left && !this.game.attack && !this.game.shoot) { //run left
+                this.facing = this.dir.left;
+                this.action = this.states.crouch_walk; //crouch walk
+                this.velocity.x -= PLAYER_PHYSICS.CROUCH_SPD;
+            }
+            else {
+                if (this.facing == this.dir.left) {
+                    if (this.velocity.x < 0) {
+                        this.velocity.x += PLAYER_PHYSICS.SKID * TICK;
+                    }
+                    else this.velocity.x = 0;
+                }
+                else if (this.facing == this.dir.right) {
+                    if (this.velocity.x > 0) {
+                        this.velocity.x -= PLAYER_PHYSICS.SKID * TICK;
+                    }
+                    else this.velocity.x = 0;
+                }
+            }
+        } else if (this.game.right && !this.game.attack && !this.game.shoot) { //run right
+            if (this.facing == this.dir.left && this.velocity.x < 0) {
+                this.action = this.states.turn_around;
+                this.velocity.x += PLAYER_PHYSICS.SKID * TICK;
+            }
+            else {
+                this.facing = this.dir.right;
+                this.action = this.states.run;
+                this.velocity.x += PLAYER_PHYSICS.MAX_RUN;
+            }
+            this.crouch = false;
+        } else if (this.game.left && !this.game.attack && !this.game.shoot) { //run left
+            if (this.facing == this.dir.right && this.velocity.x > 0) {
+                this.action = this.states.turn_around;
+                this.velocity.x -= PLAYER_PHYSICS.SKID * TICK;
+            }
+            else {
+                this.facing = this.dir.left;
+                this.action = this.states.run;
+                this.velocity.x -= PLAYER_PHYSICS.MAX_RUN;
+            }
+            this.crouch = false;
+        } else { //idle
+            if (this.facing == this.dir.left) {
+                if (this.velocity.x < 0) {
+                    this.velocity.x += (PLAYER_PHYSICS.SKID) * TICK;
+                }
+                else this.velocity.x = 0;
+            }
+            else if (this.facing == this.dir.right) {
+                if (this.velocity.x > 0) {
+                    this.velocity.x -= (PLAYER_PHYSICS.SKID) * TICK;
+                }
+                else this.velocity.x = 0;
+            }
+            this.action = this.DEFAULT_ACTION;
+            this.crouch = false;
+        }
+        //jump press
+        if (this.game.jump && !this.action.jump && !this.touchCeiling()) {
+            super.doJump();
+        }
+        if (this.action != this.states.turn_around) this.resetAnimationTimers(this.states.turn_around);
+    }
+
+
+    /**
+     * Movement of player while airbourne
+     * @param {*} TICK 
+     */
+    checkAndDoAerialMovement(TICK) {
+        // horizontal PLAYER_PHYSICS while in the air
+        if (this.action != this.states.wall_hang && this.action != this.states.wall_climb) {
+            if (this.game.right && !this.game.left) {
+                if (Math.abs(this.velocity.x) > PLAYER_PHYSICS.MAX_WALK) {
+                    this.velocity.x += PLAYER_PHYSICS.ACC_RUN * TICK;
+                } else this.velocity.x += PLAYER_PHYSICS.ACC_WALK * TICK;
+            } else if (this.game.left && !this.game.right) {
+                if (Math.abs(this.velocity.x) > PLAYER_PHYSICS.MAX_WALK) {
+                    this.velocity.x -= PLAYER_PHYSICS.ACC_RUN * TICK;
+                } else this.velocity.x -= PLAYER_PHYSICS.ACC_WALK * TICK;
+            }
+        }
+
+
+
+        if (this.inAir) {
+            // //logic to handle switching between jump animations
+            if (this.animations[this.facing][this.states.jump_to_fall].isDone()) { //falling in between finished transition to falling
+                this.action = this.states.falling;                                 //set to falling until reach ground
+            } else if (this.animations[this.facing][this.states.jump].isDone()) {  //jump finished transition to falling
+                this.action = this.states.jump_to_fall;                            //set to falling-in-between
+            }
+
+            //FALLING STATE, SET APPROPRIATE ANIMATIONS IF COLLIDING WITH SOMETHING LIKE WALLSLIDE
+            if (this.action == this.states.falling) {
+                if (this.action != this.states.wall_climb) {
+                    if (this.diffy.hi > 0 * this.scale && this.diffy.hi <= 12 * this.scale) {
+                        if ((this.collisions.lo_left || this.collisions.hi_left) && this.facing == this.dir.left ||
+                            (this.collisions.lo_right || this.collisions.hi_right) && this.facing == this.dir.right) {
+                            this.action = this.states.wall_hang;
+                            this.y = this.y + this.diffy.hi - 8 * this.scale;
+                            this.velocity.x = 0;
+                        }
+                    }
+                    else if (this.diffy.hi < 8) {
+                        if (this.collisions.lo_left) {
+                            this.action = this.states.wall_slide;
+                            this.facing = this.dir.right;
+                        }
+                        else if (this.collisions.lo_right) {
+                            this.action = this.states.wall_slide;
+                            this.facing = this.dir.left;
+                        }
+                    }
+                }
+            }
+        }
+
+        //PLAYER IS DOING A JUMP WHILE IN THE AIR
+        if (this.game.jump) {
+            // do a wall jump if touching a wall
+            if (!this.touchFloor()) {
+                if (this.collisions.lo_left) {
+                    ASSET_MANAGER.playAsset(SFX.WALLJUMP);
+                    this.game.jump = false;
+                    this.resetAnimationTimers(this.states.jump);
+                    this.resetAnimationTimers(this.states.jump_to_fall);
+                    if (this.action == this.states.wall_slide || this.action == this.states.wall_hang && this.game.left && this.facing == this.dir.right)
+                        this.velocity.y -= PLAYER_PHYSICS.JUMP_HEIGHT;
+                    else
+                        this.velocity.y -= PLAYER_PHYSICS.DOUBLE_JUMP_HEIGHT * 2;
+                    if (this.action != this.states.wall_hang || this.action == this.states.wall_hang && this.game.right) {
+                        this.velocity.x += PLAYER_PHYSICS.MAX_WALK;
+                        this.facing = this.dir.right;
+                    }
+                    this.action = this.states.jump;
+                }
+                else if (this.collisions.lo_right) {
+                    ASSET_MANAGER.playAsset(SFX.WALLJUMP);
+                    this.game.jump = false;
+                    this.resetAnimationTimers(this.states.jump);
+                    this.resetAnimationTimers(this.states.jump_to_fall);
+                    if (this.action == this.states.wall_slide || this.action == this.states.wall_hang && this.game.right && this.facing == this.dir.right)
+                        this.velocity.y -= PLAYER_PHYSICS.JUMP_HEIGHT;
+                    else
+                        this.velocity.y -= PLAYER_PHYSICS.DOUBLE_JUMP_HEIGHT * 2;
+                    if (this.action != this.states.wall_hang || this.action == this.states.wall_hang && this.game.left) {
+                        this.velocity.x -= PLAYER_PHYSICS.MAX_WALK;
+                        this.facing = this.dir.left;
+                    }
+                    this.action = this.states.jump;
+                }
+            }
+
+            //do a double jump if the player is in the air and hasn't double jumped while in air
+            if (this.doubleJump && this.inAir && this.action >= this.states.jump
+                && this.action <= this.states.falling) {
+                ASSET_MANAGER.playAsset(SFX.DOUBLEJUMP);
+                this.doubleJump = false;
+                this.game.jump = false;
+                this.resetAnimationTimers(this.states.jump);
+                this.resetAnimationTimers(this.states.jump_to_fall);
+                if (this.action == this.states.jump) {
+                    this.velocity.y -= PLAYER_PHYSICS.DOUBLE_JUMP_HEIGHT;
+                }
+                else {
+                    this.velocity.y = -PLAYER_PHYSICS.JUMP_HEIGHT / 2;
+                }
+                this.action = this.states.jump;
+
+                //handle double jump x velocity
+                let isLeft = this.facing == this.dir.left;
+                if (this.game.left) {
+                    if(isLeft) { //keep momentum and jump left
+                        this.velocity.x -= PLAYER_PHYSICS.DOUBLE_JUMP_X_BOOST * TICK;
+                    } else { //was facing right cut momentum and double jump other way
+                        this.facing = this.dir.left;
+                        this.velocity.x = 0;
+                        //gave a slightly higher boost since momentum was just killed
+                        this.velocity.x -= (PLAYER_PHYSICS.DOUBLE_JUMP_X_BOOST * PHYSIC_SCALER) * TICK;
+                    }
+
+                } else if (this.game.right) {
+                    if(!isLeft) { //keep momentum and jump right
+                        this.velocity.x += PLAYER_PHYSICS.DOUBLE_JUMP_X_BOOST * TICK;
+                    } else { //was facing left cut momentum and double jump other way
+                        this.facing = this.dir.right;
+                        this.velocity.x = 0;
+                        //gave a slightly higher boost since momentum was just killed
+                        this.velocity.x += (PLAYER_PHYSICS.DOUBLE_JUMP_X_BOOST * PHYSIC_SCALER)* TICK;
+                    };
+                }
+            }
+        }
+    }
+
 
     /**
      * Checks and execute attack input
@@ -490,15 +514,21 @@ class Knight extends AbstractPlayer {
             if (this.myInventory.arrows > 0 || this.myInventory.arrows == 0 && this.arrow) {
                 if (this.crouch) {
                     this.action = this.states.crouch_shoot;
-                }
-                else this.action = this.states.shoot;
-                let x = this.game.mouse.x + this.game.camera.x;
-                let time = this.animations[this.facing][this.action].elapsedTime;
-                if (x < this.x + this.width / 2) 
-                    this.facing = this.dir.left;
-                if (x > this.x + this.width / 2)
-                    this.facing = this.dir.right;
+                } else {
+                    this.action = this.states.shoot;
+                    let time = this.animations[this.facing][this.action].elapsedTime;
+
+                    //only adjust the direction if using the mouse to shoot
+                    if (!this.game.shootButton) {
+                        let x = this.game.mouse.x + this.game.camera.x;
+                        if (x < this.x + this.width / 2)
+                            this.facing = this.dir.left;
+                        if (x > this.x + this.width / 2)
+                            this.facing = this.dir.right;
+                    }
                     this.animations[this.facing][this.action].elapsedTime = time;
+                }
+
             }
             else {
                 if (this.game.down || this.touchHole()) {
@@ -516,9 +546,10 @@ class Knight extends AbstractPlayer {
             if (done) {
                 this.action = this.game.down || this.touchHole() ? this.states.crouch : this.DEFAULT_ACTION; //back to idle; added case for crouch attacks
                 this.game.shoot = false;
+                this.game.shootButton = false;
                 this.arrow = false;
             }
-            
+
 
         } else {
             //crouch attack
@@ -526,7 +557,7 @@ class Knight extends AbstractPlayer {
             //slash 1 and 2
             this.resetAnimationTimers(this.states.attack1);
             this.resetAnimationTimers(this.states.attack2);
-            
+
             this.resetAnimationTimers(this.states.shoot);
             this.resetAnimationTimers(this.states.crouch_shoot);
 
@@ -536,10 +567,7 @@ class Knight extends AbstractPlayer {
             //reset shooting animation
         }
         if (action == this.states.turn_around && this.action != this.states.turn_around && this.action != this.states.run) {
-            if (this.facing == this.dir.left)
-                this.facing = this.dir.right;
-            else
-                this.facing = this.dir.left;
+            this.flipFacing();
         }
     }
 
@@ -571,7 +599,7 @@ class Knight extends AbstractPlayer {
             }
             //set roll behavior
             this.action = this.states.roll; //roll
-            this.velocity.x += (this.facing == this.dir.left) ? -1 * (ROLL_SPD) : (ROLL_SPD); //movement speed boost
+            this.velocity.x += (this.facing == this.dir.left) ? -1 * (PLAYER_PHYSICS.ROLL_SPD) : (PLAYER_PHYSICS.ROLL_SPD); //movement speed boost
             if (this.vulnerable) {
                 ASSET_MANAGER.playAsset(SFX.DODGE);
                 this.vulnerable = false;
@@ -589,237 +617,51 @@ class Knight extends AbstractPlayer {
     }
 
     /**
-     * Handles collision detection of the player
-     * and adjusts positions or actions if needed
-     * @params this.game.clocktick
-     */
-    handleCollisions(TICK) {
-        //do collisions detection here
-        this.collisions = {
-            lo_left: false, hi_left: false, lo_right: false, hi_right: false,
-            ceil: false, ceil_left: false, ceil_right: false,
-            floor: false, floor_left: false, floor_right: false
-        };
-        const w = this.BB.right - this.BB.left;
-        const h = this.BB.bottom - this.BB.top;
-        const BB = {
-            top: new BoundingBox(this.BB.left, this.BB.top, w, h / 2),
-            bottom: new BoundingBox(this.BB.left, this.BB.top + h / 2, w, h / 2),
-            left: new BoundingBox(this.BB.left, this.BB.top, w / 2, h),
-            right: new BoundingBox(this.BB.left + w / 2, this.BB.top, w / 2, h),
-        };
-        let dist = { x: 0, y: 0 };
-        this.diffy = { hi: 0, lo: 0 };
-        let high = 100000 * this.scale;
-
-        let that = this;
-        this.game.foreground2.forEach(function (entity) {
-            const coll = {
-                left: false, right: false, ceil: false, floor: false
-            };
-            if (entity.BB && that.BB.collide(entity.BB)) {
-                // check which side collides
-                if (BB.bottom.collide(entity.BB)) coll.floor = true;
-                if (BB.top.collide(entity.BB)) coll.ceil = true;
-                if (BB.right.collide(entity.BB)) coll.right = true;
-                if (BB.left.collide(entity.BB)) coll.left = true;
-
-                // record height of knight and wall for wall hang
-                if (high > entity.BB.top) high = entity.BB.top;
-
-                // determine via elimination which side is actually colliding
-                if (coll.floor && !coll.ceil) { // somewhere below
-                    const y = Math.abs(entity.BB.top - that.BB.bottom);
-                    const xL = Math.abs(entity.BB.right - that.BB.left);
-                    const xR = Math.abs(entity.BB.left - that.BB.right);
-                    if (coll.left && !coll.right && xL < w / 2) { // somwehere left
-                        if (xL < y) { // certaintly left
-                            that.collisions.lo_left = true;
-                            dist.x = entity.BB.right - that.BB.left;
-                        }
-                        else { // certaintly below
-                            that.collisions.floor_left = true;
-                            if (Math.abs(entity.BB.top - that.BB.bottom) > Math.abs(dist.y) || dist.y > 0)
-                                dist.y = entity.BB.top - that.BB.bottom;
-                        }
-                    }
-                    else if (coll.right && !coll.left && xR < w / 2) { // somewhere right
-                        if (xR < y) { // certaintly right
-                            that.collisions.lo_right = true;
-                            dist.x = entity.BB.left - that.BB.right;
-                        }
-                        else { // certaintly below
-                            that.collisions.floor_right = true;
-                            if (Math.abs(entity.BB.top - that.BB.bottom) > Math.abs(dist.y) || dist.y > 0)
-                                dist.y = entity.BB.top - that.BB.bottom;
-                        }
-                    }
-                    else { // certaintly below
-                        that.collisions.floor = true;
-                        if (Math.abs(entity.BB.top - that.BB.bottom) > Math.abs(dist.y) || dist.y > 0)
-                            dist.y = entity.BB.top - that.BB.bottom;
-                    }
-                }
-                else if (coll.ceil && !coll.floor) { // somewhere above
-                    const y = Math.abs(entity.BB.bottom - that.BB.top);
-                    const xL = Math.abs(entity.BB.right - that.BB.left);
-                    const xR = Math.abs(entity.BB.left - that.BB.right);
-                    if (coll.left && !coll.right && xL < w / 2) { // somewhere left
-                        if (xL <= y) { // certaintly left
-                            that.collisions.hi_left = true;
-                            dist.x = entity.BB.right - that.BB.left;
-                            if (high > entity.BB.top) high = entity.BB.top;
-                        }
-                        else { // certaintly above
-                            that.collisions.ceil_left = true;
-                            if (Math.abs(entity.BB.bottom - that.BB.top && !that.collisions.floor) > Math.abs(dist.y));
-                        }
-                    }
-                    else if (coll.right && !coll.left && xR < w / 2) { // somewhere right
-                        if (xR <= y) { // certaintly right
-                            that.collisions.hi_right = true;
-                            dist.x = entity.BB.left - that.BB.right;
-                            if (high > entity.BB.top) high = entity.BB.top;
-                        }
-                        else { // certaintly above
-                            that.collisions.ceil_right = true;
-                            if (Math.abs(entity.BB.bottom - that.BB.top && !that.collisions.floor) > Math.abs(dist.y))
-                                dist.y = entity.BB.bottom - that.BB.top;
-                        }
-                    }
-                    else { // certaintly above
-                        that.collisions.ceil = true;
-                        if (Math.abs(entity.BB.bottom - that.BB.top && !that.collisions.floor) > Math.abs(dist.y))
-                            dist.y = entity.BB.bottom - that.BB.top;
-                    }
-                }
-                else { // neither above nor below
-                    if (coll.left) { // certaintly left
-                        that.collisions.lo_left = true;
-                        that.collisions.hi_left = true;
-                        dist.x = entity.BB.right - that.BB.left;
-                        if (high > entity.BB.top) high = entity.BB.top;
-                    }
-                    else if (coll.right) { // certaintly right
-                        that.collisions.lo_right = true;
-                        that.collisions.hi_right = true;
-                        dist.x = entity.BB.left - that.BB.right;
-                        if (high > entity.BB.top) high = entity.BB.top;
-                    }
-                }
-            }
-        });
-
-        this.game.enemies.forEach(function (entity) {
-            //interactions with enemy
-            if (entity instanceof AbstractEnemy) {
-                //attacked by an enemy
-                if (entity.HB && that.BB.collide(entity.HB)) {
-                    //console.log("knight hit by enemy");
-                    that.takeDamage(entity.getDamageValue(), false);
-
-                }
-
-                //attacked an enemy
-                if (that.HB != null && entity.BB && that.HB.collide(entity.BB)) {
-                    //console.log("knight hit an enemy");
-                    entity.takeDamage(that.getDamageValue(), that.critical);
-                }
-
-            }
-        });
-
-        this.game.projectiles.forEach(function (entity) {
-            if (entity.BB && that.BB.collide(entity.BB)) {
-                //player picks up arrow stuck on ground
-                if (entity instanceof Arrow && entity.stuck) {
-                    entity.removeFromWorld = true;
-                    that.myInventory.arrows++;
-                    ASSET_MANAGER.playAsset(SFX.ITEM_PICKUP);
-                }
-            }
-        });
-
-        this.diffy.hi = high - this.BB.top;
-
-        // instances where there are collisions along vertical, but need ignoring
-        // all cases are when there's no definitive ceiling or floor (top/bottom collision as part of a wall)
-        /*if (!(this.touchFloor() || this.touchCeiling())) {
-            dist.y = 0
-        }*/
-        // instances where there are collisons along horizontal, but need ignoring
-        // currently only when there's a crawl space to allow auto-crawl
-        if (this.touchFloor() && this.touchHole()) {
-            if (!this.collisions.lo_right && !this.collisions.lo_left)
-                dist.x = 0;
-        }
-
-        // update position as a result of collision
-        this.x += dist.x;
-        this.y += dist.y;
-        this.updateBB();
-
-        // bottom collision
-        if (this.touchFloor()) {
-            if (this.velocity.y > 0) {
+ * Adjusts the position of player based on current velocity
+ * The velocity was changed by player actions on keyboard
+ * @param {*} TICK 
+ */
+    setVelocityAndPosition(TICK) {
+        /**SET THE VELOCITY OF THE PLAYER */
+        //constant falling velocity, different depending on state
+        switch (this.action) {
+            case this.states.wall_slide:
+                this.velocity.y += this.slideAcc * TICK;
+                break;
+            case this.action == this.states.wall_climb:
+                if (this.animations[this.facing][this.action].currentFrame() >= 3)
+                    this.velocity.y += this.fallAcc * TICK;
+                break;
+            case this.states.wall_hang:
                 this.velocity.y = 0;
-                this.inAir = false;
-                this.doubleJump = true;
-                if (this.action == this.states.jump || this.action == this.states.jump_to_fall || this.action == this.states.fall) {
-                    this.action = this.DEFAULT_ACTION;
-                }
-                this.resetAnimationTimers(this.states.jump);
-                this.resetAnimationTimers(this.states.jump_to_fall);
-                this.resetAnimationTimers(this.states.falling);
-
-
-            }
+                break;
+            default:
+                this.velocity.y += this.fallAcc * TICK;
+                break;
         }
 
-        // top collison
-        if (this.touchCeiling()) {
-            if (this.velocity.y < 0) {
-                this.y -= that.velocity.y * TICK;
-                this.velocity.y = 0;
-            }
+        // max y velocity
+        if (this.velocity.y >= PLAYER_PHYSICS.MAX_FALL) this.velocity.y = PLAYER_PHYSICS.MAX_FALL;
+        if (this.velocity.y <= -PLAYER_PHYSICS.MAX_FALL) this.velocity.y = -PLAYER_PHYSICS.MAX_FALL;
+        if (this.action == this.states.wall_slide) {
+            if (this.velocity.y >= PLAYER_PHYSICS.MAX_SLIDE) this.velocity.y = PLAYER_PHYSICS.MAX_SLIDE;
         }
 
-        // left collison
-        if (this.collisions.hi_left || this.collisions.lo_left) {
-            if (this.velocity.x < 0)
-                this.velocity.x = 0;
+        //max x velocity
+        let doubleJumpBonus = 0;
+        if (!this.doubleJump) doubleJumpBonus = PLAYER_PHYSICS.DOUBLE_JUMP_X_BOOST;
+        if (this.velocity.x >= PLAYER_PHYSICS.MAX_RUN) this.velocity.x = PLAYER_PHYSICS.MAX_RUN + doubleJumpBonus;
+        if (this.velocity.x <= -PLAYER_PHYSICS.MAX_RUN) this.velocity.x = -PLAYER_PHYSICS.MAX_RUN - doubleJumpBonus;
+        if (this.action == this.states.crouch_walk) {
+            if (this.velocity.x >= PLAYER_PHYSICS.CROUCH_SPD) this.velocity.x = PLAYER_PHYSICS.CROUCH_SPD;
+            if (this.velocity.x <= -PLAYER_PHYSICS.CROUCH_SPD) this.velocity.x = -PLAYER_PHYSICS.CROUCH_SPD;
         }
 
-        // right collison
-        if (this.collisions.hi_right || this.collisions.lo_right) {
-            if (this.velocity.x > 0)
-                this.velocity.x = 0;
-        }
+        //update the position and set the bounding box
+        this.x += this.velocity.x * TICK;
+        if (this.action != this.states.wall_hang || this.action != this.states.wall_climb)
+            this.y += this.velocity.y * TICK;
         this.updateBB();
-    }
-
-    /**Collision helper methods */
-
-    touchFloor() {
-        return this.collisions.floor || (this.collisions.floor_right && this.collisions.floor_left) ||
-            (this.collisions.floor_right && !this.collisions.hi_right && !this.collisions.lo_right) ||
-            (this.collisions.floor_left && !this.collisions.hi_left && !this.collisions.lo_left);
-    }
-
-    touchCeiling() {
-        return this.collisions.ceil || (this.collisions.ceil_right && this.collisions.ceil_left) ||
-            (this.collisions.ceil_right && !this.collisions.hi_right && !this.collisions.lo_right) ||
-            (this.collisions.ceil_left && !this.collisions.hi_left && !this.collisions.lo_left);
-    }
-
-    touchHole() {
-        return this.collisions.ceil || this.collisions.ceil_right && !this.collisions.lo_right || this.collisions.ceil_left && !this.collisions.lo_left ||
-            (this.collisions.hi_right && !this.collisions.lo_right) ||
-            (this.collisions.hi_left && !this.collisions.lo_left);
-    }
-
-    isCrouched() {
-        return this.action == this.states.crouch || this.action == this.states.crouch_walk || this.action == this.states.crouch_atk;
     }
 
     //reset the animation timer in both direction
@@ -840,6 +682,12 @@ class Knight extends AbstractPlayer {
         this.playAttackSFX1 = true;
         this.playAttackSFX2 = true;
     }
+
+    /**reverse current facing direction */
+    flipFacing() {
+        (this.facing == this.dir.left) ? this.facing = this.dir.right : this.facing = this.dir.left;
+    }
+
 
     //choose how much damage the knight should do based on what action it is doing
     getDamageValue() {

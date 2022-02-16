@@ -242,7 +242,7 @@ class SceneManager {
         ASSET_MANAGER.adjustVolume(volume);
     };
 
-    drawGUI(ctx){
+    drawGUI(ctx) {
         ctx.fillStyle = "White";
         this.vignette.draw(ctx);
         this.inventory.draw(ctx);
@@ -276,7 +276,7 @@ class SceneManager {
             ctx.fillText("Untitled Webgame", (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 3);
             ctx.font = '40px "Press Start 2P"';
             ctx.fillStyle = this.textColor == 1 ? "Grey" : "White";
-            ctx.fillText("Start game", this.startGameBB.x, this.startGameBB.y);
+            ctx.fillText("Start Game", this.startGameBB.x, this.startGameBB.y);
             ctx.fillStyle = this.textColor == 2 ? "Grey" : "White";
             ctx.fillText("Controls", this.controlsBB.x, this.controlsBB.y);
             ctx.fillStyle = this.textColor == 3 ? "Grey" : "White";
@@ -291,9 +291,9 @@ class SceneManager {
                 ctx.fillText("W: Interact", 30, 30 * 9 * 2);
                 ctx.fillText("Space: Jump", 30, 30 * 10 * 2);
                 ctx.fillText("LShift: Roll", 30, 30 * 11 * 2);
-                ctx.fillText("Left Click: Melee Attack", 30, 30 * 12 * 2);
-                ctx.fillText("Right Click: Shoot Arrow", 30, 30 * 13 * 2);
-                ctx.fillText("H: Heal", 30, 30 * 14 * 2);
+                ctx.fillText("Left Click/P: Melee Attack", 30, 30 * 12 * 2);
+                ctx.fillText("Right Click/O: Shoot Arrow", 30, 30 * 13 * 2);
+                ctx.fillText("E: Heal", 30, 30 * 14 * 2);
             }
             if (this.credits) {
                 ctx.font = '30px "Press Start 2P"';
@@ -333,11 +333,11 @@ class SceneManager {
      */
     loadScene(scene, spawnX, spawnY) {
         //error checking for required level objects data
-        if(scene.ID === undefined) throw ("Level must have an ID number that represents its index in levels array.");
-        if(scene.label  === undefined) throw ("Level must have an label like \'1-1\'");
-        if(scene.width  === undefined) throw ("Level must have a level width in terms of blockdim. EX: 1 = 82 pixels");
-        if(scene.height  === undefined) throw ("Level must have a level height in terms of blockdim. EX: 1 = 82 pixels");
-        if(scene.player === undefined) throw ("Level must have a player with x and y cordinates.");
+        if (scene.ID === undefined) throw ("Level must have an ID number that represents its index in levels array.");
+        if (scene.label === undefined) throw ("Level must have an label like \'1-1\'");
+        if (scene.width === undefined) throw ("Level must have a level width in terms of blockdim. EX: 1 = 82 pixels");
+        if (scene.height === undefined) throw ("Level must have a level height in terms of blockdim. EX: 1 = 82 pixels");
+        if (scene.player === undefined) throw ("Level must have a player with x and y cordinates.");
 
 
         //initialize scene and player
@@ -592,7 +592,15 @@ class SceneManager {
         ctx.strokeStyle = this.game.attack ? "Red" : "SpringGreen";
         ctx.fillStyle = ctx.strokeStyle;
         ctx.strokeRect(215, this.game.surfaceHeight - 40, 45, 30);
-        ctx.fillText("ATK", 220, this.game.surfaceHeight - 20);
+        ctx.fillText("ATK", 223, this.game.surfaceHeight - 20);
+
+        // shoot debug
+
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = this.game.shootButton ? "Red" : "SpringGreen";
+        ctx.fillStyle = ctx.strokeStyle;
+        ctx.strokeRect(270, this.game.surfaceHeight - 40, 60, 30);
+        ctx.fillText("Shoot", 275, this.game.surfaceHeight - 20);
     };
 
     /**
@@ -662,10 +670,10 @@ class Minimap {
         let myEntities = this.game.entities;
         for (var i = 0; i < myEntities.length; i++) {
             let entity = myEntities[i];
-            if(entity instanceof AbstractPlayer) {
+            if (entity instanceof AbstractPlayer) {
                 ctx.fillStyle = this.colors.player;
                 this.drawEntity(ctx, entity);
-            } else if(entity instanceof NPC) {
+            } else if (entity instanceof NPC) {
                 ctx.fillStyle = this.colors.npc;
                 this.drawEntity(ctx, entity);
             }
@@ -674,7 +682,7 @@ class Minimap {
         let myEnemies = this.game.enemies;
         for (var i = 0; i < myEnemies.length; i++) {
             let entity = myEnemies[i];
-            if(entity instanceof AbstractEnemy) {
+            if (entity instanceof AbstractEnemy) {
                 ctx.fillStyle = this.colors.enemy;
                 this.drawEntity(ctx, entity);
             }

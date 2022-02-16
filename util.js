@@ -44,6 +44,32 @@ const PARAMS = {
     POTION_HEAL: 50,
 };
 
+/**Physics of the player
+ * Inspired by Chris Marriott's Marriot Bros
+ * A jump is about 3.5 blocks and with a double jump its about 4.5
+ */
+const PHYSIC_SCALER = 3; //scalar for some physics
+const PLAYER_JUMP_HEIGHT = 1500; //players base jump height
+const FALL_GRAVITY = 1.2; //gravity put on player's fall acc
+const PLAYER_PHYSICS = {
+    MAX_WALK: 95 * PHYSIC_SCALER,   
+    MAX_RUN: 155 * PHYSIC_SCALER,   
+    ACC_WALK: 180 * PHYSIC_SCALER,  
+    ACC_RUN: 200 * PHYSIC_SCALER,
+    ROLL_SPD: 400 * PHYSIC_SCALER,
+    SKID: 3000,
+    ATTACK_SKID: 3000 * 0.75,
+    CROUCH_SPD: 50 * PHYSIC_SCALER,
+    DOUBLE_JUMP_X_BOOST: 100,
+    JUMP_HEIGHT: PLAYER_JUMP_HEIGHT,
+    DOUBLE_JUMP_HEIGHT: PLAYER_JUMP_HEIGHT * .5,
+    MAX_FALL: 270 * PHYSIC_SCALER,
+    ACC_FALL: PLAYER_JUMP_HEIGHT * FALL_GRAVITY,
+    MAX_SLIDE: 150 * PHYSIC_SCALER,
+    ACC_SLIDE: 750
+    
+};
+
 /**Global stats that define an entity */
 const STATS = {
     /*player stats*/
@@ -75,7 +101,8 @@ const STATS = {
         SCALE: 3.5,
         WIDTH: 150,
         HEIGHT: 150,
-        DAMAGE: 12.5
+        DAMAGE: 12.5,
+        PHYSICS: {MAX_RUN: 380, MAX_FALL: 810}
     },
 
     GOBLIN: {
@@ -84,7 +111,8 @@ const STATS = {
         SCALE: 2.5,
         WIDTH: 33,
         HEIGHT: 36,
-        DAMAGE: 8
+        DAMAGE: 8,
+        PHYSICS: {MAX_RUN: 400, MAX_FALL: 500}
     },
 
     SKELETON: {
@@ -93,7 +121,8 @@ const STATS = {
         SCALE: 2.5,
         WIDTH: 45,
         HEIGHT: 51,
-        DAMAGE: 10
+        DAMAGE: 10,
+        PHYSICS: {MAX_RUN: 380, MAX_FALL: 600}
     },
 
     WIZARD: {
@@ -102,7 +131,9 @@ const STATS = {
         SCALE: 3,
         WIDTH: 80,
         HEIGHT: 80,
-        DAMAGE: 20
+        DAMAGE: 20,
+        PHYSICS: {MAX_RUN: 500, MAX_FALL: 400}
+        
     },
 
     FLYINGEYE: {
@@ -111,7 +142,8 @@ const STATS = {
         SCALE: 2,
         WIDTH: 150,
         HEIGHT: 150,
-        DAMAGE: 5
+        DAMAGE: 5,
+        PHYSICS: {MAX_RUN: 450, MAX_FALL: 610}
     },
 
 }

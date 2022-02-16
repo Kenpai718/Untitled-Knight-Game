@@ -32,7 +32,8 @@ class GameEngine {
         this.attack = null; //left click
         this.roll = null;   //left shift
         this.shoot = null;  //right click
-        this.heal = null;   //h
+        this.shootButton = null; //O: shooting with keyboard
+        this.heal = null;   //E
         this.debug = null;  //ctrl left
 
         //counter for an attack chain corresponding to attack presses
@@ -187,6 +188,11 @@ class GameEngine {
                     break;
                 case "KeyP":
                     that.attack = true;
+                    that.comboCounter += 1;
+                    break;
+                case "KeyO":
+                    that.shoot = true;
+                    that.shootButton = true;
                     break;
                 case "ShiftLeft":
                     that.roll = true;
@@ -194,7 +200,7 @@ class GameEngine {
                 case "Space":
                     that.jump = true;
                     break;
-                case "KeyH":
+                case "KeyE":
                     that.heal = true;
                     break;
                 case "ControlLeft":
