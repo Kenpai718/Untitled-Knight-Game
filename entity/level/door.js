@@ -1,9 +1,10 @@
 class Door extends AbstractInteractable {
-    constructor(game, x, y, killQuota, exitLocation) {
+    constructor(game, x, y, killQuota, exitLocation, transition) {
         super(game, x, y);
         this.killQuota = killQuota;
         this.canEnter = false;
         this.exitLocation = exitLocation;
+        this.transition = transition;
         if (!this.exitLocation) throw "Exit location not defined for door! Needs {x: , y:, levelNum: }"
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
         this.scale = PARAMS.BLOCKDIM;
@@ -42,7 +43,11 @@ class Door extends AbstractInteractable {
                         let spawnX = that.exitLocation.x;
                         let spawnY = that.exitLocation.y;
                         let nextLevel = that.exitLocation.levelNum;
-                        scene.loadLevel(nextLevel, true, spawnX, spawnY);
+                        if (!that.transition) {
+                            scene.loadLevel(nextLevel, true, spawnX, spawnY);
+                        } else {
+                            scene.loadTransition();
+                        }
                         that.game.up = false;
                     }
                 }
