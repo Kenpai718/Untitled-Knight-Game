@@ -241,11 +241,11 @@ class Knight extends AbstractPlayer {
                     if (this.game.right && !this.game.attack && !this.game.shoot) { //run right
                         this.facing = this.dir.right;
                         this.action = this.states.crouch_walk; //crouch walk
-                        this.velocity.x += CROUCH_SPD;
+                        this.velocity.x = CROUCH_SPD;
                     } else if (this.game.left && !this.game.attack && !this.game.shoot) { //run left
                         this.facing = this.dir.left;
                         this.action = this.states.crouch_walk; //crouch walk
-                        this.velocity.x -= CROUCH_SPD;
+                        this.velocity.x = -CROUCH_SPD;
                     }
                     else {
                         if (this.facing == this.dir.left) {
@@ -286,13 +286,13 @@ class Knight extends AbstractPlayer {
                 } else { //idle
                     if (this.facing == this.dir.left) {
                         if (this.velocity.x < 0) {
-                            this.velocity.x += (SKID) * TICK;
+                            this.velocity.x += SKID * TICK;
                         }
                         else this.velocity.x = 0;
                     }
                     else if (this.facing == this.dir.right) {
                         if (this.velocity.x > 0) {
-                            this.velocity.x -= (SKID)  * TICK;
+                            this.velocity.x -= SKID  * TICK;
                         }
                         else this.velocity.x = 0;
                     }
@@ -339,11 +339,21 @@ class Knight extends AbstractPlayer {
                     if (this.action == this.states.falling) {
                         if (this.action != this.states.wall_climb) {
                             if (this.diffy.hi > 0 * this.scale && this.diffy.hi <= 12 * this.scale) {
-                                if ((this.collisions.lo_left || this.collisions.hi_left) && this.facing == this.dir.left ||
-                                    (this.collisions.lo_right || this.collisions.hi_right) && this.facing == this.dir.right) {
-                                    this.action = this.states.wall_hang;
-                                    this.y = this.y + this.diffy.hi - 8 * this.scale;
-                                    this.velocity.x = 0;
+                                if (this.collisions.lo_left || this.collisions.hi_left){
+                                    if (this.game.left) this.facing = this.dir.left;
+                                    if (this.facing == this.dir.left) {
+                                        this.action = this.states.wall_hang;
+                                        this.y = this.y + this.diffy.hi - 8 * this.scale;
+                                        this.velocity.x = 0;
+                                    }
+                                }
+                                else if (this.collisions.lo_right || this.collisions.hi_right) {
+                                    if (this.game.right) this.facing = this.dir.right;
+                                    if (this.facing == this.dir.right) {
+                                        this.action = this.states.wall_hang;
+                                        this.y = this.y + this.diffy.hi - 8 * this.scale;
+                                        this.velocity.x = 0;
+                                    }
                                 }
                             }
                             else if (this.diffy.hi < 8) {
@@ -486,7 +496,7 @@ class Knight extends AbstractPlayer {
 
             }
 
-        } else if (!this.game.attack && this.game.shoot) { //only shoot an arrow when not attacking
+        } else if (!this.game.attack && this.game.shoot && !this.game.roll) { //only shoot an arrow when not attacking
             if (this.myInventory.arrows > 0 || this.myInventory.arrows == 0 && this.arrow) {
                 if (this.crouch) {
                     this.action = this.states.crouch_shoot;
@@ -571,7 +581,7 @@ class Knight extends AbstractPlayer {
             }
             //set roll behavior
             this.action = this.states.roll; //roll
-            this.velocity.x += (this.facing == this.dir.left) ? -1 * (ROLL_SPD) : (ROLL_SPD); //movement speed boost
+            this.velocity.x = (this.facing == this.dir.left) ? -1 * (ROLL_SPD) : (ROLL_SPD); //movement speed boost
             if (this.vulnerable) {
                 ASSET_MANAGER.playAsset(SFX.DODGE);
                 this.vulnerable = false;
