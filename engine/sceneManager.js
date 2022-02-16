@@ -258,7 +258,7 @@ class SceneManager {
                 ctx.fillText("LShift: Roll", 30, 30 * 11 * 2);
                 ctx.fillText("Left Click/P: Melee Attack", 30, 30 * 12 * 2);
                 ctx.fillText("Right Click/O: Shoot Arrow", 30, 30 * 13 * 2);
-                ctx.fillText("H: Heal", 30, 30 * 14 * 2);
+                ctx.fillText("E: Heal", 30, 30 * 14 * 2);
             }
             if (this.credits) {
                 ctx.font = '30px "Press Start 2P"';
