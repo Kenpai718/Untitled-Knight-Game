@@ -1,19 +1,23 @@
 //constants used for physics
 const SCALER = 3;
-//currently using Chris Marriot's mario physics
-const MAX_WALK = 93.75 * SCALER;
-const MAX_RUN = 153.75 * SCALER;
-const ACC_WALK = 133.59375 * SCALER;
-const ACC_RUN = 200.390625 * SCALER;
-const ROLL_SPD = 400 * SCALER;
-const SKID = 3000;
-const ATTACK_SKID = SKID * 0.75;
-const CROUCH_SPD = 50 * SCALER;
-const DOUBLE_JUMP_X_BOOST = 10;
-const JUMP_HEIGHT = 1500;
-const DOUBLE_JUMP_HEIGHT = JUMP_HEIGHT * .45;
-const MAX_FALL = 270 * SCALER;
-const MAX_SLIDE = 150 * SCALER;
+
+//based on chris marriot's mario physics
+const PHYSICS = {
+    MAX_WALK: 93.75 * SCALER,
+    MAX_RUN: 153.75 * SCALER,
+    ACC_WALK: 133.59375 * SCALER,
+    ACC_RUN: 200.390625 * SCALER,
+    ROLL_SPD: 400 * SCALER,
+    SKID: 3000,
+    ATTACK_SKID: 3000 * 0.75,
+    CROUCH_SPD: 50 * SCALER,
+    DOUBLE_JUMP_X_BOOST: 10,
+    JUMP_HEIGHT: 1500,
+    DOUBLE_JUMP_HEIGHT: 1500 * .45,
+    MAX_FALL: 270 * SCALER,
+    MAX_SLIDE: 150 * SCALER,
+};
+
 
 class Knight extends AbstractPlayer {
     //game = engine, (x, y) = spawn cords
@@ -156,20 +160,20 @@ class Knight extends AbstractPlayer {
             }
 
             // max y velocity
-            if (this.velocity.y >= MAX_FALL) this.velocity.y = MAX_FALL;
-            if (this.velocity.y <= -MAX_FALL) this.velocity.y = -MAX_FALL;
+            if (this.velocity.y >= PHYSICS.MAX_FALL) this.velocity.y = PHYSICS.MAX_FALL;
+            if (this.velocity.y <= -PHYSICS.MAX_FALL) this.velocity.y = -PHYSICS.MAX_FALL;
             if (this.action == this.states.wall_slide) {
-                if (this.velocity.y >= MAX_SLIDE) this.velocity.y = MAX_SLIDE;
+                if (this.velocity.y >= PHYSICS.MAX_SLIDE) this.velocity.y = PHYSICS.MAX_SLIDE;
             }
 
             //max x velocity
             let doubleJumpBonus = 0;
-            if (!this.doubleJump) doubleJumpBonus = DOUBLE_JUMP_X_BOOST;
-            if (this.velocity.x >= MAX_RUN) this.velocity.x = MAX_RUN + doubleJumpBonus;
-            if (this.velocity.x <= -MAX_RUN) this.velocity.x = -MAX_RUN - doubleJumpBonus;
+            if (!this.doubleJump) doubleJumpBonus = PHYSICS.DOUBLE_JUMP_X_BOOST;
+            if (this.velocity.x >= PHYSICS.MAX_RUN) this.velocity.x = PHYSICS.MAX_RUN + doubleJumpBonus;
+            if (this.velocity.x <= -PHYSICS.MAX_RUN) this.velocity.x = -PHYSICS.MAX_RUN - doubleJumpBonus;
             if (this.action == this.states.crouch_walk) {
-                if (this.velocity.x >= CROUCH_SPD) this.velocity.x = CROUCH_SPD;
-                if (this.velocity.x <= -CROUCH_SPD) this.velocity.x = -CROUCH_SPD;
+                if (this.velocity.x >= PHYSICS.CROUCH_SPD) this.velocity.x = PHYSICS.CROUCH_SPD;
+                if (this.velocity.x <= -PHYSICS.CROUCH_SPD) this.velocity.x = -PHYSICS.CROUCH_SPD;
             }
 
             /**UPDATE POSITIONING AND BOUNDING BOX */
@@ -241,22 +245,22 @@ class Knight extends AbstractPlayer {
                     if (this.game.right && !this.game.attack && !this.game.shoot) { //run right
                         this.facing = this.dir.right;
                         this.action = this.states.crouch_walk; //crouch walk
-                        this.velocity.x += CROUCH_SPD;
+                        this.velocity.x += PHYSICS.CROUCH_SPD;
                     } else if (this.game.left && !this.game.attack && !this.game.shoot) { //run left
                         this.facing = this.dir.left;
                         this.action = this.states.crouch_walk; //crouch walk
-                        this.velocity.x -= CROUCH_SPD;
+                        this.velocity.x -= PHYSICS.CROUCH_SPD;
                     }
                     else {
                         if (this.facing == this.dir.left) {
                             if (this.velocity.x < 0) {
-                                this.velocity.x += SKID * TICK;
+                                this.velocity.x += PHYSICS.SKID * TICK;
                             }
                             else this.velocity.x = 0;
                         }
                         else if (this.facing == this.dir.right) {
                             if (this.velocity.x > 0) {
-                                this.velocity.x -= SKID * TICK;
+                                this.velocity.x -= PHYSICS.SKID * TICK;
                             }
                             else this.velocity.x = 0;
                         }
@@ -264,35 +268,35 @@ class Knight extends AbstractPlayer {
                 } else if (this.game.right && !this.game.attack && !this.game.shoot) { //run right
                     if (this.facing == this.dir.left && this.velocity.x < 0) {
                         this.action = this.states.turn_around;
-                        this.velocity.x += SKID * TICK;
+                        this.velocity.x += PHYSICS.SKID * TICK;
                     }
                     else {
                         this.facing = this.dir.right;
                         this.action = this.states.run;
-                        this.velocity.x += MAX_RUN;
+                        this.velocity.x += PHYSICS.MAX_RUN;
                     }
                     this.crouch = false;
                 } else if (this.game.left && !this.game.attack && !this.game.shoot) { //run left
                     if (this.facing == this.dir.right && this.velocity.x > 0) {
                         this.action = this.states.turn_around;
-                        this.velocity.x -= SKID * TICK;
+                        this.velocity.x -= PHYSICS.SKID * TICK;
                     }
                     else {
                         this.facing = this.dir.left;
                         this.action = this.states.run;
-                        this.velocity.x -= MAX_RUN;
+                        this.velocity.x -= PHYSICS.MAX_RUN;
                     }
                     this.crouch = false;
                 } else { //idle
                     if (this.facing == this.dir.left) {
                         if (this.velocity.x < 0) {
-                            this.velocity.x += (SKID) * TICK;
+                            this.velocity.x += (PHYSICS.SKID) * TICK;
                         }
                         else this.velocity.x = 0;
                     }
                     else if (this.facing == this.dir.right) {
                         if (this.velocity.x > 0) {
-                            this.velocity.x -= (SKID) * TICK;
+                            this.velocity.x -= (PHYSICS.SKID) * TICK;
                         }
                         else this.velocity.x = 0;
                     }
@@ -304,7 +308,7 @@ class Knight extends AbstractPlayer {
                     ASSET_MANAGER.playAsset(SFX.JUMP);
                     this.action = this.states.jump; //jump (9-11)
                     //set jump distance
-                    this.velocity.y -= JUMP_HEIGHT;
+                    this.velocity.y -= PHYSICS.JUMP_HEIGHT;
                     this.game.jump = false;
                     this.inAir = true;
                 }
@@ -314,13 +318,13 @@ class Knight extends AbstractPlayer {
                 // horizontal physics
                 if (this.action != this.states.wall_hang && this.action != this.states.wall_climb) {
                     if (this.game.right && !this.game.left) {
-                        if (Math.abs(this.velocity.x) > MAX_WALK) {
-                            this.velocity.x += ACC_RUN * TICK;
-                        } else this.velocity.x += ACC_WALK * TICK;
+                        if (Math.abs(this.velocity.x) > PHYSICS.MAX_WALK) {
+                            this.velocity.x += PHYSICS.ACC_RUN * TICK;
+                        } else this.velocity.x += PHYSICS.ACC_WALK * TICK;
                     } else if (this.game.left && !this.game.right) {
-                        if (Math.abs(this.velocity.x) > MAX_WALK) {
-                            this.velocity.x -= ACC_RUN * TICK;
-                        } else this.velocity.x -= ACC_WALK * TICK;
+                        if (Math.abs(this.velocity.x) > PHYSICS.MAX_WALK) {
+                            this.velocity.x -= PHYSICS.ACC_RUN * TICK;
+                        } else this.velocity.x -= PHYSICS.ACC_WALK * TICK;
                     }
                 }
 
@@ -369,11 +373,11 @@ class Knight extends AbstractPlayer {
                             this.resetAnimationTimers(this.states.jump);
                             this.resetAnimationTimers(this.states.jump_to_fall);
                             if (this.action == this.states.wall_slide || this.action == this.states.wall_hang && this.game.left && this.facing == this.dir.right)
-                                this.velocity.y -= JUMP_HEIGHT;
+                                this.velocity.y -= PHYSICS.JUMP_HEIGHT;
                             else
-                                this.velocity.y -= DOUBLE_JUMP_HEIGHT * 2;
+                                this.velocity.y -= PHYSICS.DOUBLE_JUMP_HEIGHT * 2;
                             if (this.action != this.states.wall_hang || this.action == this.states.wall_hang && this.game.right) {
-                                this.velocity.x += MAX_WALK;
+                                this.velocity.x += PHYSICS.MAX_WALK;
                                 this.facing = this.dir.right;
                             }
                             this.action = this.states.jump;
@@ -384,11 +388,11 @@ class Knight extends AbstractPlayer {
                             this.resetAnimationTimers(this.states.jump);
                             this.resetAnimationTimers(this.states.jump_to_fall);
                             if (this.action == this.states.wall_slide || this.action == this.states.wall_hang && this.game.right && this.facing == this.dir.right)
-                                this.velocity.y -= JUMP_HEIGHT;
+                                this.velocity.y -= PHYSICS.JUMP_HEIGHT;
                             else
-                                this.velocity.y -= DOUBLE_JUMP_HEIGHT * 2;
+                                this.velocity.y -= PHYSICS.DOUBLE_JUMP_HEIGHT * 2;
                             if (this.action != this.states.wall_hang || this.action == this.states.wall_hang && this.game.left) {
-                                this.velocity.x -= MAX_WALK;
+                                this.velocity.x -= PHYSICS.MAX_WALK;
                                 this.facing = this.dir.left;
                             }
                             this.action = this.states.jump;
@@ -403,14 +407,14 @@ class Knight extends AbstractPlayer {
                         this.resetAnimationTimers(this.states.jump);
                         this.resetAnimationTimers(this.states.jump_to_fall);
                         if (this.action == this.states.jump) {
-                            this.velocity.y -= DOUBLE_JUMP_HEIGHT;
+                            this.velocity.y -= PHYSICS.DOUBLE_JUMP_HEIGHT;
                         }
                         else {
-                            this.velocity.y = -JUMP_HEIGHT / 2;
+                            this.velocity.y = -PHYSICS.JUMP_HEIGHT / 2;
                         }
                         this.action = this.states.jump;
-                        if (this.facing == this.states.right) this.velocity += DOUBLE_JUMP_X_BOOST;
-                        if (this.facing == this.states.left) this.velocity -= DOUBLE_JUMP_X_BOOST;
+                        if (this.facing == this.states.right) this.velocity += PHYSICS.DOUBLE_JUMP_X_BOOST;
+                        if (this.facing == this.states.left) this.velocity -= PHYSICS.DOUBLE_JUMP_X_BOOST;
                     }
                 }
             }
@@ -418,10 +422,10 @@ class Knight extends AbstractPlayer {
             //if player was attacking slow down that momentum on the ground so there is a bit of a skid
             if ((this.game.attack || this.game.shoot) && !this.inAir) {
                 if (this.velocity.x > 0) { //right momentum
-                    this.velocity.x -= ATTACK_SKID * TICK;
+                    this.velocity.x -= PHYSICS.ATTACK_SKID * TICK;
                     if (this.velocity.x < 0) this.velocity.x = 0;
                 } else { //left momentum
-                    this.velocity.x += ATTACK_SKID * TICK;
+                    this.velocity.x += PHYSICS.ATTACK_SKID * TICK;
                     if (this.velocity.x > 0) this.velocity.x = 0;
                 }
             }
@@ -578,7 +582,7 @@ class Knight extends AbstractPlayer {
             }
             //set roll behavior
             this.action = this.states.roll; //roll
-            this.velocity.x += (this.facing == this.dir.left) ? -1 * (ROLL_SPD) : (ROLL_SPD); //movement speed boost
+            this.velocity.x += (this.facing == this.dir.left) ? -1 * (PHYSICS.ROLL_SPD) : (PHYSICS.ROLL_SPD); //movement speed boost
             if (this.vulnerable) {
                 ASSET_MANAGER.playAsset(SFX.DODGE);
                 this.vulnerable = false;

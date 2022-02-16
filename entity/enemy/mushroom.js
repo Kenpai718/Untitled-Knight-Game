@@ -8,7 +8,7 @@
  */
 class Mushroom extends AbstractEnemy {
     constructor(game, x, y) {
-        super(game, x, y, STATS.MUSHROOM.NAME, STATS.MUSHROOM.MAX_HP, STATS.MUSHROOM.WIDTH, STATS.MUSHROOM.HEIGHT, STATS.MUSHROOM.SCALE);
+        super(game, x, y, STATS.MUSHROOM.NAME, STATS.MUSHROOM.MAX_HP, STATS.MUSHROOM.WIDTH, STATS.MUSHROOM.HEIGHT, STATS.MUSHROOM.SCALE, STATS.MUSHROOM.PHYSICS);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/mushroom.png");
         // seting up animation states
         this.animations = []; // [state][direction]
@@ -62,10 +62,6 @@ class Mushroom extends AbstractEnemy {
 
     update() {
         const TICK = this.game.clockTick;
-        const SCALER = 3;
-        const MAX_RUN = 123 * SCALER;
-        const ACC_RUN = 200.390625 * SCALER;
-        const MAX_FALL = 270 * SCALER;
 
         if (this.dead) { // mushroom is dead play death animation and remove
             super.setDead();
@@ -73,10 +69,10 @@ class Mushroom extends AbstractEnemy {
             // gravity
             this.velocity.y += this.fallAcc * TICK;
             // slow down bucko
-            if (this.velocity.y >= MAX_FALL) this.velocity.y = MAX_FALL;
-            if (this.velocity.y <= -MAX_FALL) this.velocity.y = -MAX_FALL;
-            if (this.velocity.x >= MAX_RUN) this.velocity.x = MAX_RUN;
-            if (this.velocity.x <= -MAX_RUN) this.velocity.x = -MAX_RUN;
+            if (this.velocity.y >= this.myMaxFall) this.velocity.y = this.myMaxFall;
+            if (this.velocity.y <= -this.myMaxFall) this.velocity.y = -this.myMaxFall;
+            if (this.velocity.x >= this.myMaxSpeed) this.velocity.x = this.myMaxSpeed;
+            if (this.velocity.x <= -this.myMaxSpeed) this.velocity.x = -this.myMaxSpeed;
 
             // update position and boxes
             this.x += this.velocity.x * TICK;
@@ -161,7 +157,7 @@ class Mushroom extends AbstractEnemy {
                         // move towards the knight
                         self.state = self.states.move;
                         self.direction = entity.BB.right < self.BB.left ? self.directions.left : self.directions.right;
-                        self.velocity.x = self.direction == self.directions.right ? self.velocity.x + MAX_RUN : self.velocity.x - MAX_RUN;
+                        self.velocity.x = self.direction == self.directions.right ? self.velocity.x + self.myMaxSpeed : self.velocity.x - self.myMaxSpeed;
                     }
                 }
                 // knight is in attack range
@@ -186,7 +182,7 @@ class Mushroom extends AbstractEnemy {
         if (this.runAway && (this.animations[this.states.attack][this.directions.left].isDone() || this.animations[this.states.attack][this.directions.right].isDone())) {
             this.state = this.states.move;
             this.direction = this.direction == this.direction.left ? this.directions.right : this.directions.left;
-            this.velocity.x = this.direction == this.directions.right ? this.velocity.x + MAX_RUN : this.velocity.x - MAX_RUN;
+            this.velocity.x = this.direction == this.directions.right ? this.velocity.x + this.myMaxSpeed : this.velocity.x - this.myMaxSpeed;
         }
     };
 

@@ -4,17 +4,22 @@
  * Mainly used for the "is-a" relationship
  */
 
+
 class AbstractEnemy extends AbstractEntity {
-    constructor(game, x, y, name, max_hp, width, height, scale) {
+    constructor(game, x, y, name, max_hp, width, height, scale, physics) {
         super(game, x, y, name, max_hp, width, height, scale);
         if (new.target === AbstractEnemy) {
             throw new TypeError("Cannot construct AbstractEnemy instance directly!");
         }
         this.collisions = { left: false, right: false, top: false, bottom: false };
 
+        this.physics = physics;
+        this.myMaxSpeed = this.physics.MAX_RUN;
+        this.myMaxFall = this.physics.MAX_FALL;
+
         //entity will try to jump if it is stuck in one x-cord for too long
         this.jumped = false;
-        this.JUMP_HEIGHT = 650;
+        this.myJumpHeight = 650;
         this.stuckTimer = 0;
         this.lastXCord = Math.round(this.x);
 
@@ -127,7 +132,7 @@ class AbstractEnemy extends AbstractEntity {
     doJump() {
         if (!this.jumped) {
             this.jumped = true;
-            this.velocity.y -= this.JUMP_HEIGHT;
+            this.velocity.y -= this.myJumpHeight;
             //ASSET_MANAGER.playAsset(SFX.JUMP2);
         }
     }
