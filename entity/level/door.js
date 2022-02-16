@@ -1,9 +1,10 @@
 class Door extends AbstractInteractable {
-    constructor(game, x, y, killQuota, exitLocation) {
+    constructor(game, x, y, killQuota, exitLocation, transition) {
         super(game, x, y);
         this.killQuota = killQuota;
         this.canEnter = false;
         this.exitLocation = exitLocation;
+        this.transition = transition;
         if (!this.exitLocation) throw "Exit location not defined for door! Needs {x: , y:, levelNum: }"
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
         this.scale = PARAMS.BLOCKDIM;
@@ -22,12 +23,12 @@ class Door extends AbstractInteractable {
     update() {
         const TICK = this.game.clockTick;
         // have a kill quota message flag in both the door and scenemanager so that all doors in a level dont execute this code
-        if (this.game.camera.killQuotaMessage && this.killQuotaMessage) {
+        if (this.killQuotaMessage) {
             this.messageTimer += TICK;
-            if (this.messageTimer >= 3) {
-                this.game.camera.killQuotaMessage = false;
-                this.killQuotaMessage = false;
+            //display message for 4 seconds
+            if (this.messageTimer >= 4) {
                 this.messageTimer = 0;
+                this.setKillMessage(false);
             }
         }
         // once player has killed enough mobs, set canEnter to true
@@ -42,19 +43,35 @@ class Door extends AbstractInteractable {
                         let spawnX = that.exitLocation.x;
                         let spawnY = that.exitLocation.y;
                         let nextLevel = that.exitLocation.levelNum;
-                        scene.loadLevel(nextLevel, true, spawnX, spawnY);
+                        if (!that.transition) {
+                            scene.loadLevel(nextLevel, true, spawnX, spawnY);
+                        } else {
+                            scene.loadTransition();
+                        }
                         that.game.up = false;
                     }
                 }
                 // player tries to enter a door befor meeting the kill quota
                 if (entity instanceof AbstractPlayer && !that.canEnter && that.game.up) {
-                    that.killQuotaMessage = true;
-                    that.game.camera.killQuotaMessage = true;
-                    that.game.camera.updateKillQuota(that.killQuota - that.game.camera.killCount);
+                    that.setKillMessage(true);
                 }
             }
         });
     };
+
+    setKillMessage(isOn) {
+        if (isOn) {
+            let scene = this.game.camera;
+            this.killQuotaMessage = true;
+            scene.updateKillQuota(this.killQuota - scene.killCount);
+            let message = "Must defeat " + scene.remainingKills + " more enemies to advance";
+            scene.myTextBox.setMessage(message, true);
+        } else {
+            let scene = this.game.camera;
+            this.killQuotaMessage = false;
+            scene.myTextBox.show = false;
+        }
+    }
 
     draw(ctx) {
         ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x * this.scale - this.game.camera.x, this.y * this.scale - this.game.camera.y, this.w * this.scale, this.h * this.scale);

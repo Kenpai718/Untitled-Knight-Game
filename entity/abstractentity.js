@@ -283,6 +283,7 @@ class AbstractEntity {
         if (this.velocity.y <= -MAX_FALL) this.velocity.y = -MAX_FALL;
         if (this.velocity.x >= MAX_RUN) this.velocity.x = MAX_RUN;
         if (this.velocity.x <= -MAX_RUN) this.velocity.x = -MAX_RUN;
+        
 
         // update position and boxes
         this.x += this.velocity.x * TICK;

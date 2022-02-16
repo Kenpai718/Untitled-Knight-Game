@@ -11,7 +11,7 @@ class Skeleton extends AbstractEnemy {
 
     constructor(game, x, y) {
 
-        super(game, x, y, STATS.SKELETON.NAME, STATS.SKELETON.MAX_HP, STATS.SKELETON.WIDTH, STATS.SKELETON.HEIGHT, STATS.SKELETON.SCALE);
+        super(game, x, y, STATS.SKELETON.NAME, STATS.SKELETON.MAX_HP, STATS.SKELETON.WIDTH, STATS.SKELETON.HEIGHT, STATS.SKELETON.SCALE, STATS.SKELETON.PHYSICS);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/skeleton.png");
 
         // Update settings
@@ -23,7 +23,7 @@ class Skeleton extends AbstractEnemy {
         // Physics
         this.fallAcc = 1500;
         this.collisions = { left: false, right: false, top: false, bottom: false };
-        this.JUMP_HEIGHT = 535;
+        this.myJumpHeight = 535;
 
         //variables to control behavior
         this.canAttack = true;
@@ -86,13 +86,7 @@ class Skeleton extends AbstractEnemy {
     update() {
 
         this.seconds += this.game.clockTick;
-
-
         const TICK = this.game.clockTick;
-        const SCALER = 3;
-        const MAX_RUN = 123 * SCALER;
-        const ACC_RUN = 200.390625 * SCALER;
-        const MAX_FALL = 270 * SCALER;
 
         if (this.dead) { // skeleton is dead play death animation and remove
             super.setDead();
@@ -100,10 +94,10 @@ class Skeleton extends AbstractEnemy {
             this.velocity.y += this.fallAcc * TICK; //constant falling
 
             //set maximum speeds
-            if (this.velocity.y >= MAX_FALL) this.velocity.y = MAX_FALL;
-            if (this.velocity.y <= -MAX_FALL) this.velocity.y = -MAX_FALL;
-            if (this.velocity.x >= MAX_RUN) this.velocity.x = MAX_RUN;
-            if (this.velocity.x <= -MAX_RUN) this.velocity.x = -MAX_RUN;
+            if (this.velocity.y >= this.myMaxFall) this.velocity.y = this.myMaxFall;
+            if (this.velocity.y <= -this.myMaxFall) this.velocity.y = -this.myMaxFall;
+            if (this.velocity.x >= this.myMaxSpeed) this.velocity.x = this.myMaxSpeed;
+            if (this.velocity.x <= -this.myMaxSpeed) this.velocity.x = -this.myMaxSpeed;
 
             //update cordinate based on velocity
             this.x += this.velocity.x * TICK;
@@ -169,7 +163,7 @@ class Skeleton extends AbstractEnemy {
                         // move towards the knight
                         self.state = self.states.move;
                         self.direction = entity.BB.right < self.BB.left ? self.directions.left : self.directions.right;
-                        self.velocity.x = self.direction == self.directions.right ? self.velocity.x + MAX_RUN : self.velocity.x - MAX_RUN;
+                        self.velocity.x = self.direction == self.directions.right ? self.velocity.x + self.myMaxSpeed : self.velocity.x - self.myMaxSpeed;
 
                         //reset action states
                         self.setAttackState(false);
@@ -249,7 +243,6 @@ class Skeleton extends AbstractEnemy {
      * UNIQUE: overrides behavior so skeleton shields at low hp
      */
     doRandomMovement() {
-        const MAX_RUN = 123 * SCALER;
         //while hp is at half keep shield up to block projectiles
         if ((this.hp / this.max_hp) <= PARAMS.MID_HP) {
             this.velocity.x = 0;
@@ -265,8 +258,8 @@ class Skeleton extends AbstractEnemy {
                     this.doRandom = this.seconds + Math.floor(Math.random() * 3);
                     this.state = this.states.move;
                     this.velocity.x = 0;
-                    if (this.direction == 0) this.velocity.x -= MAX_RUN;
-                    else this.velocity.x += MAX_RUN;
+                    if (this.direction == 0) this.velocity.x -= this.myMaxSpeed;
+                    else this.velocity.x += this.myMaxSpeed;
                 }
                 else {
                     this.doRandom = this.seconds + Math.floor(Math.random() * 10);

@@ -29,9 +29,9 @@ var testLevel = {
     player: { x: 1, y: 1 },
     music: MUSIC.FODLAN_WINDS,
     doors: [
-        { x: 1, y: 3, killQuota: 0, exitLocation: { x: 5, y: 2, levelNum: 1 } }, //door to level 3
-        { x: 6, y: 7, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 2 } }, //door to level 2
-        { x: 21, y: 3, killQuota: 0, exitLocation: { x: 4, y: 1, levelNum: 3 } } //door to level 1
+        { x: 1, y: 3, killQuota: 0, exitLocation: { x: 5, y: 2, levelNum: 1 }, transition : false }, //door to level 3
+        { x: 6, y: 7, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition : false }, //door to level 2
+        { x: 21, y: 3, killQuota: 0, exitLocation: { x: 4, y: 1, levelNum: 3 }, transition : false } //door to level 1
     ],
 
     npcs: [
@@ -40,7 +40,14 @@ var testLevel = {
 
     signs: [
         {
-            x: 6, y: 2,
+            x: 4, y: 2,
+            title: "DEVELOPER ROOM",
+            text: "This room is for developers to test entity and game mechanics"
+            
+        },
+
+        {
+            x: 18, y: 2,
             title: "IMPORTANT DISCLOSURE",
             text: ["According to all known laws of aviation",
                 "there is no way a bee should be able to fly.",
@@ -94,11 +101,11 @@ var level1_1 = {
     ID: 1,
     label: "1-1",
     width: 120, height: 15,
-    player: { x: 0, y: 1 },
+    player: { x: 1, y: 1 },
     music: MUSIC.FODLAN_WINDS,
     doors: [
-        { x: 116, y: 12, killQuota: 3, exitLocation: { x: 3, y: 1, levelNum: 2 } }, //door to level 2
-        { x: 2, y: 3, killQuota: 0, exitLocation: { x: 1, y: 1, levelNum: 0 } } //debugging room, DELETE THIS BEFORE SUBMISSION!
+        { x: 116, y: 12, killQuota: 3, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition : false }, //door to level 2
+        //{ x: 2, y: 3, killQuota: 0, exitLocation: { x: 1, y: 1, levelNum: 0 }, transition : false } //debugging room, DELETE THIS BEFORE SUBMISSION!
     ],
 
     npcs: [
@@ -111,10 +118,11 @@ var level1_1 = {
             title: "[TUTORIAL: BASIC COMBAT/MOVEMENT]",
             text: ["-[A] to move left, [D] to move right",
                 "-[SPACE] to jump and double tap to double jump",
-                "-[Left Click] to swing your sword. Double click to attack twice.",
-                "              The second hit is slower, but deals more damage.",
-                "-[MOUSE MOVE] to position cursor",
-                "-[Right click] to shoot an arrow in cursor direction.",
+                "-[LEFT-CLICK or P] to swing your sword. Double tap to attack twice.",
+                " The second hit is slower, but deals more damage.",
+                "-[MOUSE MOVE] + [RIGHT-CLICK] to shoot an arrow in cursor direction.",
+                "-Alternatively, tap [O] to shoot an arrow forward in your direction",
+                " and hold [W] or [S] to shoot diagonally up or down.",
                 "-[SHIFT] to roll and dodge attacks."
             ]
         },
@@ -132,7 +140,7 @@ var level1_1 = {
         {
             x: 53, y: 6,
             title: "[TUTORIAL: HEALING/SHOP]",
-            text: ["-[H] to heal if you have a potion in your inventory.",
+            text: ["-[E] to heal and use a potion in your inventory.",
                 "-Potions will heal you for up to half your maximum hp.",
                 "-Potions are limited so use them sparingly.",
                 "-You can get more potions or other equipment by spending",
@@ -160,7 +168,7 @@ var level1_1 = {
                 "-Chests contain valuable resources so search for them on each level!",
                 "-To progress to the next level press [W] next to the door.",
                 "-There is a KILL QUOTA that must be met before progressing to the next floor!"
-                
+
             ]
         },
     ],
@@ -245,8 +253,8 @@ var level1_2 = {
     player: { x: 1, y: 1 },
     music: MUSIC.CHASING_DAYBREAK,
     doors: [
-        { x: 116, y: 3, killQuota: 7, exitLocation: { x: 4, y: 1, levelNum: 3 } }, //next level to 3
-        { x: 0, y: 3, killQuota: 0, exitLocation: { x: 114, y: 10, levelNum: 1 } } //go back to level 1
+        { x: 116, y: 3, killQuota: 7, exitLocation: { x: 4, y: 1, levelNum: 3 }, transition : false }, //next level to 3
+        { x: 0, y: 3, killQuota: 0, exitLocation: { x: 114, y: 10, levelNum: 1 }, transition : false } //go back to level 1
     ],
 
     signs: [{
@@ -452,31 +460,54 @@ var level1_3 = {
     width: 120, height: 42,
     player: { x: 1, y: 1 },
     music: MUSIC.BETWEEN_HEAVEN_AND_EARTH,
+    signs: [
+        {
+            x: 4, y: 2,
+            title: "[TUTORIAL: OBELISK]",
+            text: ["-These strange devices can unlock inaccessible/secret areas!",
+                   "-To activate: hit them or press \'W'\ next to it."
+            ]
+        },
+        {
+            x: 34, y: 4,
+            title: "[TUTORIAL: ADVANCED JUMPS]",
+            text: ["-Delay your second jump to cover more distance.",
+                   "-If you are running and then jump your momentum will be carried over.",
+                   "-Wait until you're at the peak of your first jump before doing your double jump.",
+                   "-While in air, hold the opposite direction and double jump to quickly switch directions.",
+            ]
+        }
+    ],
     doors: [
-        { x: 1, y: 3, killQuota: 0, exitLocation: { x: 114, y: 1, levelNum: 2 } }, //go back to level 2
-        { x: 117, y: 25, killQuota: 4, exitLocation: { x: 1, y: 3, levelNum: 3 } }, // change to level 4 once theres a level 4
-        { x: 34, y: 35, killQuota: 1, exitLocation: { x: 1, y: 3, levelNum: 3 } } // change to treasure room
+        { x: 1, y: 3, killQuota: 0, exitLocation: { x: 114, y: 1, levelNum: 2 }, transition : false }, //go back to level 2
+        { x: 117, y: 25, killQuota: 4, exitLocation: { x: 1, y: 3, levelNum: 3 }, transition : true }, // change to level 4 once theres a level 4
+        { x: 34, y: 35, killQuota: 1, exitLocation: { x: 1, y: 3, levelNum: 3 }, transition : false } // change to treasure room
     ],
     ground: [
         { x: 0, y: 0, width: 10, type: 1 }
     ],
     obelisks: [
+        { x: 7, y: 1, brickX: 10, brickY: 15, brickWidth: 3, brickHeight: 15 },
         { x: 79, y: 15, brickX: 81, brickY: 17, brickWidth: 3, brickHeight: 3 },
         { x: 100, y: 23, brickX: 105, brickY: 30, brickWidth: 11, brickHeight: 8 }
     ],
     shrooms: [
         { x: 107, y: 32 },
         { x: 36, y: 35 },
-        { x: 77, y: 27 }
+        { x: 77, y: 27 },
+        { x: 61, y: 9}
     ],
     goblins: [
-        { x: 110, y: 32 }
+        { x: 110, y: 32 },
     ],
     skeletons: [
-        { x: 112, y: 32 }
+        { x: 112, y: 32 },
+        { x: 73, y: 27 },
+        { x: 77, y: 27 },
     ],
     chests: [
-        { x: 77, y: 15, direction: 0 }
+        { x: 77, y: 15, direction: 0 },
+        { x: 53, y: 5, directon: 1 },
     ],
     bricks: [
         { x: 120, y: 42, width: 1, height: 43 },
@@ -519,21 +550,24 @@ var level1_3 = {
         { x: 69, y: 42, width: 21, height: 12 },
         { x: 85, y: 30, width: 5, height: 1 },
         { x: 87, y: 29, width: 3, height: 1 },
-        { x: 89, y: 28, width: 1, height: 1 }
+        { x: 89, y: 28, width: 1, height: 1 },
+        { x: 84, y: 22, width: 1, height: 1 },
     ],
     platforms: [
         { x: 22, y: 2, width: 2, height: 1 },
-        { x: 42, y: 8, width: 2, height: 1 },
-        { x: 50, y: 12, width: 2, height: 1 },
+        { x: 40, y: 7, width: 2, height: 1 },
+        { x: 49, y: 12, width: 2, height: 1 },
         { x: 59, y: 22, width: 5, height: 1 },
         { x: 69, y: 12, width: 5, height: 1 },
         { x: 89, y: 17, width: 3, height: 1 },
         { x: 95, y: 21, width: 1, height: 1 },
-        { x: 45, y: 30, width: 2, height: 1 }
+        { x: 45, y: 30, width: 2, height: 1 },
+        { x: 51, y: 4, width: 5, height: 1 },
+        { x: 60, y: 8, width: 3, height: 1 }
     ],
     walls: [
         { x: 57, y: 22, height: 8, type: 0 },
-        { x: 53, y: 25, height: 7, type: 2 },
+        { x: 53, y: 25, height: 8, type: 2 },
         { x: 70, y: 25, height: 12, type: 0 }
     ],
     backgroundWalls: [

@@ -9,7 +9,7 @@
 class Goblin extends AbstractEnemy {
     constructor(game, x, y) {
 
-        super(game, x, y, STATS.GOBLIN.NAME, STATS.GOBLIN.MAX_HP, STATS.GOBLIN.WIDTH, STATS.GOBLIN.HEIGHT, STATS.GOBLIN.SCALE);
+        super(game, x, y, STATS.GOBLIN.NAME, STATS.GOBLIN.MAX_HP, STATS.GOBLIN.WIDTH, STATS.GOBLIN.HEIGHT, STATS.GOBLIN.SCALE, STATS.GOBLIN.PHYSICS);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/goblin.png");
 
         // Update settings
@@ -54,12 +54,7 @@ class Goblin extends AbstractEnemy {
     update() { // physics
 
         this.seconds += this.game.clockTick;
-
         const TICK = this.game.clockTick;
-        const SCALER = 3;
-        const MAX_RUN = 123 * SCALER;
-        const ACC_RUN = 200.390625 * SCALER;
-        const MAX_FALL = 270 * SCALER;
 
         if (this.dead) { // goblin is dead play death animation and remove
             super.setDead();
@@ -67,10 +62,10 @@ class Goblin extends AbstractEnemy {
             this.velocity.y += this.fallAcc * TICK; //constant falling, and fixed by collision detection
 
             //set maximum speeds
-            if (this.velocity.y >= MAX_FALL) this.velocity.y = MAX_FALL;
-            if (this.velocity.y <= -MAX_FALL) this.velocity.y = -MAX_FALL;
-            if (this.velocity.x >= MAX_RUN) this.velocity.x = MAX_RUN;
-            if (this.velocity.x <= -MAX_RUN) this.velocity.x = -MAX_RUN;
+            if (this.velocity.y >= this.myMaxFall) this.velocity.y = this.myMaxFall;
+            if (this.velocity.y <= -this.myMaxFall) this.velocity.y = -this.myMaxFall;
+            if (this.velocity.x >= this.myMaxSpeed) this.velocity.x = this.myMaxSpeed;
+            if (this.velocity.x <= -this.myMaxSpeed) this.velocity.x = -this.myMaxSpeed;
 
             //update cordinate based on velocity
             this.x += this.velocity.x * TICK;
@@ -161,7 +156,7 @@ class Goblin extends AbstractEnemy {
                         // move towards the knight
                         self.state = self.states.move;
                         self.direction = entity.BB.right < self.BB.left ? self.directions.left : self.directions.right;
-                        self.velocity.x = self.direction == self.directions.right ? self.velocity.x + MAX_RUN : self.velocity.x - MAX_RUN;
+                        self.velocity.x = self.direction == self.directions.right ? self.velocity.x + self.myMaxSpeed : self.velocity.x - self.myMaxSpeed;
                         self.resetAttack();
                     }
                 }
@@ -245,8 +240,8 @@ class Goblin extends AbstractEnemy {
                 this.doRandom = this.seconds + Math.floor(Math.random() * 3);
                 this.state = this.states.move;
                 this.velocity.x = 0;
-                if (this.direction == 0) this.velocity.x -= MAX_RUN;
-                else this.velocity.x += MAX_RUN;
+                if (this.direction == 0) this.velocity.x -= this.myMaxSpeed;
+                else this.velocity.x += this.myMaxSpeed;
             }
             else {
                 this.doRandom = this.seconds + Math.floor(Math.random() * 10);
