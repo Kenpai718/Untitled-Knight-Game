@@ -176,7 +176,7 @@ class Knight extends AbstractPlayer {
      */
     checkAndDoVerticalActions(TICK) {
 
-        let isWallAction = (this.action == this.states.wall_hang || this.action == this.states.wall_climb)
+        let isWallAction = (this.action == this.states.wall_hang || this.action == this.states.wall_climb || this.action == this.states.wall_slide)
         if (isWallAction) {
             if (this.action == this.states.wall_hang) {
                 if (this.game.up) {
