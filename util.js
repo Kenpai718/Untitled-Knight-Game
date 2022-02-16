@@ -289,3 +289,24 @@ function maskImage(dest,source){
     dest.ctx.globalCompositeOperation = "source-over";
     return dest;
 }
+
+function isString(e) {
+    var isString = e.constructor == String;
+    return isString;
+}
+
+function getMaxStrLength(theText) {
+    let maxLen = 0
+    let totalLines = theText.length;
+    if (theText instanceof Array) {
+        for (let i = 0; i < totalLines; i++) {
+            let line = new String(theText[i]);
+            if (line.length > maxLen) maxLen = line.length;
+        }
+    } else if (isString(theText)) {
+        maxLen = theText.length;
+    }
+
+    return maxLen;
+
+}

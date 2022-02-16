@@ -2,7 +2,7 @@ class Sign extends AbstractBackFeature {
     constructor(game, x, y, text, title) {
         super(game, x, y);
 
-        if (!(text instanceof Array)) throw Exception("Sign text must be put into an array where each index is a line");
+        //if (!(text instanceof Array)) throw Exception("Sign text must be put into an array where each index is a line");
 
         this.scale = PARAMS.BLOCKDIM;
         this.text = text;
@@ -20,7 +20,8 @@ class Sign extends AbstractBackFeature {
         this.animationY = this.BB.y - this.scale / 4;
 
         //textbox specific to this sign
-        this.myTextBox = new TextBox(this.game, this.BB.x, this.BB.y, this.text);
+        this.myTextBox = new TextBox(this.game, this.BB.x, this.BB.y, this.text, true);
+        this.game.addEntityToFront(this.myTextBox);
         this.myHoverMsg = "Hold \'W\' to read";
 
     }

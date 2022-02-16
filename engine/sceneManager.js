@@ -9,8 +9,7 @@ class SceneManager {
         this.x = 0;
         this.y = 0;
         this.defaultMusic = MUSIC.CHASING_DAYBREAK;
-
-
+        this.myTextBox = new SceneTextBox(this.game, "Placeholder message");
 
         //game status
         this.title = false;
@@ -72,6 +71,21 @@ class SceneManager {
     }
 
     /**
+     * Draws textbox to the canvas
+     * @param {*} ctx 
+     */
+    drawTextBox(ctx) {
+        //initialize textbox here because this method could be called before constructor is done
+        //had problems where it was null and draw method was called...
+        if (this.myTextBox == null) {
+            this.myTextBox = new SceneTextBox(this.game, "Placeholder message");
+        }
+
+        this.myTextBox.draw(ctx);
+
+    }
+
+    /**
      * MAKE SURE THIS IS CALLED BEFORE LOADING IN A LEVELS COMPONENTS!!!
      * This instantiates a player and places them appropriately on a level.
      *
@@ -102,7 +116,7 @@ class SceneManager {
     loadLevel(number, usedDoor, doorExitX, doorExitY) {
         // save the state of the enemies and interactables for the current level
         if (!this.title && !this.restart && !this.transition) {
-            this.levelState[this.currentLevel] = { enemies : [...this.game.enemies], interactables : [...this.game.interactables], killCount : this.killCount };
+            this.levelState[this.currentLevel] = { enemies: [...this.game.enemies], interactables: [...this.game.interactables], killCount: this.killCount };
         } else {
             this.title = false;
             this.restart = false;
@@ -233,6 +247,11 @@ class SceneManager {
         this.vignette.update();
         this.heartsbar.update();
         this.inventory.update();
+        
+        if (this.myTextBox == null) {
+            this.myTextBox = new SceneTextBox(this.game, "Placeholder message");
+        }
+        this.myTextBox.update();
     };
 
     updateAudio() {
@@ -247,6 +266,8 @@ class SceneManager {
         this.vignette.draw(ctx);
         this.inventory.draw(ctx);
         this.heartsbar.draw(ctx);
+
+        this.drawTextBox(ctx);
     };
 
     draw(ctx) {
@@ -257,16 +278,10 @@ class SceneManager {
             let xOffset;
             (this.level.label.length <= 4) ? xOffset = this.level.label.length * 70 : xOffset = this.level.label.length * 31;
             ctx.fillText("Level:" + this.level.label, this.game.surfaceWidth - xOffset, 30);
-            // display kill quota message, i would do this in the door class but the text gets covered by other entites
-            if (this.killQuotaMessage) {
-                ctx.font = PARAMS.BIG_FONT;
-                ctx.fillText("Must defeat " + this.remainingKills + " more enemies to advance", (this.game.surfaceWidth / 2) - ((20 * 35) / 2), 40);
-            }
             if (PARAMS.DEBUG) {
                 this.viewDebug(ctx);
                 this.minimap.draw(ctx);
             }
-
             this.drawGUI(ctx);
         } else if (this.title) {
             var fontSize = 60;

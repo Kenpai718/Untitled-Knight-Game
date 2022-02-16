@@ -40,10 +40,22 @@ var testLevel = {
 
     signs: [
         {
-            x: 6, y: 2,
+            x: 4, y: 2,
+            title: "DEVELOPER ROOM",
+            text: "This room is for developers to test entity and game mechanics"
+            
+        },
+
+        {
+            x: 18, y: 2,
             title: "IMPORTANT DISCLOSURE",
             text: ["According to all known laws of aviation",
-
+                "there is no way a bee should be able to fly.",
+                "Its wings are too small to get",
+                "its fat little body off the ground.",
+                "The bee, of course, flies anyway",
+                "because bees don't care",
+                "what humans think is impossible."
             ]
         }
     ],
