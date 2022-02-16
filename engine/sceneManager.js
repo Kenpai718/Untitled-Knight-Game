@@ -24,7 +24,7 @@ class SceneManager {
         this.killCount = 0;
 
         //levels array to load levels by calling levels[0], levels[1], etc
-        this.currentLevel = 3;
+        this.currentLevel = 0;
         this.setupAllLevels();
         this.loadTitle();
         //this.loadLevel(this.currentLevel, false);
