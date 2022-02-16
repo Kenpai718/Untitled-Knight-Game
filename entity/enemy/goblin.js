@@ -80,6 +80,7 @@ class Goblin extends AbstractEnemy {
                 dist.x = 0;
             }
             dist = this.checkEntityInteractions(dist, TICK); //move entity according to other entities
+            dist = this.collideWithOtherEnemies(dist, TICK); // change speed based on other enemies
             this.updatePositionAndVelocity(dist); //set where entity is based on interactions/collisions put on dist
             this.checkCooldowns(TICK); //check and reset the cooldowns of its actions
 
@@ -151,7 +152,7 @@ class Goblin extends AbstractEnemy {
                     self.playerInSight = playerInVB;
                     self.aggro = true;
                     // knight is in the vision box and not in the attack range
-                    if (!self.AR.collide(entity.BB)) {
+                    if (!self.AR.collide(entity.BB) && self.state != self.states.damaged && (self.state != self.states.attack || self.state == self.states.attack && self.animations[self.state][self.direction].currentFrame() < 3)) {
                         // move towards the knight
                         self.state = self.states.move;
                         self.direction = entity.BB.right < self.BB.left ? self.directions.left : self.directions.right;

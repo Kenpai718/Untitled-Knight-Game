@@ -50,8 +50,8 @@ class Mushroom extends AbstractEnemy {
         this.animations[this.states.death][this.directions.left] = new Animator(this.spritesheet, 0, 150, 150, 150, 4, 0.2, 0, true, false, false);
         this.animations[this.states.death][this.directions.right] = new Animator(this.spritesheet, 600, 150, 150, 150, 4, 0.2, 0, false, false, false);
         // Damaged
-        this.animations[this.states.damaged][this.directions.left] = new Animator(this.spritesheet, 0, 300, 150, 150, 4, 0.15, 0, true, true, false);
-        this.animations[this.states.damaged][this.directions.right] = new Animator(this.spritesheet, 600, 300, 150, 150, 4, 0.15, 0, false, true, false);
+        this.animations[this.states.damaged][this.directions.left] = new Animator(this.spritesheet, 0, 300, 150, 150, 4, 0.15, 0, true, false, false);
+        this.animations[this.states.damaged][this.directions.right] = new Animator(this.spritesheet, 600, 300, 150, 150, 4, 0.15, 0, false, false, false);
         // Attack
         this.animations[this.states.attack][this.directions.left] = new Animator(this.spritesheet, 0, 600, 150, 150, 8, 0.1, 0, true, false, false);
         this.animations[this.states.attack][this.directions.right] = new Animator(this.spritesheet, 0, 450, 150, 150, 8, 0.1, 0, false, false, false);
@@ -85,6 +85,7 @@ class Mushroom extends AbstractEnemy {
             this.playerInSight = false; //set to true in environment collisions
             dist = super.checkEnvironmentCollisions(dist); //check if colliding with environment and adjust entity accordingly
             this.checkEntityInteractions(); //move entity according to other entities
+            dist = this.collideWithOtherEnemies(dist, TICK); // change speed based on other enemies
             this.updatePositionAndVelocity(dist); //set where entity is based on interactions/collisions put on dist
             this.checkCooldowns(TICK); //check and reset the cooldowns of its actions
 
@@ -153,7 +154,7 @@ class Mushroom extends AbstractEnemy {
                     self.playerInSight = playerInVB;
                     self.aggro = true;
                     // knight is in the vision box and not in the attack range
-                    if (!self.AR.collide(entity.BB)) {
+                    if (!self.AR.collide(entity.BB) && self.state != self.states.damaged && (self.state != self.states.attack || self.state == self.states.attack && self.animations[self.state][self.direction].currentFrame() < 3)) {
                         // move towards the knight
                         self.state = self.states.move;
                         self.direction = entity.BB.right < self.BB.left ? self.directions.left : self.directions.right;
@@ -203,6 +204,7 @@ class Mushroom extends AbstractEnemy {
             this.damagedCooldown += TICK;
             if (this.damagedCooldown >= PARAMS.DMG_COOLDOWN) {
                 this.resetAnimationTimers(this.states.damaged);
+                this.state = this.states.move;
                 this.damagedCooldown = 0;
                 this.canAttack = true;
                 this.runAway = false;
