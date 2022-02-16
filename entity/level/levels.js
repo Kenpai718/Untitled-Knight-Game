@@ -43,12 +43,7 @@ var testLevel = {
             x: 6, y: 2,
             title: "IMPORTANT DISCLOSURE",
             text: ["According to all known laws of aviation",
-                "there is no way a bee should be able to fly.",
-                "Its wings are too small to get",
-                "its fat little body off the ground.",
-                "The bee, of course, flies anyway",
-                "because bees don't care",
-                "what humans think is impossible."
+
             ]
         }
     ],
@@ -465,7 +460,9 @@ var level1_3 = {
             x: 34, y: 4,
             title: "[TUTORIAL: ADVANCED JUMPS]",
             text: ["-Delay your second jump to cover more distance.",
-                   "-Wait until you're at the peak of your first jump before doing your second jump."
+                   "-If you are running and then jump your momentum will be carried over.",
+                   "-Wait until you're at the peak of your first jump before doing your double jump.",
+                   "-While in air, hold the opposite direction and double jump to quickly switch directions.",
             ]
         }
     ],

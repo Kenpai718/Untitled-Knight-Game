@@ -272,8 +272,8 @@ class SceneManager {
             var fontSize = 60;
             ctx.font = fontSize + 'px "Press Start 2P"';
             ctx.fillStyle = "White";
-            let gameTitle = "Untitled Webgame";
-            ctx.fillText("Untitled Webgame", (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 3);
+            let gameTitle = "Untitled Knight Game";
+            ctx.fillText(gameTitle, (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 3);
             ctx.font = '40px "Press Start 2P"';
             ctx.fillStyle = this.textColor == 1 ? "Grey" : "White";
             ctx.fillText("Start Game", this.startGameBB.x, this.startGameBB.y);
@@ -289,11 +289,11 @@ class SceneManager {
                 ctx.fillText("D: Move Right", 30, 30 * 7 * 2);
                 ctx.fillText("S: Crouch", 30, 30 * 8 * 2);
                 ctx.fillText("W: Interact", 30, 30 * 9 * 2);
-                ctx.fillText("Space: Jump", 30, 30 * 10 * 2);
-                ctx.fillText("LShift: Roll", 30, 30 * 11 * 2);
-                ctx.fillText("Left Click/P: Melee Attack", 30, 30 * 12 * 2);
-                ctx.fillText("Right Click/O: Shoot Arrow", 30, 30 * 13 * 2);
-                ctx.fillText("E: Heal", 30, 30 * 14 * 2);
+                ctx.fillText("E: Heal", 30, 30 * 10 * 2);
+                ctx.fillText("Space: Jump", 30, 30 * 11 * 2);
+                ctx.fillText("LShift: Roll", 30, 30 * 12 * 2);
+                ctx.fillText("Left Click/P: Melee Attack", 30, 30 * 13 * 2);
+                ctx.fillText("Right Click/O: Shoot Arrow", 30, 30 * 14 * 2);
             }
             if (this.credits) {
                 ctx.font = '30px "Press Start 2P"';
