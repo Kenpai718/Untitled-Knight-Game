@@ -539,8 +539,8 @@ var level1_3 = {
     ],
     platforms: [
         { x: 22, y: 2, width: 2, height: 1 },
-        { x: 40, y: 6, width: 2, height: 1 },
-        { x: 48, y: 11, width: 2, height: 1 },
+        { x: 40, y: 7, width: 2, height: 1 },
+        { x: 49, y: 12, width: 2, height: 1 },
         { x: 59, y: 22, width: 5, height: 1 },
         { x: 69, y: 12, width: 5, height: 1 },
         { x: 89, y: 17, width: 3, height: 1 },
@@ -551,8 +551,8 @@ var level1_3 = {
     ],
     walls: [
         { x: 57, y: 22, height: 8, type: 0 },
-        { x: 53, y: 25, height: 9, type: 2 },
-        { x: 70, y: 25, height: 11, type: 0 }
+        { x: 53, y: 25, height: 8, type: 2 },
+        { x: 70, y: 25, height: 12, type: 0 }
     ],
     backgroundWalls: [
         { x: 0, y: 42, width: 120, height: 42 }

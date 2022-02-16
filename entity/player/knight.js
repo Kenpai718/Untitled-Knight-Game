@@ -150,7 +150,7 @@ class Knight extends AbstractPlayer {
      * Checks all avaliable actions of a player
      * and if the player's chosen action can be done it will
      * be executed.
-     * @param {} TICK 
+     * @param {} TICK
      */
     checkAndDoPlayerActions(TICK) {
         //horizontal or vertical actions
@@ -172,16 +172,17 @@ class Knight extends AbstractPlayer {
 
     /**
      * Sets vertical action states like wall hang, wall slide, etc
-     * 
+     *
      * If it is not a wallslide, hang or an aerial bow shot then flip the
      * direction if needed depending on velocity
-     * @param {*} TICK 
+     * @param {*} TICK
      */
     checkAndDoAerialActions(TICK) {
 
         let isWallAction = (this.action == this.states.wall_hang || this.action == this.states.wall_climb || this.action == this.states.wall_slide)
         if (isWallAction) {
             if (this.action == this.states.wall_hang) {
+                this.doubleJump = true;
                 if (this.game.up) {
                     this.action = this.states.wall_climb;
                     this.y -= 3 * this.scale;
@@ -252,7 +253,7 @@ class Knight extends AbstractPlayer {
 
     /**
      * Movement controls while grounded
-     * @param {} TICK 
+     * @param {} TICK
      */
     checkAndDoGroundedMovement(TICK) {
         //horizontal movement
@@ -331,7 +332,7 @@ class Knight extends AbstractPlayer {
 
     /**
      * Movement of player while airbourne
-     * @param {*} TICK 
+     * @param {*} TICK
      */
     checkAndDoAerialMovement(TICK) {
         // horizontal PLAYER_PHYSICS while in the air
@@ -619,7 +620,7 @@ class Knight extends AbstractPlayer {
     /**
  * Adjusts the position of player based on current velocity
  * The velocity was changed by player actions on keyboard
- * @param {*} TICK 
+ * @param {*} TICK
  */
     setVelocityAndPosition(TICK) {
         /**SET THE VELOCITY OF THE PLAYER */
