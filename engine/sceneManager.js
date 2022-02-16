@@ -9,8 +9,7 @@ class SceneManager {
         this.x = 0;
         this.y = 0;
         this.defaultMusic = MUSIC.CHASING_DAYBREAK;
-
-
+        this.myTextBox = new SceneTextBox(this.game, "Placeholder message");
 
         //game status
         this.title = false;
@@ -23,7 +22,7 @@ class SceneManager {
         this.killCount = 0;
 
         //levels array to load levels by calling levels[0], levels[1], etc
-        this.currentLevel = 0; // CHANGE TO 1 BEFORE SUBMISSION
+        this.currentLevel = 1; // CHANGE TO 1 BEFORE SUBMISSION
         this.setupAllLevels();
         this.loadTitle();
     };
@@ -72,6 +71,21 @@ class SceneManager {
     }
 
     /**
+     * Draws textbox to the canvas
+     * @param {*} ctx 
+     */
+    drawTextBox(ctx) {
+        //initialize textbox here because this method could be called before constructor is done
+        //had problems where it was null and draw method was called...
+        if (this.myTextBox == null) {
+            this.myTextBox = new SceneTextBox(this.game, "Placeholder message");
+        }
+
+        this.myTextBox.draw(ctx);
+
+    }
+
+    /**
      * MAKE SURE THIS IS CALLED BEFORE LOADING IN A LEVELS COMPONENTS!!!
      * This instantiates a player and places them appropriately on a level.
      *
@@ -102,7 +116,7 @@ class SceneManager {
     loadLevel(number, usedDoor, doorExitX, doorExitY) {
         // save the state of the enemies and interactables for the current level
         if (!this.title && !this.restart && !this.transition) {
-            this.levelState[this.currentLevel] = { enemies : [...this.game.enemies], interactables : [...this.game.interactables], killCount : this.killCount };
+            this.levelState[this.currentLevel] = { enemies: [...this.game.enemies], interactables: [...this.game.interactables], killCount: this.killCount };
         } else {
             this.title = false;
             this.restart = false;
@@ -233,6 +247,8 @@ class SceneManager {
         this.vignette.update();
         this.heartsbar.update();
         this.inventory.update();
+        if(this)
+        this.myTextBox.update();
     };
 
     updateAudio() {
@@ -247,6 +263,8 @@ class SceneManager {
         this.vignette.draw(ctx);
         this.inventory.draw(ctx);
         this.heartsbar.draw(ctx);
+
+        this.drawTextBox(ctx);
     };
 
     draw(ctx) {
@@ -257,23 +275,17 @@ class SceneManager {
             let xOffset;
             (this.level.label.length <= 4) ? xOffset = this.level.label.length * 70 : xOffset = this.level.label.length * 31;
             ctx.fillText("Level:" + this.level.label, this.game.surfaceWidth - xOffset, 30);
-            // display kill quota message, i would do this in the door class but the text gets covered by other entites
-            if (this.killQuotaMessage) {
-                ctx.font = PARAMS.BIG_FONT;
-                ctx.fillText("Must defeat " + this.remainingKills + " more enemies to advance", (this.game.surfaceWidth / 2) - ((20 * 35) / 2), 40);
-            }
             if (PARAMS.DEBUG) {
                 this.viewDebug(ctx);
                 this.minimap.draw(ctx);
             }
-
             this.drawGUI(ctx);
         } else if (this.title) {
             var fontSize = 60;
             ctx.font = fontSize + 'px "Press Start 2P"';
             ctx.fillStyle = "White";
-            let gameTitle = "Untitled Webgame";
-            ctx.fillText("Untitled Webgame", (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 3);
+            let gameTitle = "Untitled Knight Game";
+            ctx.fillText(gameTitle, (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 3);
             ctx.font = '40px "Press Start 2P"';
             ctx.fillStyle = this.textColor == 1 ? "Grey" : "White";
             ctx.fillText("Start Game", this.startGameBB.x, this.startGameBB.y);
@@ -289,11 +301,11 @@ class SceneManager {
                 ctx.fillText("D: Move Right", 30, 30 * 7 * 2);
                 ctx.fillText("S: Crouch", 30, 30 * 8 * 2);
                 ctx.fillText("W: Interact", 30, 30 * 9 * 2);
-                ctx.fillText("Space: Jump", 30, 30 * 10 * 2);
-                ctx.fillText("LShift: Roll", 30, 30 * 11 * 2);
-                ctx.fillText("Left Click/P: Melee Attack", 30, 30 * 12 * 2);
-                ctx.fillText("Right Click/O: Shoot Arrow", 30, 30 * 13 * 2);
-                ctx.fillText("E: Heal", 30, 30 * 14 * 2);
+                ctx.fillText("E: Heal", 30, 30 * 10 * 2);
+                ctx.fillText("Space: Jump", 30, 30 * 11 * 2);
+                ctx.fillText("LShift: Roll", 30, 30 * 12 * 2);
+                ctx.fillText("Left Click/P: Melee Attack", 30, 30 * 13 * 2);
+                ctx.fillText("Right Click/O: Shoot Arrow", 30, 30 * 14 * 2);
             }
             if (this.credits) {
                 ctx.font = '30px "Press Start 2P"';

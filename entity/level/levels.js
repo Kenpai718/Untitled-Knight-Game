@@ -40,7 +40,14 @@ var testLevel = {
 
     signs: [
         {
-            x: 6, y: 2,
+            x: 4, y: 2,
+            title: "DEVELOPER ROOM",
+            text: "This room is for developers to test entity and game mechanics"
+            
+        },
+
+        {
+            x: 18, y: 2,
             title: "IMPORTANT DISCLOSURE",
             text: ["According to all known laws of aviation",
                 "there is no way a bee should be able to fly.",
@@ -94,7 +101,7 @@ var level1_1 = {
     ID: 1,
     label: "1-1",
     width: 120, height: 15,
-    player: { x: 0, y: 1 },
+    player: { x: 1, y: 1 },
     music: MUSIC.FODLAN_WINDS,
     doors: [
         { x: 116, y: 12, killQuota: 3, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition : false }, //door to level 2
@@ -465,7 +472,9 @@ var level1_3 = {
             x: 34, y: 4,
             title: "[TUTORIAL: ADVANCED JUMPS]",
             text: ["-Delay your second jump to cover more distance.",
-                   "-Wait until you're at the peak of your first jump before doing your second jump."
+                   "-If you are running and then jump your momentum will be carried over.",
+                   "-Wait until you're at the peak of your first jump before doing your double jump.",
+                   "-While in air, hold the opposite direction and double jump to quickly switch directions.",
             ]
         }
     ],
