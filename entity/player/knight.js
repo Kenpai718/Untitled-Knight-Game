@@ -32,7 +32,7 @@ class Knight extends AbstractPlayer {
             roll: 7, wall_climb: 8, wall_hang: 9, wall_slide: 10,
             jump: 11, jump_to_fall: 12, falling: 13,
             turn_around: 14, slide: 15,
-            attack1: 16, attack2: 17, shoot: 18, pluck : 19,
+            attack1: 16, attack2: 17, shoot: 18, pluck: 19,
             death: 20
         };
 
@@ -179,8 +179,8 @@ class Knight extends AbstractPlayer {
             this.updateBB();
 
             //set to falling state if needed
-            if (!this.touchFloor() && (this.action < this.states.jump || this.action > this.states.falling) && 
-            this.action != this.states.attack1 && this.action != this.states.attack2 && this.action != this.states.shoot && this.action != this.states.pluck) {
+            if (!this.touchFloor() && (this.action < this.states.jump || this.action > this.states.falling) &&
+                this.action != this.states.attack1 && this.action != this.states.attack2 && this.action != this.states.shoot && this.action != this.states.pluck) {
                 if ((this.action != this.states.wall_slide && this.action != this.states.roll && this.action != this.states.wall_hang && this.action != this.states.wall_climb) ||
                     (this.action == this.states.wall_slide && !(this.collisions.lo_left || this.collisions.lo_right))) {
                     this.action = this.states.falling;
@@ -199,7 +199,7 @@ class Knight extends AbstractPlayer {
         if (!this.vulnerable && !this.game.roll) {
             ctx.filter = "drop-shadow(0 0 0.2rem crimson) opacity(100%)"; //red border to indicate damaged
             //drop the opacity a bit each flicker to create an effect of switching between 100% opaque
-            if(this.flickerFlag) {
+            if (this.flickerFlag) {
                 ctx.filter = "drop-shadow(0 0 0.2rem crimson) opacity(85%)";
             }
             this.animations[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
@@ -292,7 +292,7 @@ class Knight extends AbstractPlayer {
                     }
                     else if (this.facing == this.dir.right) {
                         if (this.velocity.x > 0) {
-                            this.velocity.x -= (SKID)  * TICK;
+                            this.velocity.x -= (SKID) * TICK;
                         }
                         else this.velocity.x = 0;
                     }
@@ -490,15 +490,21 @@ class Knight extends AbstractPlayer {
             if (this.myInventory.arrows > 0 || this.myInventory.arrows == 0 && this.arrow) {
                 if (this.crouch) {
                     this.action = this.states.crouch_shoot;
-                }
-                else this.action = this.states.shoot;
-                let x = this.game.mouse.x + this.game.camera.x;
-                let time = this.animations[this.facing][this.action].elapsedTime;
-                if (x < this.x + this.width / 2) 
-                    this.facing = this.dir.left;
-                if (x > this.x + this.width / 2)
-                    this.facing = this.dir.right;
+                } else {
+                    this.action = this.states.shoot;
+                    let time = this.animations[this.facing][this.action].elapsedTime;
+
+                    //only adjust the direction if using the mouse to shoot
+                    if (!this.game.shootButton) {
+                        let x = this.game.mouse.x + this.game.camera.x;
+                        if (x < this.x + this.width / 2)
+                            this.facing = this.dir.left;
+                        if (x > this.x + this.width / 2)
+                            this.facing = this.dir.right;
+                    }
                     this.animations[this.facing][this.action].elapsedTime = time;
+                }
+
             }
             else {
                 if (this.game.down || this.touchHole()) {
@@ -516,9 +522,10 @@ class Knight extends AbstractPlayer {
             if (done) {
                 this.action = this.game.down || this.touchHole() ? this.states.crouch : this.DEFAULT_ACTION; //back to idle; added case for crouch attacks
                 this.game.shoot = false;
+                this.game.shootButton = false;
                 this.arrow = false;
             }
-            
+
 
         } else {
             //crouch attack
@@ -526,7 +533,7 @@ class Knight extends AbstractPlayer {
             //slash 1 and 2
             this.resetAnimationTimers(this.states.attack1);
             this.resetAnimationTimers(this.states.attack2);
-            
+
             this.resetAnimationTimers(this.states.shoot);
             this.resetAnimationTimers(this.states.crouch_shoot);
 

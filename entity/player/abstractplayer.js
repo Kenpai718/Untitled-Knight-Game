@@ -42,7 +42,7 @@ class AbstractPlayer extends AbstractEntity {
     shootArrow() {
         if (this.myInventory.arrows > 0) {
             //try to position starting arrow at the waist of the knight
-            const target = { x: this.game.mouse.x + this.game.camera.x, y: this.game.mouse.y + this.game.camera.y };
+            const target = this.chooseArrowTarget();
             this.game.addEntityToFront(new Arrow(this.game, this.x + this.offsetxBB + 20, (this.BB.top + this.BB.height / 4), target));
             this.myInventory.arrows--;
             ASSET_MANAGER.playAsset(SFX.BOW_SHOT);
@@ -50,6 +50,55 @@ class AbstractPlayer extends AbstractEntity {
         } else { //out of arrows
             ASSET_MANAGER.playAsset(SFX.CLICK);
         }
+    }
+
+    /**
+     * Chooses arrow target based on if user shot an arrow with
+     * mouse or keyboard input.
+     * @returns target for arrow to fly in
+     */
+    chooseArrowTarget() {
+        let target;
+        if (this.game.shoot) {
+            //keyboard input shoot in direction of keyboard
+            if (this.game.shootButton) {
+                //get cordinates of player
+                let myX = this.BB.right;
+                let myY = this.BB.top;
+                let myH = this.BB.height;
+                let myMid = myY + (myH / 2.5);
+
+                //target cordinates
+                let myTargetX = myX;
+                let myTargetY = myMid;
+
+                //flip arrow direction if left
+                let xDir = 1;
+                if (this.facing == this.dir.left) {
+                    xDir = -1;
+                    myX = this.BB.left;
+                }
+
+                //make arrow fly up or down depending on direction held
+                if(this.game.up) {
+                    myTargetY = myY - 500;
+                } else if(this.game.down && this.inAir) {
+                    myTargetY = myY + 500;
+                }
+
+                //xbuffer to choose a target in the right direction
+                let xBuffer = 500 * xDir;
+                //player cords are already in terms of the camera so need for an offset
+                target = { x: myTargetX + xBuffer, y: myTargetY };
+
+                //console.log("Shooting with button", target.x, target.y);;
+            } else { //use mouse cursor input
+                //console.log("Shooting with mouse");
+                target = { x: this.game.mouse.x + this.game.camera.x, y: this.game.mouse.y + this.game.camera.y };
+            }
+        }
+
+        return target;
     }
 
     /**

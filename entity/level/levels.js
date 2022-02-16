@@ -111,10 +111,11 @@ var level1_1 = {
             title: "[TUTORIAL: BASIC COMBAT/MOVEMENT]",
             text: ["-[A] to move left, [D] to move right",
                 "-[SPACE] to jump and double tap to double jump",
-                "-[Left Click] to swing your sword. Double click to attack twice.",
-                "              The second hit is slower, but deals more damage.",
-                "-[MOUSE MOVE] to position cursor",
-                "-[Right click] to shoot an arrow in cursor direction.",
+                "-[LEFT-CLICK or P] to swing your sword. Double tap to attack twice.",
+                " The second hit is slower, but deals more damage.",
+                "-[MOUSE MOVE] + [RIGHT-CLICK] to shoot an arrow in cursor direction.",
+                "-Alternatively, tap [O] to shoot an arrow forward in your direction",
+                " and hold [W] or [S] to shoot diagonally up or down.",
                 "-[SHIFT] to roll and dodge attacks."
             ]
         },
@@ -132,7 +133,7 @@ var level1_1 = {
         {
             x: 53, y: 6,
             title: "[TUTORIAL: HEALING/SHOP]",
-            text: ["-[H] to heal if you have a potion in your inventory.",
+            text: ["-[E] to heal and use a potion in your inventory.",
                 "-Potions will heal you for up to half your maximum hp.",
                 "-Potions are limited so use them sparingly.",
                 "-You can get more potions or other equipment by spending",
