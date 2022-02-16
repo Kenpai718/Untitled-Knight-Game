@@ -175,24 +175,35 @@ class Knight extends AbstractPlayer {
      * @param {*} TICK 
      */
     checkAndDoVerticalActions(TICK) {
-        if (this.action == this.states.wall_hang) {
-            if (this.game.up) {
-                this.action = this.states.wall_climb;
-                this.y -= 3 * this.scale;
-                if (this.animations[this.facing][this.action].isDone()) {
-                    this.resetAnimationTimers(this.action);
+
+        let isWallAction = (this.action == this.states.wall_hang || this.action == this.states.wall_climb)
+        if (isWallAction) {
+            if (this.action == this.states.wall_hang) {
+                if (this.game.up) {
+                    this.action = this.states.wall_climb;
+                    this.y -= 3 * this.scale;
+                    if (this.animations[this.facing][this.action].isDone()) {
+                        this.resetAnimationTimers(this.action);
+                    }
+                }
+                else if (this.game.down) {
+                    this.action = this.states.wall_slide;
+                    this.facing = this.facing == this.dir.right ? this.dir.left : this.dir.right;
                 }
             }
-            else if (this.game.down) {
-                this.action = this.states.wall_slide;
-                this.facing = this.facing == this.dir.right ? this.dir.left : this.dir.right;
+            if (this.action == this.states.wall_climb) {
+                if (this.animations[this.facing][this.action].currentFrame() < 4)
+                    this.velocity.y = -250;
+                else if (this.animations[this.facing][this.action].currentFrame() == 4)
+                    this.velocity.y = -125;
             }
-        }
-        if (this.action == this.states.wall_climb) {
-            if (this.animations[this.facing][this.action].currentFrame() < 4)
-                this.velocity.y = -250;
-            else if (this.animations[this.facing][this.action].currentFrame() == 4)
-                this.velocity.y = -125;
+        } else if (this.inAir) { //player is falling
+            //adjust the direction depending on how the player is drifting
+            let flip = (this.velocity.x < 0 && this.facing == this.dir.right) ||
+                (this.velocity.x > 0 && this.facing == this.dir.left);
+            if (flip) this.flipFacing();
+
+
         }
     }
 
@@ -333,6 +344,8 @@ class Knight extends AbstractPlayer {
             }
         }
 
+
+
         if (this.inAir) {
             // //logic to handle switching between jump animations
             if (this.animations[this.facing][this.states.jump_to_fall].isDone()) { //falling in between finished transition to falling
@@ -405,20 +418,41 @@ class Knight extends AbstractPlayer {
             //do a double jump if the player is in the air and hasn't double jumped while in air
             if (this.doubleJump && this.inAir && this.action >= this.states.jump
                 && this.action <= this.states.falling) {
-                    ASSET_MANAGER.playAsset(SFX.DOUBLEJUMP);
-                    this.doubleJump = false;
-                    this.game.jump = false;
-                    this.resetAnimationTimers(this.states.jump);
-                    this.resetAnimationTimers(this.states.jump_to_fall);
-                    if (this.action == this.states.jump) {
-                        this.velocity.y -= PLAYER_PHYSICS.DOUBLE_JUMP_HEIGHT;
+                ASSET_MANAGER.playAsset(SFX.DOUBLEJUMP);
+                this.doubleJump = false;
+                this.game.jump = false;
+                this.resetAnimationTimers(this.states.jump);
+                this.resetAnimationTimers(this.states.jump_to_fall);
+                if (this.action == this.states.jump) {
+                    this.velocity.y -= PLAYER_PHYSICS.DOUBLE_JUMP_HEIGHT;
+                }
+                else {
+                    this.velocity.y = -PLAYER_PHYSICS.JUMP_HEIGHT / 2;
+                }
+                this.action = this.states.jump;
+
+                //handle double jump x velocity
+                let isLeft = this.facing == this.dir.left;
+                if (this.game.left) {
+                    if(isLeft) { //keep momentum and jump left
+                        this.velocity.x -= PLAYER_PHYSICS.DOUBLE_JUMP_X_BOOST * TICK;
+                    } else { //was facing right cut momentum and double jump other way
+                        this.facing = this.dir.left;
+                        this.velocity.x = 0;
+                        //gave a slightly higher boost since momentum was just killed
+                        this.velocity.x -= (PLAYER_PHYSICS.DOUBLE_JUMP_X_BOOST * PHYSIC_SCALER) * TICK;
                     }
-                    else {
-                        this.velocity.y = -PLAYER_PHYSICS.JUMP_HEIGHT / 2;
-                    }
-                    this.action = this.states.jump;
-                    if (this.facing == this.states.right) this.velocity += PLAYER_PHYSICS.DOUBLE_JUMP_X_BOOST;
-                    if (this.facing == this.states.left) this.velocity -= PLAYER_PHYSICS.DOUBLE_JUMP_X_BOOST;
+
+                } else if (this.game.right) {
+                    if(!isLeft) { //keep momentum and jump right
+                        this.velocity.x += PLAYER_PHYSICS.DOUBLE_JUMP_X_BOOST * TICK;
+                    } else { //was facing left cut momentum and double jump other way
+                        this.facing = this.dir.right;
+                        this.velocity.x = 0;
+                        //gave a slightly higher boost since momentum was just killed
+                        this.velocity.x += (PLAYER_PHYSICS.DOUBLE_JUMP_X_BOOST * PHYSIC_SCALER)* TICK;
+                    };
+                }
             }
         }
     }
