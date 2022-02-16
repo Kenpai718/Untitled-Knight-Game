@@ -115,6 +115,7 @@ class Skeleton extends AbstractEnemy {
             this.playerInSight = false; //set to true in environment collisions
             dist = super.checkEnvironmentCollisions(dist); //check if colliding with environment and adjust entity accordingly
             dist = this.checkEntityInteractions(dist, TICK); //move entity according to other entities
+            dist = this.collideWithOtherEnemies(dist, TICK); // change speed based on other enemies
             this.updatePositionAndVelocity(dist); //set where entity is based on interactions/collisions put on dist
             this.checkCooldowns(TICK); //check and reset the cooldowns of its actions
 
@@ -164,7 +165,7 @@ class Skeleton extends AbstractEnemy {
                     self.playerInSight = playerInVB;
                     self.aggro = true;
                     // knight is in the vision box and not in the attack range
-                    if (!self.AR.collide(entity.BB)) {
+                    if (!self.AR.collide(entity.BB) && self.state != self.states.damaged && (self.state != self.states.attack || self.state == self.states.attack && self.animations[self.state][self.direction].currentFrame() < 3)) {
                         // move towards the knight
                         self.state = self.states.move;
                         self.direction = entity.BB.right < self.BB.left ? self.directions.left : self.directions.right;
@@ -234,6 +235,7 @@ class Skeleton extends AbstractEnemy {
             this.damagedCooldown += TICK;
             if (this.damagedCooldown >= PARAMS.DMG_COOLDOWN) {
                 this.resetAnimationTimers(this.states.damaged);
+                this.setCombatPhase();
                 this.damagedCooldown = 0;
                 this.canAttack = true;
                 this.runAway = false;
@@ -400,8 +402,8 @@ class Skeleton extends AbstractEnemy {
         this.animations[0][1] = new Animator(this.spritesheet, 660, 50, 45, 51, 4, 0.7, 105, 0, 1, 0);
 
         // Damaged Animation
-        this.animations[1][0] = new Animator(this.spritesheet, 495, 348, 55, 53, 4, 0.1, -205, 0, 1, 0); //0.1
-        this.animations[1][1] = new Animator(this.spritesheet, 650, 348, 55, 53, 4, 0.1, 95, 0, 1, 0);
+        this.animations[1][0] = new Animator(this.spritesheet, 495, 348, 55, 53, 4, 0.1, -205, 0, 0, 0); //0.1
+        this.animations[1][1] = new Animator(this.spritesheet, 650, 348, 55, 53, 4, 0.1, 95, 0, 0, 0);
 
         // Death Animation
         this.animations[2][0] = new Animator(this.spritesheet, 492, 200, 56, 51, 4, 0.1, -206, 0, 0, 0); //0.1

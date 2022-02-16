@@ -58,6 +58,23 @@ class AbstractEnemy extends AbstractEntity {
         }
     }
 
+    collideWithOtherEnemies(dist, TICK) {
+        let self = this;
+        let speed = 20;
+        if (this.velocity.x == 0)
+            speed = 10;
+        this.game.enemies.forEach(function(entity) {
+            if (entity != self && self.BB.collide(entity.BB)) {
+                if (self.BB.left < entity.BB.left)
+                    dist.x -= speed * TICK;
+                else if (self.BB.right > entity.BB.right)
+                    dist.x += speed * TICK;
+                else dist.x += (Math.round(Math.random() * 4) - 2) * speed / 2  * TICK;
+            }
+        });
+        return dist;
+    }
+
 
     /**
      * If entity is in a moving state and it's x cordinate is not changing
