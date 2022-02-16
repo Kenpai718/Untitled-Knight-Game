@@ -101,7 +101,7 @@ var level1_1 = {
     ID: 1,
     label: "1-1",
     width: 120, height: 15,
-    player: { x: 0, y: 1 },
+    player: { x: 1, y: 1 },
     music: MUSIC.FODLAN_WINDS,
     doors: [
         { x: 116, y: 12, killQuota: 3, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition : false }, //door to level 2

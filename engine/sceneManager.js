@@ -22,7 +22,7 @@ class SceneManager {
         this.killCount = 0;
 
         //levels array to load levels by calling levels[0], levels[1], etc
-        this.currentLevel = 0; // CHANGE TO 1 BEFORE SUBMISSION
+        this.currentLevel = 1; // CHANGE TO 1 BEFORE SUBMISSION
         this.setupAllLevels();
         this.loadTitle();
     };
@@ -247,10 +247,7 @@ class SceneManager {
         this.vignette.update();
         this.heartsbar.update();
         this.inventory.update();
-        
-        if (this.myTextBox == null) {
-            this.myTextBox = new SceneTextBox(this.game, "Placeholder message");
-        }
+        if(this)
         this.myTextBox.update();
     };
 
