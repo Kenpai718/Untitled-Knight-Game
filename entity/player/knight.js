@@ -113,77 +113,13 @@ class Knight extends AbstractPlayer {
             super.setDead();
         } else {
             /**CONTROLS:
-             * CheckAndDo..() checks user input and executs that action is possible
+             * CheckAndDo..() checks user input and executes that action if possible
             */
-            this.checkAndDoMovement(TICK);
-            this.checkAndDoAttack();
-            this.checkAndDoHeal();
-            //NOTE: Roll should be the last option checked because user should be able to cancel actions into roll
-            this.checkAndDoRoll();
-
-            if (this.action == this.states.wall_hang) {
-                if (this.game.up) {
-                    this.action = this.states.wall_climb;
-                    this.y -= 3 * this.scale;
-                    if (this.animations[this.facing][this.action].isDone()) {
-                        this.resetAnimationTimers(this.action);
-                    }
-                }
-                else if (this.game.down) {
-                    this.action = this.states.wall_slide;
-                    this.facing = this.facing == this.dir.right ? this.dir.left : this.dir.right;
-                }
-            }
-            if (this.action == this.states.wall_climb) {
-                if (this.animations[this.facing][this.action].currentFrame() < 4)
-                    this.velocity.y = -250;
-                else if (this.animations[this.facing][this.action].currentFrame() == 4)
-                    this.velocity.y = -125;
-            }
-
-            /**SET THE VELOCITY OF THE PLAYER */
-            //constant falling velocity
-            switch (this.action) {
-                case this.states.wall_slide:
-                    this.velocity.y += this.slideAcc * TICK;
-                    break;
-                case this.action == this.states.wall_climb:
-                    if (this.animations[this.facing][this.action].currentFrame() >= 3)
-                        this.velocity.y += this.fallAcc * TICK;
-                    break;
-                case this.states.wall_hang:
-                    this.velocity.y = 0;
-                    break;
-                default:
-                    this.velocity.y += this.fallAcc * TICK;
-                    break;
-            }
-
-            // max y velocity
-            if (this.velocity.y >= PHYSICS.MAX_FALL) this.velocity.y = PHYSICS.MAX_FALL;
-            if (this.velocity.y <= -PHYSICS.MAX_FALL) this.velocity.y = -PHYSICS.MAX_FALL;
-            if (this.action == this.states.wall_slide) {
-                if (this.velocity.y >= PHYSICS.MAX_SLIDE) this.velocity.y = PHYSICS.MAX_SLIDE;
-            }
-
-            //max x velocity
-            let doubleJumpBonus = 0;
-            if (!this.doubleJump) doubleJumpBonus = PHYSICS.DOUBLE_JUMP_X_BOOST;
-            if (this.velocity.x >= PHYSICS.MAX_RUN) this.velocity.x = PHYSICS.MAX_RUN + doubleJumpBonus;
-            if (this.velocity.x <= -PHYSICS.MAX_RUN) this.velocity.x = -PHYSICS.MAX_RUN - doubleJumpBonus;
-            if (this.action == this.states.crouch_walk) {
-                if (this.velocity.x >= PHYSICS.CROUCH_SPD) this.velocity.x = PHYSICS.CROUCH_SPD;
-                if (this.velocity.x <= -PHYSICS.CROUCH_SPD) this.velocity.x = -PHYSICS.CROUCH_SPD;
-            }
-
-            /**UPDATE POSITIONING AND BOUNDING BOX */
-            this.x += this.velocity.x * TICK;
-            if (this.action != this.states.wall_hang || this.action != this.states.wall_climb)
-                this.y += this.velocity.y * TICK;
-            this.updateBB();
+            this.checkAndDoPlayerActions(TICK);
+            this.setVelocityAndPosition(TICK);
 
             //set to falling state if needed
-            if (!this.touchFloor() && (this.action < this.states.jump || this.action > this.states.falling) &&
+            if (!super.touchFloor() && (this.action < this.states.jump || this.action > this.states.falling) &&
                 this.action != this.states.attack1 && this.action != this.states.attack2 && this.action != this.states.shoot && this.action != this.states.pluck) {
                 if ((this.action != this.states.wall_slide && this.action != this.states.roll && this.action != this.states.wall_hang && this.action != this.states.wall_climb) ||
                     (this.action == this.states.wall_slide && !(this.collisions.lo_left || this.collisions.lo_right))) {
@@ -192,8 +128,11 @@ class Knight extends AbstractPlayer {
                 }
             }
 
-            /**COLLISION HANDLING */
-            this.handleCollisions(TICK);
+            /**COLLISION HANDLING
+             * All interactions like environment or entities
+             * are handled by the AbstractPlayer superclass
+             */
+            super.handleCollisions(TICK);
         }
     }
 
@@ -224,6 +163,56 @@ class Knight extends AbstractPlayer {
         super.drawDebug(ctx);
         this.viewBoundingBox(ctx);
         this.viewCollisionsBox(ctx);
+    }
+
+    /**
+     * Checks all avaliable actions of a player
+     * and if the player's chosen action can be done it will
+     * be executed.
+     * @param {} TICK 
+     */
+    checkAndDoPlayerActions(TICK) {
+        //horizontal or vertical actions
+        this.checkAndDoMovement(TICK); //keyboard movement
+        this.checkAndDoAttack();       //attacking
+        this.checkAndDoHeal();         //healing
+
+        /**
+         * ROLLING SHOULD ALWAYS BE LAST
+         * This is so roll can cancel other animations
+         */
+        this.checkAndDoRoll();
+
+        //vertical actions
+        this.checkAndDoVerticalActions(TICK);
+
+    }
+
+
+    /**
+     * Sets vertical action states like wall hang, wall slide, etc
+     * @param {*} TICK 
+     */
+    checkAndDoVerticalActions(TICK) {
+        if (this.action == this.states.wall_hang) {
+            if (this.game.up) {
+                this.action = this.states.wall_climb;
+                this.y -= 3 * this.scale;
+                if (this.animations[this.facing][this.action].isDone()) {
+                    this.resetAnimationTimers(this.action);
+                }
+            }
+            else if (this.game.down) {
+                this.action = this.states.wall_slide;
+                this.facing = this.facing == this.dir.right ? this.dir.left : this.dir.right;
+            }
+        }
+        if (this.action == this.states.wall_climb) {
+            if (this.animations[this.facing][this.action].currentFrame() < 4)
+                this.velocity.y = -250;
+            else if (this.animations[this.facing][this.action].currentFrame() == 4)
+                this.velocity.y = -125;
+        }
     }
 
     /**
@@ -600,237 +589,51 @@ class Knight extends AbstractPlayer {
     }
 
     /**
-     * Handles collision detection of the player
-     * and adjusts positions or actions if needed
-     * @params this.game.clocktick
-     */
-    handleCollisions(TICK) {
-        //do collisions detection here
-        this.collisions = {
-            lo_left: false, hi_left: false, lo_right: false, hi_right: false,
-            ceil: false, ceil_left: false, ceil_right: false,
-            floor: false, floor_left: false, floor_right: false
-        };
-        const w = this.BB.right - this.BB.left;
-        const h = this.BB.bottom - this.BB.top;
-        const BB = {
-            top: new BoundingBox(this.BB.left, this.BB.top, w, h / 2),
-            bottom: new BoundingBox(this.BB.left, this.BB.top + h / 2, w, h / 2),
-            left: new BoundingBox(this.BB.left, this.BB.top, w / 2, h),
-            right: new BoundingBox(this.BB.left + w / 2, this.BB.top, w / 2, h),
-        };
-        let dist = { x: 0, y: 0 };
-        this.diffy = { hi: 0, lo: 0 };
-        let high = 100000 * this.scale;
-
-        let that = this;
-        this.game.foreground2.forEach(function (entity) {
-            const coll = {
-                left: false, right: false, ceil: false, floor: false
-            };
-            if (entity.BB && that.BB.collide(entity.BB)) {
-                // check which side collides
-                if (BB.bottom.collide(entity.BB)) coll.floor = true;
-                if (BB.top.collide(entity.BB)) coll.ceil = true;
-                if (BB.right.collide(entity.BB)) coll.right = true;
-                if (BB.left.collide(entity.BB)) coll.left = true;
-
-                // record height of knight and wall for wall hang
-                if (high > entity.BB.top) high = entity.BB.top;
-
-                // determine via elimination which side is actually colliding
-                if (coll.floor && !coll.ceil) { // somewhere below
-                    const y = Math.abs(entity.BB.top - that.BB.bottom);
-                    const xL = Math.abs(entity.BB.right - that.BB.left);
-                    const xR = Math.abs(entity.BB.left - that.BB.right);
-                    if (coll.left && !coll.right && xL < w / 2) { // somwehere left
-                        if (xL < y) { // certaintly left
-                            that.collisions.lo_left = true;
-                            dist.x = entity.BB.right - that.BB.left;
-                        }
-                        else { // certaintly below
-                            that.collisions.floor_left = true;
-                            if (Math.abs(entity.BB.top - that.BB.bottom) > Math.abs(dist.y) || dist.y > 0)
-                                dist.y = entity.BB.top - that.BB.bottom;
-                        }
-                    }
-                    else if (coll.right && !coll.left && xR < w / 2) { // somewhere right
-                        if (xR < y) { // certaintly right
-                            that.collisions.lo_right = true;
-                            dist.x = entity.BB.left - that.BB.right;
-                        }
-                        else { // certaintly below
-                            that.collisions.floor_right = true;
-                            if (Math.abs(entity.BB.top - that.BB.bottom) > Math.abs(dist.y) || dist.y > 0)
-                                dist.y = entity.BB.top - that.BB.bottom;
-                        }
-                    }
-                    else { // certaintly below
-                        that.collisions.floor = true;
-                        if (Math.abs(entity.BB.top - that.BB.bottom) > Math.abs(dist.y) || dist.y > 0)
-                            dist.y = entity.BB.top - that.BB.bottom;
-                    }
-                }
-                else if (coll.ceil && !coll.floor) { // somewhere above
-                    const y = Math.abs(entity.BB.bottom - that.BB.top);
-                    const xL = Math.abs(entity.BB.right - that.BB.left);
-                    const xR = Math.abs(entity.BB.left - that.BB.right);
-                    if (coll.left && !coll.right && xL < w / 2) { // somewhere left
-                        if (xL <= y) { // certaintly left
-                            that.collisions.hi_left = true;
-                            dist.x = entity.BB.right - that.BB.left;
-                            if (high > entity.BB.top) high = entity.BB.top;
-                        }
-                        else { // certaintly above
-                            that.collisions.ceil_left = true;
-                            if (Math.abs(entity.BB.bottom - that.BB.top && !that.collisions.floor) > Math.abs(dist.y));
-                        }
-                    }
-                    else if (coll.right && !coll.left && xR < w / 2) { // somewhere right
-                        if (xR <= y) { // certaintly right
-                            that.collisions.hi_right = true;
-                            dist.x = entity.BB.left - that.BB.right;
-                            if (high > entity.BB.top) high = entity.BB.top;
-                        }
-                        else { // certaintly above
-                            that.collisions.ceil_right = true;
-                            if (Math.abs(entity.BB.bottom - that.BB.top && !that.collisions.floor) > Math.abs(dist.y))
-                                dist.y = entity.BB.bottom - that.BB.top;
-                        }
-                    }
-                    else { // certaintly above
-                        that.collisions.ceil = true;
-                        if (Math.abs(entity.BB.bottom - that.BB.top && !that.collisions.floor) > Math.abs(dist.y))
-                            dist.y = entity.BB.bottom - that.BB.top;
-                    }
-                }
-                else { // neither above nor below
-                    if (coll.left) { // certaintly left
-                        that.collisions.lo_left = true;
-                        that.collisions.hi_left = true;
-                        dist.x = entity.BB.right - that.BB.left;
-                        if (high > entity.BB.top) high = entity.BB.top;
-                    }
-                    else if (coll.right) { // certaintly right
-                        that.collisions.lo_right = true;
-                        that.collisions.hi_right = true;
-                        dist.x = entity.BB.left - that.BB.right;
-                        if (high > entity.BB.top) high = entity.BB.top;
-                    }
-                }
-            }
-        });
-
-        this.game.enemies.forEach(function (entity) {
-            //interactions with enemy
-            if (entity instanceof AbstractEnemy) {
-                //attacked by an enemy
-                if (entity.HB && that.BB.collide(entity.HB)) {
-                    //console.log("knight hit by enemy");
-                    that.takeDamage(entity.getDamageValue(), false);
-
-                }
-
-                //attacked an enemy
-                if (that.HB != null && entity.BB && that.HB.collide(entity.BB)) {
-                    //console.log("knight hit an enemy");
-                    entity.takeDamage(that.getDamageValue(), that.critical);
-                }
-
-            }
-        });
-
-        this.game.projectiles.forEach(function (entity) {
-            if (entity.BB && that.BB.collide(entity.BB)) {
-                //player picks up arrow stuck on ground
-                if (entity instanceof Arrow && entity.stuck) {
-                    entity.removeFromWorld = true;
-                    that.myInventory.arrows++;
-                    ASSET_MANAGER.playAsset(SFX.ITEM_PICKUP);
-                }
-            }
-        });
-
-        this.diffy.hi = high - this.BB.top;
-
-        // instances where there are collisions along vertical, but need ignoring
-        // all cases are when there's no definitive ceiling or floor (top/bottom collision as part of a wall)
-        /*if (!(this.touchFloor() || this.touchCeiling())) {
-            dist.y = 0
-        }*/
-        // instances where there are collisons along horizontal, but need ignoring
-        // currently only when there's a crawl space to allow auto-crawl
-        if (this.touchFloor() && this.touchHole()) {
-            if (!this.collisions.lo_right && !this.collisions.lo_left)
-                dist.x = 0;
-        }
-
-        // update position as a result of collision
-        this.x += dist.x;
-        this.y += dist.y;
-        this.updateBB();
-
-        // bottom collision
-        if (this.touchFloor()) {
-            if (this.velocity.y > 0) {
+ * Adjusts the position of player based on current velocity
+ * The velocity was changed by player actions on keyboard
+ * @param {*} TICK 
+ */
+    setVelocityAndPosition(TICK) {
+        /**SET THE VELOCITY OF THE PLAYER */
+        //constant falling velocity, different depending on state
+        switch (this.action) {
+            case this.states.wall_slide:
+                this.velocity.y += this.slideAcc * TICK;
+                break;
+            case this.action == this.states.wall_climb:
+                if (this.animations[this.facing][this.action].currentFrame() >= 3)
+                    this.velocity.y += this.fallAcc * TICK;
+                break;
+            case this.states.wall_hang:
                 this.velocity.y = 0;
-                this.inAir = false;
-                this.doubleJump = true;
-                if (this.action == this.states.jump || this.action == this.states.jump_to_fall || this.action == this.states.fall) {
-                    this.action = this.DEFAULT_ACTION;
-                }
-                this.resetAnimationTimers(this.states.jump);
-                this.resetAnimationTimers(this.states.jump_to_fall);
-                this.resetAnimationTimers(this.states.falling);
-
-
-            }
+                break;
+            default:
+                this.velocity.y += this.fallAcc * TICK;
+                break;
         }
 
-        // top collison
-        if (this.touchCeiling()) {
-            if (this.velocity.y < 0) {
-                this.y -= that.velocity.y * TICK;
-                this.velocity.y = 0;
-            }
+        // max y velocity
+        if (this.velocity.y >= PHYSICS.MAX_FALL) this.velocity.y = PHYSICS.MAX_FALL;
+        if (this.velocity.y <= -PHYSICS.MAX_FALL) this.velocity.y = -PHYSICS.MAX_FALL;
+        if (this.action == this.states.wall_slide) {
+            if (this.velocity.y >= PHYSICS.MAX_SLIDE) this.velocity.y = PHYSICS.MAX_SLIDE;
         }
 
-        // left collison
-        if (this.collisions.hi_left || this.collisions.lo_left) {
-            if (this.velocity.x < 0)
-                this.velocity.x = 0;
+        //max x velocity
+        let doubleJumpBonus = 0;
+        if (!this.doubleJump) doubleJumpBonus = PHYSICS.DOUBLE_JUMP_X_BOOST;
+        if (this.velocity.x >= PHYSICS.MAX_RUN) this.velocity.x = PHYSICS.MAX_RUN + doubleJumpBonus;
+        if (this.velocity.x <= -PHYSICS.MAX_RUN) this.velocity.x = -PHYSICS.MAX_RUN - doubleJumpBonus;
+        if (this.action == this.states.crouch_walk) {
+            if (this.velocity.x >= PHYSICS.CROUCH_SPD) this.velocity.x = PHYSICS.CROUCH_SPD;
+            if (this.velocity.x <= -PHYSICS.CROUCH_SPD) this.velocity.x = -PHYSICS.CROUCH_SPD;
         }
 
-        // right collison
-        if (this.collisions.hi_right || this.collisions.lo_right) {
-            if (this.velocity.x > 0)
-                this.velocity.x = 0;
-        }
+        //update the position and set the bounding box
+        this.x += this.velocity.x * TICK;
+        if (this.action != this.states.wall_hang || this.action != this.states.wall_climb)
+            this.y += this.velocity.y * TICK;
         this.updateBB();
-    }
-
-    /**Collision helper methods */
-
-    touchFloor() {
-        return this.collisions.floor || (this.collisions.floor_right && this.collisions.floor_left) ||
-            (this.collisions.floor_right && !this.collisions.hi_right && !this.collisions.lo_right) ||
-            (this.collisions.floor_left && !this.collisions.hi_left && !this.collisions.lo_left);
-    }
-
-    touchCeiling() {
-        return this.collisions.ceil || (this.collisions.ceil_right && this.collisions.ceil_left) ||
-            (this.collisions.ceil_right && !this.collisions.hi_right && !this.collisions.lo_right) ||
-            (this.collisions.ceil_left && !this.collisions.hi_left && !this.collisions.lo_left);
-    }
-
-    touchHole() {
-        return this.collisions.ceil || this.collisions.ceil_right && !this.collisions.lo_right || this.collisions.ceil_left && !this.collisions.lo_left ||
-            (this.collisions.hi_right && !this.collisions.lo_right) ||
-            (this.collisions.hi_left && !this.collisions.lo_left);
-    }
-
-    isCrouched() {
-        return this.action == this.states.crouch || this.action == this.states.crouch_walk || this.action == this.states.crouch_atk;
     }
 
     //reset the animation timer in both direction
