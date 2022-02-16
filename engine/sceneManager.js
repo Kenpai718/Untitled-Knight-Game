@@ -13,10 +13,9 @@ class SceneManager {
 
 
         //game status
-        this.title = true;
+        this.title = false;
+        this.transition = false;
         this.gameOver = false;
-
-        this.levelState = [];
 
         this.levelH = 0;
         this.levelW = 0;
@@ -24,13 +23,14 @@ class SceneManager {
         this.killCount = 0;
 
         //levels array to load levels by calling levels[0], levels[1], etc
-        this.currentLevel = 0;
+        this.currentLevel = 0; // CHANGE TO 1 BEFORE SUBMISSION
         this.setupAllLevels();
         this.loadTitle();
-        //this.loadLevel(this.currentLevel, false);
     };
 
     loadTitle() {
+        this.title = true;
+        this.levelState = [];
         this.game.addEntity(new Background(this.game));
         var x = (this.game.surfaceWidth / 2) - ((40 * 10) / 2);
         var y = (this.game.surfaceHeight / 2) - 40;
@@ -43,16 +43,27 @@ class SceneManager {
         this.creditsBB = new BoundingBox(x, y, 40 * 7, -40);
     };
 
+    loadTransition() {
+        this.transition = true;
+        this.clearEntities();
+        this.game.addEntity(new Background(this.game));
+        var x = (this.game.surfaceWidth / 2) - ((40 * 10) / 2);
+        var y = (this.game.surfaceHeight / 2) - 40;
+        this.nextLevelBB = new BoundingBox(x, y, 40 * 10, -40);
+        x = (this.game.surfaceWidth / 2) - ((40 * 13) / 2);
+        y = (this.game.surfaceHeight / 2) + 40;
+        this.restartLevelBB = new BoundingBox(x, y, 40 * 13, -40);
+        x = (this.game.surfaceWidth / 2) - ((40 * 14) / 2);
+        y = (this.game.surfaceHeight / 2) + 40 * 3;
+        this.returnToMenuBB = new BoundingBox(x, y, 40 * 14, -40);
+    };
+
     /**
      * MUST BE CALLED BEFORE LOADING A LEVEL!!!
      * Initialize all levels into levels array
      */
     setupAllLevels() {
         var self = this;
-        // let levelZero = function() {self.loadScene(testLevel)};
-        // let levelOne = function() {self.loadScene(level1_1)};
-        // let levelTwo = function() {self.loadScene(level1_2)};
-        // let levelThree = function() {self.loadScene(level1_3)};
         let levelZero = testLevel;
         let levelOne = level1_1;
         let levelTwo = level1_2;
@@ -74,7 +85,6 @@ class SceneManager {
         this.player = new Knight(this.game, 0, 0);
         this.player.x = spawnX - this.player.BB.left;
         this.player.y = spawnY - this.player.BB.bottom;
-        //this.player.updateBB();
         this.inventory = this.player.myInventory;
         this.heartsbar = new HeartBar(this.game, this.player);
         this.vignette = new Vignette(this.game);
@@ -91,11 +101,12 @@ class SceneManager {
      */
     loadLevel(number, usedDoor, doorExitX, doorExitY) {
         // save the state of the enemies and interactables for the current level
-        if (!this.title && !this.restart) {
-            this.levelState[this.currentLevel] = { enemies: [...this.game.enemies], interactables: [...this.game.interactables], killCount: this.killCount };
+        if (!this.title && !this.restart && !this.transition) {
+            this.levelState[this.currentLevel] = { enemies : [...this.game.enemies], interactables : [...this.game.interactables], killCount : this.killCount };
         } else {
             this.title = false;
             this.restart = false;
+            this.transition = false;
         }
         this.clearEntities();
         if (number < 0 || number > this.levels.length - 1) {
@@ -106,7 +117,6 @@ class SceneManager {
             this.currentLevel = number;
             let lvlData = this.levels[number];
             if (usedDoor) {
-                //console.log("Entering door to Level#" + number + "| Exit Location = (x:" + doorExitX + ", Y:" + doorExitY + ")")
                 this.loadScene(lvlData, doorExitX, doorExitY);
             } else {
                 this.loadScene(lvlData, lvlData.player.x, lvlData.player.y);
@@ -143,7 +153,7 @@ class SceneManager {
      * Update the camera and gui elements
      */
     update() {
-        if (!this.title) {
+        if (!this.title && !this.transition) {
             //debug key toggle, flip state of debug checkbox
             if (this.game.debug) {
                 this.game.debug = false;
@@ -167,7 +177,7 @@ class SceneManager {
 
             this.x = Math.round(this.x);
             this.y = Math.round(this.y);
-        } else {
+        } else if (this.title) {
             this.textColor = 0;
             if (this.game.mouse) {
                 if (this.startGameBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
@@ -191,6 +201,31 @@ class SceneManager {
                 }
                 this.game.click = null;
             }
+        } else if (this.transition) {
+            this.textColor = 0;
+            if (this.game.mouse) {
+                if (this.nextLevelBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
+                    this.textColor = 1;
+                } else if (this.restartLevelBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
+                    this.textColor = 2;
+                } else if (this.returnToMenuBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
+                    this.textColor = 3;
+                }
+            }
+            if (this.game.click) {
+                if (this.nextLevelBB.collideMouse(this.game.click.x, this.game.click.y)) {
+                    // load next level code goes here when level 2 is added
+                } else if (this.restartLevelBB.collideMouse(this.game.click.x, this.game.click.y)) {
+                    this.currentLevel = 1;
+                    this.levelState = [];
+                    this.loadLevel(this.currentLevel, false);
+                } else if (this.returnToMenuBB.collideMouse(this.game.click.x, this.game.click.y)) {
+                    this.currentLevel = 1;
+                    this.levelState = [];
+                    this.title = true;
+                }
+                this.game.click = null;
+            }
         }
     };
 
@@ -198,7 +233,7 @@ class SceneManager {
         this.vignette.update();
         this.heartsbar.update();
         this.inventory.update();
-    }
+    };
 
     updateAudio() {
         let mute = document.getElementById("mute").checked;
@@ -212,10 +247,10 @@ class SceneManager {
         this.vignette.draw(ctx);
         this.inventory.draw(ctx);
         this.heartsbar.draw(ctx);
-    }
+    };
 
     draw(ctx) {
-        if (!this.title) {
+        if (!this.title && !this.transition) {
             //current level
             ctx.font = PARAMS.BIG_FONT;
             ctx.fillStyle = "White";
@@ -233,7 +268,7 @@ class SceneManager {
             }
 
             this.drawGUI(ctx);
-        } else {
+        } else if (this.title) {
             var fontSize = 60;
             ctx.font = fontSize + 'px "Press Start 2P"';
             ctx.fillStyle = "White";
@@ -269,6 +304,19 @@ class SceneManager {
                 ctx.fillText("Embert Pezzali", 30, 30 * 9 * 2);
                 ctx.fillText("David Shcherbina", 30, 30 * 10 * 2);
             }
+        } else if (this.transition) {
+            var fontSize = 60;
+            ctx.font = fontSize + 'px "Press Start 2P"';
+            ctx.fillStyle = "White";
+            let gameTitle = "Level Complete!";
+            ctx.fillText("Level Complete!", (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 3);
+            ctx.font = '40px "Press Start 2P"';
+            ctx.fillStyle = "Grey";
+            ctx.fillText("Next Level", this.nextLevelBB.x, this.nextLevelBB.y);
+            ctx.fillStyle = this.textColor == 2 ? "Grey" : "White";
+            ctx.fillText("Restart Level", this.restartLevelBB.x, this.restartLevelBB.y);
+            ctx.fillStyle = this.textColor == 3 ? "Grey" : "White";
+            ctx.fillText("Return To Menu", this.returnToMenuBB.x, this.returnToMenuBB.y);
         }
     };
 
@@ -404,7 +452,7 @@ class SceneManager {
             if (this.level.doors) {
                 for (var i = 0; i < this.level.doors.length; i++) {
                     let door = this.level.doors[i];
-                    this.game.addEntity(new Door(this.game, door.x, h - door.y - 1, door.killQuota, door.exitLocation));
+                    this.game.addEntity(new Door(this.game, door.x, h - door.y - 1, door.killQuota, door.exitLocation, door.transition));
                 }
             }
         } else { // load the enemies and interactables from their previous state
@@ -643,8 +691,8 @@ class Minimap {
 
     /**
      * Draws a smaller scale of an entity on the minimap
-     * @param {} ctx 
-     * @param {*} entity 
+     * @param {} ctx
+     * @param {*} entity
      */
     drawEntity(ctx, entity) {
         let convertX = entity.BB.left / PARAMS.BLOCKDIM;

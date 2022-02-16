@@ -29,9 +29,9 @@ var testLevel = {
     player: { x: 1, y: 1 },
     music: MUSIC.FODLAN_WINDS,
     doors: [
-        { x: 1, y: 3, killQuota: 0, exitLocation: { x: 5, y: 2, levelNum: 1 } }, //door to level 3
-        { x: 6, y: 7, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 2 } }, //door to level 2
-        { x: 21, y: 3, killQuota: 0, exitLocation: { x: 4, y: 1, levelNum: 3 } } //door to level 1
+        { x: 1, y: 3, killQuota: 0, exitLocation: { x: 5, y: 2, levelNum: 1 }, transition : false }, //door to level 3
+        { x: 6, y: 7, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition : false }, //door to level 2
+        { x: 21, y: 3, killQuota: 0, exitLocation: { x: 4, y: 1, levelNum: 3 }, transition : false } //door to level 1
     ],
 
     npcs: [
@@ -97,8 +97,8 @@ var level1_1 = {
     player: { x: 0, y: 1 },
     music: MUSIC.FODLAN_WINDS,
     doors: [
-        { x: 116, y: 12, killQuota: 3, exitLocation: { x: 3, y: 1, levelNum: 2 } }, //door to level 2
-        { x: 2, y: 3, killQuota: 0, exitLocation: { x: 1, y: 1, levelNum: 0 } } //debugging room, DELETE THIS BEFORE SUBMISSION!
+        { x: 116, y: 12, killQuota: 3, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition : false }, //door to level 2
+        //{ x: 2, y: 3, killQuota: 0, exitLocation: { x: 1, y: 1, levelNum: 0 }, transition : false } //debugging room, DELETE THIS BEFORE SUBMISSION!
     ],
 
     npcs: [
@@ -161,7 +161,7 @@ var level1_1 = {
                 "-Chests contain valuable resources so search for them on each level!",
                 "-To progress to the next level press [W] next to the door.",
                 "-There is a KILL QUOTA that must be met before progressing to the next floor!"
-                
+
             ]
         },
     ],
@@ -246,8 +246,8 @@ var level1_2 = {
     player: { x: 1, y: 1 },
     music: MUSIC.CHASING_DAYBREAK,
     doors: [
-        { x: 116, y: 3, killQuota: 7, exitLocation: { x: 4, y: 1, levelNum: 3 } }, //next level to 3
-        { x: 0, y: 3, killQuota: 0, exitLocation: { x: 114, y: 10, levelNum: 1 } } //go back to level 1
+        { x: 116, y: 3, killQuota: 7, exitLocation: { x: 4, y: 1, levelNum: 3 }, transition : false }, //next level to 3
+        { x: 0, y: 3, killQuota: 0, exitLocation: { x: 114, y: 10, levelNum: 1 }, transition : false } //go back to level 1
     ],
 
     signs: [{
@@ -463,9 +463,9 @@ var level1_3 = {
         },
     ],
     doors: [
-        { x: 1, y: 3, killQuota: 0, exitLocation: { x: 114, y: 1, levelNum: 2 } }, //go back to level 2
-        { x: 117, y: 25, killQuota: 4, exitLocation: { x: 1, y: 3, levelNum: 3 } }, // change to level 4 once theres a level 4
-        { x: 34, y: 35, killQuota: 1, exitLocation: { x: 1, y: 3, levelNum: 3 } } // change to treasure room
+        { x: 1, y: 3, killQuota: 0, exitLocation: { x: 114, y: 1, levelNum: 2 }, transition : false }, //go back to level 2
+        { x: 117, y: 25, killQuota: 4, exitLocation: { x: 1, y: 3, levelNum: 3 }, transition : true }, // change to level 4 once theres a level 4
+        { x: 34, y: 35, killQuota: 1, exitLocation: { x: 1, y: 3, levelNum: 3 }, transition : false } // change to treasure room
     ],
     ground: [
         { x: 0, y: 0, width: 10, type: 1 }
