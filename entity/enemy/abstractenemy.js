@@ -6,11 +6,26 @@
 
 
 class AbstractEnemy extends AbstractEntity {
-    constructor(game, x, y, name, max_hp, width, height, scale, physics) {
+    /**
+     * 
+     * @param {*} game    game engine
+     * @param {*} x       xCord on canvas in blockdims
+     * @param {*} y       yCord on canvas in blockdims
+     * @param {*} onGuard is the enemy will stand still (true) or roam around (false)
+     * @param {*} name    name of entity
+     * @param {*} max_hp  maximum hitpoints
+     * @param {*} width   initial width
+     * @param {*} height  initial height
+     * @param {*} scale   scale of size ex: (width * scale)
+     * @param {*} physics physics that includes: MAX_RUN, MAX_FALL
+     */
+    constructor(game, x, y, onGuard, name, max_hp, width, height, scale, physics) {
         super(game, x, y, name, max_hp, width, height, scale);
         if (new.target === AbstractEnemy) {
             throw new TypeError("Cannot construct AbstractEnemy instance directly!");
         }
+
+        this.onGuardDuty = onGuard; //controls if should move or stay still on idle
         this.collisions = { left: false, right: false, top: false, bottom: false };
 
         this.physics = physics;

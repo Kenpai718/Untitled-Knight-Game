@@ -9,9 +9,9 @@
 
 class Skeleton extends AbstractEnemy {
 
-    constructor(game, x, y) {
+    constructor(game, x, y, onGuard) {
 
-        super(game, x, y, STATS.SKELETON.NAME, STATS.SKELETON.MAX_HP, STATS.SKELETON.WIDTH, STATS.SKELETON.HEIGHT, STATS.SKELETON.SCALE, STATS.SKELETON.PHYSICS);
+        super(game, x, y, onGuard, STATS.SKELETON.NAME, STATS.SKELETON.MAX_HP, STATS.SKELETON.WIDTH, STATS.SKELETON.HEIGHT, STATS.SKELETON.SCALE, STATS.SKELETON.PHYSICS);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/skeleton.png");
 
         // Update settings
@@ -122,8 +122,8 @@ class Skeleton extends AbstractEnemy {
                 this.HB = null;
             }
 
-            //do random movement while the player is not in sight
-            if (!this.playerInSight) this.doRandomMovement();
+            //do random movement while the player is not in sight and not on guardduty
+            if (!this.onGuardDuty && !this.playerInSight) this.doRandomMovement();
 
             super.setAggro(this.playerInSight);
             super.updateVelocity();
@@ -273,6 +273,7 @@ class Skeleton extends AbstractEnemy {
         }
 
     }
+    
 
 
     /**
