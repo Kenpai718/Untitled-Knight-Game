@@ -126,8 +126,10 @@ var level1_1 = {
                 "     if you have any in your inventory.",
                 "     *Hold [W] to shoot diagonally up or [S] down.",
                 "-[SHIFT] to roll and dodge attacks.",
+                " *Recommend to disable sticky keys!",
                 "",
                 "KEYBOARD + MOUSE CONTROLS:",
+                "*NOTE: Keep mouse cursor within game screen!",
                 "-[LEFT-CLICK]: Melee attack",
                 "-[MOUSE-MOVE]: Aim an arrow with cursor in game screen",
                 "-[RIGHT-CLICK]: Shoot arrow in cursor direction",
@@ -166,8 +168,9 @@ var level1_1 = {
             title: "[TUTORIAL: WALLJUMP]",
             text: [
                 "HOW TO SCALE WALLS:",
-                "-While falling hold a direction against a wall to wallslide",
-                "-While wallsliding tap [SPACE] to walljump in the other direction.",
+                "-While falling next to a wall you will wallslide",
+                "-While wallsliding or next to a wall",
+                " tap [SPACE] to walljump in the other direction.",
                 " Chain together walljumps to scale vertical heights!",
                 "-If hanging on a ledge press [W] to get up"
             ]
@@ -283,8 +286,31 @@ var level1_2 = {
             "-After an enemy spots you they will chase you down for a",
             " certain amount of time.",
             "-If you shoot an arrow and it got stuck then you can retrieve it.",
-        ]
-    }
+        ],
+    },
+    {
+        x: 4, y: 26,
+        title: "[GET 1,000,0000 DIAMONDS WITH THIS ONE SIMPLE TRICK!]",
+        text: [
+            "Never gonna give you up",
+            "Never gonna let you down",
+            "Never gonna run around and desert you",
+            "Never gonna make you cry",
+            "Never gonna say goodbye",
+            "Never gonna tell a lie and hurt you"
+        ],
+    },
+
+    ],
+
+    chests: [
+        { x: 2, y: 25, direction: 1 },
+        { x: 57, y: 7, direction: 0 },
+        { x: 80, y: 20, direction: 0 }
+    ],
+
+    npcs: [{
+        x: 82, y: 21,}
     ],
 
     ground: [
@@ -355,7 +381,8 @@ var level1_2 = {
     skeletons: [
         { x: 70, y: 3 },
         { x: 75, y: 3 },
-        { x: 100, y: 3 }
+        { x: 100, y: 3 },
+        { x: 3, y: 26 },
     ],
     windows: [
         { x: 2, y: 9, width: 1, height: 1.5 },
@@ -373,10 +400,6 @@ var level1_2 = {
         { x: 47, y: 10, width: 2, height: 3 },
         { x: 39, y: 28, width: 2, height: 3 },
         { x: 46, y: 28, width: 2, height: 3 }
-    ],
-    chests: [
-        { x: 2, y: 25, direction: 1 },
-        { x: 80, y: 20, direction: 0 }
     ],
     banners: [
         { x: 71, y: 4 },
@@ -502,8 +525,23 @@ var level1_3 = {
                 "-While in air, hold the opposite direction and double ",
                 " jump to quickly switch directions.",
             ]
-        }
+        },
+        {
+            x: 37, y: 34,
+            title: "[????????????????????]",
+            text: [
+                ">-(•_•)-<",
+                "   ( )",
+                "   o o.",
+                "  wooper",
+            ]
+        },
+
     ],
+    npcs: [{x: 81, y:28}
+
+    ],
+
     doors: [
         { x: 1, y: 3, killQuota: 0, exitLocation: { x: 114, y: 1, levelNum: 2 }, transition: false }, //go back to level 2
         { x: 117, y: 25, killQuota: 4, exitLocation: { x: 1, y: 3, levelNum: 3 }, transition: true }, // change to level 4 once theres a level 4
