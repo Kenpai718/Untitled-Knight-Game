@@ -61,11 +61,13 @@ class SceneManager {
                 "Embert Pezzali",
                 "David Shcherbina",
                 "",
-                "Special Thanks to Chris Marriot"
+                "TCSS 491: Computational Worlds",
+                "Project started in Winter 2022",
+                "Special Thanks to Chris Marriot!"
             ]
 
         let creditX = 860;
-        let creditY = 1100;
+        let creditY = 1220;
         let controlX = 870;
         let controlY = 1220;
         this.myControlBox = new SceneTextBox(this.game, controlX, controlY, controlInfo);
@@ -496,7 +498,7 @@ class SceneManager {
             if (this.level.shrooms) {
                 for (var i = 0; i < scene.shrooms.length; i++) {
                     let shroom = scene.shrooms[i];
-                    let e = new Mushroom(this.game, 0, 0);
+                    let e = new Mushroom(this.game, 0, 0, shroom.guard);
                     this.positionEntity(e, shroom.x, h - shroom.y);
                     this.game.addEntity(e);
                 }
@@ -504,7 +506,7 @@ class SceneManager {
             if (this.level.goblins) {
                 for (var i = 0; i < scene.goblins.length; i++) {
                     let goblin = scene.goblins[i];
-                    let e = new Goblin(this.game, 0, 0);
+                    let e = new Goblin(this.game, 0, 0, goblin.guard);
                     this.positionEntity(e, goblin.x, h - goblin.y);
                     this.game.addEntity(e);
                 }
@@ -512,7 +514,7 @@ class SceneManager {
             if (this.level.skeletons) {
                 for (var i = 0; i < scene.skeletons.length; i++) {
                     let skeleton = scene.skeletons[i];
-                    let e = new Skeleton(this.game, 0, 0);
+                    let e = new Skeleton(this.game, 0, 0, skeleton.guard);
                     this.positionEntity(e, skeleton.x, h - skeleton.y);
                     this.game.addEntity(e);
                 }
