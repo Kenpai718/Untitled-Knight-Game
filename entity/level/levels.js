@@ -41,8 +41,9 @@ var testLevel = {
     signs: [
         {
             x: 4, y: 2,
-            title: "DEVELOPER ROOM",
-            text: "This room is for developers to test entity and game mechanics"
+            title: "TOP SECRET: DEVELOPER ROOM",
+            text: ["This room is for developers to test mechanics",
+                  "If you are not a developer then... 🔫😬"]
 
         },
 
@@ -84,13 +85,13 @@ var testLevel = {
         { x: 8, y: 1, brickX: 15, brickY: 1, brickWidth: 1, brickHeight: 1 }
     ],
     shrooms: [
-        { x: 16, y: 1 }
+        { x: 16, y: 1, guard: true}
     ],
     goblins: [
-        { x: 12, y: 1 }
+        { x: 12, y: 1, guard: false}
     ],
     skeletons: [
-        { x: 12, y: 7 }
+        { x: 12, y: 7, guard: true}
     ],
 }
 
@@ -252,15 +253,15 @@ var level1_1 = {
         { x: 115, y: 12 }
     ],
     shrooms: [
-        { x: 16, y: 2 },
-        { x: 62, y: 1 },
-        { x: 72, y: 5 }
+        { x: 16, y: 2, guard: false},
+        { x: 62, y: 1, guard: false },
+        { x: 72, y: 5, guard: false }
     ],
     goblins: [
-        { x: 112, y: 12 }
+        { x: 105, y: 12, guard: true}
     ],
     skeletons: [
-        { x: 47, y: 7 }
+        { x: 47, y: 7, guard: true}
     ],
 }
 
@@ -306,11 +307,11 @@ var level1_2 = {
     chests: [
         { x: 2, y: 25, direction: 1 },
         { x: 57, y: 7, direction: 0 },
-        { x: 80, y: 20, direction: 0 }
+        { x: 82, y: 19, direction: 0 }
     ],
 
-    npcs: [{
-        x: 82, y: 21,}
+    npcs: [
+        {x: 38, y: 22}
     ],
 
     ground: [
@@ -320,7 +321,10 @@ var level1_2 = {
         { x: 46, y: 6, width: 14, height: 1, type: 1 },
         { x: 1, y: 6, width: 41, height: 1, type: 1 },
         { x: 5, y: 19, width: 35, height: 1, type: 1 },
-        { x: 4, y: 19, width: 1, height: 1, type: 0 }
+        { x: 4, y: 19, width: 1, height: 1, type: 0 },
+        { x: 65, y: 18, width: 5, height: 1, type: 1 },
+        { x: 80, y: 18, width: 4, height: 1, type: 1 },
+        
     ],
     bricks: [
         { x: 45, y: 0, width: 16, height: 1 },
@@ -342,10 +346,14 @@ var level1_2 = {
         { x: 35, y: 24, width: 25, height: 2 },
         { x: 41, y: 22, width: 19, height: 4 },
         { x: 65, y: 36, width: 55, height: 14 },
-        { x: 65, y: 19, width: 55, height: 8 },
-        { x: 85, y: 22, width: 35, height: 3 },
+        { x: 65, y: 17, width: 5, height: 8 },
+        { x: 70, y: 15, width: 10, height: 6 },
+        { x: 80, y: 17, width: 40, height: 8},
+        { x: 85, y: 22, width: 35, height: 5 },
         { x: 9, y: 28, width: 1, height: 1 }
     ],
+
+    spikes: [{x: 70, y: 16,  width: 10}],
     walls: [
         { x: 41, y: 5, height: 2, type: 2 },
         { x: 40, y: 22, height: 4, type: 0 },
@@ -358,31 +366,33 @@ var level1_2 = {
         { x: 0, y: 28, height: 4, type: 2 },
         { x: 30, y: 24, height: 2, type: 2 },
         { x: 34, y: 24, height: 3, type: 0 },
-        { x: 84, y: 22, height: 3, type: 0 },
+        { x: 84, y: 22, height: 5, type: 0 },
         { x: 120, y: 36, height: 37, type: 0 }
     ],
     backgroundWalls: [
         { x: 0, y: 36, width: 120, height: 36 }
     ],
     shrooms: [
-        { x: 15, y: 20 },
-        { x: 12, y: 1 },
-        { x: 40, y: 25 },
-        { x: 47, y: 25 },
-        { x: 102, y: 1 }
+        { x: 15, y: 20, guard: false },
+        { x: 12, y: 1, guard: false },
+        { x: 40, y: 25, guard: false },
+        { x: 47, y: 25, guard: false },
+        { x: 102, y: 1, guard: false }
     ],
     goblins: [
-        { x: 10, y: 7 },
-        { x: 8, y: 7 },
-        { x: 17, y: 20 },
-        { x: 72, y: 1 },
-        { x: 105, y: 1 }
+        { x: 10, y: 7, guard: false },
+        { x: 8, y: 7, guard: false },
+        { x: 17, y: 20, guard: true },
+        { x: 72, y: 1, guard: false },
+        { x: 105, y: 1, guard: true }
     ],
     skeletons: [
-        { x: 70, y: 3 },
-        { x: 75, y: 3 },
-        { x: 100, y: 3 },
-        { x: 3, y: 26 },
+        { x: 3, y: 26, guard: true },
+        { x: 70, y: 3, guard: true},
+        { x: 71, y: 15, guard: true},
+        { x: 75, y: 3, guard: true },
+        { x: 81, y: 22, guard: true },
+        { x: 100, y: 3, guard: true},
     ],
     windows: [
         { x: 2, y: 9, width: 1, height: 1.5 },
@@ -544,8 +554,8 @@ var level1_3 = {
 
     doors: [
         { x: 1, y: 3, killQuota: 0, exitLocation: { x: 114, y: 1, levelNum: 2 }, transition: false }, //go back to level 2
-        { x: 117, y: 25, killQuota: 4, exitLocation: { x: 1, y: 3, levelNum: 3 }, transition: true }, // change to level 4 once theres a level 4
-        { x: 34, y: 35, killQuota: 1, exitLocation: { x: 1, y: 3, levelNum: 3 }, transition: false } // change to treasure room
+        { x: 117, y: 25, killQuota: 5, exitLocation: { x: 1, y: 3, levelNum: 3 }, transition: true }, // change to level 4 once theres a level 4
+        { x: 34, y: 35, killQuota: 1, exitLocation: { x: 1, y: 3, levelNum: 0 }, transition: false } // change to treasure room
     ],
     ground: [
         { x: 0, y: 0, width: 10, type: 1 }
@@ -556,18 +566,18 @@ var level1_3 = {
         { x: 100, y: 23, brickX: 105, brickY: 30, brickWidth: 11, brickHeight: 8 }
     ],
     shrooms: [
-        { x: 107, y: 32 },
-        { x: 36, y: 35 },
-        { x: 77, y: 27 },
-        { x: 61, y: 9 }
+        { x: 107, y: 32, guard: false },
+        { x: 36, y: 35, guard: false },
+        { x: 61, y: 9, guard: false }
     ],
     goblins: [
-        { x: 110, y: 32 },
+        { x: 110, y: 32, guard: true },
+        { x: 76, y: 28, guard: true },
     ],
     skeletons: [
-        { x: 112, y: 32 },
-        { x: 73, y: 27 },
-        { x: 77, y: 27 },
+        { x: 112, y: 32, guard: true },
+        { x: 73, y: 27, guard: true },
+        { x: 77, y: 27, guard: true },
     ],
     chests: [
         { x: 77, y: 15, direction: 0 },

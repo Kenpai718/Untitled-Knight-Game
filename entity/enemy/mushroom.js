@@ -7,8 +7,8 @@
  * First couple frames of an attack cannot be interrupted
  */
 class Mushroom extends AbstractEnemy {
-    constructor(game, x, y) {
-        super(game, x, y, STATS.MUSHROOM.NAME, STATS.MUSHROOM.MAX_HP, STATS.MUSHROOM.WIDTH, STATS.MUSHROOM.HEIGHT, STATS.MUSHROOM.SCALE, STATS.MUSHROOM.PHYSICS);
+    constructor(game, x, y, onGuard) {
+        super(game, x, y, onGuard, STATS.MUSHROOM.NAME, STATS.MUSHROOM.MAX_HP, STATS.MUSHROOM.WIDTH, STATS.MUSHROOM.HEIGHT, STATS.MUSHROOM.SCALE, STATS.MUSHROOM.PHYSICS);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/mushroom.png");
         // seting up animation states
         this.animations = []; // [state][direction]

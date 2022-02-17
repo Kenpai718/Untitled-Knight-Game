@@ -7,9 +7,9 @@
  */
 
 class Goblin extends AbstractEnemy {
-    constructor(game, x, y) {
+    constructor(game, x, y, onGuard) {
 
-        super(game, x, y, STATS.GOBLIN.NAME, STATS.GOBLIN.MAX_HP, STATS.GOBLIN.WIDTH, STATS.GOBLIN.HEIGHT, STATS.GOBLIN.SCALE, STATS.GOBLIN.PHYSICS);
+        super(game, x, y, onGuard, STATS.GOBLIN.NAME, STATS.GOBLIN.MAX_HP, STATS.GOBLIN.WIDTH, STATS.GOBLIN.HEIGHT, STATS.GOBLIN.SCALE, STATS.GOBLIN.PHYSICS);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/goblin.png");
 
         // Update settings
@@ -95,7 +95,7 @@ class Goblin extends AbstractEnemy {
             }
 
             //do random movement while the player is not in sight
-            if (!this.playerInSight) this.doRandomMovement();
+            if (!this.onGuardDuty && !this.playerInSight) this.doRandomMovement();
 
             //entity can jump if it is on floor
             super.setAggro(this.playerInSight);
