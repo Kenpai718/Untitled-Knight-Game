@@ -17,8 +17,9 @@ class SceneManager {
 
         this.levelH = 0;
         this.levelW = 0;
-
+        //how many kills needed to pass the level
         this.killCount = 0;
+        this.killsRequired = 0;
 
         //levels array to load levels by calling levels[0], levels[1], etc
         this.makeTextBox();
@@ -43,12 +44,13 @@ class SceneManager {
 
         //text boxes for the title screen
         let controlInfo =
-            ["Controls",
+            ["Controls:",
                 "A: Left",
                 "D: Right",
                 "S: Crouch",
                 "W: Interact",
-                "E: Heal",
+                "E: Heal/Use-Potion",
+                "SPACE: Jump",
                 "P/Left-Click: Melee Attack",
                 "O/Right-Click: Shoot Arrow",
             ];
@@ -65,7 +67,7 @@ class SceneManager {
         let creditX = 860;
         let creditY = 1100;
         let controlX = 870;
-        let controlY = 1150;
+        let controlY = 1220;
         this.myControlBox = new SceneTextBox(this.game, controlX, controlY, controlInfo);
         this.myCreditBox = new SceneTextBox(this.game, creditX, creditY, creditInfo);
     };
@@ -308,19 +310,31 @@ class SceneManager {
         this.drawTextBox(ctx);
     };
 
+
     draw(ctx) {
         if (!this.title && !this.transition) {
             //current level
-            ctx.font = PARAMS.BIG_FONT;
+            ctx.font = PARAMS.BIG_FONT; //this is size 20 font
             ctx.fillStyle = "White";
-            let xOffset;
-            (this.level.label.length <= 4) ? xOffset = this.level.label.length * 70 : xOffset = this.level.label.length * 31;
-            ctx.fillText("Level:" + this.level.label, this.game.surfaceWidth - xOffset, 30);
+
+            //labels on top right
+            //level label
+            let levelLabel = "Level:" + this.level.label;
+            let offset = getRightTextOffset(levelLabel, 20);
+            ctx.fillText(levelLabel, this.game.surfaceWidth - offset, 30);
+            //quota label
+            let quotaLabel = "Kill Quota:" + this.killCount + "/" + this.killsRequired;
+            offset = getRightTextOffset(quotaLabel, 20);
+            if (this.killCount >= this.killsRequired) ctx.fillStyle = "SpringGreen";
+            ctx.fillText(quotaLabel, this.game.surfaceWidth - offset, 65);
+
+            //draw gui like hearts, inventory etc
+            this.drawGUI(ctx);
+
             if (PARAMS.DEBUG) {
                 this.viewDebug(ctx);
                 this.minimap.draw(ctx);
             }
-            this.drawGUI(ctx);
         } else if (this.title) {
             var fontSize = 60;
             var titleFont = fontSize + 'px "Press Start 2P"';
@@ -394,6 +408,9 @@ class SceneManager {
         let h = scene.height;
         this.game.addEntity(new Background(this.game));
         this.makePlayer(spawnX, h - spawnY);
+
+        //turn off textbox and only set it up when needed
+        if(this.myTextBox) this.myTextBox.setMessage("", false);
 
         //make a minimap for the level
         this.setupMinimap();
@@ -499,6 +516,9 @@ class SceneManager {
                 for (var i = 0; i < this.level.doors.length; i++) {
                     let door = this.level.doors[i];
                     this.game.addEntity(new Door(this.game, door.x, h - door.y - 1, door.killQuota, door.exitLocation, door.transition));
+
+                    //update the kill requirement for the level based on the max door
+                    this.killsRequired = Math.max(door.killQuota, this.killsRequired);
                 }
             }
         } else { // load the enemies and interactables from their previous state
@@ -689,6 +709,7 @@ class Minimap {
             chest: "yellow",
             door: "SpringGreen",
             sign: "bisque",
+            obelisk: "DarkSlateBlue"
         }
 
 
@@ -875,7 +896,7 @@ class Minimap {
             }
         }
 
-        //chest
+        //sign
         ctx.fillStyle = this.colors.sign;
         if (this.level.signs) {
             for (var i = 0; i < this.level.signs.length; i++) {
@@ -886,6 +907,20 @@ class Minimap {
                 let myH = PARAMS.SCALE;
 
                 ctx.fillRect(this.x + myX, this.y - myY + (this.h + 4) * PARAMS.SCALE, myW, myH);
+            }
+        }
+
+        //obelisk
+        ctx.fillStyle = this.colors.obelisk;
+        if (this.level.obelisks) {
+            for (var i = 0; i < this.level.obelisks.length; i++) {
+                let obelisk = this.level.obelisks[i];
+                let myX = obelisk.x * PARAMS.SCALE;
+                let myY = obelisk.y * PARAMS.SCALE;
+                let myW = PARAMS.SCALE / 2;
+                let myH = PARAMS.SCALE;
+
+                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 1) * PARAMS.SCALE, 3 * myW, 3 * myH);
             }
         }
 
