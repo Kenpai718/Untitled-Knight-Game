@@ -32,6 +32,7 @@ class Goblin extends AbstractEnemy {
         this.visionwidth = 1400;
         this.attackwidth = 89 * this.scale;
         this.damageValue = STATS.GOBLIN.DAMAGE;
+        this.myRoamRate = 5; //0-10 how often to move
 
         // Mapping animations and mob states
         this.animations = []; // [state][direction]
@@ -95,7 +96,7 @@ class Goblin extends AbstractEnemy {
             }
 
             //do random movement while the player is not in sight
-            if (!this.onGuardDuty && !this.playerInSight) this.doRandomMovement();
+            if (!this.playerInSight) super.doRandomMovement(this.myRoamRate);
 
             //entity can jump if it is on floor
             super.setAggro(this.playerInSight);
@@ -228,28 +229,6 @@ class Goblin extends AbstractEnemy {
                 this.state = this.states.idle;
             }
         }
-    }
-
-    doRandomMovement() {
-        if (this.seconds >= this.doRandom) {
-
-            this.direction = Math.floor(Math.random() * 2);
-            this.event = Math.floor(Math.random() * 6);
-            let moveTrigger = 3; //0-6, higher the number the more often it moves
-            if (this.event <= moveTrigger) {
-                this.doRandom = this.seconds + Math.floor(Math.random() * 3);
-                this.state = this.states.move;
-                this.velocity.x = 0;
-                if (this.direction == 0) this.velocity.x -= this.myMaxSpeed;
-                else this.velocity.x += this.myMaxSpeed;
-            }
-            else {
-                this.doRandom = this.seconds + Math.floor(Math.random() * 10);
-                this.state = this.states.idle;
-                this.velocity.x = 0
-            }
-        }
-
     }
 
     /**
