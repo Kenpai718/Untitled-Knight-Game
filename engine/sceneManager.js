@@ -142,13 +142,15 @@ class SceneManager {
         let spawnY = theY * PARAMS.BLOCKDIM;
 
         this.player = new Knight(this.game, 0, 0);
+        if (this.lastHp) this.player.hp = this.lastHp;
+        if (this.lastInventory) this.player.myInventory = this.lastInventory;
         this.player.x = spawnX - this.player.BB.left;
         this.player.y = spawnY - this.player.BB.bottom;
         this.inventory = this.player.myInventory;
         this.heartsbar = new HeartBar(this.game, this.player);
         this.vignette = new Vignette(this.game);
         this.game.addEntity(this.player);
-    }
+    };
 
     /**
      * Loads a valid level
@@ -162,6 +164,8 @@ class SceneManager {
         // save the state of the enemies and interactables for the current level
         if (!this.title && !this.restart && !this.transition) {
             this.levelState[this.currentLevel] = { enemies: [...this.game.enemies], interactables: [...this.game.interactables], killCount: this.killCount };
+            this.lastInventory = this.player.myInventory;
+            this.lastHp = this.player.hp;
         } else {
             this.title = false;
             this.restart = false;
@@ -381,7 +385,7 @@ class SceneManager {
 
     /**
      * How many kills left for the level
-     * @param {*} count 
+     * @param {*} count
      */
     updateKillQuota(count) {
         this.remainingKills = count;
