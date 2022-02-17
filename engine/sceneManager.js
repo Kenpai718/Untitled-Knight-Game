@@ -410,7 +410,12 @@ class SceneManager {
         this.makePlayer(spawnX, h - spawnY);
 
         //turn off textbox and only set it up when needed
-        if(this.myTextBox) this.myTextBox.setMessage("", false);
+        if (this.myTextBox) this.myTextBox.setMessage("", false);
+
+        //reset quotas
+        this.killCount = 0;
+        this.killsRequired = 0; //set by the door class later in this method
+        this.remainingKills = 0;
 
         //make a minimap for the level
         this.setupMinimap();
