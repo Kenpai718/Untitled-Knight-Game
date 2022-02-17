@@ -498,7 +498,7 @@ var level1_3 = {
                 "-If you are running and THEN jump your momentum",
                 " will be carried over and you will go farther.",
                 "-Wait until you're at the peak of your first jump",
-                " before doing your double jump.",
+                " before doing your double jump to go higher.",
                 "-While in air, hold the opposite direction and double ",
                 " jump to quickly switch directions.",
             ]
