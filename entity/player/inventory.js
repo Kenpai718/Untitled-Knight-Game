@@ -37,7 +37,7 @@ class Inventory {
         ctx.fillStyle = "White";
         ctx.fillText("🏹 x" + this.arrows, 5, (PARAMS.HEART_DIM * PARAMS.GUI_SCALE) * 2 + 10);
         ctx.fillText("⚗️ x" + this.potions, 130, (PARAMS.HEART_DIM * PARAMS.GUI_SCALE) * 2 + 10);
-        ctx.fillText("💎 x" + this.diamonds, 5, (PARAMS.HEART_DIM * PARAMS.GUI_SCALE) * 2 + 50);
+        ctx.fillText("💎 x" + this.diamonds, 7, (PARAMS.HEART_DIM * PARAMS.GUI_SCALE) * 2 + 50 -1);
         this.animations.drawFrame(this.game.clockTick, ctx, 8, 133, 2.5);
         ctx.font = PARAMS.DEFAULT_FONT;
     };
