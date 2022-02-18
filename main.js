@@ -7,6 +7,7 @@ const ASSET_MANAGER = new AssetManager();
 ASSET_MANAGER.queueDownload("./sprites/knight/knightLeft.png");
 ASSET_MANAGER.queueDownload("./sprites/knight/knightRight.png");
 ASSET_MANAGER.queueDownload("./sprites/projectile/arrow.png");
+ASSET_MANAGER.queueDownload("./sprites/projectile/arrowupgrades.png");
 ASSET_MANAGER.queueDownload("./sprites/Hearts.png");
 
 //enemies
@@ -24,6 +25,8 @@ ASSET_MANAGER.queueDownload("./sprites/environment/sign.png");
 
 //other
 ASSET_MANAGER.queueDownload("./sprites/vignette.png");
+ASSET_MANAGER.queueDownload("./sprites/GUI/armor.png");
+ASSET_MANAGER.queueDownload("./sprites/GUI/bows.png");
 
 //music
 ASSET_MANAGER.queueDownload(MUSIC.CHASING_DAYBREAK);
