@@ -177,6 +177,8 @@ class SceneManager {
         } else {
             console.log("Loading level " + number);
             this.killCount = !this.levelState[number] ? 0 : this.levelState[number].killCount;
+            console.log(this.killCount);
+            console.log(this.levelState[number]);
             this.currentLevel = number;
             let lvlData = this.levels[number];
             if (usedDoor) {
@@ -418,8 +420,7 @@ class SceneManager {
         //turn off textbox and only set it up when needed
         if (this.myTextBox) this.myTextBox.setMessage("", false);
 
-        //reset quotas
-        this.killCount = 0;
+        //reset quota
         this.killsRequired = 0; //set by the door class later in this method
         this.remainingKills = 0;
 
@@ -542,6 +543,8 @@ class SceneManager {
                 if (interactable instanceof Obelisk) {
                     interactable.bricks.removeFromWorld = false;
                     that.game.addEntity(interactable.bricks);
+                } else if (interactable instanceof Door) {
+                    that.killsRequired = Math.max(interactable.killQuota, that.killsRequired);
                 }
                 interactable.removeFromWorld = false
             });
