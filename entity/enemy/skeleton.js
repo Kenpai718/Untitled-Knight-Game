@@ -9,9 +9,9 @@
 
 class Skeleton extends AbstractEnemy {
 
-    constructor(game, x, y) {
+    constructor(game, x, y, onGuard) {
 
-        super(game, x, y, STATS.SKELETON.NAME, STATS.SKELETON.MAX_HP, STATS.SKELETON.WIDTH, STATS.SKELETON.HEIGHT, STATS.SKELETON.SCALE, STATS.SKELETON.PHYSICS);
+        super(game, x, y, onGuard, STATS.SKELETON.NAME, STATS.SKELETON.MAX_HP, STATS.SKELETON.WIDTH, STATS.SKELETON.HEIGHT, STATS.SKELETON.SCALE, STATS.SKELETON.PHYSICS);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/skeleton.png");
 
         // Update settings
@@ -23,7 +23,6 @@ class Skeleton extends AbstractEnemy {
         // Physics
         this.fallAcc = 1500;
         this.collisions = { left: false, right: false, top: false, bottom: false };
-        this.myJumpHeight = 535;
 
         //variables to control behavior
         this.canAttack = true;
@@ -32,6 +31,7 @@ class Skeleton extends AbstractEnemy {
         this.runAway = false;
         this.attackCooldown = 0;
         this.playerInSight = false;
+        this.myRoamRate = 3; //0-10 on how often
 
 
         //unique shielding behavior
@@ -122,8 +122,8 @@ class Skeleton extends AbstractEnemy {
                 this.HB = null;
             }
 
-            //do random movement while the player is not in sight
-            if (!this.playerInSight) this.doRandomMovement();
+            //do random movement while the player is not in sight and not on guardduty
+            if (!this.playerInSight) this.doRandomMovement(this.myRoamRate);
 
             super.setAggro(this.playerInSight);
             super.updateVelocity();
@@ -242,32 +242,19 @@ class Skeleton extends AbstractEnemy {
      * Do random movement like switching directions or walking
      * UNIQUE: overrides behavior so skeleton shields at low hp
      */
-    doRandomMovement() {
+    doRandomMovement(theRoamRate) {
         //while hp is at half keep shield up to block projectiles
         if ((this.hp / this.max_hp) <= PARAMS.MID_HP) {
             this.velocity.x = 0;
             this.setBlockState(true);
             this.setAttackState(false);
-        } else { //do random movement
-            if (this.seconds >= this.doRandom) {
+        }
 
-                this.direction = Math.floor(Math.random() * 2);
-                this.event = Math.floor(Math.random() * 6);
-                let moveTrigger = 1; //0-6, higher the number the more often it moves
-                if (this.event <= moveTrigger) {
-                    this.doRandom = this.seconds + Math.floor(Math.random() * 3);
-                    this.state = this.states.move;
-                    this.velocity.x = 0;
-                    if (this.direction == 0) this.velocity.x -= this.myMaxSpeed;
-                    else this.velocity.x += this.myMaxSpeed;
-                }
-                else {
-                    this.doRandom = this.seconds + Math.floor(Math.random() * 10);
-                    this.state = this.states.idle;
-                    this.velocity.x = 0
-                }
-            }
-            //reset action states
+        //do random movements from superclass
+        super.doRandomMovement(theRoamRate);
+
+        //if doing an idle roam state then switch off phase states
+        if (this.seconds >= this.doRandom) {
             this.setAttackState(false);
             this.setBlockState(false);
         }

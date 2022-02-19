@@ -9,7 +9,6 @@ class SceneManager {
         this.x = 0;
         this.y = 0;
         this.defaultMusic = MUSIC.CHASING_DAYBREAK;
-        this.myTextBox = new SceneTextBox(this.game, "Placeholder message");
 
         //game status
         this.title = false;
@@ -18,11 +17,13 @@ class SceneManager {
 
         this.levelH = 0;
         this.levelW = 0;
-
+        //how many kills needed to pass the level
         this.killCount = 0;
+        this.killsRequired = 0;
 
         //levels array to load levels by calling levels[0], levels[1], etc
-        this.currentLevel = 0; // CHANGE TO 1 BEFORE SUBMISSION
+        this.makeTextBox();
+        this.currentLevel = 1; // CHANGE TO 1 BEFORE SUBMISSION
         this.setupAllLevels();
         this.loadTitle();
     };
@@ -40,8 +41,43 @@ class SceneManager {
         x = (this.game.surfaceWidth / 2) - ((40 * 7) / 2);
         y = (this.game.surfaceHeight / 2) + 40 * 3;
         this.creditsBB = new BoundingBox(x, y, 40 * 7, -40);
+
+        //text boxes for the title screen
+        let controlInfo =
+            ["Controls:",
+                "A: Left",
+                "D: Right",
+                "S: Crouch",
+                "W: Interact",
+                "E: Heal/Use-Potion",
+                "SPACE: Jump",
+                "P/Left-Click: Melee Attack",
+                "O/Right-Click: Shoot Arrow",
+            ];
+        let creditInfo =
+            ["Developed by:",
+                "Kenneth Ahrens",
+                "Andre Larson",
+                "Embert Pezzali",
+                "David Shcherbina",
+                "",
+                "TCSS 491: Computational Worlds",
+                "Project started in Winter 2022",
+                "Special Thanks to Chris Marriot!"
+            ]
+
+        let creditX = 860;
+        let creditY = 1220;
+        let controlX = 870;
+        let controlY = 1220;
+        this.myControlBox = new SceneTextBox(this.game, controlX, controlY, controlInfo);
+        this.myCreditBox = new SceneTextBox(this.game, creditX, creditY, creditInfo);
     };
 
+
+    /**
+     * Transition Screen
+     */
     loadTransition() {
         this.transition = true;
         this.clearEntities();
@@ -78,11 +114,20 @@ class SceneManager {
         //initialize textbox here because this method could be called before constructor is done
         //had problems where it was null and draw method was called...
         if (this.myTextBox == null) {
-            this.myTextBox = new SceneTextBox(this.game, "Placeholder message");
+            this.makeTextBox();
         }
-
         this.myTextBox.draw(ctx);
 
+    }
+
+    /**
+     * Initializes the main textbox of the canvas
+     */
+    makeTextBox() {
+        this.defaultTextX = (this.game.surfaceWidth / 2);
+        this.defaultTextY = 150;
+        this.myTextBox = new SceneTextBox(this.game, this.defaultTextX, this.defaultTextY, "Placeholder message");
+        this.myTextBox.centerTop();
     }
 
     /**
@@ -97,13 +142,15 @@ class SceneManager {
         let spawnY = theY * PARAMS.BLOCKDIM;
 
         this.player = new Knight(this.game, 0, 0);
+        if (this.lastHp) this.player.hp = this.lastHp;
+        if (this.lastInventory) this.player.myInventory = this.lastInventory;
         this.player.x = spawnX - this.player.BB.left;
         this.player.y = spawnY - this.player.BB.bottom;
         this.inventory = this.player.myInventory;
         this.heartsbar = new HeartBar(this.game, this.player);
         this.vignette = new Vignette(this.game);
         this.game.addEntity(this.player);
-    }
+    };
 
     /**
      * Loads a valid level
@@ -117,6 +164,8 @@ class SceneManager {
         // save the state of the enemies and interactables for the current level
         if (!this.title && !this.restart && !this.transition) {
             this.levelState[this.currentLevel] = { enemies: [...this.game.enemies], interactables: [...this.game.interactables], killCount: this.killCount };
+            this.lastInventory = this.player.myInventory;
+            this.lastHp = this.player.hp;
         } else {
             this.title = false;
             this.restart = false;
@@ -203,6 +252,7 @@ class SceneManager {
                 }
             }
             if (this.game.click) {
+                ASSET_MANAGER.playAsset(SFX.CLICK);
                 if (this.startGameBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     this.game.attack = false;
                     this.loadLevel(this.currentLevel, false);
@@ -227,6 +277,7 @@ class SceneManager {
                 }
             }
             if (this.game.click) {
+                ASSET_MANAGER.playAsset(SFX.CLICK);
                 if (this.nextLevelBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     // load next level code goes here when level 2 is added
                 } else if (this.restartLevelBB.collideMouse(this.game.click.x, this.game.click.y)) {
@@ -247,7 +298,6 @@ class SceneManager {
         this.vignette.update();
         this.heartsbar.update();
         this.inventory.update();
-        if(this.myTextBox)
         this.myTextBox.update();
     };
 
@@ -263,58 +313,59 @@ class SceneManager {
         this.vignette.draw(ctx);
         this.inventory.draw(ctx);
         this.heartsbar.draw(ctx);
-
         this.drawTextBox(ctx);
     };
+
 
     draw(ctx) {
         if (!this.title && !this.transition) {
             //current level
-            ctx.font = PARAMS.BIG_FONT;
+            ctx.font = PARAMS.BIG_FONT; //this is size 20 font
             ctx.fillStyle = "White";
-            let xOffset;
-            (this.level.label.length <= 4) ? xOffset = this.level.label.length * 70 : xOffset = this.level.label.length * 31;
-            ctx.fillText("Level:" + this.level.label, this.game.surfaceWidth - xOffset, 30);
+
+            //labels on top right
+            //level label
+            let levelLabel = "Level:" + this.level.label;
+            let offset = getRightTextOffset(levelLabel, 20);
+            ctx.fillText(levelLabel, this.game.surfaceWidth - offset, 30);
+            //quota label
+            let quotaLabel = "Kill Quota:" + this.killCount + "/" + this.killsRequired;
+            offset = getRightTextOffset(quotaLabel, 20);
+            if (this.killCount >= this.killsRequired) ctx.fillStyle = "SpringGreen";
+            ctx.fillText(quotaLabel, this.game.surfaceWidth - offset, 65);
+
+            //draw gui like hearts, inventory etc
+            this.drawGUI(ctx);
+
             if (PARAMS.DEBUG) {
                 this.viewDebug(ctx);
                 this.minimap.draw(ctx);
             }
-            this.drawGUI(ctx);
         } else if (this.title) {
             var fontSize = 60;
-            ctx.font = fontSize + 'px "Press Start 2P"';
+            var titleFont = fontSize + 'px "Press Start 2P"';
+            ctx.font = "Bold" + titleFont;
             ctx.fillStyle = "White";
             let gameTitle = "Untitled Knight Game";
+
+            ctx.font = titleFont;
             ctx.fillText(gameTitle, (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 3);
             ctx.font = '40px "Press Start 2P"';
-            ctx.fillStyle = this.textColor == 1 ? "Grey" : "White";
+            ctx.fillStyle = this.textColor == 1 ? "SpringGreen" : "White";
             ctx.fillText("Start Game", this.startGameBB.x, this.startGameBB.y);
             ctx.fillStyle = this.textColor == 2 ? "Grey" : "White";
             ctx.fillText("Controls", this.controlsBB.x, this.controlsBB.y);
             ctx.fillStyle = this.textColor == 3 ? "Grey" : "White";
             ctx.fillText("Credits", this.creditsBB.x, this.creditsBB.y);
             ctx.strokeStyle = "Red";
+
             if (this.controls) {
-                ctx.font = '30px "Press Start 2P"';
-                ctx.fillStyle = "White";
-                ctx.fillText("A: Move Left", 30, 30 * 6 * 2);
-                ctx.fillText("D: Move Right", 30, 30 * 7 * 2);
-                ctx.fillText("S: Crouch", 30, 30 * 8 * 2);
-                ctx.fillText("W: Interact", 30, 30 * 9 * 2);
-                ctx.fillText("E: Heal", 30, 30 * 10 * 2);
-                ctx.fillText("Space: Jump", 30, 30 * 11 * 2);
-                ctx.fillText("LShift: Roll", 30, 30 * 12 * 2);
-                ctx.fillText("Left Click/P: Melee Attack", 30, 30 * 13 * 2);
-                ctx.fillText("Right Click/O: Shoot Arrow", 30, 30 * 14 * 2);
+                this.myControlBox.show = true;
+                this.myControlBox.draw(ctx);
             }
             if (this.credits) {
-                ctx.font = '30px "Press Start 2P"';
-                ctx.fillStyle = "White";
-                ctx.fillText("Developed by:", 30, 30 * 6 * 2);
-                ctx.fillText("Kenneth Ahrens", 30, 30 * 7 * 2);
-                ctx.fillText("Andre Larson", 30, 30 * 8 * 2);
-                ctx.fillText("Embert Pezzali", 30, 30 * 9 * 2);
-                ctx.fillText("David Shcherbina", 30, 30 * 10 * 2);
+                this.myCreditBox.show = true;
+                this.myCreditBox.draw(ctx);
             }
         } else if (this.transition) {
             var fontSize = 60;
@@ -332,6 +383,10 @@ class SceneManager {
         }
     };
 
+    /**
+     * How many kills left for the level
+     * @param {*} count
+     */
     updateKillQuota(count) {
         this.remainingKills = count;
     };
@@ -359,7 +414,14 @@ class SceneManager {
         let h = scene.height;
         this.game.addEntity(new Background(this.game));
         this.makePlayer(spawnX, h - spawnY);
-        this.myTextBox = null;
+
+        //turn off textbox and only set it up when needed
+        if (this.myTextBox) this.myTextBox.setMessage("", false);
+
+        //reset quotas
+        this.killCount = 0;
+        this.killsRequired = 0; //set by the door class later in this method
+        this.remainingKills = 0;
 
         //make a minimap for the level
         this.setupMinimap();
@@ -440,7 +502,7 @@ class SceneManager {
             if (this.level.shrooms) {
                 for (var i = 0; i < scene.shrooms.length; i++) {
                     let shroom = scene.shrooms[i];
-                    let e = new Mushroom(this.game, 0, 0);
+                    let e = new Mushroom(this.game, 0, 0, shroom.guard);
                     this.positionEntity(e, shroom.x, h - shroom.y);
                     this.game.addEntity(e);
                 }
@@ -448,7 +510,7 @@ class SceneManager {
             if (this.level.goblins) {
                 for (var i = 0; i < scene.goblins.length; i++) {
                     let goblin = scene.goblins[i];
-                    let e = new Goblin(this.game, 0, 0);
+                    let e = new Goblin(this.game, 0, 0, goblin.guard);
                     this.positionEntity(e, goblin.x, h - goblin.y);
                     this.game.addEntity(e);
                 }
@@ -456,7 +518,7 @@ class SceneManager {
             if (this.level.skeletons) {
                 for (var i = 0; i < scene.skeletons.length; i++) {
                     let skeleton = scene.skeletons[i];
-                    let e = new Skeleton(this.game, 0, 0);
+                    let e = new Skeleton(this.game, 0, 0, skeleton.guard);
                     this.positionEntity(e, skeleton.x, h - skeleton.y);
                     this.game.addEntity(e);
                 }
@@ -473,6 +535,9 @@ class SceneManager {
                 for (var i = 0; i < this.level.doors.length; i++) {
                     let door = this.level.doors[i];
                     this.game.addEntity(new Door(this.game, door.x, h - door.y - 1, door.killQuota, door.exitLocation, door.transition));
+
+                    //update the kill requirement for the level based on the max door
+                    this.killsRequired = Math.max(door.killQuota, this.killsRequired);
                 }
             }
         } else { // load the enemies and interactables from their previous state
@@ -663,6 +728,7 @@ class Minimap {
             chest: "yellow",
             door: "SpringGreen",
             sign: "bisque",
+            obelisk: "DarkSlateBlue"
         }
 
 
@@ -849,7 +915,7 @@ class Minimap {
             }
         }
 
-        //chest
+        //sign
         ctx.fillStyle = this.colors.sign;
         if (this.level.signs) {
             for (var i = 0; i < this.level.signs.length; i++) {
@@ -860,6 +926,20 @@ class Minimap {
                 let myH = PARAMS.SCALE;
 
                 ctx.fillRect(this.x + myX, this.y - myY + (this.h + 4) * PARAMS.SCALE, myW, myH);
+            }
+        }
+
+        //obelisk
+        ctx.fillStyle = this.colors.obelisk;
+        if (this.level.obelisks) {
+            for (var i = 0; i < this.level.obelisks.length; i++) {
+                let obelisk = this.level.obelisks[i];
+                let myX = obelisk.x * PARAMS.SCALE;
+                let myY = obelisk.y * PARAMS.SCALE;
+                let myW = PARAMS.SCALE / 2;
+                let myH = PARAMS.SCALE;
+
+                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 1) * PARAMS.SCALE, 3 * myW, 3 * myH);
             }
         }
 

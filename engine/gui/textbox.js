@@ -7,7 +7,7 @@
 class TextBox {
     constructor(game, x, y, text) {
         Object.assign(this, { game, x, y, text });
-        this.fontSize = DEFAULT_FONT_SIZE;
+        this.fontSize = 15;
 
 
         this.boxColor = "BlueViolet";
@@ -39,7 +39,7 @@ class TextBox {
         //no longer showing start doing a fade out
         if (!this.show && this.doFade) {
             if (this.myOpacity > 0) {
-                this.myOpacity-=2;
+                this.myOpacity -= 2;
                 ctx.filter = "opacity(" + this.myOpacity + "%)";
                 this.drawTextBox(ctx, this.text);
                 ctx.filter = "none";
@@ -56,10 +56,11 @@ class TextBox {
      */
     drawTextBox(ctx, theText) {
         //ctx.font = PARAMS.DEFAULT_FONT;
-        ctx.font = PARAMS.DEFAULT_FONT_SIZE;
+        ctx.font = this.fontSize + 'px "Press Start 2P"'
         if (theText instanceof Array) this.buildMultiLineBox(ctx, theText);
         else if (isString(theText)) this.buildSingleLineBox(ctx, theText);
         else throw "Cannot draw textbox because text is not a string or a string in an array!";
+        ctx.font = PARAMS.DEFAULT_FONT;
     }
 
     buildMultiLineBox(ctx, theText) {
@@ -88,7 +89,7 @@ class TextBox {
             let boxWidth = (this.fontSize * maxLen) + xBuffer;
             let boxHeight = ((this.fontSize * totalLines) * 2) + yBuffer;
             let myBoxX = (this.x - this.game.camera.x) - (boxWidth / 3);
-            let myBoxY = (this.y - this.game.camera.y) - (boxHeight * 1.5);
+            let myBoxY = (this.y - this.game.camera.y) - (boxHeight * 1.2);
             ctx.globalAlpha = 0.5;
             ctx.fillRect(myBoxX, myBoxY, boxWidth, boxHeight);
             ctx.globalAlpha = 1;
@@ -156,15 +157,9 @@ class TextBox {
  * each index is a new line string.
  */
 class SceneTextBox {
-    constructor(game, text) {
-        Object.assign(this, { game, text });
-        this.fontSize = 30;
-
-        //position at top of canvas
-        this.defaultX = (this.game.surfaceWidth / 2);
-        this.defaultY = this.fontSize * 5;
-        this.x = this.defaultX;
-        this.y = this.defaultY;
+    constructor(game, x, y, text) {
+        Object.assign(this, { game, x, y, text });
+        this.fontSize = 20;
 
         this.boxColor = "BlueViolet";
         this.borderColor = "Azure";
@@ -209,10 +204,15 @@ class SceneTextBox {
     }
 
     update() {
-        //position it in center of the screen
+
+    };
+
+    //position it in center of the screen
+    center() {
+        this.resetDefaultPos();
         let myLen = getMaxStrLength(this.text);
         this.x = (this.defaultX) - ((myLen / 6) * this.fontSize);
-    };
+    }
 
     draw(ctx) {
         if (this.show) {
@@ -245,7 +245,7 @@ class SceneTextBox {
         if (theText instanceof Array) this.buildMultiLineBox(ctx, theText);
         else if (isString(theText)) this.buildSingleLineBox(ctx, theText);
         else throw "Cannot draw textbox because text is not a string or a string in an array!";
-        ctx.font = PARAMS.DEFAULT_FONT_SIZE;
+        ctx.font = PARAMS.DEFAULT_FONT;
     }
 
     /**
@@ -337,6 +337,19 @@ class SceneTextBox {
         let textY = myBoxY + (this.fontSize) + (boxHeight / 5) + (yBuffer / 2);
         ctx.fillText(theText, textX, textY);
         ctx.align = "left";
+    }
+
+
+    //methods to position it
+    
+    centerTop() {
+        this.x = (this.game.surfaceWidth / 2);
+        this.y = 150;
+    }
+
+    centerBottom() {
+        this.x = (this.game.surfaceWidth / 2);
+        this.y = (this.game.surfaceHeight) - 100;
     }
 
     drawDebug() {

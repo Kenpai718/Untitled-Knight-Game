@@ -29,21 +29,22 @@ var testLevel = {
     player: { x: 1, y: 1 },
     music: MUSIC.FODLAN_WINDS,
     doors: [
-        { x: 1, y: 3, killQuota: 0, exitLocation: { x: 5, y: 2, levelNum: 1 }, transition : false }, //door to level 3
-        { x: 6, y: 7, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition : false }, //door to level 2
-        { x: 21, y: 3, killQuota: 0, exitLocation: { x: 4, y: 1, levelNum: 3 }, transition : false } //door to level 1
+        { x: 1, y: 3, killQuota: 0, exitLocation: { x: 5, y: 2, levelNum: 1 }, transition: false }, //door to level 3
+        { x: 6, y: 7, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition: false }, //door to level 2
+        { x: 21, y: 3, killQuota: 0, exitLocation: { x: 4, y: 1, levelNum: 3 }, transition: false } //door to level 1
     ],
 
     npcs: [
-        { x: 3, y: 5}
+        { x: 3, y: 5 }
     ],
 
     signs: [
         {
             x: 4, y: 2,
-            title: "DEVELOPER ROOM",
-            text: "This room is for developers to test entity and game mechanics"
-            
+            title: "TOP SECRET: DEVELOPER ROOM",
+            text: ["This room is for developers to test mechanics",
+                  "If you are not a developer then... 🔫😬"]
+
         },
 
         {
@@ -84,13 +85,13 @@ var testLevel = {
         { x: 8, y: 1, brickX: 15, brickY: 1, brickWidth: 1, brickHeight: 1 }
     ],
     shrooms: [
-        { x: 16, y: 1 }
+        { x: 16, y: 1, guard: true}
     ],
     goblins: [
-        { x: 12, y: 1 }
+        { x: 12, y: 1, guard: false}
     ],
     skeletons: [
-        { x: 12, y: 7 }
+        { x: 12, y: 7, guard: true}
     ],
     flyingeyes: [
         { x: 12, y: 5 }
@@ -107,32 +108,43 @@ var level1_1 = {
     player: { x: 1, y: 1 },
     music: MUSIC.FODLAN_WINDS,
     doors: [
-        { x: 116, y: 12, killQuota: 3, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition : false }, //door to level 2
+        { x: 116, y: 12, killQuota: 3, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition: false }, //door to level 2
         //{ x: 2, y: 3, killQuota: 0, exitLocation: { x: 1, y: 1, levelNum: 0 }, transition : false } //debugging room, DELETE THIS BEFORE SUBMISSION!
     ],
 
     npcs: [
-        { x: 55, y: 6}
+        { x: 55, y: 6 }
     ],
 
     signs: [
         {
             x: 6, y: 2,
             title: "[TUTORIAL: BASIC COMBAT/MOVEMENT]",
-            text: ["-[A] to move left, [D] to move right",
-                "-[SPACE] to jump and double tap to double jump",
-                "-[LEFT-CLICK or P] to swing your sword. Double tap to attack twice.",
-                " The second hit is slower, but deals more damage.",
-                "-[MOUSE MOVE] + [RIGHT-CLICK] to shoot an arrow in cursor direction.",
-                "-Alternatively, tap [O] to shoot an arrow forward in your direction",
-                " and hold [W] or [S] to shoot diagonally up or down.",
-                "-[SHIFT] to roll and dodge attacks."
+            text: [
+                "KEYBOARD CONTROLS:",
+                "-[A] to move left, [D] to move right",
+                "-[SPACE] to jump and press again to double jump",
+                "-[P] to swing your sword. Double tap to attack twice.",
+                "     The second hit is slower, but deals more damage.",
+                "-[O] to shoot an arrow forward in your direction",
+                "     if you have any in your inventory.",
+                "     *Hold [W] to shoot diagonally up or [S] down.",
+                "-[SHIFT] to roll and dodge attacks.",
+                " *Recommend to disable sticky keys!",
+                "",
+                "KEYBOARD + MOUSE CONTROLS:",
+                "*NOTE: Keep mouse cursor within game screen!",
+                "-[LEFT-CLICK]: Melee attack",
+                "-[MOUSE-MOVE]: Aim an arrow with cursor in game screen",
+                "-[RIGHT-CLICK]: Shoot arrow in cursor direction",
             ]
         },
         {
             x: 36, y: 6,
             title: "[TUTORIAL: CROUCHING]",
-            text: ["-Hold [S] to crouch.",
+            text: [
+                "CROUCHING OPTIONS:",
+                "-Hold [S] to crouch.",
                 "-While crouching you can move left or right.",
                 "-You are still able to attack while crouching!",
                 "-Use crouches to get through small spaces or attack quickly.",
@@ -143,12 +155,14 @@ var level1_1 = {
         {
             x: 53, y: 6,
             title: "[TUTORIAL: HEALING/SHOP]",
-            text: ["-[E] to heal and use a potion in your inventory.",
-                "-Potions will heal you for up to half your maximum hp.",
+            text: [
+                "HOW TO HEAL AND USE SHOP:",
+                "-[E] to use a potion in your inventory.",
+                "-Potions will heal you for a set amount.",
                 "-Potions are limited so use them sparingly.",
                 "-You can get more potions or other equipment by spending",
-                " diamonds at the SHOP, which are found somewhere in each level.",
-                "-Get diamonds from chests or from enemy drops."
+                " DIAMONDS at the SHOP, which are found somewhere in each level.",
+                "-Get DIAMONDS from chests or from enemy drops."
             ]
         },
 
@@ -156,9 +170,12 @@ var level1_1 = {
         {
             x: 92, y: 2,
             title: "[TUTORIAL: WALLJUMP]",
-            text: ["-While falling hold a direction against a wall to wallslide",
-                "-While wallsliding tap [SPACE] to walljump in the other direction.",
-                "         Chain together walljumps to scale vertical heights!",
+            text: [
+                "HOW TO SCALE WALLS:",
+                "-While falling next to a wall you will wallslide",
+                "-While wallsliding or next to a wall",
+                " tap [SPACE] to walljump in the other direction.",
+                " Chain together walljumps to scale vertical heights!",
                 "-If hanging on a ledge press [W] to get up"
             ]
         },
@@ -166,11 +183,13 @@ var level1_1 = {
         {
             x: 110, y: 11,
             title: "[TUTORIAL: CHESTS/DOORS]",
-            text: ["-To open a chest get near it and press [W]",
+            text: [
+                "INTERACTING/PROGRESSING IN LEVEL:",
                 "-In general [W] is used to interact with the map.",
-                "-Chests contain valuable resources so search for them on each level!",
-                "-To progress to the next level press [W] next to the door.",
-                "-There is a KILL QUOTA that must be met before progressing to the next floor!"
+                "-To open a chest get near it and press [W]",
+                "-Chests contain valuable resources so search for them!",
+                "-To progress to the next level press [W] next to door.",
+                "-A KILL QUOTA must be met to progress to next level!"
 
             ]
         },
@@ -237,15 +256,15 @@ var level1_1 = {
         { x: 115, y: 12 }
     ],
     shrooms: [
-        { x: 16, y: 2 },
-        { x: 62, y: 1 },
-        { x: 72, y: 5 }
+        { x: 16, y: 2, guard: false},
+        { x: 62, y: 1, guard: false },
+        { x: 72, y: 5, guard: false }
     ],
     goblins: [
-        { x: 112, y: 12 }
+        { x: 105, y: 12, guard: true}
     ],
     skeletons: [
-        { x: 47, y: 7 }
+        { x: 47, y: 7, guard: true}
     ],
 }
 
@@ -256,19 +275,46 @@ var level1_2 = {
     player: { x: 1, y: 1 },
     music: MUSIC.CHASING_DAYBREAK,
     doors: [
-        { x: 116, y: 3, killQuota: 7, exitLocation: { x: 4, y: 1, levelNum: 3 }, transition : false }, //next level to 3
-        { x: 0, y: 3, killQuota: 0, exitLocation: { x: 114, y: 10, levelNum: 1 }, transition : false } //go back to level 1
+        { x: 116, y: 3, killQuota: 7, exitLocation: { x: 4, y: 1, levelNum: 3 }, transition: false }, //next level to 3
+        { x: 0, y: 3, killQuota: 0, exitLocation: { x: 114, y: 10, levelNum: 1 }, transition: false } //go back to level 1
     ],
 
     signs: [{
         x: 4, y: 2,
         title: "[TUTORIAL: MORE COMBAT TIPS]",
-        text: ["-Each hit has a base 10% chance to CRIT and do x2 damage!",
-               "-Cancel an attack animation with a roll to do damage while staying evasive.",
-               "-After an enemy spots you they will chase you down for a certain amount of time.",
-               "-If you shoot an arrow and it got stuck then you can retrieve it.",
-        ]
-    }
+        text: [
+            "ADVANCED COMBAT TIPS:",
+            "-Each hit has a base 10% chance to CRIT and do x2 damage!",
+            "-Cancel an attack animation with a roll.",
+            " This lets you do damage while staying evasive.",
+            "-After an enemy spots you they will chase you down for a",
+            " certain amount of time.",
+            "-If you shoot an arrow and it got stuck then you can retrieve it.",
+        ],
+    },
+    {
+        x: 4, y: 26,
+        title: "[GET 1,000,0000 DIAMONDS WITH THIS ONE SIMPLE TRICK!]",
+        text: [
+            "Never gonna give you up",
+            "Never gonna let you down",
+            "Never gonna run around and desert you",
+            "Never gonna make you cry",
+            "Never gonna say goodbye",
+            "Never gonna tell a lie and hurt you"
+        ],
+    },
+
+    ],
+
+    chests: [
+        { x: 2, y: 25, direction: 1 },
+        { x: 57, y: 7, direction: 0 },
+        { x: 82, y: 19, direction: 0 }
+    ],
+
+    npcs: [
+        {x: 38, y: 22}
     ],
 
     ground: [
@@ -278,7 +324,10 @@ var level1_2 = {
         { x: 46, y: 6, width: 14, height: 1, type: 1 },
         { x: 1, y: 6, width: 41, height: 1, type: 1 },
         { x: 5, y: 19, width: 35, height: 1, type: 1 },
-        { x: 4, y: 19, width: 1, height: 1, type: 0 }
+        { x: 4, y: 19, width: 1, height: 1, type: 0 },
+        { x: 65, y: 18, width: 5, height: 1, type: 1 },
+        { x: 80, y: 18, width: 4, height: 1, type: 1 },
+        
     ],
     bricks: [
         { x: 45, y: 0, width: 16, height: 1 },
@@ -300,10 +349,14 @@ var level1_2 = {
         { x: 35, y: 24, width: 25, height: 2 },
         { x: 41, y: 22, width: 19, height: 4 },
         { x: 65, y: 36, width: 55, height: 14 },
-        { x: 65, y: 19, width: 55, height: 8 },
-        { x: 85, y: 22, width: 35, height: 3 },
+        { x: 65, y: 17, width: 5, height: 8 },
+        { x: 70, y: 15, width: 10, height: 6 },
+        { x: 80, y: 17, width: 40, height: 8},
+        { x: 85, y: 22, width: 35, height: 5 },
         { x: 9, y: 28, width: 1, height: 1 }
     ],
+
+    spikes: [{x: 70, y: 16,  width: 10}],
     walls: [
         { x: 41, y: 5, height: 2, type: 2 },
         { x: 40, y: 22, height: 4, type: 0 },
@@ -316,30 +369,33 @@ var level1_2 = {
         { x: 0, y: 28, height: 4, type: 2 },
         { x: 30, y: 24, height: 2, type: 2 },
         { x: 34, y: 24, height: 3, type: 0 },
-        { x: 84, y: 22, height: 3, type: 0 },
+        { x: 84, y: 22, height: 5, type: 0 },
         { x: 120, y: 36, height: 37, type: 0 }
     ],
     backgroundWalls: [
         { x: 0, y: 36, width: 120, height: 36 }
     ],
     shrooms: [
-        { x: 15, y: 20 },
-        { x: 12, y: 1 },
-        { x: 40, y: 25 },
-        { x: 47, y: 25 },
-        { x: 102, y: 1 }
+        { x: 15, y: 20, guard: false },
+        { x: 12, y: 1, guard: false },
+        { x: 40, y: 25, guard: false },
+        { x: 47, y: 25, guard: false },
+        { x: 102, y: 1, guard: false }
     ],
     goblins: [
-        { x: 10, y: 7 },
-        { x: 8, y: 7 },
-        { x: 17, y: 20 },
-        { x: 72, y: 1 },
-        { x: 105, y: 1 }
+        { x: 10, y: 7, guard: false },
+        { x: 8, y: 7, guard: false },
+        { x: 17, y: 20, guard: true },
+        { x: 72, y: 1, guard: false },
+        { x: 105, y: 1, guard: true }
     ],
     skeletons: [
-        { x: 70, y: 3 },
-        { x: 75, y: 3 },
-        { x: 100, y: 3 }
+        { x: 3, y: 26, guard: true },
+        { x: 70, y: 3, guard: true},
+        { x: 71, y: 15, guard: true},
+        { x: 75, y: 3, guard: true },
+        { x: 81, y: 22, guard: true },
+        { x: 100, y: 3, guard: true},
     ],
     windows: [
         { x: 2, y: 9, width: 1, height: 1.5 },
@@ -357,10 +413,6 @@ var level1_2 = {
         { x: 47, y: 10, width: 2, height: 3 },
         { x: 39, y: 28, width: 2, height: 3 },
         { x: 46, y: 28, width: 2, height: 3 }
-    ],
-    chests: [
-        { x: 2, y: 25, direction: 1 },
-        { x: 80, y: 20, direction: 0 }
     ],
     banners: [
         { x: 71, y: 4 },
@@ -467,24 +519,46 @@ var level1_3 = {
         {
             x: 4, y: 2,
             title: "[TUTORIAL: OBELISK]",
-            text: ["-These strange devices can unlock inaccessible/secret areas!",
-                   "-To activate: hit them or press \'W'\ next to it."
+            text: [
+                "OBELISK DEVICE:",
+                "-These strange devices can unlock inaccessible/secret areas!",
+                "-To activate: hit them or press \'W'\ next to it."
             ]
         },
         {
             x: 34, y: 4,
             title: "[TUTORIAL: ADVANCED JUMPS]",
-            text: ["-Delay your second jump to cover more distance.",
-                   "-If you are running and then jump your momentum will be carried over.",
-                   "-Wait until you're at the peak of your first jump before doing your double jump.",
-                   "-While in air, hold the opposite direction and double jump to quickly switch directions.",
+            text: [
+                "PLATFORMING TIPS:",
+                "-Delay your second jump to cover more distance.",
+                "-If you are running and THEN jump your momentum",
+                " will be carried over and you will go farther.",
+                "-Wait until you're at the peak of your first jump",
+                " before doing your double jump to go higher.",
+                "-While in air, hold the opposite direction and double ",
+                " jump to quickly switch directions.",
             ]
-        }
+        },
+        {
+            x: 37, y: 34,
+            title: "[????????????????????]",
+            text: [
+                ">-(•_•)-<",
+                "   ( )",
+                "   o o.",
+                "  wooper",
+            ]
+        },
+
     ],
+    npcs: [{x: 81, y:28}
+
+    ],
+
     doors: [
-        { x: 1, y: 3, killQuota: 0, exitLocation: { x: 114, y: 1, levelNum: 2 }, transition : false }, //go back to level 2
-        { x: 117, y: 25, killQuota: 4, exitLocation: { x: 1, y: 3, levelNum: 3 }, transition : true }, // change to level 4 once theres a level 4
-        { x: 34, y: 35, killQuota: 1, exitLocation: { x: 1, y: 3, levelNum: 3 }, transition : false } // change to treasure room
+        { x: 1, y: 3, killQuota: 0, exitLocation: { x: 114, y: 1, levelNum: 2 }, transition: false }, //go back to level 2
+        { x: 117, y: 25, killQuota: 5, exitLocation: { x: 1, y: 3, levelNum: 3 }, transition: true }, // change to level 4 once theres a level 4
+        { x: 34, y: 35, killQuota: 1, exitLocation: { x: 1, y: 3, levelNum: 0 }, transition: false } // change to treasure room
     ],
     ground: [
         { x: 0, y: 0, width: 10, type: 1 }
@@ -495,18 +569,18 @@ var level1_3 = {
         { x: 100, y: 23, brickX: 105, brickY: 30, brickWidth: 11, brickHeight: 8 }
     ],
     shrooms: [
-        { x: 107, y: 32 },
-        { x: 36, y: 35 },
-        { x: 77, y: 27 },
-        { x: 61, y: 9}
+        { x: 107, y: 32, guard: false },
+        { x: 36, y: 35, guard: false },
+        { x: 61, y: 9, guard: false }
     ],
     goblins: [
-        { x: 110, y: 32 },
+        { x: 110, y: 32, guard: true },
+        { x: 76, y: 28, guard: true },
     ],
     skeletons: [
-        { x: 112, y: 32 },
-        { x: 73, y: 27 },
-        { x: 77, y: 27 },
+        { x: 112, y: 32, guard: true },
+        { x: 73, y: 27, guard: true },
+        { x: 77, y: 27, guard: true },
     ],
     chests: [
         { x: 77, y: 15, direction: 0 },

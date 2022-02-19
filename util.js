@@ -317,5 +317,12 @@ function getMaxStrLength(theText) {
     }
 
     return maxLen;
+}
 
+/**
+ * if drawing text on the right this will give the proper offset
+ * so all the text is shown and not cut off by the canvas
+*/
+function getRightTextOffset(theText, fontSize) {
+    return (theText.length) * (fontSize) + 10;
 }
