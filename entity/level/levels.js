@@ -92,6 +92,9 @@ var testLevel = {
     skeletons: [
         { x: 12, y: 7 }
     ],
+    flyingeyes: [
+        { x: 12, y: 5 }
+    ]
 }
 
 /**

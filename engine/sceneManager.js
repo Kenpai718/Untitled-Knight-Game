@@ -22,7 +22,7 @@ class SceneManager {
         this.killCount = 0;
 
         //levels array to load levels by calling levels[0], levels[1], etc
-        this.currentLevel = 1; // CHANGE TO 1 BEFORE SUBMISSION
+        this.currentLevel = 0; // CHANGE TO 1 BEFORE SUBMISSION
         this.setupAllLevels();
         this.loadTitle();
     };
@@ -458,6 +458,14 @@ class SceneManager {
                     let skeleton = scene.skeletons[i];
                     let e = new Skeleton(this.game, 0, 0);
                     this.positionEntity(e, skeleton.x, h - skeleton.y);
+                    this.game.addEntity(e);
+                }
+            }
+            if (this.level.flyingeyes) {
+                for (var i = 0; i < scene.flyingeyes.length; i++) {
+                    let flyingeye = scene.flyingeyes[i];
+                    let e = new FlyingEye(this.game, 0, 0);
+                    this.positionEntity(e, flyingeye.x, h - flyingeye.y);
                     this.game.addEntity(e);
                 }
             }
