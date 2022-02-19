@@ -6,11 +6,15 @@ class Shop {
 
         this.diamond_sprite = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
         this.armor_sprite = ASSET_MANAGER.getAsset("./sprites/GUI/armor.png");
+        this.sword_sprite = ASSET_MANAGER.getAsset("./sprites/GUI/sword.png");
         this.heart_sprite = ASSET_MANAGER.getAsset("./sprites/Hearts.png");
+        this.arrow_sprite = ASSET_MANAGER.getAsset("./sprites/projectile/arrowupgrades.png");
 
         this.armor = [];
         this.heart = [];
         this.diamond;
+        this.sword = [];
+        this.arrows = [];
 
         this.x = 1920/2 - this.width / 2;
         this.y = 1080/2 - this.height / 2 - 50;
@@ -52,12 +56,26 @@ class Shop {
         this.heart[3] = new Animator(this.heart_sprite, PARAMS.HEART_DIM, 0, PARAMS.HEART_DIM, PARAMS.HEART_DIM, 1, 1, 0, false, false, false);
         this.heart[4] = new Animator(this.heart_sprite, 0, 0, PARAMS.HEART_DIM, PARAMS.HEART_DIM, 1, 1, 0, false, false, false);
 
+        this.arrows[0] = new Animator(this.arrow_sprite, 0,     46, 43, 34, 1, 0, 0, false, false, false);
+        this.arrows[1] = new Animator(this.arrow_sprite, 43,    46, 43, 34, 1, 0, 0, false, false, false);
+        this.arrows[2] = new Animator(this.arrow_sprite, 86,    46, 43, 34, 1, 0, 0, false, false, false);
+        this.arrows[3] = new Animator(this.arrow_sprite, 130,   46, 43, 34, 1, 0, 0, false, false, false);
+
+        this.sword[0] = new Animator(this.sword_sprite, 36,    0, 36, 44, 1, 0, 0, false, false, false);
+        this.sword[1] = new Animator(this.sword_sprite, 72,    0, 36, 44, 1, 0, 0, false, false, false);
+        this.sword[2] = new Animator(this.sword_sprite, 108,   0, 36, 44, 1, 0, 0, false, false, false);
+        this.sword[3] = new Animator(this.sword_sprite, 144,   0, 36, 44, 1, 0, 0, false, false, false);
+
         
 
     };
 
     draw(ctx) {
 
+        let tempFont = ctx.font;
+        let tempFill = ctx.fillStyle;
+
+        // Shop Border and lines
         ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
         ctx.fillRect(this.x, this.y, this.width, this.height);
         ctx.strokeRect(this.x, this.y, this.width, this.height);
@@ -73,28 +91,50 @@ class Shop {
         ctx.strokeStyle = 'rgba(50, 0, 107, 1)';
         ctx.strokeRect(this.x, this.y, this.width, this.height);
         ctx.strokeRect(this.x-1, this.y+1, this.width+1, this.height+1);
-        ctx.strokeRect(this.x-2, this.y+2, this.width+2, this.height+2);
+        //ctx.strokeRect(this.x-2, this.y+2, this.width+2, this.height+2);
 
-        let that = this;
-        let tempFont = ctx.font;
-        let tempFill = ctx.fillStyle;
-        ctx.font = ctx.font.replace(/\d+px/, "35px");
+        // Shop text
         ctx.fillStyle = "white";
+        ctx.font = ctx.font.replace(/\d+px/, "35px");
+        ctx.fillText("Wizard's Shop", this.x + this.width /4 + 4, this.y + + this.height / 7 * .5);
+
+        ctx.font = ctx.font.replace(/\d+px/, "20px");
+        ctx.fillText("Arrow Pack",      this.x + 10, this.y + this.height / 7 * 1.3);
+        ctx.fillText("HP Potions",    this.x + 10, this.y + this.height / 7 * 2.3);
+        ctx.fillText("Health Upgrade",  this.x + 10, this.y + this.height / 7 * 3.3);
+        ctx.fillText("Arrow Upgrade",   this.x + 10, this.y + this.height / 7 * 4.3);
+        ctx.fillText("Attack Upgrade",  this.x + 10, this.y + this.height / 7 * 5.3);
+        ctx.fillText("Armor Upgrade",   this.x + 10, this.y + this.height / 7 * 6.3);
+
+
+        // Shop Icons
+        ctx.font = ctx.font.replace(/\d+px/, "25px");
+        ctx.fillText("🏹 x" + 10,   this.x + 10, this.y + this.height / 7 * 1.7);
+        ctx.fillText("⚗️ x" + 1,    this.x + 10, this.y + this.height / 7 * 2.7);
+        ctx.fillText("󠀠󠀠󠀠❤️ x1",       this.x + 10, this.y + this.height / 7 * 3.7);
+
+        // Diamond Animations
+
+        this.diamond.drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 1 + 10, this.y + 30, 4);
+        this.diamond.drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - (10 * 4) + 10, this.y + 30, 4);
+
+        // Item Animations
+
+        this.heart[this.seconds%4 +1].drawFrame(this.game.clockTick,    ctx, this.x + 5 + 8, this.y + this.height / 7 * 3.5, 1.7);
+        this.arrows[this.seconds%4].drawFrame(this.game.clockTick,      ctx, this.x + 5 + 10, this.y + this.height / 7 * 4.4, 1.8);
+        this.sword[this.seconds%4].drawFrame(this.game.clockTick,       ctx, this.x + 5 + 10, this.y + this.height / 7 * 5.3, 1.6);
+        this.armor[this.seconds%4].drawFrame(this.game.clockTick,       ctx, this.x + 5, this.y + this.height / 7 * 6.45, 1);
+        
+
+
+
+        // Purchasing
+        let that = this;
         this.game.entities.forEach(function (entity) {
             if(entity instanceof AbstractPlayer){
-                ctx.fillText("Gandalf's Shop", that.x + that.width /4, that.y + + that.height / 7 * .5);
-                ctx.fillText("🏹 x" + entity.myInventory.arrows, that.x, that.y + that.height / 7 * 1.9);
-                ctx.fillText("⚗️ x" + entity.myInventory.potions, that.x, that.y + that.height / 7 * 2.9);
-                ctx.fillText("󠀠󠀠󠀠❤️ x1", that.x, that.y + that.height / 7 * 3.9);
+
             }
         });
-
-        this.diamond.drawFrame(this.game.clockTick, ctx, this.x + that.width /6, this.y + 30, 4);
-        this.diamond.drawFrame(this.game.clockTick, ctx, this.x + that.width /6 * 5, this.y + 30, 4);
-
-        this.heart[this.seconds%5].drawFrame(this.game.clockTick, ctx, this.x + 5, that.y + that.height / 7 * 3.62, 2.2);
-        this.armor[this.seconds%4].drawFrame(this.game.clockTick, ctx, this.x + 5, this.y + that.height / 7 * 6.5, 1);
-        
         
 
         ctx.fillStyle = tempFill; 
