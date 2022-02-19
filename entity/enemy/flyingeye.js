@@ -1,6 +1,6 @@
 class FlyingEye extends AbstractEnemy {
-    constructor(game, x, y) {
-        super(game, x, y, STATS.FLYINGEYE.NAME, STATS.FLYINGEYE.MAX_HP, STATS.FLYINGEYE.WIDTH, STATS.FLYINGEYE.HEIGHT, STATS.FLYINGEYE.SCALE, STATS.FLYINGEYE.PHYSICS);
+    constructor(game, x, y, onGuard) {
+        super(game, x, y, onGuard, STATS.FLYINGEYE.NAME, STATS.FLYINGEYE.MAX_HP, STATS.FLYINGEYE.WIDTH, STATS.FLYINGEYE.HEIGHT, STATS.FLYINGEYE.SCALE, STATS.FLYINGEYE.PHYSICS);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/flyingeye.png");
         this.animations = [];
         this.loadAnimations();
@@ -370,7 +370,7 @@ class FlyingEye extends AbstractEnemy {
 
     draw(ctx) {
         if (this.dead) {
-            super.drawWithFadeOut(ctx, this.animations[this.state][this.direction]);
+            super.drawWithFadeOut(ctx, this.animations[this.states.death][this.direction]);
         }else {
             let anim = this.animations[this.state][this.dir];
             anim.drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);

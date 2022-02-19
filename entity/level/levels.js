@@ -94,7 +94,7 @@ var testLevel = {
         { x: 12, y: 7, guard: true}
     ],
     flyingeyes: [
-        { x: 12, y: 5 }
+        { x: 12, y: 5, guard: false}
     ]
 }
 

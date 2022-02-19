@@ -526,7 +526,7 @@ class SceneManager {
             if (this.level.flyingeyes) {
                 for (var i = 0; i < scene.flyingeyes.length; i++) {
                     let flyingeye = scene.flyingeyes[i];
-                    let e = new FlyingEye(this.game, 0, 0);
+                    let e = new FlyingEye(this.game, 0, 0, flyingeye.guard);
                     this.positionEntity(e, flyingeye.x, h - flyingeye.y);
                     this.game.addEntity(e);
                 }
