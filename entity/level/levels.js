@@ -263,11 +263,12 @@ var level1_1 = {
     ],
     secrets: [
         {
-            ID: 0,
-            found: false,
             bricks: [
                 {x: 94, y: 1, width: 1, height: 1},
-                {x: 95, y: 8, width: 12, height: 8}
+                {x: 99, y: 8, width: 4, height: 1},
+                {x: 97, y: 7, width: 8, height: 1},
+                {x: 96, y: 6, width: 10, height: 1},
+                {x: 95, y: 5, width: 12, height: 5}
             ]
         }
     ],

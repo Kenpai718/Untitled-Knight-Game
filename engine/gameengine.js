@@ -303,11 +303,13 @@ class GameEngine {
         if (PARAMS.DEBUG) {
             this.drawDebug(this.foreground1);
             this.drawDebug(this.interactables);
-            this.drawDebug(this.foreground2);
             this.drawDebug(this.enemies);
             this.drawDebug(this.entities);
+            this.drawDebug(this.foreground2);
+            this.drawDebug(this.secrets);
             this.drawDebug(this.projectiles);
             this.drawDebug(this.information);
+            
         }
 
         //update the camera (scene manager)

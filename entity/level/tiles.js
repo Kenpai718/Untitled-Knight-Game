@@ -63,8 +63,8 @@ class AbstractSecret extends AbstractBarrier {
 }
 
 class Secret {
-    constructor(game, ID, secrets, found) {
-        Object.assign(this, {game, ID, secrets, found});
+    constructor(game, secrets, found) {
+        Object.assign(this, {game, secrets, found});
     }
 
     update() {

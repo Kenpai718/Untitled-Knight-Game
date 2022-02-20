@@ -548,9 +548,9 @@ class SceneManager {
                         let secrets = [];
                         for (var j = 0; j < secret.bricks.length; j++) {
                             let bricks = secret.bricks[j];
-                            secrets.push(new SecretBricks(this.game, bricks.x, h - bricks.y - 1, bricks.width, bricks.height, secret.found));
+                            secrets.push(new SecretBricks(this.game, bricks.x, h - bricks.y - 1, bricks.width, bricks.height, false));
                         }
-                        this.game.addEntity(new Secret(this.game, secret.ID, secrets, secret.found));
+                        this.game.addEntity(new Secret(this.game, secrets, false));
                     }
                 }
             }
