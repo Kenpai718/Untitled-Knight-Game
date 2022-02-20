@@ -28,7 +28,8 @@ ASSET_MANAGER.queueDownload("./sprites/environment/sign.png");
 ASSET_MANAGER.queueDownload("./sprites/vignette.png");
 ASSET_MANAGER.queueDownload("./sprites/GUI/armor.png");
 ASSET_MANAGER.queueDownload("./sprites/GUI/bows.png");
-ASSET_MANAGER.queueDownload("./sprites/GUI/sword.png");
+ASSET_MANAGER.queueDownload("./sprites/GUI/attack.png");
+ASSET_MANAGER.queueDownload("./sprites/GUI/interactables.png");
 
 //music
 ASSET_MANAGER.queueDownload(MUSIC.CHASING_DAYBREAK);
