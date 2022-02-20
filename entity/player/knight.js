@@ -39,6 +39,9 @@ class Knight extends AbstractPlayer {
         this.crouch = false;
         this.doubleJump = true;
         this.flickerFlag = false;
+        this.bladeBeam1 = true;
+        this.bladeBeam2 = true;
+        this.berserk = false;
         //these two audio variables control which sound effect is playing during the attack combo
         this.playAttackSFX1 = true;
         this.playAttackSFX2 = true;
@@ -472,7 +475,6 @@ class Knight extends AbstractPlayer {
             if (this.crouch) { //crouch attack
                 this.action = this.states.crouch_atk;
             } else { //standing or jumping attack
-
                 //set action based on combo counter.
                 //If attack button was pressed more than once change action to the second attack after the animation is complete
                 this.combo = (this.game.comboCounter > 1 && this.animations[this.facing][this.states.attack1].isDone()) ? true : false;
@@ -485,6 +487,13 @@ class Knight extends AbstractPlayer {
                 }
             }
             this.updateHB();
+            if (this.bladeBeam1 && this.berserk) {
+                this.bladeBeam1 = false;
+                super.bladeBeam();
+            } else if (this.bladeBeam2 && this.animations[this.facing][this.states.attack1].isDone() && this.berserk) {
+                this.bladeBeam2 = false;
+                super.bladeBeam();
+            }
 
             //play
             if (this.playAttackSFX1) {
@@ -501,6 +510,8 @@ class Knight extends AbstractPlayer {
 
                 } else { //end attack
                     this.action = this.game.down || this.touchHole() ? this.states.crouch : this.DEFAULT_ACTION; //back to idle; added case for crouch attacks
+                    this.bladeBeam1 = true;
+                    this.bladeBeam2 = true;
                     this.HB = null;
                     this.game.attack = false; //stop attackin
                     // delete hitbox here

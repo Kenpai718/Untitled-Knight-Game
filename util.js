@@ -52,9 +52,9 @@ const PHYSIC_SCALER = 3; //scalar for some physics
 const PLAYER_JUMP_HEIGHT = 1500; //players base jump height
 const FALL_GRAVITY = 1.2; //gravity put on player's fall acc
 const PLAYER_PHYSICS = {
-    MAX_WALK: 95 * PHYSIC_SCALER,   
-    MAX_RUN: 155 * PHYSIC_SCALER,   
-    ACC_WALK: 180 * PHYSIC_SCALER,  
+    MAX_WALK: 95 * PHYSIC_SCALER,
+    MAX_RUN: 155 * PHYSIC_SCALER,
+    ACC_WALK: 180 * PHYSIC_SCALER,
     ACC_RUN: 200 * PHYSIC_SCALER,
     ROLL_SPD: 400 * PHYSIC_SCALER,
     SKID: 3000,
@@ -67,7 +67,7 @@ const PLAYER_PHYSICS = {
     ACC_FALL: PLAYER_JUMP_HEIGHT * FALL_GRAVITY,
     MAX_SLIDE: 150 * PHYSIC_SCALER,
     ACC_SLIDE: 750
-    
+
 };
 
 /**Global stats that define an entity */
@@ -91,6 +91,15 @@ const STATS = {
         HEIGHT: 32,
         SCALE: 2,
         DAMAGE: 10
+    },
+
+    BLADE_BEAM: {
+        NAME: "Blade Beam",
+        MAX_HP: 10,
+        WIDTH: 40,
+        HEIGHT: 20,
+        SCALE: 5,
+        DAMAGE: 30
     },
 
     /*enemy stats*/
@@ -133,7 +142,7 @@ const STATS = {
         HEIGHT: 80,
         DAMAGE: 20,
         PHYSICS: {MAX_RUN: 500, MAX_FALL: 400}
-        
+
     },
 
     FLYINGEYE: {
