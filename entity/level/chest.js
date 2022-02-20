@@ -6,8 +6,9 @@ class Chest extends AbstractInteractable {
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
 
         // Items in chest
-        this.arrowStorage = 0; // 0 until player interacts with chest
-        this.potionStorage = 0;
+        //this.arrowStorage = 0; // 0 until player interacts with chest
+        //this.potionStorage = 0;
+        this.diamondStorage = 0;
 
         // Scale sizes
         this.scale = 5; // 4
@@ -70,11 +71,13 @@ class Chest extends AbstractInteractable {
                 ASSET_MANAGER.playAsset(SFX.CHEST_OPEN);
 
                 // varaibles needed for GUI to display amount
-                that.potionStorage = 1 + Math.floor(Math.random() * 3);      // Gives random amount of hp potions 1-3
-                that.arrowStorage = 1 + Math.floor(Math.random() * 15);     // Gives random amount of arrows 1-15
+                //that.potionStorage = 1 + Math.floor(Math.random() * 3);      // Gives random amount of hp potions 1-3
+                //that.arrowStorage = 1 + Math.floor(Math.random() * 15);     // Gives random amount of arrows 1-15
+                that.diamondStorage = 1 + Math.floor(Math.random() * 15) + 10;     // Gives random amount of arrows 10-25
 
-                entity.myInventory.potions += that.potionStorage;
-                entity.myInventory.arrows += that.arrowStorage;
+                //entity.myInventory.potions += that.potionStorage;
+                //entity.myInventory.arrows += that.arrowStorage;
+                entity.myInventory.diamonds += that.diamondStorage;
 
                 that.timerGUI = that.timerGUI2 + 1;
             }
@@ -94,6 +97,8 @@ class Chest extends AbstractInteractable {
                 this.animations[i].push([]);
             }
         }
+
+        this.diamondAnimation = new Animator(this.spritesheet, 19, 84, 10, 8, 6, 0.2, 6, 0, 1, 0);
 
         // Animations  [state]
 
@@ -143,8 +148,10 @@ class Chest extends AbstractInteractable {
 
             ctx.filter = "opacity(" + this.myOpacity + "%)";
 
-            ctx.fillText("🏹 x" + that.arrowStorage, that.x * PARAMS.BLOCKDIM - this.game.camera.x, that.y * PARAMS.BLOCKDIM - 5 - this.game.camera.y);
-            ctx.fillText("⚗️ x" + that.potionStorage, that.x * PARAMS.BLOCKDIM - this.game.camera.x, that.y * PARAMS.BLOCKDIM - 40 - this.game.camera.y);
+            //ctx.fillText("🏹 x" + that.arrowStorage, that.x * PARAMS.BLOCKDIM - this.game.camera.x, that.y * PARAMS.BLOCKDIM - 5 - this.game.camera.y);
+            //ctx.fillText("⚗️ x" + that.potionStorage, that.x * PARAMS.BLOCKDIM - this.game.camera.x, that.y * PARAMS.BLOCKDIM - 40 - this.game.camera.y);
+            ctx.fillText("  x" + that.diamondStorage, that.x * PARAMS.BLOCKDIM - this.game.camera.x, that.y * PARAMS.BLOCKDIM - 5 - this.game.camera.y);
+            this.diamondAnimation.drawFrame(this.game.clockTick, ctx, that.x * PARAMS.BLOCKDIM - this.game.camera.x + 0, that.y * PARAMS.BLOCKDIM - 5 - this.game.camera.y - 17, 2.4);
 
             ctx.filter = "none";
 
