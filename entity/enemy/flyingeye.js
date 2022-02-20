@@ -4,8 +4,8 @@ class FlyingEye extends AbstractEnemy {
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/flyingeye.png");
         this.animations = [];
         this.loadAnimations();
-        this.states = {idle: 0, attack1: 1, attack2: 2, attack3: 3, damaged: 4, death: 5};
-        this.directions = {right: 0, left: 1};
+        this.states = { idle: 0, attack1: 1, attack2: 2, attack3: 3, damaged: 4, death: 5 };
+        this.directions = { right: 0, left: 1 };
         this.state = this.states.idle;
         this.direction = this.directions.left;
         this.phase = Math.floor(Math.random() * 6);
@@ -23,7 +23,7 @@ class FlyingEye extends AbstractEnemy {
 
         this.updateBoxes();
     }
-    
+
     updateBoxes() {
         this.lastBB = this.BB;
         this.BB = new BoundingBox(this.x + 70 * this.scale, this.y + 65 * this.scale, this.width, this.height);
@@ -36,21 +36,21 @@ class FlyingEye extends AbstractEnemy {
     };
 
     updateAR1() {
-        const arDim = {w: 75 * this.scale, h: 150 * this.scale};
+        const arDim = { w: 75 * this.scale, h: 150 * this.scale };
         if (this.direction == 0)
             this.AR1 = new BoundingBox(this.BB.right - 20 * this.scale, (this.BB.top + this.BB.bottom) / 2 - arDim.h / 2 - 6 * this.scale, arDim.w, arDim.h);
         else this.AR1 = new BoundingBox(this.BB.left + 20 * this.scale - arDim.w, (this.BB.top + this.BB.bottom) / 2 - arDim.h / 2 - 6 * this.scale, arDim.w, arDim.h);
     }
 
     updateAR2() {
-        const arDim = {w: 150 * this.scale, h: 150 * this.scale};
+        const arDim = { w: 150 * this.scale, h: 150 * this.scale };
         if (this.direction == 0)
             this.AR2 = new BoundingBox(this.BB.right + 20 * this.scale, (this.BB.top + this.BB.bottom) / 2 - arDim.h / 2 - 6 * this.scale, arDim.w, arDim.h);
         else this.AR2 = new BoundingBox(this.BB.left - 20 * this.scale - arDim.w, (this.BB.top + this.BB.bottom) / 2 - arDim.h / 2 - 6 * this.scale, arDim.w, arDim.h);
     }
 
     updateAR3() {
-        const arDim = {w: 242 * this.scale, h: 40 * this.scale}
+        const arDim = { w: 242 * this.scale, h: 40 * this.scale }
         if (this.direction == 0)
             this.AR3 = new BoundingBox(this.BB.right + 100 * this.scale, (this.BB.top + this.BB.bottom) / 2 - arDim.h / 2 - 6 * this.scale, arDim.w, arDim.h);
         else this.AR3 = new BoundingBox(this.BB.left - 100 * this.scale - arDim.w, (this.BB.top + this.BB.bottom) / 2 - arDim.h / 2 - 6 * this.scale, arDim.w, arDim.h);
@@ -99,8 +99,8 @@ class FlyingEye extends AbstractEnemy {
         this.game.entities.forEach(function (entity) {
             let states = [];
             if (entity instanceof AbstractPlayer) {
-                const dest = {x:entity.BB.left + entity.BB.width / 2, y:entity.BB.top + entity.BB.height / 2};
-                const init = {x:self.BB.left + self.BB.width / 2, y:self.BB.top + self.BB.height / 2};
+                const dest = { x: entity.BB.left + entity.BB.width / 2, y: entity.BB.top + entity.BB.height / 2 };
+                const init = { x: self.BB.left + self.BB.width / 2, y: self.BB.top + self.BB.height / 2 };
                 const distX = dest.x - init.x;
                 const distY = dest.y - init.y;
                 const dist = Math.sqrt(distX * distX + distY * distY);
@@ -116,7 +116,7 @@ class FlyingEye extends AbstractEnemy {
                     if (self.AR3.collide(entity.BB)) {
                         states.push(state.attack3);
                     }
-                    
+
                 }
                 if (states.length > 1 && Math.random() > 0.25) {
                     states.pop();
@@ -150,7 +150,7 @@ class FlyingEye extends AbstractEnemy {
                         self.direction = self.directions.left;
                     }
                     self.animations[self.state][self.direction].elapsedTime = time;
-                    
+
                     if (self.state == self.states.idle) {
                         const v = 400;
                         self.velocity.x = v * distX / dist;
@@ -168,7 +168,7 @@ class FlyingEye extends AbstractEnemy {
                         self.velocity.x = 0;
                         self.velocity.y = 0;
                     }
-                        
+
                     if (self.state != self.states.idle)
                         self.resetAnimationTimers(self.state);
                     self.state = self.states.idle;
@@ -181,13 +181,13 @@ class FlyingEye extends AbstractEnemy {
                 }
 
                 // goblin hit by player switch to damaged state
-                    if (entity.HB && self.BB.collide(entity.HB) && !self.HB && self.vulnerable) {
-                        self.setDamagedState();
-                        self.resetAttack();
-                    }
+                if (entity.HB && self.BB.collide(entity.HB) && !self.HB && self.vulnerable) {
+                    self.setDamagedState();
+                    self.resetAttack();
+                }
             }
-            
-            
+
+
         });
         return dist;
     }
@@ -195,7 +195,7 @@ class FlyingEye extends AbstractEnemy {
     /**
     * Hard reset all variables related to attacking
     */
-     resetAttack() {
+    resetAttack() {
         this.resetAnimationTimers(this.states.attack1);
         this.resetAnimationTimers(this.states.attack2);
         this.resetAnimationTimers(this.states.attack3);
@@ -223,7 +223,7 @@ class FlyingEye extends AbstractEnemy {
     loadAnimations() {
         for (let i = 0; i < 6; i++) {
             this.animations.push([]);
-            for(let j = 0; j < 2; j++) {
+            for (let j = 0; j < 2; j++) {
                 this.animations.push([]);
             }
         }
@@ -280,7 +280,7 @@ class FlyingEye extends AbstractEnemy {
             if (this.state == this.states.attack3) {
                 if (this.animations[this.state][this.direction].currentFrame() == 3 && !this.projectile) {
                     if (this.direction == this.directions.right)
-                        this.game.addEntity(new FlyingEyeProjectile(this.game, this.BB.right - 20 *this.scale, this.y + 53 * this.scale, this.direction));
+                        this.game.addEntity(new FlyingEyeProjectile(this.game, this.BB.right - 20 * this.scale, this.y + 53 * this.scale, this.direction));
                     else
                         this.game.addEntity(new FlyingEyeProjectile(this.game, this.BB.left + (20 - STATS.EYE_PROJECTILE.WIDTH * this.scale) * this.scale, this.y + 53 * this.scale, this.direction));
                     this.projectile = true;
@@ -352,7 +352,7 @@ class FlyingEye extends AbstractEnemy {
                 this.HB = new BoundingBox(this.BB.left - offset - xOffset, this.BB.top - offset - 5 * this.scale, width, height);
             }
             else this.HB = new BoundingBox(this.BB.left - offset + xOffset, this.BB.top - offset - 5 * this.scale, width, height);
-            
+
         }
     };
 
@@ -387,7 +387,7 @@ class FlyingEye extends AbstractEnemy {
     draw(ctx) {
         if (this.dead) {
             super.drawWithFadeOut(ctx, this.animations[this.states.death][this.direction]);
-        }else {
+        } else {
             let anim = this.animations[this.state][this.direction];
             anim.drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
             if (!anim.loop && anim.isDone()) {
@@ -399,6 +399,7 @@ class FlyingEye extends AbstractEnemy {
                 this.velocity.x = 0;
                 this.velocity.y = 0;
             }
+            this.healthbar.draw(ctx);
         }
     }
 }
@@ -410,8 +411,8 @@ class FlyingEyeProjectile extends AbstractEntity {
         this.animations = [];
         this.loadAnimations();
 
-        this.states = {move: 0, destroy: 1};
-        this.directions = {right:0, left:1};
+        this.states = { move: 0, destroy: 1 };
+        this.directions = { right: 0, left: 1 };
         this.velocity = 400;
         if (dir == this.directions.left)
             this.velocity = -400;
@@ -422,13 +423,13 @@ class FlyingEyeProjectile extends AbstractEntity {
     }
 
     updateBB() {
-        this.BB = new BoundingBox(this.x + 16 * this.scale - (this.width - 16 * this.scale) / 2, this.y + 16 * this.scale - (this.height - 16 * this.scale) / 2 , this.width, this.height);
+        this.BB = new BoundingBox(this.x + 16 * this.scale - (this.width - 16 * this.scale) / 2, this.y + 16 * this.scale - (this.height - 16 * this.scale) / 2, this.width, this.height);
     }
 
     loadAnimations() {
         for (let i = 0; i < 2; i++) {
             this.animations.push([]);
-            for(let j = 0; j < 2; j++) {
+            for (let j = 0; j < 2; j++) {
                 this.animations.push([]);
             }
         }
@@ -499,7 +500,7 @@ class FlyingEyeProjectile extends AbstractEntity {
     draw(ctx) {
         this.elapsedTime += this.game.clockTick;
         this.animations[this.state][this.dir].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
-        if (this.state == this.states.move && this.elapsedTime >=2) {
+        if (this.state == this.states.move && this.elapsedTime >= 2) {
             this.state = this.states.destroy;
             this.width *= 2;
             this.height *= 2;

@@ -193,6 +193,9 @@ const SFX = {
     DOOR_ENTER: "./sound/sfx/door_enter.wav",
     CHEST_OPEN: "./sound/sfx/minecraft_chest_open.wav",
     OBELISK_ON: "./sound/sfx/loz_secret.mp3",
+    NEW_ITEM: "./sound/sfx/zelda-new-item.mp3",
+    NEW_HEART: "./sound/sfx/zelda-new-heart.mp3",
+    PURCHASE: "./sound/sfx/ka-ching.mp3",
 
 
 };

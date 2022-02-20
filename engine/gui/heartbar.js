@@ -45,6 +45,17 @@ class HeartBar {
         });
     };
 
+    /**
+     * Adds one more heart to the gui and to player health
+     */
+    addHeart() {
+        this.player.max_hp += this.hp_per_heart;
+        this.player.hp = this.player.max_hp; //heal up after getting a new heart;
+        let heart = new HeartContainer(this.game, PARAMS.HEART_DIM * this.max_hearts, 5, this.scale, this.hp_per_heart);
+        this.myHearts.push(heart);
+        this.max_hearts++;
+    }
+
     draw(ctx) {
         for (let i = 0; i < this.max_hearts; i++) {
             this.myHearts[i].draw(ctx);
