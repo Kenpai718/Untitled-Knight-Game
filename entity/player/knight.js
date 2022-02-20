@@ -541,7 +541,7 @@ class Knight extends AbstractPlayer {
                     this.facing = this.dir.right;
             }
             this.animations[this.facing][this.action].elapsedTime = time;
-            
+
             if (done) {
                 this.action = this.game.down || this.touchHole() ? this.states.crouch : this.DEFAULT_ACTION; //back to idle; added case for crouch attacks
                 this.game.shoot = false;
@@ -815,7 +815,7 @@ class Knight extends AbstractPlayer {
         this.animations[1][this.states.wall_hang] = new Animator(this.spritesheetRight, -3, 1200, 120, 80, 1, 0.2, 0, false, true, false);
         // wall slide = 10
         this.animations[0][this.states.wall_slide] = new Animator(this.spritesheetLeft, 1081, 1280, 120, 80, 3, 0.1, 0, true, true, false);
-        this.animations[1][this.states.wall_slide] = new Animator(this.spritesheetRight, -1, 1280, 120, 80, 3, 0.1, 0, false, true, false);
+        this.animations[1][this.states.wall_slide] = new Animator(this.spritesheetRight, -2, 1280, 120, 80, 3, 0.1, 0, false, true, false);
         // jump -> jump/fall inbetween -> fall
         // jump = 11
         this.animations[0][this.states.jump] = new Animator(this.spritesheetLeft, 1085, 640, 120, 80, 3, 0.1, 0, true, false, false);
