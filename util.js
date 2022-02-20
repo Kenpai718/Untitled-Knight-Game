@@ -139,11 +139,20 @@ const STATS = {
     FLYINGEYE: {
         NAME: "Flying Eye",
         MAX_HP: 30,
-        SCALE: 2,
-        WIDTH: 150,
-        HEIGHT: 150,
+        SCALE: 2.5,
+        WIDTH: 22,
+        HEIGHT: 25,
         DAMAGE: 5,
-        PHYSICS: {MAX_RUN: 450, MAX_FALL: 610}
+        PHYSICS: {MAX_RUN: 400, MAX_FALL: 200}
+    },
+
+    EYE_PROJECTILE: {
+        NAME: "Flying Eye Projectile",
+        MAX_HP: 10,
+        WIDTH: 16,
+        HEIGHT: 16,
+        SCALE: 2.5,
+        DAMAGE: 2.5
     },
 
 }

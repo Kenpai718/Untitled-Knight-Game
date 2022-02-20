@@ -189,22 +189,21 @@ class AbstractEntity {
     }
 
     drawDebug(ctx) {
+        const camera = this.game.camera;
         this.healthbar.drawDebug(ctx);
         ctx.strokeStyle = "Blue";
         if (this.VB)
-            ctx.strokeRect(this.VB.x - this.game.camera.x, this.VB.y - this.game.camera.y, this.VB.width, this.VB.height);
+            ctx.strokeRect(this.VB.x - camera.x, this.VB.y - camera.y, this.VB.width, this.VB.height);
         ctx.strokeStyle = "Purple";
         if (this.AR)
-            ctx.strokeRect(this.AR.x - this.game.camera.x, this.AR.y - this.game.camera.y, this.AR.width, this.AR.height);
+            ctx.strokeRect(this.AR.x - camera.x, this.AR.y - camera.y, this.AR.width, this.AR.height);
         ctx.strokeStyle = "Red";
         if (this.BB)
-            ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
+            ctx.strokeRect(this.BB.x - camera.x, this.BB.y - camera.y, this.BB.width, this.BB.height);
 
         ctx.strokeStyle = "Green";
         if (this.HB)
-            ctx.strokeRect(this.HB.x - this.game.camera.x, this.HB.y - this.game.camera.y, this.HB.width, this.HB.height);
-
-
+            ctx.strokeRect(this.HB.x - camera.x, this.HB.y - camera.y, this.HB.width, this.HB.height);
         if (this.displayHitbox) {        // This is the Hitbox, defines space where mob can be hit
             ctx.strokeStyle = "Red";
             ctx.strokeRect(this.x + 14 * this.scale, this.y - 37, 21 * this.scale, 51 * this.scale);

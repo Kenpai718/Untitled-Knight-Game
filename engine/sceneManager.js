@@ -467,11 +467,23 @@ class SceneManager {
                 this.game.addEntity(new Walls(this.game, walls.x, h - walls.y - 1, 1, walls.height, walls.type));
             }
         }
-
         if (this.level.signs) {
             for (var i = 0; i < this.level.signs.length; i++) {
                 let sign = this.level.signs[i];
                 this.game.addEntity(new Sign(this.game, sign.x, h - sign.y, sign.text, sign.title));
+            }
+        }
+        if (this.level.secrets) {
+            for (var i = 0; i < this.level.secrets.length; i++) {
+                let secret = this.level.secrets[i];
+                if (!secret.found) {
+                    let secrets = [];
+                    for (var j = 0; j < secret.bricks.length; j++) {
+                        let bricks = secret.bricks[j];
+                        secrets.push(new SecretBricks(this.game, bricks.x, h - bricks.y - 1, bricks.width, bricks.height, secret.found));
+                    }
+                    this.game.addEntity(new Secret(this.game, secret.ID, secrets, secret.found));
+                }
             }
         }
 
@@ -521,6 +533,14 @@ class SceneManager {
                     let skeleton = scene.skeletons[i];
                     let e = new Skeleton(this.game, 0, 0, skeleton.guard);
                     this.positionEntity(e, skeleton.x, h - skeleton.y);
+                    this.game.addEntity(e);
+                }
+            }
+            if (this.level.flyingeyes) {
+                for (var i = 0; i < scene.flyingeyes.length; i++) {
+                    let flyingeye = scene.flyingeyes[i];
+                    let e = new FlyingEye(this.game, 0, 0, flyingeye.guard);
+                    this.positionEntity(e, flyingeye.x, h - flyingeye.y);
                     this.game.addEntity(e);
                 }
             }
@@ -838,6 +858,24 @@ class Minimap {
 
                 //ctx.fillRect(this.x + myX, this.y + (this.h - myY + 3/2 * PARAMS.SCALE), myW, myH);
                 ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);
+            }
+        }
+        if (this.level.secrets) {
+            
+            for (var i = 0; i < this.level.secrets.length; i++) {
+                let secret = this.level.secrets[i];
+                
+                if (!secret.found) {
+                    for (var j = 0; j < secret.bricks.length; j++) {
+                        let brick = secret.bricks[j];
+                        let myX = brick.x * PARAMS.SCALE;
+                        let myY = brick.y * PARAMS.SCALE;
+                        let myW = brick.width * PARAMS.SCALE;
+                        let myH = brick.height * PARAMS.SCALE;
+
+                        ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);
+                    }
+                }
             }
         }
 
