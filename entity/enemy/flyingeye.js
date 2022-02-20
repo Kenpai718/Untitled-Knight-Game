@@ -27,9 +27,6 @@ class FlyingEye extends AbstractEnemy {
     updateBoxes() {
         this.lastBB = this.BB;
         this.BB = new BoundingBox(this.x + 70 * this.scale, this.y + 65 * this.scale, this.width, this.height);
-        //if (this.direction == 0) this.AR = new BoundingBox(this.x - 71, this.y - 24, this.attackwidth, 46 * this.scale);
-        //else this.AR = new BoundingBox(this.x - 84, this.y - 24, this.attackwidth, 46 * this.scale);
-
 
         if (this.direction == 0) this.VB = new BoundingBox(this.BB.left - 20 * this.scale, this.BB.top - 100 * this.scale, 400 * this.scale, this.BB.height + 200 * this.scale);
         else this.VB = new BoundingBox(this.BB.right + 20 * this.scale - 400 * this.scale, this.BB.top - 100 * this.scale, 400 * this.scale, this.BB.height + 200 * this.scale);
@@ -37,10 +34,6 @@ class FlyingEye extends AbstractEnemy {
         this.updateAR2();
         this.updateAR3();
     };
-
-    updateVB() {
-        //this.VB = new BoundingBox(this.)
-    }
 
     updateAR1() {
         const arDim = {w: 75 * this.scale, h: 150 * this.scale};
@@ -223,7 +216,8 @@ class FlyingEye extends AbstractEnemy {
     }
 
     setDamagedState() {
-
+        this.vulnerable = false;
+        this.state = this.states.damaged;
     }
 
     loadAnimations() {
@@ -277,6 +271,7 @@ class FlyingEye extends AbstractEnemy {
             if (this.touchHole()) {
                 dist.x = 0;
             }
+            dist = this.checkSpikeCollisions(dist); //check if colliding with environment and adjust entity accordingly
             dist = this.checkEntityInteractions(dist, TICK); //move entity according to other entities
             dist = this.collideWithOtherEnemies(dist, TICK); // change speed based on other enemies
             this.updatePositionAndVelocity(dist); //set where entity is based on interactions/collisions put on dist
@@ -313,6 +308,20 @@ class FlyingEye extends AbstractEnemy {
                 this.HB = null;
             }
         }
+    }
+
+    checkSpikeCollisions(dist) {
+        let self = this;
+        this.game.foreground1.forEach(function (entity) {
+            if (entity instanceof Spike && self.BB.collide(entity.BB) && self.vulnerable) {
+                dist.y -= 40 * self.scale;
+                self.velocity.x = 0;
+                self.velocity.y = 0;
+                self.takeDamage(10, false);
+                self.setDamagedState();
+            }
+        })
+        return dist;
     }
 
     /**
