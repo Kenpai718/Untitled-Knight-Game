@@ -188,7 +188,7 @@ class FlyingEye extends AbstractEnemy {
                 }
 
                 // goblin hit by player switch to damaged state
-                    if (entity.HB && self.BB.collide(entity.HB) && !self.HB) {
+                    if (entity.HB && self.BB.collide(entity.HB) && !self.HB && self.vulnerable) {
                         self.setDamagedState();
                         self.resetAttack();
                     }
