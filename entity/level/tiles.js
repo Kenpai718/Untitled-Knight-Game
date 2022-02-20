@@ -96,7 +96,6 @@ class Secret {
             this.secrets.forEach(function(secret) {
                 secret.found = true;
             });
-            this.found = false;
         } 
         this.secrets.forEach(function(secret) {
             secret.draw(ctx);
@@ -107,10 +106,6 @@ class Secret {
             }
         }
         if (this.secrets.length == 0) {
-            this.game.camera.level.secrets.forEach(function(secret) {
-                if (secret.ID == self.ID)
-                    secret.found = true;
-            });
             this.removeFromWorld = true;
         }
     }
@@ -129,12 +124,8 @@ class SecretBricks extends AbstractSecret {
         this.scale = PARAMS.BLOCKDIM;
         // only need to worry about these if you want a specific kind of brick
         this.types = { middle : 0, innerLeft : 1, innerRight : 2, broken1 : 3, broken2 : 4, broken3 : 5, broken4 : 6, broken5 : 7, broken6 : 8};
-        this.srcWidth = 16;
-        this.srcHeight = 16;
-        this.bricks = [];
         this.loadImage();
         this.updateBB();
-        this.bricks = null;
     };
 
     // generates a random 2d array of brick types
@@ -142,15 +133,12 @@ class SecretBricks extends AbstractSecret {
         let blocksY = this.h;
         let blocksX = this.w;
         for (let i = 0; i < blocksY; i++) {
-            this.bricks.push([]);
             for (let j = 0; j < blocksX; j++) {
-                this.bricks[i].push([j]);
                 this.type = randomInt(9);
                 this.getBrickType();
-                this.bricks[i][j] = { x : this.srcX, y : this.srcY };
                 let w = this.srcWidth;
                 let h = this.srcHeight;
-                this.ctx.drawImage(this.spritesheet, this.bricks[i][j].x, this.bricks[i][j].y, w, h, j * w, i * h, w, h);
+                this.ctx.drawImage(this.spritesheet, this.srcX, this.srcY, w, h, j * w, i * h, w, h);
             }
         }
         
@@ -279,12 +267,8 @@ class Brick extends AbstractBarrier {
         this.scale = PARAMS.BLOCKDIM;
         // only need to worry about these if you want a specific kind of brick
         this.types = { middle : 0, innerLeft : 1, innerRight : 2, broken1 : 3, broken2 : 4, broken3 : 5, broken4 : 6, broken5 : 7, broken6 : 8};
-        this.srcWidth = 16;
-        this.srcHeight = 16;
-        this.bricks = [];
         this.loadImage();
         this.updateBB();
-        this.bricks = null;
     };
 
     // generates a random 2d array of brick types
@@ -292,15 +276,12 @@ class Brick extends AbstractBarrier {
         let blocksY = this.h;
         let blocksX = this.w;
         for (let i = 0; i < blocksY; i++) {
-            this.bricks.push([]);
             for (let j = 0; j < blocksX; j++) {
-                this.bricks[i].push([j]);
                 this.type = randomInt(9);
                 this.getBrickType();
-                this.bricks[i][j] = { x : this.srcX, y : this.srcY };
                 let w = this.srcWidth;
                 let h = this.srcHeight;
-                this.ctx.drawImage(this.spritesheet, this.bricks[i][j].x, this.bricks[i][j].y, w, h, j * w, i * h, w, h);
+                this.ctx.drawImage(this.spritesheet, this.srcX, this.srcY, w, h, j * w, i * h, w, h);
             }
         }
         
@@ -351,13 +332,11 @@ class Brick extends AbstractBarrier {
 
 class Platform extends AbstractBarrier {
     constructor(game, x, y, w, h) {
-        super(game, x, y, w, h, 16, 16);
+        super(game, x, y, w, h, 16, 13);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
         this.scale = PARAMS.BLOCKDIM;
         this.srcX = 144;
         this.srcY = 32;
-        this.srcWidth = 16;
-        this.srcHeight = 13;
         this.updateBB();
         this.loadImage();
     };

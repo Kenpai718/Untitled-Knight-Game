@@ -250,7 +250,7 @@ class GameEngine {
             this.background2.push(e);
         else if (e instanceof AbstractInteractable)
             this.interactables.push(e);
-        else if (e instanceof AbstractSecret)
+        else if (e instanceof Secret) 
             this.secrets.push(e);
         else if (e instanceof AbstractBackFeature)
             this.foreground1.push(entity);

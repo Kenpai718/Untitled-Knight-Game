@@ -163,7 +163,8 @@ class SceneManager {
     loadLevel(number, usedDoor, doorExitX, doorExitY) {
         // save the state of the enemies and interactables for the current level
         if (!this.title && !this.restart && !this.transition) {
-            this.levelState[this.currentLevel] = { enemies: [...this.game.enemies], interactables: [...this.game.interactables], killCount: this.killCount };
+            this.levelState[this.currentLevel] = { enemies: [...this.game.enemies], interactables: [...this.game.interactables],
+                secrets: [...this.game.secrets], killCount: this.killCount};
             this.lastInventory = this.player.myInventory;
             this.lastHp = this.player.hp;
         } else {
@@ -473,19 +474,6 @@ class SceneManager {
                 this.game.addEntity(new Sign(this.game, sign.x, h - sign.y, sign.text, sign.title));
             }
         }
-        if (this.level.secrets) {
-            for (var i = 0; i < this.level.secrets.length; i++) {
-                let secret = this.level.secrets[i];
-                if (!secret.found) {
-                    let secrets = [];
-                    for (var j = 0; j < secret.bricks.length; j++) {
-                        let bricks = secret.bricks[j];
-                        secrets.push(new SecretBricks(this.game, bricks.x, h - bricks.y - 1, bricks.width, bricks.height, secret.found));
-                    }
-                    this.game.addEntity(new Secret(this.game, secret.ID, secrets, secret.found));
-                }
-            }
-        }
 
         //npc
         if (this.level.npcs) {
@@ -553,10 +541,24 @@ class SceneManager {
                     this.killsRequired = Math.max(door.killQuota, this.killsRequired);
                 }
             }
+            if (this.level.secrets) {
+                for (var i = 0; i < this.level.secrets.length; i++) {
+                    let secret = this.level.secrets[i];
+                    if (!secret.found) {
+                        let secrets = [];
+                        for (var j = 0; j < secret.bricks.length; j++) {
+                            let bricks = secret.bricks[j];
+                            secrets.push(new SecretBricks(this.game, bricks.x, h - bricks.y - 1, bricks.width, bricks.height, secret.found));
+                        }
+                        this.game.addEntity(new Secret(this.game, secret.ID, secrets, secret.found));
+                    }
+                }
+            }
         } else { // load the enemies and interactables from their previous state
             this.game.enemies = [...this.levelState[this.currentLevel].enemies];
             this.game.enemies.forEach(enemy => enemy.removeFromWorld = false);
             this.game.interactables = [...this.levelState[this.currentLevel].interactables];
+            this.game.secrets = [...this.levelState[this.currentLevel].secrets];
             var that = this;
             this.game.interactables.forEach(interactable => {
                 // if obelisk, add associated blocks as well
@@ -855,27 +857,8 @@ class Minimap {
                 let myY = brick.y * PARAMS.SCALE;
                 let myW = brick.width * PARAMS.SCALE;
                 let myH = brick.height * PARAMS.SCALE;
-
-                //ctx.fillRect(this.x + myX, this.y + (this.h - myY + 3/2 * PARAMS.SCALE), myW, myH);
-                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);
-            }
-        }
-        if (this.level.secrets) {
-            
-            for (var i = 0; i < this.level.secrets.length; i++) {
-                let secret = this.level.secrets[i];
                 
-                if (!secret.found) {
-                    for (var j = 0; j < secret.bricks.length; j++) {
-                        let brick = secret.bricks[j];
-                        let myX = brick.x * PARAMS.SCALE;
-                        let myY = brick.y * PARAMS.SCALE;
-                        let myW = brick.width * PARAMS.SCALE;
-                        let myH = brick.height * PARAMS.SCALE;
-
-                        ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);
-                    }
-                }
+                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);
             }
         }
 
@@ -975,6 +958,24 @@ class Minimap {
                 ctx.fillRect(this.x + myX, this.y - myY + (this.h + 1) * PARAMS.SCALE, 3 * myW, 3 * myH);
             }
         }
+        let self = this;
+        this.game.secrets.forEach(function (secret) {
+            if (!secret.found) {
+                secret.secrets.forEach(function (s) {
+                    let myX = s.x * PARAMS.SCALE;
+                    let myY = s.y * PARAMS.SCALE;
+                    let myW = s.w * PARAMS.SCALE;
+                    let myH = s.h * PARAMS.SCALE;
+                    
+                    if (s instanceof SecretBricks)
+                        ctx.fillStyle = self.colors.brick;
+                    ctx.fillRect(self.x + myX, myY -self.y + (self.h-3) * PARAMS.SCALE, myW, myH);
+                    
+                });
+                
+                
+            }
+        });
 
     }
 
