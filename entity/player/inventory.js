@@ -6,12 +6,21 @@ class Inventory {
         const STARTING_ARROWS = 50;
         const STARTING_POTIONS = 5;
         const STARTING_DIAMONDS = 0;
-        this.maxStack = 99;
+        const STARTING_HEALTH_UPGRADE = 0;
+        const STARTING_ATTACK_UPGRADE = 0;
+        const STARTING_ARROW_UPGRADE = 0;
+        const STARTING_ARMOR_UPGRADE = 0;
+        this.maxStack = 599;
+        this.maxUpgrade = 4;
 
         //inventory
         this.arrows = STARTING_ARROWS;
         this.potions = STARTING_POTIONS;
         this.diamonds = STARTING_DIAMONDS;
+        this.healthUpgrade = STARTING_HEALTH_UPGRADE;
+        this.attackUpgrade = STARTING_ATTACK_UPGRADE;
+        this.arrowUpgrade = STARTING_ARROW_UPGRADE;
+        this.armorUpgrade = STARTING_ARMOR_UPGRADE;
 
         // Other
         this.loadAnimations();
@@ -29,6 +38,19 @@ class Inventory {
 
         if(this.diamonds > this.maxStack) {
             this.diamonds = this.maxStack;
+        }
+
+        if(this.healthUpgrade > this.maxUpgrade) {
+            this.healthUpgrade = this.maxUpgrade;
+        }
+        if(this.attackUpgrade > this.maxUpgrade) {
+            this.attackUpgrade = this.maxUpgrade;
+        }
+        if(this.arrowUpgrade > this.maxUpgrade) {
+            this.arrowUpgrade = this.maxUpgrade;
+        }
+        if(this.armorUpgrade > this.maxUpgrade) {
+            this.armorUpgrade = this.maxUpgrade;
         }
     };
 
