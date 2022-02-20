@@ -151,10 +151,10 @@ class FlyingEye extends AbstractEnemy {
                     let state = self.states;
                     let switchable = self.state != state.attack1 || self.state == state.attack1 && frame < 5;
                     if (distX > 0 && switchable) {
-                        self.dir = self.directions.right;
+                        self.direction = self.directions.right;
                     }
                     else if (distX < 0 && switchable) {
-                        self.dir = self.directions.left;
+                        self.direction = self.directions.left;
                     }
                     self.animations[self.state][self.direction].elapsedTime = time;
                     
@@ -179,7 +179,12 @@ class FlyingEye extends AbstractEnemy {
                     if (self.state != self.states.idle)
                         self.resetAnimationTimers(self.state);
                     self.state = self.states.idle;
-                    self.doRandomMovement();
+                    if (!self.onGuard)
+                        self.doRandomMovement();
+                    else {
+                        self.velocity.x = 0;
+                        self.velocity.y = 0;
+                    }
                 }
 
                 // goblin hit by player switch to damaged state
@@ -280,15 +285,17 @@ class FlyingEye extends AbstractEnemy {
             if (this.state == this.states.attack3) {
                 if (this.animations[this.state][this.direction].currentFrame() == 3 && !this.projectile) {
                     if (this.direction == this.directions.right)
-                        this.game.addEntity(new FlyingEyeProjectile(this.game, this.BB.right - 20 *this.scale, this.y + 53 * this.scale, this.dir));
+                        this.game.addEntity(new FlyingEyeProjectile(this.game, this.BB.right - 20 *this.scale, this.y + 53 * this.scale, this.direction));
                     else
-                        this.game.addEntity(new FlyingEyeProjectile(this.game, this.BB.left + (20 - STATS.EYE_PROJECTILE.WIDTH * this.scale) * this.scale, this.y + 53 * this.scale, this.dir));
+                        this.game.addEntity(new FlyingEyeProjectile(this.game, this.BB.left + (20 - STATS.EYE_PROJECTILE.WIDTH * this.scale) * this.scale, this.y + 53 * this.scale, this.direction));
                     this.projectile = true;
                 }
             }
 
             //do random movement while the player is not in sight
-            if (!this.playerInSight) this.doRandomMovement();
+            if (!this.playerInSight && !this.onGuard) this.doRandomMovement();
+            else {
+            }
             super.setAggro(this.playerInSight);
 
             //set the attack hitbox if in an attack state and the attack frame is out
@@ -389,7 +396,7 @@ class FlyingEye extends AbstractEnemy {
 class FlyingEyeProjectile extends AbstractEntity {
     constructor(game, x, y, dir, scale) {
         super(game, x, y, STATS.EYE_PROJECTILE.NAME, STATS.EYE_PROJECTILE.MAX_HP, STATS.EYE_PROJECTILE.WIDTH, STATS.EYE_PROJECTILE.HEIGHT, STATS.EYE_PROJECTILE.SCALE);
-        this.direction = dir;
+        this.dir = dir;
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/flyingeye.png");
         this.animations = [];
         this.loadAnimations();
@@ -482,7 +489,7 @@ class FlyingEyeProjectile extends AbstractEntity {
 
     draw(ctx) {
         this.elapsedTime += this.game.clockTick;
-        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
+        this.animations[this.state][this.dir].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
         if (this.state == this.states.move && this.elapsedTime >=2) {
             this.state = this.states.destroy;
             this.width *= 2;
@@ -490,7 +497,7 @@ class FlyingEyeProjectile extends AbstractEntity {
             this.updateBB();
         }
         else {
-            if (this.animations[this.state][this.direction].isDone())
+            if (this.animations[this.state][this.dir].isDone())
                 this.removeFromWorld = true;
         }
     }
