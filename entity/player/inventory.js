@@ -5,12 +5,12 @@ class Inventory {
 
         const STARTING_ARROWS = 50;
         const STARTING_POTIONS = 5;
-        const STARTING_DIAMONDS = 10000;
+        const STARTING_DIAMONDS = 0;
         const STARTING_HEALTH_UPGRADE = 0;
         const STARTING_ATTACK_UPGRADE = 0;
         const STARTING_ARROW_UPGRADE = 0;
         const STARTING_ARMOR_UPGRADE = 0;
-        this.maxStack = 599;
+        this.maxStack = 999;
         this.maxUpgrade = 4;
 
         //inventory
