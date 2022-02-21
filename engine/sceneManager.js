@@ -178,7 +178,7 @@ class SceneManager {
             this.lastInventory.copyInventory(this.player.myInventory);
         } else {
             // if player dies reset their hp and inventory to what it was upon entering the level
-            if (this.restart) {
+            if (this.restart && this.lastPlayer) {
                 this.player.hp = this.lastHP;
                 this.player.myInventory = new Inventory(this.game)
                 this.player.myInventory.copyInventory(this.lastInventory);
