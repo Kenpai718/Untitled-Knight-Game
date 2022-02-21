@@ -141,15 +141,19 @@ class SceneManager {
         let spawnX = theX * PARAMS.BLOCKDIM;
         let spawnY = theY * PARAMS.BLOCKDIM;
 
-        this.player = new Knight(this.game, 0, 0);
-        if (this.lastHp) this.player.hp = this.lastHp;
-        if (this.lastInventory) this.player.myInventory = this.lastInventory;
+        this.player = this.lastPlayer ? this.lastPlayer : new Knight(this.game, 0, 0);
+        if (this.lastPlayer) {
+            this.player.removeFromWorld = false;
+            this.player.x = 0;
+            this.player.y = 0;
+            this.player.updateBB();
+        }
         this.player.x = spawnX - this.player.BB.left;
         this.player.y = spawnY - this.player.BB.bottom;
         this.inventory = this.player.myInventory;
         this.heartsbar = new HeartBar(this.game, this.player);
         this.vignette = new Vignette(this.game);
-        this.game.addEntity(this.player);
+        if (!this.lastPlayer) this.game.addEntity(this.player);
     };
 
     /**
@@ -163,11 +167,23 @@ class SceneManager {
     loadLevel(number, usedDoor, doorExitX, doorExitY) {
         // save the state of the enemies and interactables for the current level
         if (!this.title && !this.restart && !this.transition) {
+            // save level state
             this.levelState[this.currentLevel] = { enemies: [...this.game.enemies], interactables: [...this.game.interactables],
                 secrets: [...this.game.secrets], killCount: this.killCount};
-            this.lastInventory = this.player.myInventory;
-            this.lastHp = this.player.hp;
+            // save player state
+            this.lastPlayer = this.player;
+            // save initial player hp and inventory upon entering a level
+            this.lastHP = this.player.hp;
+            this.lastInventory = new Inventory(this.game);
+            this.lastInventory.copyInventory(this.player.myInventory);
         } else {
+            // if player dies reset their hp and inventory to what it was upon entering the level
+            if (this.restart && this.lastPlayer) {
+                this.player.hp = this.lastHP;
+                this.player.myInventory = new Inventory(this.game)
+                this.player.myInventory.copyInventory(this.lastInventory);
+                this.player.dead = false;
+            }
             this.title = false;
             this.restart = false;
             this.transition = false;
@@ -178,8 +194,6 @@ class SceneManager {
         } else {
             console.log("Loading level " + number);
             this.killCount = !this.levelState[number] ? 0 : this.levelState[number].killCount;
-            console.log(this.killCount);
-            console.log(this.levelState[number]);
             this.currentLevel = number;
             let lvlData = this.levels[number];
             if (usedDoor) {
@@ -857,7 +871,7 @@ class Minimap {
                 let myY = brick.y * PARAMS.SCALE;
                 let myW = brick.width * PARAMS.SCALE;
                 let myH = brick.height * PARAMS.SCALE;
-                
+
                 ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);
             }
         }
@@ -966,14 +980,14 @@ class Minimap {
                     let myY = s.y * PARAMS.SCALE;
                     let myW = s.w * PARAMS.SCALE;
                     let myH = s.h * PARAMS.SCALE;
-                    
+
                     if (s instanceof SecretBricks)
                         ctx.fillStyle = self.colors.brick;
                     ctx.fillRect(self.x + myX, myY -self.y + (self.h-3) * PARAMS.SCALE, myW, myH);
-                    
+
                 });
-                
-                
+
+
             }
         });
 
