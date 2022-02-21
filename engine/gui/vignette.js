@@ -1,7 +1,7 @@
 /**
  * Black blurred border effect
  * used as a visual effect at a low hp
- * 
+ *
  * Make sure this is made AFTER the player character was created in scene manager
  */
 class Vignette {
@@ -23,8 +23,11 @@ class Vignette {
 
         if ((this.myPlayer.hp / this.myPlayer.max_hp) <= PARAMS.LOW_HP) {
             this.show = true;
+            if (this.myPlayer.berserkTimer < 10) this.myPlayer.berserk = true;
         } else {
             this.show = false;
+            this.myPlayer.berserk = false;
+            this.myPlayer.berserkTimer = 0;
         }
 
     };
@@ -70,4 +73,3 @@ class Vignette {
     }
 
 };
-

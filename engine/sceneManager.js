@@ -215,6 +215,7 @@ class SceneManager {
         this.clearLayer(this.game.foreground2);
         this.clearLayer(this.game.enemies);
         this.clearLayer(this.game.entities);
+        this.clearLayer(this.game.secrets);
         this.clearLayer(this.game.projectiles);
         this.clearLayer(this.game.information);
     };
