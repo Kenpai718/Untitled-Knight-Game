@@ -26,6 +26,18 @@ class Inventory {
         this.loadAnimations();
     };
 
+    copyInventory(inventory) {
+        this.maxStack = inventory.maxStack;
+        this.maxUpgrade = inventory.maxUpgrade;
+        this.arrows = inventory.arrows;
+        this.potions = inventory.potions;
+        this.diamonds = inventory.diamonds;
+        this.healthUpgrade = inventory.healthUpgrade;
+        this.attackUpgrade = inventory.attackUpgrade;
+        this.arrowUpgrade = inventory.arrowUpgrade;
+        this.armorUpgrade = inventory.armorUpgrade;
+    };
+
     update() {
 
         if(this.arrows > this.maxStack) {

@@ -372,8 +372,12 @@ class FlyingEye extends AbstractEnemy {
                 else if (angle > Math.PI / 2 && angle < Math.PI * 3 / 2) {
                     this.direction = this.directions.left;
                 }
-                this.velocity.x = 200 * Math.cos(angle);
-                this.velocity.y = 200 * Math.sin(angle);
+
+                //set velocities
+                if (!this.onGuardDuty) {
+                    this.velocity.x = 200 * Math.cos(angle);
+                    this.velocity.y = 200 * Math.sin(angle);
+                }
             }
             else {
                 this.doRandom = Math.floor(Math.random() * 10);

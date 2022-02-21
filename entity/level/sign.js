@@ -9,8 +9,9 @@ class Sign extends AbstractBackFeature {
         this.title = title;
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/sign.png");
         this.fontSize = DEFAULT_FONT_SIZE;
-        this.showText = false;
-        this.read = false;
+        this.showText = false;  //check if draw textbox
+        this.read = false;      //check if player has read this sign before
+        this.isReading = false; //check if player currently reading this sign
 
         this.updateBoxes();
 
@@ -22,7 +23,7 @@ class Sign extends AbstractBackFeature {
         //textbox specific to this sign
         this.myTextBox = new TextBox(this.game, this.BB.x, this.BB.y, this.text, true);
         this.game.addEntityToFront(this.myTextBox);
-        this.myHoverMsg = "Hold \'W\' to read";
+        this.myHoverMsg = "Tap \'W\' to read";
 
     }
 
@@ -51,11 +52,22 @@ class Sign extends AbstractBackFeature {
                  * Add the textbox to the scene manager when it is needed
                  * Set it to null when not needed
                  */
-                if (entity.BB && self.BB.collide(entity.BB) && self.game.up) {
-                    if (!self.read) self.read = true;
+                let playerNearSign = entity.BB && self.BB.collide(entity.BB);
+                //player pressed up to read sign
+                if (playerNearSign && self.game.up) {
+                    //mark player has read this sign
+                    if (!self.read) self.read = true; 
+                    self.isReading = true;
                     self.showText = true;
                 } else {
-                    self.showText = false;
+                    //player is next to the sign and reading it
+                    if (playerNearSign && self.isReading) {
+                        self.showText = true;
+                    } else { //player no longer near sign and reading
+                        self.isReading = false;
+                        self.showText = false;
+                    }
+                    
                 }
             }
         });

@@ -420,10 +420,12 @@ var level1_2 = {
     skeletons: [
         { x: 3, y: 26, guard: true },
         { x: 70, y: 3, guard: true},
-        { x: 71, y: 15, guard: true},
         { x: 75, y: 3, guard: true },
         { x: 81, y: 22, guard: true },
         { x: 100, y: 3, guard: true},
+    ],
+    flyingeyes: [
+        { x: 75, y: 21, guard: true },
     ],
     windows: [
         { x: 2, y: 9, width: 1, height: 1.5 },
@@ -579,7 +581,7 @@ var level1_3 = {
         },
 
     ],
-    npcs: [{x: 81, y:28}
+    npcs: [{x: 51, y:10}
 
     ],
 
@@ -621,7 +623,7 @@ var level1_3 = {
     ],
     chests: [
         { x: 77, y: 15, direction: 0 },
-        { x: 53, y: 5, directon: 1 },
+        { x: 54, y: 5, directon: 0},
     ],
     bricks: [
         { x: 120, y: 42, width: 1, height: 43 },
