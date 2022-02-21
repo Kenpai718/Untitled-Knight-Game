@@ -81,7 +81,6 @@ class Goblin extends AbstractEnemy {
                 dist.x = 0;
             }
             dist = this.checkEntityInteractions(dist, TICK); //move entity according to other entities
-            dist = this.collideWithOtherEnemies(dist, TICK); // change speed based on other enemies
             this.updatePositionAndVelocity(dist); //set where entity is based on interactions/collisions put on dist
             this.checkCooldowns(TICK); //check and reset the cooldowns of its actions
 
@@ -153,7 +152,7 @@ class Goblin extends AbstractEnemy {
                     self.playerInSight = playerInVB;
                     self.aggro = true;
                     // knight is in the vision box and not in the attack range
-                    if (!self.AR.collide(entity.BB) && self.state != self.states.damaged && (self.state != self.states.attack || self.state == self.states.attack && self.animations[self.state][self.direction].currentFrame() < 3)) {
+                    if (!self.AR.collide(entity.BB)) {
                         // move towards the knight
                         self.state = self.states.move;
                         self.direction = entity.BB.right < self.BB.left ? self.directions.left : self.directions.right;
@@ -192,14 +191,14 @@ class Goblin extends AbstractEnemy {
                             self.state = self.states.attack;
                         }
                     }
+                }
 
-                    // goblin hit by player switch to damaged state
-                    if (entity.HB && self.BB.collide(entity.HB) && !self.HB) {
-                        //entity.doDamage(self);
-                        self.setDamagedState();
-                        self.resetAttack();
+                // goblin hit by player switch to damaged state
+                if (entity.HB && self.BB.collide(entity.HB) && !self.HB) {
+                    //entity.doDamage(self);
+                    self.setDamagedState();
+                    self.resetAttack();
 
-                    }
                 }
             }
 
@@ -208,8 +207,7 @@ class Goblin extends AbstractEnemy {
         return dist;
     }
 
-    checkCooldowns() {
-        const TICK = this.game.clockTick;
+    checkCooldowns(TICK) {
         // goblin attack cooldown
         if (!this.canAttack) {
             this.attackCooldown += TICK;

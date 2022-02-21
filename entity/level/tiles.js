@@ -1,12 +1,21 @@
 class AbstractBarrier {
-    constructor(game, x, y, w, h) {
-        Object.assign(this, {game, x, y, w, h});
+    constructor(game, x, y, w, h, srcWidth, srcHeight) {
+        Object.assign(this, {game, x, y, w, h, srcWidth, srcHeight});
+        this.canvas = document.createElement("Canvas"); 
+	    this.ctx = this.canvas.getContext("2d");
+        this.canvas.width = srcWidth * w;
+        this.canvas.height = srcHeight * h;
+    }
+
+    loadImage() {
+        throw new TypeError("Cannot load image directly from AbstractBarrier instance directly!");
     }
 
     update() {
     };
 
     draw(ctx) {
+        ctx.drawImage(this.canvas, this.x * this.scale - this.game.camera.x, this.y * this.scale - this.game.camera.y, this.w * this.scale, this.h * this.scale);
     }
 
     drawDebug(ctx) {
@@ -24,122 +33,115 @@ class AbstractBarrier {
         this.topBB = new BoundingBox(this.x * scale, this.y * scale, this.w * scale, this.h / 2 * scale);
         this.bottomBB = new BoundingBox(this.x * scale, this.y + this.h / 2 * scale, this.w * scale, this.h / 2 * scale);
     };
+}
 
-    /**
-     * Draws the tile in a minimap. Expected all parameters are translated beforehand.
-     * @param {} ctx
-     * @param {*} mmX
-     * @param {*} mmY
-     * @param {*} mmW
-     * @param {*} mmH
-     */
-    drawMinimap(ctx, mmX, mmY) {
+class AbstractSecret extends AbstractBarrier {
+    constructor(game, x, y, w, h, sW, sH, found) {
+        super(game, x, y, w, h, sW, sH);
+        this.found = found;
+        this.myOpacity = 100;
+    }
 
+    draw(ctx) {
+        if (!this.found) {
+            super.draw(ctx);
+        }
+        else {
+            if (this.myOpacity > 0) {
+                this.myOpacity -= 125 * this.game.clockTick;
+                if (this.myOpacity < 0) this.myOpacity = 0;
+                ctx.filter = "opacity(" + this.myOpacity + "%)";
+                ctx.drawImage(this.canvas, this.x * this.scale - this.game.camera.x, this.y * this.scale - this.game.camera.y, this.w * this.scale, this.h * this.scale);
+                ctx.filter = "none";
+            }
+            else {
+                this.remove = true;
+            }
+        }
+    }
+
+}
+
+class Secret {
+    constructor(game, secrets, found) {
+        Object.assign(this, {game, secrets, found});
+    }
+
+    update() {
+        let self = this;
+        this.game.entities.forEach(function(entity) {
+            if (entity instanceof AbstractPlayer) {
+                self.secrets.forEach(function(secret) {
+                    if (entity.BB.collide(secret.BB) && !self.found) {
+                        let top = secret.BB.top - entity.BB.top;
+                        let bottom = entity.BB.bottom - secret.BB.bottom;
+                        let left = secret.BB.left - entity.BB.left;
+                        let right = entity.BB.right - secret.BB.right;
+                        top = top < 0? 0 : top;
+                        bottom = bottom < 0? 0 : bottom;
+                        left = left < 0? 0 : left;
+                        right = right < 0? 0 : right;
+                        let total = (top + bottom) * (left + right);
+                        if (total / (entity.BB.width * entity.BB.height) <= 0.01)
+                            self.found = true;
+                    }
+                })
+            }
+        });
+    }
+
+    draw(ctx) {
+        let self = this;
+        if (this.found) {
+            this.secrets.forEach(function(secret) {
+                secret.found = true;
+            });
+        } 
+        this.secrets.forEach(function(secret) {
+            secret.draw(ctx);
+        });
+        for (let i = 0; i < this.secrets.length; i++) {
+            if (this.secrets[i].remove) {
+                this.secrets.splice(i, 1);
+            }
+        }
+        if (this.secrets.length == 0) {
+            this.removeFromWorld = true;
+        }
+    }
+
+    drawDebug(ctx) {
+        this.secrets.forEach(function(secret) {
+            secret.drawDebug(ctx);
+        })
     }
 }
 
-class Ground extends AbstractBarrier {
-    constructor(game, x, y, w, h, type) {
-        super(game, x, y, w, h);
-        this.type = type;
-        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
-        // left is for left corner piece, middle is for middle piece, right is for right corner piece
-        this.types = { left : 0, middle : 1, right : 2};
-        // switch expression to get the source coordinates depending on the type
-        switch (this.type) {
-            case this.types.left:
-                this.srcX = 16;
-                break;
-            case this.types.middle:
-                this.srcX = 32;
-                break;
-            case this.types.right:
-                this.srcX = 48;
-                break;
-        }
-        this.srcY = 16;
-        this.srcWidth = 16;
-        this.srcHeight = 16;
-        this.scale = PARAMS.BLOCKDIM;
-        this.updateBB();
-    };
-
-    draw(ctx) {
-        let blockCount = this.w; // number of blocks to draw
-        for (let i = 0; i < blockCount; i++) {
-            ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcWidth, this.srcHeight, (this.x+i) * this.scale - this.game.camera.x, this.y * this.scale - this.game.camera.y, this.scale, this.scale);
-        }
-    };
-
-};
-
-class Walls extends AbstractBarrier {
-    constructor(game, x, y, w, h, type) {
-        super(game, x, y, w, h);
-        this.type = type;
-        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
-        // left : middle left wall, leftCorner : bottom left corner wall, right : middle right wall, rightCorner : bottom right corner wall
-        this.types = { left : 0, leftCorner : 1, right : 2, rightCorner : 3};
-        // switch expression to get the source coordinates depending on the type
-        switch (this.type) {
-            case this.types.left:
-                this.srcX = 16;
-                this.srcY = 32;
-                break;
-            case this.types.leftCorner:
-                this.srcX = 16;
-                this.srcY = 48;
-                break;
-            case this.types.right:
-                this.srcX = 48;
-                this.srcY = 32;
-                break;
-            case this.types.rightCorner:
-                this.srcX = 48;
-                this.srcY = 48;
-                break;
-        }
-        this.srcWidth = 16;
-        this.srcHeight = 16;
-        this.scale = PARAMS.BLOCKDIM;
-        this.updateBB();
-    };
-
-    draw(ctx) {
-        let blockcount = this.h;
-        for (var i = 0; i < blockcount; i++) {
-            ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcWidth, this.srcHeight, this.x * this.scale - this.game.camera.x, (this.y + i) * this.scale - this.game.camera.y, this.scale, this.scale);
-        }
-    };
-};
-
-class Brick extends AbstractBarrier {
-    constructor(game, x, y, w, h) {
-        super(game, x, y, w, h);
+class SecretBricks extends AbstractSecret {
+    constructor(game, x, y, w, h, found) {
+        super(game, x, y, w, h, 16, 16, found);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
         this.scale = PARAMS.BLOCKDIM;
         // only need to worry about these if you want a specific kind of brick
         this.types = { middle : 0, innerLeft : 1, innerRight : 2, broken1 : 3, broken2 : 4, broken3 : 5, broken4 : 6, broken5 : 7, broken6 : 8};
-        this.srcWidth = 16;
-        this.srcHeight = 16;
-        this.bricks = [];
-        this.loadBricks();
+        this.loadImage();
         this.updateBB();
     };
 
     // generates a random 2d array of brick types
-    loadBricks() {
+    loadImage() {
         let blocksY = this.h;
         let blocksX = this.w;
         for (let i = 0; i < blocksY; i++) {
-            this.bricks.push([]);
             for (let j = 0; j < blocksX; j++) {
-                this.bricks[i].push([j]);
                 this.type = randomInt(9);
                 this.getBrickType();
-                this.bricks[i][j] = { x : this.srcX, y : this.srcY };
+                let w = this.srcWidth;
+                let h = this.srcHeight;
+                this.ctx.drawImage(this.spritesheet, this.srcX, this.srcY, w, h, j * w, i * h, w, h);
             }
         }
+        
     };
 
     // switch expression to get the source coordinates depending on the type
@@ -183,36 +185,169 @@ class Brick extends AbstractBarrier {
                 break;
         }
     };
+};
 
-    draw(ctx) {
-        let blocksY = this.h; // number of rows of blocks
-        let blocksX = this.w; // number of columns of blocks
-        for (var i = 0; i < blocksY; i++) {
-            for (var j = 0; j < blocksX; j++) {
-                ctx.drawImage(this.spritesheet, this.bricks[i][j].x, this.bricks[i][j].y, this.srcWidth, this.srcHeight, (this.x + j) * this.scale - this.game.camera.x, (this.y + i) * this.scale - this.game.camera.y, this.scale, this.scale);
+class Ground extends AbstractBarrier {
+    constructor(game, x, y, w, h, type) {
+        super(game, x, y, w, h, 16, 16);
+        this.type = type;
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
+        // left is for left corner piece, middle is for middle piece, right is for right corner piece
+        this.types = { left : 0, middle : 1, right : 2};
+        // switch expression to get the source coordinates depending on the type
+        switch (this.type) {
+            case this.types.left:
+                this.srcX = 16;
+                break;
+            case this.types.middle:
+                this.srcX = 32;
+                break;
+            case this.types.right:
+                this.srcX = 48;
+                break;
+        }
+        this.srcY = 16;
+        this.scale = PARAMS.BLOCKDIM;
+        this.updateBB();
+        this.loadImage();
+    };
+
+    loadImage() {
+        let sW = this.srcWidth;
+        let sH = this.srcHeight;
+        for (var i = 0; i < this.w; i++) 
+            this.ctx.drawImage(this.spritesheet, this.srcX, this.srcY, sW, sH, i * sW, 0, sW, sH);
+    }
+
+};
+
+class Walls extends AbstractBarrier {
+    constructor(game, x, y, w, h, type) {
+        super(game, x, y, w, h, 16, 16);
+        this.type = type;
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
+        // left : middle left wall, leftCorner : bottom left corner wall, right : middle right wall, rightCorner : bottom right corner wall
+        this.types = { left : 0, leftCorner : 1, right : 2, rightCorner : 3};
+        // switch expression to get the source coordinates depending on the type
+        switch (this.type) {
+            case this.types.left:
+                this.srcX = 16;
+                this.srcY = 32;
+                break;
+            case this.types.leftCorner:
+                this.srcX = 16;
+                this.srcY = 48;
+                break;
+            case this.types.right:
+                this.srcX = 48;
+                this.srcY = 32;
+                break;
+            case this.types.rightCorner:
+                this.srcX = 48;
+                this.srcY = 48;
+                break;
+        }
+        this.scale = PARAMS.BLOCKDIM;
+        this.updateBB();
+        this.loadImage();
+    };
+
+    loadImage() {
+        let sW = this.srcWidth;
+        let sH = this.srcHeight;
+        for (var i = 0; i < this.h; i++) 
+            this.ctx.drawImage(this.spritesheet, this.srcX, this.srcY, sW, sH, 0, i * sH, sW, sH);
+    }
+};
+
+class Brick extends AbstractBarrier {
+    constructor(game, x, y, w, h) {
+        super(game, x, y, w, h, 16, 16);
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
+        this.scale = PARAMS.BLOCKDIM;
+        // only need to worry about these if you want a specific kind of brick
+        this.types = { middle : 0, innerLeft : 1, innerRight : 2, broken1 : 3, broken2 : 4, broken3 : 5, broken4 : 6, broken5 : 7, broken6 : 8};
+        this.loadImage();
+        this.updateBB();
+    };
+
+    // generates a random 2d array of brick types
+    loadImage() {
+        let blocksY = this.h;
+        let blocksX = this.w;
+        for (let i = 0; i < blocksY; i++) {
+            for (let j = 0; j < blocksX; j++) {
+                this.type = randomInt(9);
+                this.getBrickType();
+                let w = this.srcWidth;
+                let h = this.srcHeight;
+                this.ctx.drawImage(this.spritesheet, this.srcX, this.srcY, w, h, j * w, i * h, w, h);
             }
+        }
+        
+    };
+
+    // switch expression to get the source coordinates depending on the type
+    getBrickType() {
+        switch (this.type) {
+            case this.types.middle:
+                this.srcX = 32;
+                this.srcY = 32;
+                break;
+            case this.types.innerLeft:
+                this.srcX = 80;
+                this.srcY = 32;
+                break;
+            case this.types.innerRight:
+                this.srcX = 112;
+                this.srcY = 32;
+                break;
+            case this.types.broken1:
+                this.srcX = 32;
+                this.srcY = 48;
+                break;
+            case this.types.broken2:
+                this.srcX = 80;
+                this.srcY = 16;
+                break;
+            case this.types.broken3:
+                this.srcX = 96;
+                this.srcY = 16;
+                break;
+            case this.types.broken4:
+                this.srcX = 112;
+                this.srcY = 16;
+                break;
+            case this.types.broken5:
+                this.srcX = 80;
+                this.srcY = 48;
+                break;
+            case this.types.broken6:
+                this.srcX = 112;
+                this.srcY = 48;
+                break;
         }
     };
 };
 
 class Platform extends AbstractBarrier {
     constructor(game, x, y, w, h) {
-        super(game, x, y, w, h);
+        super(game, x, y, w, h, 16, 13);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
         this.scale = PARAMS.BLOCKDIM;
         this.srcX = 144;
         this.srcY = 32;
-        this.srcWidth = 16;
-        this.srcHeight = 13;
         this.updateBB();
+        this.loadImage();
     };
 
-    draw(ctx) {
-        let blockCount = this.w;
-        for (let i = 0; i < blockCount; i++) {
-            ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcWidth, this.srcHeight, (this.x+i) * this.scale - this.game.camera.x, this.y * this.scale - this.game.camera.y, this.scale, this.scale);
-        }
-    };
+    loadImage() {
+        let sW = this.srcWidth;
+        let sH = this.srcHeight;
+        for (var i = 0; i < this.w; i++) 
+            this.ctx.drawImage(this.spritesheet, this.srcX, this.srcY, sW, sH, i * sW, 0, sW, sH);
+    }
+    
 };
 
 class BackgroundWalls {
@@ -223,20 +358,27 @@ class BackgroundWalls {
         this.srcWidth = 16;
         this.srcHeight = 16;
         this.bricks = [];
-        this.loadBricks();
+        this.canvas = document.createElement("Canvas"); 
+	    this.ctx = this.canvas.getContext("2d");
+        this.canvas.width = this.srcWidth * w;
+        this.canvas.height = this.srcHeight * h;
+        this.loadImage();
     };
 
-    // generates a random array of brick types
-    loadBricks() {
-        let blockCountY = this.h;
-        let blockCountX = this.w;
-        for (let i = 0; i < blockCountY; i++) {
+    // generates a random 2d array of brick types
+    loadImage() {
+        let blocksY = this.h;
+        let blocksX = this.w;
+        for (let i = 0; i < blocksY; i++) {
             this.bricks.push([]);
-            for (let j = 0; j < blockCountX; j++) {
-                this.bricks[i].push([]);
-                this.type = randomInt(20);
+            for (let j = 0; j < blocksX; j++) {
+                this.bricks[i].push([j]);
+                this.type = randomInt(9);
                 this.getTileType();
                 this.bricks[i][j] = { x : this.srcX, y : this.srcY };
+                let w = this.srcWidth;
+                let h = this.srcHeight;
+                this.ctx.drawImage(this.spritesheet, this.bricks[i][j].x, this.bricks[i][j].y, w, h, j * w, i * h, w, h);
             }
         }
     };
@@ -262,15 +404,8 @@ class BackgroundWalls {
     };
 
     draw(ctx) {
-        let blockCountY = this.h;
-        let blockCountX = this.w;
-        for (let i = 0; i < blockCountY; i++) {
-            for (let j = 0; j < blockCountX; j++) {
-                ctx.drawImage(this.spritesheet, this.bricks[i][j].x, this.bricks[i][j].y, this.srcWidth, this.srcHeight, (this.x + j) * this.scale - this.game.camera.x, (this.y + i) * this.scale - this.game.camera.y, this.scale, this.scale);
-            }
-        }
-
-    };
+        ctx.drawImage(this.canvas, this.x * this.scale - this.game.camera.x, this.y * this.scale - this.game.camera.y, this.w * this.scale, this.h * this.scale);
+    }
 };
 
 class AbstractBackFeature {
@@ -283,7 +418,7 @@ class AbstractBackFeature {
 }
 
 class Torch extends AbstractBackFeature {
-    constructor(game, x, y) {
+    constructor(game, x, y, w, h, srcWidth, srcHeight) {
         super(game, x, y);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
         this.scale = 5;

@@ -163,7 +163,8 @@ class SceneManager {
     loadLevel(number, usedDoor, doorExitX, doorExitY) {
         // save the state of the enemies and interactables for the current level
         if (!this.title && !this.restart && !this.transition) {
-            this.levelState[this.currentLevel] = { enemies: [...this.game.enemies], interactables: [...this.game.interactables], killCount: this.killCount };
+            this.levelState[this.currentLevel] = { enemies: [...this.game.enemies], interactables: [...this.game.interactables],
+                secrets: [...this.game.secrets], killCount: this.killCount};
             this.lastInventory = this.player.myInventory;
             this.lastHp = this.player.hp;
         } else {
@@ -177,6 +178,8 @@ class SceneManager {
         } else {
             console.log("Loading level " + number);
             this.killCount = !this.levelState[number] ? 0 : this.levelState[number].killCount;
+            console.log(this.killCount);
+            console.log(this.levelState[number]);
             this.currentLevel = number;
             let lvlData = this.levels[number];
             if (usedDoor) {
@@ -418,8 +421,7 @@ class SceneManager {
         //turn off textbox and only set it up when needed
         if (this.myTextBox) this.myTextBox.setMessage("", false);
 
-        //reset quotas
-        this.killCount = 0;
+        //reset quota
         this.killsRequired = 0; //set by the door class later in this method
         this.remainingKills = 0;
 
@@ -466,7 +468,6 @@ class SceneManager {
                 this.game.addEntity(new Walls(this.game, walls.x, h - walls.y - 1, 1, walls.height, walls.type));
             }
         }
-
         if (this.level.signs) {
             for (var i = 0; i < this.level.signs.length; i++) {
                 let sign = this.level.signs[i];
@@ -523,6 +524,14 @@ class SceneManager {
                     this.game.addEntity(e);
                 }
             }
+            if (this.level.flyingeyes) {
+                for (var i = 0; i < scene.flyingeyes.length; i++) {
+                    let flyingeye = scene.flyingeyes[i];
+                    let e = new FlyingEye(this.game, 0, 0, flyingeye.guard);
+                    this.positionEntity(e, flyingeye.x, h - flyingeye.y);
+                    this.game.addEntity(e);
+                }
+            }
             if (this.level.doors) {
                 for (var i = 0; i < this.level.doors.length; i++) {
                     let door = this.level.doors[i];
@@ -532,16 +541,32 @@ class SceneManager {
                     this.killsRequired = Math.max(door.killQuota, this.killsRequired);
                 }
             }
+            if (this.level.secrets) {
+                for (var i = 0; i < this.level.secrets.length; i++) {
+                    let secret = this.level.secrets[i];
+                    if (!secret.found) {
+                        let secrets = [];
+                        for (var j = 0; j < secret.bricks.length; j++) {
+                            let bricks = secret.bricks[j];
+                            secrets.push(new SecretBricks(this.game, bricks.x, h - bricks.y - 1, bricks.width, bricks.height, false));
+                        }
+                        this.game.addEntity(new Secret(this.game, secrets, false));
+                    }
+                }
+            }
         } else { // load the enemies and interactables from their previous state
             this.game.enemies = [...this.levelState[this.currentLevel].enemies];
             this.game.enemies.forEach(enemy => enemy.removeFromWorld = false);
             this.game.interactables = [...this.levelState[this.currentLevel].interactables];
+            this.game.secrets = [...this.levelState[this.currentLevel].secrets];
             var that = this;
             this.game.interactables.forEach(interactable => {
                 // if obelisk, add associated blocks as well
                 if (interactable instanceof Obelisk) {
                     interactable.bricks.removeFromWorld = false;
                     that.game.addEntity(interactable.bricks);
+                } else if (interactable instanceof Door) {
+                    that.killsRequired = Math.max(interactable.killQuota, that.killsRequired);
                 }
                 interactable.removeFromWorld = false
             });
@@ -832,8 +857,7 @@ class Minimap {
                 let myY = brick.y * PARAMS.SCALE;
                 let myW = brick.width * PARAMS.SCALE;
                 let myH = brick.height * PARAMS.SCALE;
-
-                //ctx.fillRect(this.x + myX, this.y + (this.h - myY + 3/2 * PARAMS.SCALE), myW, myH);
+                
                 ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);
             }
         }
@@ -934,6 +958,24 @@ class Minimap {
                 ctx.fillRect(this.x + myX, this.y - myY + (this.h + 1) * PARAMS.SCALE, 3 * myW, 3 * myH);
             }
         }
+        let self = this;
+        this.game.secrets.forEach(function (secret) {
+            if (!secret.found) {
+                secret.secrets.forEach(function (s) {
+                    let myX = s.x * PARAMS.SCALE;
+                    let myY = s.y * PARAMS.SCALE;
+                    let myW = s.w * PARAMS.SCALE;
+                    let myH = s.h * PARAMS.SCALE;
+                    
+                    if (s instanceof SecretBricks)
+                        ctx.fillStyle = self.colors.brick;
+                    ctx.fillRect(self.x + myX, myY -self.y + (self.h-3) * PARAMS.SCALE, myW, myH);
+                    
+                });
+                
+                
+            }
+        });
 
     }
 

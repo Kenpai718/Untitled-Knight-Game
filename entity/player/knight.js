@@ -39,6 +39,9 @@ class Knight extends AbstractPlayer {
         this.crouch = false;
         this.doubleJump = true;
         this.flickerFlag = false;
+        this.bladeBeam1 = true;
+        this.bladeBeam2 = true;
+        this.berserk = false;
         //these two audio variables control which sound effect is playing during the attack combo
         this.playAttackSFX1 = true;
         this.playAttackSFX2 = true;
@@ -472,7 +475,6 @@ class Knight extends AbstractPlayer {
             if (this.crouch) { //crouch attack
                 this.action = this.states.crouch_atk;
             } else { //standing or jumping attack
-
                 //set action based on combo counter.
                 //If attack button was pressed more than once change action to the second attack after the animation is complete
                 this.combo = (this.game.comboCounter > 1 && this.animations[this.facing][this.states.attack1].isDone()) ? true : false;
@@ -485,6 +487,13 @@ class Knight extends AbstractPlayer {
                 }
             }
             this.updateHB();
+            if (this.bladeBeam1 && this.berserk) {
+                this.bladeBeam1 = false;
+                super.bladeBeam();
+            } else if (this.bladeBeam2 && this.animations[this.facing][this.states.attack1].isDone() && this.berserk) {
+                this.bladeBeam2 = false;
+                super.bladeBeam();
+            }
 
             //play
             if (this.playAttackSFX1) {
@@ -501,6 +510,8 @@ class Knight extends AbstractPlayer {
 
                 } else { //end attack
                     this.action = this.game.down || this.touchHole() ? this.states.crouch : this.DEFAULT_ACTION; //back to idle; added case for crouch attacks
+                    this.bladeBeam1 = true;
+                    this.bladeBeam2 = true;
                     this.HB = null;
                     this.game.attack = false; //stop attackin
                     // delete hitbox here
@@ -513,45 +524,41 @@ class Knight extends AbstractPlayer {
 
         } else if (!this.game.attack && this.game.shoot && !this.game.roll) { //only shoot an arrow when not attacking
             if (this.myInventory.arrows > 0 || this.myInventory.arrows == 0 && this.arrow) {
-                if (this.crouch) {
+                if (this.crouch) 
                     this.action = this.states.crouch_shoot;
-                } else {
-                    this.action = this.states.shoot;
-                    let time = this.animations[this.facing][this.action].elapsedTime;
-
-                    //only adjust the direction if using the mouse to shoot
-                    if (!this.game.shootButton) {
-                        let x = this.game.mouse.x + this.game.camera.x;
-                        if (x < this.x + this.width / 2)
-                            this.facing = this.dir.left;
-                        if (x > this.x + this.width / 2)
-                            this.facing = this.dir.right;
-                    }
-                    this.animations[this.facing][this.action].elapsedTime = time;
-                }
-
+                else this.action = this.states.shoot;
             }
             else {
-                if (this.game.down || this.touchHole()) {
+                if (this.game.down || this.touchHole()) 
                     this.action = this.states.crouch_pluck;
-                }
                 else this.action = this.states.pluck;
             }
             let done = this.animations[this.facing][this.action].isDone();
 
+            // shoot arrow
             if (this.animations[this.facing][this.action].currentFrame() == 2 && !this.arrow) {
                 if (this.myInventory.arrows > 0)
                     this.arrow = true;
                 super.shootArrow();
             }
+
+            //only adjust the direction if using the mouse to shoot
+            let time = this.animations[this.facing][this.action].elapsedTime;
+            if (!this.game.shootButton) {
+                let x = this.game.mouse.x + this.game.camera.x;
+                if (x < this.x + this.width / 2)
+                    this.facing = this.dir.left;
+                if (x > this.x + this.width / 2)
+                    this.facing = this.dir.right;
+            }
+            this.animations[this.facing][this.action].elapsedTime = time;
+
             if (done) {
                 this.action = this.game.down || this.touchHole() ? this.states.crouch : this.DEFAULT_ACTION; //back to idle; added case for crouch attacks
                 this.game.shoot = false;
                 this.game.shootButton = false;
                 this.arrow = false;
             }
-
-
         } else {
             //crouch attack
             this.resetAnimationTimers(this.states.crouch_atk);
@@ -819,7 +826,7 @@ class Knight extends AbstractPlayer {
         this.animations[1][this.states.wall_hang] = new Animator(this.spritesheetRight, -3, 1200, 120, 80, 1, 0.2, 0, false, true, false);
         // wall slide = 10
         this.animations[0][this.states.wall_slide] = new Animator(this.spritesheetLeft, 1081, 1280, 120, 80, 3, 0.1, 0, true, true, false);
-        this.animations[1][this.states.wall_slide] = new Animator(this.spritesheetRight, -1, 1280, 120, 80, 3, 0.1, 0, false, true, false);
+        this.animations[1][this.states.wall_slide] = new Animator(this.spritesheetRight, -2, 1280, 120, 80, 3, 0.1, 0, false, true, false);
         // jump -> jump/fall inbetween -> fall
         // jump = 11
         this.animations[0][this.states.jump] = new Animator(this.spritesheetLeft, 1085, 640, 120, 80, 3, 0.1, 0, true, false, false);

@@ -15,6 +15,7 @@ class GameEngine {
         this.enemies = [];
         this.interactables = [];
         this.entities = [];
+        this.secrets = [];
         this.projectiles = [];
         this.information = [];
 
@@ -237,7 +238,7 @@ class GameEngine {
 
     addEntity(entity) {
         const e = entity;
-        if (e instanceof Arrow || e instanceof FlyingEyeProjectile)
+        if (e instanceof Arrow || e instanceof FlyingEyeProjectile || e instanceof BladeBeam)
             this.projectiles.push(e);
         else if (e instanceof AbstractEnemy)
             this.enemies.push(e);
@@ -249,6 +250,8 @@ class GameEngine {
             this.background2.push(e);
         else if (e instanceof AbstractInteractable)
             this.interactables.push(e);
+        else if (e instanceof Secret) 
+            this.secrets.push(e);
         else if (e instanceof AbstractBackFeature)
             this.foreground1.push(entity);
         else if (e instanceof AbstractBarrier)
@@ -271,6 +274,8 @@ class GameEngine {
             this.background2.unshift(e);
         else if (e instanceof AbstractInteractable)
             this.interactables.unshift(e);
+        else if (e instanceof AbstractSecret)
+            this.secrets.unshift(e);
         else if (e instanceof AbstractBackFeature)
             this.foreground1.unshift(entity);
         else if (e instanceof AbstractBarrier)
@@ -288,20 +293,23 @@ class GameEngine {
         this.drawLayer(this.background2);
         this.drawLayer(this.foreground1);
         this.drawLayer(this.interactables);
-        this.drawLayer(this.foreground2);
         this.drawLayer(this.enemies);
         this.drawLayer(this.entities);
+        this.drawLayer(this.foreground2);
+        this.drawLayer(this.secrets);
         this.drawLayer(this.projectiles);
         this.drawLayer(this.information);
 
         if (PARAMS.DEBUG) {
             this.drawDebug(this.foreground1);
             this.drawDebug(this.interactables);
-            this.drawDebug(this.foreground2);
             this.drawDebug(this.enemies);
             this.drawDebug(this.entities);
+            this.drawDebug(this.foreground2);
+            this.drawDebug(this.secrets);
             this.drawDebug(this.projectiles);
             this.drawDebug(this.information);
+            
         }
 
         //update the camera (scene manager)
@@ -327,6 +335,7 @@ class GameEngine {
         this.updateLayer(this.projectiles);
         this.updateLayer(this.foreground1);
         this.updateLayer(this.information);
+        this.updateLayer(this.secrets);
 
         this.removeFromLayer(this.background1);
         this.removeFromLayer(this.background2);
@@ -337,6 +346,7 @@ class GameEngine {
         this.removeFromLayer(this.entities);
         this.removeFromLayer(this.projectiles);
         this.removeFromLayer(this.information);
+        this.removeFromLayer(this.secrets);
 
         //update the camera (scene manager)
         this.camera.update();

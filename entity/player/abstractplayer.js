@@ -52,6 +52,10 @@ class AbstractPlayer extends AbstractEntity {
         }
     }
 
+    bladeBeam() {
+        this.game.addEntityToFront(new BladeBeam(this.game, this.BB.left, this.BB.top, this.facing));
+    }
+
     /**
      * Chooses arrow target based on if user shot an arrow with
      * mouse or keyboard input.

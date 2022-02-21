@@ -52,9 +52,9 @@ const PHYSIC_SCALER = 3; //scalar for some physics
 const PLAYER_JUMP_HEIGHT = 1500; //players base jump height
 const FALL_GRAVITY = 1.2; //gravity put on player's fall acc
 const PLAYER_PHYSICS = {
-    MAX_WALK: 95 * PHYSIC_SCALER,   
-    MAX_RUN: 155 * PHYSIC_SCALER,   
-    ACC_WALK: 180 * PHYSIC_SCALER,  
+    MAX_WALK: 95 * PHYSIC_SCALER,
+    MAX_RUN: 155 * PHYSIC_SCALER,
+    ACC_WALK: 180 * PHYSIC_SCALER,
     ACC_RUN: 200 * PHYSIC_SCALER,
     ROLL_SPD: 400 * PHYSIC_SCALER,
     SKID: 3000,
@@ -67,7 +67,7 @@ const PLAYER_PHYSICS = {
     ACC_FALL: PLAYER_JUMP_HEIGHT * FALL_GRAVITY,
     MAX_SLIDE: 150 * PHYSIC_SCALER,
     ACC_SLIDE: 750
-    
+
 };
 
 /**Global stats that define an entity */
@@ -91,6 +91,15 @@ const STATS = {
         HEIGHT: 32,
         SCALE: 2,
         DAMAGE: 10
+    },
+
+    BLADE_BEAM: {
+        NAME: "Blade Beam",
+        MAX_HP: 10,
+        WIDTH: 40,
+        HEIGHT: 20,
+        SCALE: 5,
+        DAMAGE: 30
     },
 
     /*enemy stats*/
@@ -133,17 +142,26 @@ const STATS = {
         HEIGHT: 80,
         DAMAGE: 20,
         PHYSICS: {MAX_RUN: 500, MAX_FALL: 400}
-        
+
     },
 
     FLYINGEYE: {
         NAME: "Flying Eye",
         MAX_HP: 30,
-        SCALE: 2,
-        WIDTH: 150,
-        HEIGHT: 150,
+        SCALE: 2.5,
+        WIDTH: 22,
+        HEIGHT: 25,
         DAMAGE: 5,
-        PHYSICS: {MAX_RUN: 450, MAX_FALL: 610}
+        PHYSICS: {MAX_RUN: 400, MAX_FALL: 200}
+    },
+
+    EYE_PROJECTILE: {
+        NAME: "Flying Eye Projectile",
+        MAX_HP: 10,
+        WIDTH: 16,
+        HEIGHT: 16,
+        SCALE: 2.5,
+        DAMAGE: 2.5
     },
 
 }
@@ -175,6 +193,9 @@ const SFX = {
     DOOR_ENTER: "./sound/sfx/door_enter.wav",
     CHEST_OPEN: "./sound/sfx/minecraft_chest_open.wav",
     OBELISK_ON: "./sound/sfx/loz_secret.mp3",
+    NEW_ITEM: "./sound/sfx/zelda-new-item.mp3",
+    NEW_HEART: "./sound/sfx/zelda-new-heart.mp3",
+    PURCHASE: "./sound/sfx/ka-ching.mp3",
 
 
 };

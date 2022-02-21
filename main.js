@@ -8,6 +8,7 @@ ASSET_MANAGER.queueDownload("./sprites/knight/knightLeft.png");
 ASSET_MANAGER.queueDownload("./sprites/knight/knightRight.png");
 ASSET_MANAGER.queueDownload("./sprites/projectile/arrow.png");
 ASSET_MANAGER.queueDownload("./sprites/projectile/arrowupgrades.png");
+ASSET_MANAGER.queueDownload("./sprites/projectile/bladeBeam.png");
 ASSET_MANAGER.queueDownload("./sprites/Hearts.png");
 
 //enemies
@@ -62,6 +63,9 @@ ASSET_MANAGER.queueDownload(SFX.SHIELD_BLOCK);
 ASSET_MANAGER.queueDownload(SFX.DOOR_ENTER);
 ASSET_MANAGER.queueDownload(SFX.CHEST_OPEN);
 ASSET_MANAGER.queueDownload(SFX.OBELISK_ON);
+ASSET_MANAGER.queueDownload(SFX.NEW_ITEM);
+ASSET_MANAGER.queueDownload(SFX.NEW_HEART);
+ASSET_MANAGER.queueDownload(SFX.PURCHASE);
 
 
 
