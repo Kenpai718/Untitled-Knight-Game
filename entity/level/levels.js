@@ -579,7 +579,7 @@ var level1_3 = {
         },
 
     ],
-    npcs: [{x: 81, y:28}
+    npcs: [{x: 51, y:6}
 
     ],
 
@@ -621,7 +621,7 @@ var level1_3 = {
     ],
     chests: [
         { x: 77, y: 15, direction: 0 },
-        { x: 53, y: 5, directon: 1 },
+        { x: 54, y: 5, directon: 0},
     ],
     bricks: [
         { x: 120, y: 42, width: 1, height: 43 },
