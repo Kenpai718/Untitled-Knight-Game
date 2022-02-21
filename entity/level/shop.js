@@ -74,11 +74,14 @@ class Shop {
         this.game.entities.forEach(function (entity) {
             let mouseBB = new BoundingBox(that.game.mouse.x, that.game.mouse.y, 1, 1);
 
+            if(that.game.click) ASSET_MANAGER.playAsset(SFX.CLICK);
+
             if(that.game.click && mouseBB.collide(that.ButtonBB1)){
                 console.log("Button 1 : Arrow Pack");
                 if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= that.arrowPackCost[entity.myInventory.arrowUpgrade]){
                     entity.myInventory.diamonds -= that.arrowPackCost[entity.myInventory.arrowUpgrade];
                     entity.myInventory.arrows += 10;
+                    ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
                 }
             }
             else if(that.game.click && mouseBB.collide(that.ButtonBB2)){
@@ -86,6 +89,7 @@ class Shop {
                 if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= 10){
                     entity.myInventory.diamonds -= 10;
                     entity.myInventory.potions += 1;
+                    ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
                 }
             }
             else if(that.game.click && mouseBB.collide(that.ButtonBB3)){
@@ -94,21 +98,10 @@ class Shop {
                     entity.myInventory.diamonds -= that.healthCost[entity.myInventory.healthUpgrade];
                     entity.myInventory.healthUpgrade += 1;
 
-                    console.log(entity.max_hp);
-                    entity.max_hp += 10; // TO BE FIXED
-                    //entity.myHearts.push(heart);
-
-                    /*  It appears increasing max health on player works..
-
-                    Line 150 - sceneManager.js
-                    this.heartsbar = new HeartBar(this.game, this.player);
-
-                    Line 8 - healthbar.js 
-                    this.max_hearts = this.player.max_hp / this.hp_per_heart;
-
-                    Line 19 - healthbar.js 
-                    this.myHearts.push(heart);
-                    */
+                    //add hearts to heartbar and player
+                    let player_hearts = that.game.camera.heartsbar;
+                    player_hearts.addHeart();
+                    ASSET_MANAGER.playAsset(SFX.NEW_HEART);
                 }
             }
             else if(that.game.click && mouseBB.collide(that.ButtonBB4)){
@@ -116,6 +109,7 @@ class Shop {
                 if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= that.attackCost[entity.myInventory.attackUpgrade]){
                     entity.myInventory.diamonds -= that.attackCost[entity.myInventory.attackUpgrade];
                     entity.myInventory.attackUpgrade += 1;
+                    ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
                 }
             }
             else if(that.game.click && mouseBB.collide(that.ButtonBB5)){
@@ -124,6 +118,7 @@ class Shop {
                     entity.myInventory.diamonds -= that.arrowCost[entity.myInventory.arrowUpgrade];
                     entity.myInventory.arrowUpgrade += 1;
                     entity.myInventory.arrows = Math.floor(entity.myInventory.arrows/2); 
+                    ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
                 }
             }
             else if(that.game.click && mouseBB.collide(that.ButtonBB6)){
@@ -131,6 +126,7 @@ class Shop {
                 if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= that.armorCost[entity.myInventory.armorUpgrade]){
                     entity.myInventory.diamonds -= that.armorCost[entity.myInventory.armorUpgrade];
                     entity.myInventory.armorUpgrade += 1;
+                    ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
                 }
             }
 
@@ -138,6 +134,7 @@ class Shop {
 
             that.game.click = false;
         });
+
 
     };
 
@@ -216,10 +213,10 @@ class Shop {
         ctx.font = ctx.font.replace(/\d+px/, "20px");
         ctx.fillText("Arrow Pack",      this.x + 10, this.y + this.height / 7 * 1.3);
         ctx.fillText("Health Potion",    this.x + 10, this.y + this.height / 7 * 2.3);
-        ctx.fillText("Health Upgrade",  this.x + 10, this.y + this.height / 7 * 3.3);
-        ctx.fillText("Attack Upgrade",  this.x + 10, this.y + this.height / 7 * 4.3);
-        ctx.fillText("Arrow Upgrade",   this.x + 10, this.y + this.height / 7 * 5.3);
-        ctx.fillText("Armor Upgrade",   this.x + 10, this.y + this.height / 7 * 6.3);
+        ctx.fillText("Max-Health Upgrade",  this.x + 10, this.y + this.height / 7 * 3.3);
+        ctx.fillText("Attack Upgrade [NOT IMPLEMENTED]",  this.x + 10, this.y + this.height / 7 * 4.3);
+        ctx.fillText("Arrow Upgrade  [NOT IMPLEMENTED]",   this.x + 10, this.y + this.height / 7 * 5.3);
+        ctx.fillText("Armor Upgrade  [NOT IMPLEMENTED]",   this.x + 10, this.y + this.height / 7 * 6.3);
 
 
         // Shop Icons
