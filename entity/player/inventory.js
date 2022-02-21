@@ -10,7 +10,7 @@ class Inventory {
         const STARTING_ATTACK_UPGRADE = 0;
         const STARTING_ARROW_UPGRADE = 0;
         const STARTING_ARMOR_UPGRADE = 0;
-        this.maxStack = 599;
+        this.maxStack = 999;
         this.maxUpgrade = 4;
 
         //inventory
