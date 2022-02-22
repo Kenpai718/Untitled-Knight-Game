@@ -310,6 +310,7 @@ class SceneManager {
                 this.game.click = null;
             }
         }
+
     };
 
     updateGUI() {
@@ -398,6 +399,18 @@ class SceneManager {
             ctx.fillText("Restart Level", this.restartLevelBB.x, this.restartLevelBB.y);
             ctx.fillStyle = this.textColor == 3 ? "Grey" : "White";
             ctx.fillText("Return To Menu", this.returnToMenuBB.x, this.returnToMenuBB.y);
+        }
+
+        //pause screen
+        if(PAUSED) {
+            var fontSize = 60;
+            ctx.font = fontSize + 'px "Press Start 2P"';
+            
+            let title = "PAUSED";
+            ctx.fillStyle = "Orchid";
+            ctx.fillText(title, (this.game.surfaceWidth / 2) - ((fontSize * title.length) / 2) + 5, fontSize * 9 + 5);
+            ctx.fillStyle = "GhostWhite";
+            ctx.fillText(title, (this.game.surfaceWidth / 2) - ((fontSize * title.length) / 2), fontSize * 9);
         }
     };
 
