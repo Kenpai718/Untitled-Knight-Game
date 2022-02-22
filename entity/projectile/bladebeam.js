@@ -12,6 +12,11 @@ class BladeBeam extends AbstractEntity {
         this.hit = false;
         this.loadAnimations();
         this.updateBB();
+
+        //how long the blade beam lasts before it fades out
+        this.duration = 0;
+        this.maxDuration = 0.5;
+        this.myOpacity = 100;
     };
 
     loadAnimations() {
@@ -26,6 +31,14 @@ class BladeBeam extends AbstractEntity {
 
     update() {
         const TICK = this.game.clockTick;
+        //remove from world after set time
+        this.duration += TICK;
+        if(this.duration > this.maxDuration) {
+            if(this.myOpacity > 0) this.myOpacity -= 1;
+            if(this.myOpacity <= 0) this.removeFromWorld = true;
+        }
+
+
         this.x += (this.velocity * TICK);
         this.updateBB();
         let self = this;
@@ -52,10 +65,13 @@ class BladeBeam extends AbstractEntity {
         if (this.x > 3 / 2 * w + this.game.camera.x || this.x + w / 2 < this.game.camera.x ||
             this.y > h + w / 2 + this.game.camera.y || this.y + w / 2 < this.game.camera.y)
         this.removeFromWorld = true;
+
     };
 
     draw(ctx) {
+        ctx.filter = "Opacity(" + this.myOpacity + "%)";
         this.animations[this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
+        ctx.filter = "none";
     };
 
     setDamagedState() {};

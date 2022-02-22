@@ -217,6 +217,7 @@ class SceneManager {
         this.clearLayer(this.game.foreground2);
         this.clearLayer(this.game.enemies);
         this.clearLayer(this.game.entities);
+        this.clearLayer(this.game.secrets);
         this.clearLayer(this.game.projectiles);
         this.clearLayer(this.game.information);
     };
@@ -291,10 +292,13 @@ class SceneManager {
                 } else if (this.restartLevelBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     this.currentLevel = 1;
                     this.levelState = [];
+                    this.lastPlayer = null;
+                    this.game.attack = false;
                     this.loadLevel(this.currentLevel, false);
                 } else if (this.returnToMenuBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     this.currentLevel = 1;
                     this.levelState = [];
+                    this.lastPlayer = null;
                     this.title = true;
                 }
                 this.game.click = null;
