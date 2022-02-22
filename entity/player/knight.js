@@ -149,7 +149,6 @@ class Knight extends AbstractPlayer {
             this.flickerFlag = !this.flickerFlag;
         } else {
             if (this.berserk) {
-                console.log(this.berserkFilter);
                 ctx.filter = "drop-shadow(0 0 " + this.berserkFilter + "rem crimson) opacity(100%)";
             }
             //white border to indicate roll invincibility
