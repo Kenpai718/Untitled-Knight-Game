@@ -306,8 +306,8 @@ class GameEngine {
             this.drawDebug(this.enemies);
             this.drawDebug(this.entities);
             this.drawDebug(this.foreground2);
-            this.drawDebug(this.secrets);
             this.drawDebug(this.projectiles);
+            this.drawDebug(this.secrets);
             this.drawDebug(this.information);
             
         }

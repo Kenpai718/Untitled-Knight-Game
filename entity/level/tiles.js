@@ -36,35 +36,78 @@ class AbstractBarrier {
 }
 
 class AbstractSecret extends AbstractBarrier {
-    constructor(game, x, y, w, h, sW, sH, found) {
+    constructor(game, x, y, w, h, sW, sH, found, indicate) {
         super(game, x, y, w, h, sW, sH);
         this.found = found;
+        this.indicate = indicate;
         this.myOpacity = 100;
+        this.myBrightness = 100;
+        this.up = true;
     }
 
     draw(ctx) {
-        if (!this.found) {
+        if (this.indicate) {
+            ctx.filter = "brightness(" + this.myBrightness + "%) ";
+            if (this.up) this.myBrightness += 10 * this.game.clockTick;
+            else this.myBrightness -= 10 * this.game.clockTick;
+            if (this.myBrightness >= 130) {
+                this.up = false;
+                this.myBrightness = 130;
+            }
+            if (this.myBrightness <= 75) {
+                this.up = true;
+                this.myBrightness = 75;
+            }
+        }
+        if (!this.found) {        
             super.draw(ctx);
         }
         else {
             if (this.myOpacity > 0) {
-                this.myOpacity -= 125 * this.game.clockTick;
+                this.myOpacity -= 25 * this.game.clockTick;
                 if (this.myOpacity < 0) this.myOpacity = 0;
-                ctx.filter = "opacity(" + this.myOpacity + "%)";
+                if (this.indicate) ctx.filter += "opacity(" + this.myOpacity + "%)";
+                else ctx.filter = "opacity(" + this.myOpacity + "%)";
                 ctx.drawImage(this.canvas, this.x * this.scale - this.game.camera.x, this.y * this.scale - this.game.camera.y, this.w * this.scale, this.h * this.scale);
-                ctx.filter = "none";
             }
             else {
                 this.remove = true;
             }
         }
+        ctx.filter = "none";
     }
 
 }
 
 class Secret {
-    constructor(game, secrets, found) {
-        Object.assign(this, {game, secrets, found});
+    constructor(game, secrets, found, indicate) {
+        Object.assign(this, {game, secrets, found, indicate});
+        this.myOpacity = 100;
+        this.myBrightness = 100;
+        this.up = true;
+        this.scale = PARAMS.BLOCKDIM;
+        this.lower = {x: Number.MAX_VALUE, y: Number.MAX_VALUE};
+        this.upper = {x: Number.MIN_VALUE, y: Number.MIN_VALUE};
+        let self = this;
+        secrets.forEach(function(secret) {
+            if (secret.x < self.lower.x)
+                self.lower.x = secret.x;
+            if (secret.y < self.lower.y)
+                self.lower.y = secret.y;
+            if ((secret.x + secret.w) * secret.srcWidth > self.upper.x)
+                self.upper.x = (secret.x + secret.w) * secret.srcWidth;
+            if ((secret.y + secret.h) * secret.srcHeight > self.upper.y)
+                self.upper.y = (secret.y + secret.h) * secret.srcHeight;
+        })
+        this.canvas = document.createElement("Canvas"); 
+	    this.ctx = this.canvas.getContext("2d");
+        this.canvas.width = this.upper.x;
+        this.canvas.height = this.upper.y;
+        secrets.forEach(function(secret) {
+            let x = secret.x - self.lower.x;
+            let y = secret.y - self.lower.y;
+            self.ctx.drawImage(secret.canvas, x * secret.srcWidth, y * secret.srcHeight, secret.w * secret.srcWidth, secret.h * secret.srcHeight);
+        })
     }
 
     update() {
@@ -92,6 +135,37 @@ class Secret {
 
     draw(ctx) {
         let self = this;
+        if (this.indicate) {
+            ctx.filter = "brightness(" + this.myBrightness + "%) ";
+            if (this.up) this.myBrightness += 25 * this.game.clockTick;
+            else this.myBrightness -= 25 * this.game.clockTick;
+            if (this.myBrightness >= 125) {
+                this.up = false;
+                this.myBrightness = 125;
+            }
+            if (this.myBrightness <= 75) {
+                this.up = true;
+                this.myBrightness = 75;
+            }
+        }
+        if (!this.found) {        
+            ctx.drawImage(this.canvas, this.lower.x * this.scale - this.game.camera.x, this.lower.y * this.scale - this.game.camera.y, this.upper.x / 16 * this.scale, this.upper.y / 16 * this.scale);
+        }
+        else {
+            this.myOpacity -= 50 * this.game.clockTick;
+            if (this.myOpacity < 0) this.myOpacity = 0;
+            if (this.myOpacity > 0) {
+                ctx.filter = "opacity(" + this.myOpacity + "%)";
+                ctx.drawImage(this.canvas, this.lower.x * this.scale - this.game.camera.x, this.lower.y * this.scale - this.game.camera.y, this.upper.x / 16 * this.scale, this.upper.y / 16 * this.scale);
+            }
+            else {
+                ASSET_MANAGER.playAsset(SFX.OBELISK_ON);
+                this.removeFromWorld = true;
+            }
+        }
+        ctx.filter = "none";
+        
+        /*
         if (this.found) {
             this.secrets.forEach(function(secret) {
                 secret.found = true;
@@ -106,8 +180,9 @@ class Secret {
             }
         }
         if (this.secrets.length == 0) {
+            ASSET_MANAGER.playAsset(SFX.OBELISK_ON);
             this.removeFromWorld = true;
-        }
+        }*/
     }
 
     drawDebug(ctx) {
@@ -118,8 +193,8 @@ class Secret {
 }
 
 class SecretBricks extends AbstractSecret {
-    constructor(game, x, y, w, h, found) {
-        super(game, x, y, w, h, 16, 16, found);
+    constructor(game, x, y, w, h, found, indicate) {
+        super(game, x, y, w, h, 16, 16, found, indicate);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
         this.scale = PARAMS.BLOCKDIM;
         // only need to worry about these if you want a specific kind of brick
