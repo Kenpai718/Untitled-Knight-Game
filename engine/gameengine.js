@@ -302,9 +302,9 @@ class GameEngine {
         this.drawLayer(this.interactables);
         this.drawLayer(this.enemies);
         this.drawLayer(this.entities);
-        this.drawLayer(this.foreground2);
-        this.drawLayer(this.secrets);
         this.drawLayer(this.projectiles);
+        this.drawLayer(this.foreground2);
+        this.drawLayer(this.secrets);    
         this.drawLayer(this.information);
 
         if (PARAMS.DEBUG) {

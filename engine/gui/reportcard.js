@@ -29,7 +29,7 @@
         let theLevelTime = this.game.camera.levelTimer;
 
         let labels = [
-            "Report Card for Level " + this.game.camera.level.label,
+            "Report Card up to Level " + this.game.camera.level.label,
             "--------------------------",
             this.game.camera.getLevelTimer() + " to complete!",
             this.game.camera.killCount + " enemies defeated",

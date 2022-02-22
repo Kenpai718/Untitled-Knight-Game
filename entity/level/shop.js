@@ -117,7 +117,7 @@ class Shop {
                 if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= that.arrowCost[entity.myInventory.arrowUpgrade]){
                     entity.myInventory.diamonds -= that.arrowCost[entity.myInventory.arrowUpgrade];
                     entity.myInventory.arrowUpgrade += 1;
-                    entity.myInventory.arrows = Math.floor(entity.myInventory.arrows/2); 
+                    //entity.myInventory.arrows = Math.floor(entity.myInventory.arrows/2); 
                     ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
                 }
             }
@@ -215,7 +215,7 @@ class Shop {
         ctx.fillText("Health Potion",    this.x + 10, this.y + this.height / 7 * 2.3);
         ctx.fillText("Max-Health Upgrade",  this.x + 10, this.y + this.height / 7 * 3.3);
         ctx.fillText("Attack Upgrade [NOT IMPLEMENTED]",  this.x + 10, this.y + this.height / 7 * 4.3);
-        ctx.fillText("Arrow Upgrade  [NOT IMPLEMENTED]",   this.x + 10, this.y + this.height / 7 * 5.3);
+        ctx.fillText("Arrow Upgrade",   this.x + 10, this.y + this.height / 7 * 5.3);
         ctx.fillText("Armor Upgrade  [NOT IMPLEMENTED]",   this.x + 10, this.y + this.height / 7 * 6.3);
 
 
