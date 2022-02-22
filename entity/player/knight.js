@@ -9,6 +9,8 @@ class Knight extends AbstractPlayer {
         // get spritesheets
         this.spritesheetRight = ASSET_MANAGER.getAsset("./sprites/knight/knightRight.png");
         this.spritesheetLeft = ASSET_MANAGER.getAsset("./sprites/knight/knightLeft.png");
+        this.armorRight = ASSET_MANAGER.getAsset("./sprites/knight/armorRight.png");
+        this.armorLeft = ASSET_MANAGER.getAsset("./sprites/knight/armorLeft.png");
 
         //setup variable mapping for the states. Labeled for ease of use
         this.dir = { left: 0, right: 1 }; //directions
@@ -65,6 +67,8 @@ class Knight extends AbstractPlayer {
         //animations
         this.animations = [];
         this.loadAnimations();
+        this.armor = [];
+        this.loadArmor();
         this.updateBB();
     };
 
@@ -130,11 +134,15 @@ class Knight extends AbstractPlayer {
                 ctx.filter = "drop-shadow(0 0 0.2rem crimson) opacity(85%)";
             }
             this.animations[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
+            //ctx.filter = "saturate(500%) hue-rotate(135deg)"; // use this for knight's armor color
+            this.armor[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
             this.flickerFlag = !this.flickerFlag;
         } else {
             //white border to indicate roll invincibility
             //if(this.game.roll) ctx.filter = "drop-shadow(0 0 0.15rem ghostwhite)";
             this.animations[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
+            //ctx.filter = "saturate(500%) hue-rotate(135deg)"; // use this for knight's armor color
+            this.armor[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
             //ctx.filter = "none";
         }
 
@@ -625,10 +633,10 @@ class Knight extends AbstractPlayer {
     }
 
     /**
- * Adjusts the position of player based on current velocity
- * The velocity was changed by player actions on keyboard
- * @param {*} TICK
- */
+     * Adjusts the position of player based on current velocity
+     * The velocity was changed by player actions on keyboard
+     * @param {*} TICK
+    */
     setVelocityAndPosition(TICK) {
         /**SET THE VELOCITY OF THE PLAYER */
         //constant falling velocity, different depending on state
@@ -676,6 +684,8 @@ class Knight extends AbstractPlayer {
     resetAnimationTimers(action) {
         this.animations[0][action].elapsedTime = 0;
         this.animations[1][action].elapsedTime = 0;
+        this.armor[0][action].elapsedTime = 0;
+        this.armor[1][action].elapsedTime = 0;
     }
 
     /**Attack/Damage Logic helper methods */
@@ -862,6 +872,87 @@ class Knight extends AbstractPlayer {
         // death = 19 (special property so might be better to just have it called only when the player dies)
         this.animations[0][this.states.death] = new Animator(this.spritesheetLeft, 365, 400, 120, 80, 9, 0.1, 0, true, false, false);
         this.animations[1][this.states.death] = new Animator(this.spritesheetRight, -5, 400, 120, 80, 9, 0.1, 0, false, false, false);
+    };
+
+    loadArmor() {
+        let numDir = 2;
+        let numStates = 21;
+        for (var i = 0; i < numDir; i++) {
+            this.armor.push([]);
+            for (var j = 0; j < numStates; j++) {
+                this.armor[i].push([]);
+            }
+        }
+
+        //states: 1-10
+        // idle = 0
+        this.armor[0][this.states.idle] = new Animator(this.armorLeft, 245, 560, 120, 80, 10, 0.1, 0, true, true, false);
+        this.armor[1][this.states.idle] = new Animator(this.armorRight, -5, 560, 120, 80, 10, 0.1, 0, false, true, false);
+        // run = 1
+        this.armor[0][this.states.run] = new Animator(this.armorLeft, 245, 880, 120, 80, 10, 0.1, 0, true, true, false);
+        this.armor[1][this.states.run] = new Animator(this.armorRight, -5, 880, 120, 80, 10, 0.1, 0, false, true, false);
+        // crouch = 2
+        this.armor[0][this.states.crouch] = new Animator(this.armorLeft, 1205, 80, 120, 80, 1, 1, 0, true, true, false);
+        this.armor[1][this.states.crouch] = new Animator(this.armorRight, 115, 80, 120, 80, 1, 1, 0, false, true, false);
+        // crouch walk = 3
+        this.armor[0][this.states.crouch_walk] = new Animator(this.armorLeft, 485, 240, 120, 80, 8, 0.1, 0, true, true, false);
+        this.armor[1][this.states.crouch_walk] = new Animator(this.armorRight, -5, 240, 120, 80, 8, 0.1, 0, false, true, false);
+        // crouch attack = 4
+        this.armor[0][this.states.crouch_atk] = new Animator(this.armorLeft, 965, 160, 120, 80, 4, 0.08, 0, true, false, false);
+        this.armor[1][this.states.crouch_atk] = new Animator(this.armorRight, -5, 160, 120, 80, 4, 0.08, 0, false, false, false);
+        // crouch pluck = 6
+        this.armor[0][this.states.crouch_shoot] = new Animator(this.armorLeft, 965, 1440, 120, 80, 4, 0.1, 0, true, false, false);
+        this.armor[1][this.states.crouch_shoot] = new Animator(this.armorRight, -5, 1440, 120, 80, 4, 0.1, 0, false, false, false);
+        // crouch shoot = 5
+        this.armor[0][this.states.crouch_pluck] = new Animator(this.armorLeft, 965, 1600, 120, 80, 4, 0.1, 0, true, false, false);
+        this.armor[1][this.states.crouch_pluck] = new Animator(this.armorRight, -5, 1600, 120, 80, 4, 0.1, 0, false, false, false);
+        // roll = 7
+        this.armor[0][this.states.roll] = new Animator(this.armorLeft, 0, 800, 120, 80, 12, 0.083, 0, true, false, false);
+        this.armor[1][this.states.roll] = new Animator(this.armorRight, 0, 800, 120, 80, 12, 0.083, 0, false, false, false);
+        // wall climb = 8
+        this.armor[0][this.states.wall_climb] = new Animator(this.armorLeft, 608, 1120, 120, 80, 7, 0.1, 0, true, false, false);
+        this.armor[1][this.states.wall_climb] = new Animator(this.armorRight, -8, 1120, 120, 80, 7, 0.1, 0, false, false, false);
+        // wall hang = 9
+        this.armor[0][this.states.wall_hang] = new Animator(this.armorLeft, 1323, 1200, 120, 80, 1, 0.2, 0, true, true, false);
+        this.armor[1][this.states.wall_hang] = new Animator(this.armorRight, -3, 1200, 120, 80, 1, 0.2, 0, false, true, false);
+        // wall slide = 10
+        this.armor[0][this.states.wall_slide] = new Animator(this.armorLeft, 1081, 1280, 120, 80, 3, 0.1, 0, true, true, false);
+        this.armor[1][this.states.wall_slide] = new Animator(this.armorRight, -2, 1280, 120, 80, 3, 0.1, 0, false, true, false);
+        // jump -> jump/fall inbetween -> fall
+        // jump = 11
+        this.armor[0][this.states.jump] = new Animator(this.armorLeft, 1085, 640, 120, 80, 3, 0.1, 0, true, false, false);
+        this.armor[1][this.states.jump] = new Animator(this.armorRight, -5, 640, 120, 80, 3, 0.1, 0, false, false, false);
+        // jump/fall inbetween = 12
+        this.armor[0][this.states.jump_to_fall] = new Animator(this.armorLeft, 1205, 720, 120, 80, 2, 0.1, 0, true, false, false);
+        this.armor[1][this.states.jump_to_fall] = new Animator(this.armorRight, -5, 720, 120, 80, 2, 0.1, 0, false, false, false);
+        // fall = 13
+        this.armor[0][this.states.falling] = new Animator(this.armorLeft, 1085, 480, 120, 80, 3, 0.1, 0, true, true, false);
+        this.armor[1][this.states.falling] = new Animator(this.armorRight, -5, 480, 120, 80, 3, 0.1, 0, false, true, false);
+        // turn around = 14
+        this.armor[0][this.states.turn_around] = new Animator(this.armorLeft, 1085, 1040, 120, 80, 3, 0.1, 0, true, false, false);
+        this.armor[1][this.states.turn_around] = new Animator(this.armorRight, -5, 1040, 120, 80, 3, 0.1, 0, false, false, false);
+        // slide = 15
+        this.armor[0][this.states.slide] = new Animator(this.armorLeft, 960, 960, 120, 80, 4, 0.1, 0, true, true, false);
+        this.armor[1][this.states.slide] = new Animator(this.armorRight, 0, 960, 120, 80, 4, 0.1, 0, false, true, false);
+
+        //attack combo (on ground or in air)
+        //Note: Slash 1 is a faster attack but less damage. Slash 2 is slower but more damage
+        //slash 1 = 16
+        this.armor[0][this.states.attack1] = new Animator(this.armorLeft, 725, 0, 120, 80, 6, 0.09, 0, true, false, false);
+        this.armor[1][this.states.attack1] = new Animator(this.armorRight, -5, 0, 120, 80, 6, 0.09, 0, false, false, false);
+        //slash 2 = 17
+        this.armor[0][this.states.attack2] = new Animator(this.armorLeft, 245, 0, 120, 80, 6, 0.1, 0, true, false, false);
+        this.armor[1][this.states.attack2] = new Animator(this.armorRight, 475, 0, 120, 80, 6, 0.1, 0, false, false, false);
+        //shoot = 18
+        this.armor[0][this.states.shoot] = new Animator(this.armorLeft, 965, 1360, 120, 80, 4, 0.1, 0, true, false, false);
+        this.armor[1][this.states.shoot] = new Animator(this.armorRight, -5, 1360, 120, 80, 4, 0.1, 0, false, false, false);
+        // pluck = 19
+        this.armor[0][this.states.pluck] = new Animator(this.armorLeft, 965, 1520, 120, 80, 4, 0.1, 0, true, false, false);
+        this.armor[1][this.states.pluck] = new Animator(this.armorRight, -5, 1520, 120, 80, 4, 0.1, 0, false, false, false);
+
+        // death = 19 (special property so might be better to just have it called only when the player dies)
+        this.armor[0][this.states.death] = new Animator(this.armorLeft, 365, 400, 120, 80, 9, 0.1, 0, true, false, false);
+        this.armor[1][this.states.death] = new Animator(this.armorRight, -5, 400, 120, 80, 9, 0.1, 0, false, false, false);
     };
 
     /**Offset the bounding box based on action state */
