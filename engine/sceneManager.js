@@ -301,10 +301,13 @@ class SceneManager {
                 } else if (this.restartLevelBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     this.currentLevel = 1;
                     this.levelState = [];
+                    this.lastPlayer = null;
+                    this.game.attack = false;
                     this.loadLevel(this.currentLevel, false);
                 } else if (this.returnToMenuBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     this.currentLevel = 1;
                     this.levelState = [];
+                    this.lastPlayer = null;
                     this.title = true;
                 }
                 this.game.click = null;
