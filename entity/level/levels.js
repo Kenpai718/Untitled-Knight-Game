@@ -209,7 +209,7 @@ var level1_1 = {
     ],
     ground: [
         { x: 0, y: 0, width: 15, height: 1, type: 1 },
-        { x: 60, y: 0, width: 34, height: 1, type: 1 },
+        { x: 60, y: 0, width: 47, height: 1, type: 1 },
         { x: 15, y: 1, width: 1, height: 1, type: 0 },
         { x: 16, y: 1, width: 1, height: 1, type: 1 },
         { x: 17, y: 1, width: 1, height: 1, type: 2 },
@@ -249,7 +249,7 @@ var level1_1 = {
         { x: 28, y: 1, width: 31, height: 1 },
         { x: 15, y: 0, width: 3, height: 1 },
         { x: 20, y: 0, width: 40, height: 1 },
-        { x: 94, y: 0, width: 26, height: 1 }
+        { x: 107, y: 0, width: 13, height: 1 }
     ],
     walls: [
         { x: -1, y: 15, height: 16, type: 0 },
@@ -262,7 +262,8 @@ var level1_1 = {
         { x: 120, y: 15, height: 16, type: 0 }
     ],
     secrets: [
-        {
+        {   
+            indicate: true,
             bricks: [
                 {x: 94, y: 1, width: 1, height: 1},
                 {x: 99, y: 8, width: 4, height: 1},

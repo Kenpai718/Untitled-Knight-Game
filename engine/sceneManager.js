@@ -8,6 +8,8 @@ class SceneManager {
         this.game.camera = this; //add scene manager as an entity to game engine
         this.x = 0;
         this.y = 0;
+        this.velocity = {x: 0, y: 0};
+        this.anchor = {right: false, bottom: false};
         this.defaultMusic = MUSIC.CHASING_DAYBREAK;
 
         //game status
@@ -149,8 +151,8 @@ class SceneManager {
             this.player.y = 0;
             this.player.updateBB();
         }
-        this.player.x = spawnX - this.player.BB.left;
-        this.player.y = spawnY - this.player.BB.bottom;
+        this.player.x = spawnX;
+        this.player.y = spawnY - this.player.BB.height - PARAMS.BLOCKDIM;
         this.inventory = this.player.myInventory;
         this.heartsbar = new HeartBar(this.game, this.player);
         this.vignette = new Vignette(this.game);
@@ -251,18 +253,7 @@ class SceneManager {
             PARAMS.DEBUG = document.getElementById("debug").checked;
             this.updateAudio();
             this.updateGUI();
-
-            if (this.player.BB.left < 0) this.player.x -= this.player.BB.left;
-            else if (this.player.BB.right > this.level.width * PARAMS.BLOCKDIM) this.player.x -= this.player.BB.right - this.level.width * PARAMS.BLOCKDIM;
-            if (this.x < this.player.x - this.game.surfaceWidth * 9 / 16 && this.x + this.game.surfaceWidth < this.level.width * PARAMS.BLOCKDIM) this.x = this.player.x - this.game.surfaceWidth * 9 / 16;
-            else if (this.x > this.player.x - this.game.surfaceWidth * 7 / 16 && this.x > 0) this.x = this.player.x - this.game.surfaceWidth * 7 / 16;
-
-            if (this.x < 0) this.x = 0;
-            else if (this.x + this.game.surfaceWidth > this.level.width * PARAMS.BLOCKDIM) this.x = this.level.width * PARAMS.BLOCKDIM - this.game.surfaceWidth;
-            if (this.y < this.player.y - this.game.surfaceHeight * 3 / 16 && this.y + this.game.surfaceHeight < this.level.height * PARAMS.BLOCKDIM) this.y = this.player.y - this.game.surfaceHeight * 3 / 16;
-            else if (this.y > this.player.y - this.game.surfaceHeight * 1 / 16 && this.y > 0) this.y = this.player.y - this.game.surfaceHeight * 1 / 16;
-            if (this.y < 0) this.y = 0;
-            else if (this.y + this.game.surfaceHeight > this.level.height * PARAMS.BLOCKDIM) this.y = this.level.height * PARAMS.BLOCKDIM - this.game.surfaceHeight;
+            this.BBCamera();
 
             this.x = Math.round(this.x);
             this.y = Math.round(this.y);
@@ -327,6 +318,114 @@ class SceneManager {
         }
 
     };
+
+    BBCamera() {
+        if (this.player.BB.left < 0) this.player.x -= this.player.BB.left;
+        else if (this.player.BB.right > this.level.width * PARAMS.BLOCKDIM) this.player.x -= this.player.BB.right - this.level.width * PARAMS.BLOCKDIM;
+        if (this.x < this.player.x - this.game.surfaceWidth * 9 / 16 && this.x + this.game.surfaceWidth < this.level.width * PARAMS.BLOCKDIM) this.x = this.player.x - this.game.surfaceWidth * 9 / 16;
+        else if (this.x > this.player.x - this.game.surfaceWidth * 7 / 16 && this.x > 0) this.x = this.player.x - this.game.surfaceWidth * 7 / 16;
+
+        if (this.x < 0) this.x = 0;
+        else if (this.x + this.game.surfaceWidth > this.level.width * PARAMS.BLOCKDIM) this.x = this.level.width * PARAMS.BLOCKDIM - this.game.surfaceWidth;
+        if (this.y < this.player.y - this.game.surfaceHeight * 3 / 16 && this.y + this.game.surfaceHeight < this.level.height * PARAMS.BLOCKDIM) this.y = this.player.y - this.game.surfaceHeight * 3 / 16;
+        else if (this.y > this.player.y - this.game.surfaceHeight * 1 / 16 && this.y > 0) this.y = this.player.y - this.game.surfaceHeight * 1 / 16;
+        if (this.y < 0) this.y = 0;
+        else if (this.y + this.game.surfaceHeight > this.level.height * PARAMS.BLOCKDIM) this.y = this.level.height * PARAMS.BLOCKDIM - this.game.surfaceHeight;
+    }
+
+    velCamera() {
+        if (this.player.velocity.y >= 0) {
+            this.scrollTime = 0;
+        }
+        if (this.x + this.game.surfaceWidth < this.player.BB.right) {
+            this.x = this.player.BB.right - this.game.surfaceWidth * 10 / 16;
+        }
+        else if (this.x > this.player.BB.left) {
+            this.x = this.player.BB.left - this.game.surfaceWidth * 6 / 16;
+        }
+
+        if (this.game.right && !this.game.left) {
+            this.anchor.right = true;
+        }
+        if (this.game.left && !this.game.right) {
+            this.anchor.right = false;
+        }
+        if(this.anchor.right) {
+            if (this.x + this.game.surfaceWidth * 6 / 16 < this.player.BB.left) {
+                if (this.player.facing == this.player.dir.right)
+                    this.x += (this.player.velocity.x + Math.abs(this.player.velocity.x) * 3 / 4) * this.game.clockTick;
+                else
+                    this.x += (this.player.velocity.x + Math.abs(this.player.velocity.x) * 1 / 4) * this.game.clockTick;
+            }
+            else if (this.x + this.game.surfaceWidth * 6 / 16 < this.player.BB.right) 
+                this.x += this.player.velocity.x * this.game.clockTick;
+        }
+        else {
+            if (this.x + this.game.surfaceWidth * 10 / 16 > this.player.BB.right) {
+                if (this.player.facing == this.player.dir.left)
+                    this.x += (this.player.velocity.x - Math.abs(this.player.velocity.x) * 3 / 4) * this.game.clockTick;
+                else
+                    this.x += (this.player.velocity.x - Math.abs(this.player.velocity.x) * 1 / 4) * this.game.clockTick;
+            }
+            else if (this.x + this.game.surfaceWidth * 10 / 16 > this.player.BB.left) 
+                this.x += this.player.velocity.x * this.game.clockTick;
+        }
+
+        if (this.x <= 0) {
+            this.x = 0;
+            this.anchor.right = true;
+        }
+        else if (this.x + this.game.surfaceWidth >= this.level.width * PARAMS.BLOCKDIM) {
+            this.x = this.level.width * PARAMS.BLOCKDIM - this.game.surfaceWidth;
+            this.anchor.right = false;
+        }
+
+        if (this.y + this.game.surfaceHeight < this.player.BB.bottom) {
+            this.y = this.player.BB.bottom + this.game.surfaceWidth * 10 / 16;
+        }
+        else if (this.y > this.player.BB.top) {
+            this.y = this.player.BB.bottom - this.game.surfaceWidth * 6 / 16;
+        }
+
+        if (this.player.velocity.y < 0) {
+            this.scrollTime += this.game.clockTick;
+            this.anchor.bottom = false;
+        }
+        if (this.player.velocity.y >= 450) {
+            this.anchor.bottom = true;
+        }
+
+        if (this.anchor.bottom) {
+            if (this.y + this.game.surfaceHeight * 4 / 16 < this.player.BB.top) 
+                this.y += (this.player.velocity.y + Math.abs(this.player.velocity.y) * 3 / 4) * this.game.clockTick;
+            else if (this.y + this.game.surfaceHeight * 4 / 16 < this.player.BB.bottom)
+                this.y += this.player.velocity.y * this.game.clockTick;
+        }
+        else {
+            if (this.scrollTime > .15) {
+                if (this.y + this.game.surfaceHeight * 12 / 16 > this.player.BB.bottom)
+                    this.y += (this.player.velocity.y - Math.abs(this.player.velocity.y) * 6 / 4) * this.game.clockTick;
+                else if (this.y + this.game.surfaceHeight * 12 / 16 > this.player.BB.top) 
+                    this.y += this.player.velocity.y * this.game.clockTick;
+            }
+        }
+
+        if (this.y <= 0) {
+            this.y = 0;
+            this.anchor.bottom = true;
+        }
+        else if (this.y + this.game.surfaceHeight >= this.level.height * PARAMS.BLOCKDIM) {
+            this.y = this.level.height * PARAMS.BLOCKDIM - this.game.surfaceHeight;
+            this.anchor.bottom = false;
+        }
+
+        if (this.player.BB.left < 0) this.player.x -= this.player.BB.left;
+        else if (this.player.BB.right > this.level.width * PARAMS.BLOCKDIM) {
+            this.player.x -= this.player.BB.right - this.level.width * PARAMS.BLOCKDIM;
+        }
+        
+
+    }
 
     updateGUI() {
         this.vignette.update();
@@ -595,13 +694,11 @@ class SceneManager {
             if (this.level.secrets) {
                 for (var i = 0; i < this.level.secrets.length; i++) {
                     let secret = this.level.secrets[i];
-                    if (!secret.found) {
-                        let secrets = [];
-                        for (var j = 0; j < secret.bricks.length; j++) {
-                            let bricks = secret.bricks[j];
-                            secrets.push(new SecretBricks(this.game, bricks.x, h - bricks.y - 1, bricks.width, bricks.height, false));
-                        }
-                        this.game.addEntity(new Secret(this.game, secrets, false));
+                    let secrets = [];
+                    for (var j = 0; j < secret.bricks.length; j++) {
+                        let bricks = secret.bricks[j];
+                        secrets.push(new SecretBricks(this.game, bricks.x, h - bricks.y - 1, bricks.width, bricks.height, false, secret.indicate));                
+                        this.game.addEntity(new Secret(this.game, secrets, false, secret.indicate));
                     }
                 }
             }
