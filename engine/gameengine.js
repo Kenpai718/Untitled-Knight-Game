@@ -24,6 +24,8 @@ class GameEngine {
         this.mouse = null;
         this.wheel = null;
 
+        this.myReportCard = new ReportCard(this);
+
         //controls
         this.left = null;   //A
         this.right = null;  //D

@@ -15,7 +15,6 @@ class Vignette {
         this.x = 0;
         this.y = 0;
         this.elapsedTime = 0;
-        this.alpha = 0.5;
 
         this.myPlayer = this.game.camera.player;
         this.show = false;

@@ -306,14 +306,18 @@ class SceneManager {
                 ASSET_MANAGER.playAsset(SFX.CLICK);
                 if (this.nextLevelBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     // load next level code goes here when level 2 is added
+                    this.game.myReportCard.reset();
+                    this.levelTimer = 0;
                 } else if (this.restartLevelBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     this.currentLevel = 1;
                     this.levelState = [];
                     this.loadLevel(this.currentLevel, false);
+                    this.game.myReportCard.reset();
                 } else if (this.returnToMenuBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     this.currentLevel = 1;
                     this.levelState = [];
                     this.title = true;
+                    this.game.myReportCard.reset();
                 }
                 this.game.click = null;
             }
@@ -345,6 +349,7 @@ class SceneManager {
 
 
     draw(ctx) {
+
         if (!this.title && !this.transition) {
             //current level
             ctx.font = PARAMS.BIG_FONT; //this is size 20 font
@@ -412,6 +417,8 @@ class SceneManager {
             ctx.fillText("Restart Level", this.restartLevelBB.x, this.restartLevelBB.y);
             ctx.fillStyle = this.textColor == 3 ? "Grey" : "White";
             ctx.fillText("Return To Menu", this.returnToMenuBB.x, this.returnToMenuBB.y);
+
+            this.game.myReportCard.drawReportCard(ctx);
         }
 
         //pause screen
@@ -680,6 +687,10 @@ class SceneManager {
         entity.x = x * PARAMS.BLOCKDIM - entity.BB.left;
         entity.y = y * PARAMS.BLOCKDIM - entity.BB.bottom;
         entity.updateBoxes();
+    }
+
+    getLevelTimer() {
+        return Math.round(this.levelTimer).toString().toHHMMSS();
     }
 
     //keyboard input
