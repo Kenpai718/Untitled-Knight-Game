@@ -1,6 +1,8 @@
 /**
  * Black blurred border effect
  * used as a visual effect at a low hp
+ * 
+ * Also synced to control the player's beserker mode at low hp
  *
  * Make sure this is made AFTER the player character was created in scene manager
  */
@@ -17,6 +19,7 @@ class Vignette {
 
         this.myPlayer = this.game.camera.player;
         this.show = false;
+        this.myOpacity = 0;
     };
 
     update() {
@@ -25,12 +28,22 @@ class Vignette {
             this.show = true;
             if (this.myPlayer.berserkTimer < 10) this.myPlayer.berserk = true;
         } else {
-            this.show = false;
-            this.myPlayer.berserk = false;
-            this.myPlayer.berserkTimer = 0;
+            this.reset();
+        }
+
+        //fade in effect
+        if(this.show && this.myOpacity < 100) {
+            this.myOpacity += 5;
+        } else { //fade out effect
+            if(!this.show && this.myOpacity > 0) this.myOpacity -= 5;
         }
 
     };
+
+    reset() {
+        this.show = false;
+        this.myPlayer.resetBerserkState();
+    }
 
     /**
      * Modify transparency of vignette to it seems like its flickering
@@ -60,10 +73,10 @@ class Vignette {
 
     draw(ctx) {
         //draw border at low hp
-        if ((this.myPlayer.hp / this.myPlayer.max_hp) <= PARAMS.LOW_HP) {
-            ctx.globalAlpha = rgba(255, 255, 255, this.alpha);
+        if (this.show || this.myOpacity > 0) {
+            ctx.filter = "Opacity(" + this.myOpacity + "%)";
             ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-            ctx.restore();
+            ctx.filter = "none";
         }
     };
 

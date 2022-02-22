@@ -99,7 +99,7 @@ const STATS = {
         WIDTH: 40,
         HEIGHT: 20,
         SCALE: 5,
-        DAMAGE: 50
+        DAMAGE: 30
     },
 
     /*enemy stats*/

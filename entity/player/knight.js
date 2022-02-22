@@ -43,6 +43,7 @@ class Knight extends AbstractPlayer {
         this.bladeBeam2 = true;
         this.berserk = false;
         this.berserkTimer = 0;
+        this.berserkFilter = 0.6;
         //these two audio variables control which sound effect is playing during the attack combo
         this.playAttackSFX1 = true;
         this.playAttackSFX2 = true;
@@ -102,6 +103,14 @@ class Knight extends AbstractPlayer {
                 if (this.berserkTimer >= 10) {
                     this.berserk = false;
                 }
+
+                //flickers when the powerup state is almost gone
+                if (this.berserkTimer > 7) {
+                    if (this.berserkFilter <= 1 && this.berserkFilter >= 0.8) this.berserkFilter -= .01;
+                    else if (this.berserkFilter <= 0.8 && this.berserkFilter >= 0.2) this.berserkFilter -= .01;
+                    else this.berserkFilter = 0.5;
+                }
+
             }
             /**CONTROLS:
              * CheckAndDo..() checks user input and executes that action if possible
@@ -130,7 +139,7 @@ class Knight extends AbstractPlayer {
     /**Draws player to the canvas */
     draw(ctx) {
         //flicker if the knight was damaged
-        if (!this.vulnerable && !this.game.roll) {
+        if (!this.vulnerable && !this.game.roll && !this.berserk) {
             ctx.filter = "drop-shadow(0 0 0.2rem crimson) opacity(100%)"; //red border to indicate damaged
             //drop the opacity a bit each flicker to create an effect of switching between 100% opaque
             if (this.flickerFlag) {
@@ -140,7 +149,8 @@ class Knight extends AbstractPlayer {
             this.flickerFlag = !this.flickerFlag;
         } else {
             if (this.berserk) {
-                ctx.filter = "drop-shadow(0 0 0.2rem crimson) opacity(100%)";
+                console.log(this.berserkFilter);
+                ctx.filter = "drop-shadow(0 0 " + this.berserkFilter + "rem crimson) opacity(100%)";
             }
             //white border to indicate roll invincibility
             //if(this.game.roll) ctx.filter = "drop-shadow(0 0 0.15rem ghostwhite)";
@@ -451,7 +461,7 @@ class Knight extends AbstractPlayer {
                 //handle double jump x velocity
                 let isLeft = this.facing == this.dir.left;
                 if (this.game.left) {
-                    if(isLeft) { //keep momentum and jump left
+                    if (isLeft) { //keep momentum and jump left
                         this.velocity.x -= PLAYER_PHYSICS.DOUBLE_JUMP_X_BOOST * TICK;
                     } else { //was facing right cut momentum and double jump other way
                         this.facing = this.dir.left;
@@ -461,13 +471,13 @@ class Knight extends AbstractPlayer {
                     }
 
                 } else if (this.game.right) {
-                    if(!isLeft) { //keep momentum and jump right
+                    if (!isLeft) { //keep momentum and jump right
                         this.velocity.x += PLAYER_PHYSICS.DOUBLE_JUMP_X_BOOST * TICK;
                     } else { //was facing left cut momentum and double jump other way
                         this.facing = this.dir.right;
                         this.velocity.x = 0;
                         //gave a slightly higher boost since momentum was just killed
-                        this.velocity.x += (PLAYER_PHYSICS.DOUBLE_JUMP_X_BOOST * PHYSIC_SCALER)* TICK;
+                        this.velocity.x += (PLAYER_PHYSICS.DOUBLE_JUMP_X_BOOST * PHYSIC_SCALER) * TICK;
                     };
                 }
             }
@@ -699,6 +709,15 @@ class Knight extends AbstractPlayer {
         this.game.comboCounter = 0;
         this.playAttackSFX1 = true;
         this.playAttackSFX2 = true;
+    }
+
+    /**
+     * Reset the powered up state from low hp
+     */
+    resetBerserkState() {
+        this.berserk = false;
+        this.berserkTimer = 0;
+        this.berserkFilter = 0.6;
     }
 
     /**reverse current facing direction */
