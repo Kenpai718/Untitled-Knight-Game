@@ -11,8 +11,7 @@ class Arrow extends AbstractEntity {
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/projectile/arrows.png");
 
         var dist = distance(this, this.target);
-        this.maxSpeed = 1000; // pixels per second
-
+        this.maxSpeed = 1000 + (this.type * 100); //pixels per second, upgraded arrows fly a bit faster
         this.velocity = { x: (this.target.x - this.x) / dist * this.maxSpeed, y: (this.target.y - this.y) / dist * this.maxSpeed };
 
         this.cache = [];
@@ -139,28 +138,35 @@ class Arrow extends AbstractEntity {
 
     loadAnimations() {
         switch (this.type) {
-            case 1:
+            case 1: //iron arrow
+                this.animations.push(new Animator(this.spritesheet, 0, 154, 32, 36, 1, 0.2, 0, false, true)); //up
+                this.animations.push(new Animator(this.spritesheet, 32, 154, 37, 36, 1, 0.2, 0, false, true)); //up right
+                this.animations.push(new Animator(this.spritesheet, 75, 154, 43, 36, 1, 0.2, 0, false, true)); //right
+                this.animations.push(new Animator(this.spritesheet, 119, 154, 37, 36, 1, 0.2, 0, false, true)); //down right
+                this.animations.push(new Animator(this.spritesheet, 166, 154, 32, 36, 1, 0.2, 0, false, true)); //down
+                break;
+            case 2: //gold arrow
                 this.animations.push(new Animator(this.spritesheet, 0, 34, 32, 39, 1, 0.2, 0, false, true)); //up
                 this.animations.push(new Animator(this.spritesheet, 32, 34, 36, 37, 1, 0.2, 0, false, true)); //up right
                 this.animations.push(new Animator(this.spritesheet, 75, 34, 40, 32, 1, 0.2, 0, false, true)); //right
                 this.animations.push(new Animator(this.spritesheet, 119, 34, 36, 37, 1, 0.2, 0, false, true)); //down right
                 this.animations.push(new Animator(this.spritesheet, 166, 34, 32, 37, 1, 0.2, 0, false, true)); //down
                 break;
-            case 2:
+            case 3: //diamond arrow
                 this.animations.push(new Animator(this.spritesheet, 0, 72, 32, 39, 1, 0.2, 0, false, true)); //up
                 this.animations.push(new Animator(this.spritesheet, 32, 72, 37, 37, 1, 0.2, 0, false, true)); //up right
                 this.animations.push(new Animator(this.spritesheet, 75, 72, 43, 32, 1, 0.2, 0, false, true)); //right
                 this.animations.push(new Animator(this.spritesheet, 119, 72, 37, 37, 1, 0.2, 0, false, true)); //down right
                 this.animations.push(new Animator(this.spritesheet, 166, 72, 32, 38, 1, 0.2, 0, false, true)); //down
                 break;
-            case 3:
+            case 4: //netherite arrow
                 this.animations.push(new Animator(this.spritesheet, 0, 115, 32, 36, 1, 0.2, 0, false, true)); //up
                 this.animations.push(new Animator(this.spritesheet, 32, 115, 37, 36, 1, 0.2, 0, false, true)); //up right
                 this.animations.push(new Animator(this.spritesheet, 75, 115, 43, 36, 1, 0.2, 0, false, true)); //right
                 this.animations.push(new Animator(this.spritesheet, 119, 115, 37, 36, 1, 0.2, 0, false, true)); //down right
                 this.animations.push(new Animator(this.spritesheet, 166, 115, 32, 36, 1, 0.2, 0, false, true)); //down
                 break;
-            default:
+            default: //base arrow
                 this.type = 0;
                 this.animations.push(new Animator(this.spritesheet, 0, 0, 32, 32, 1, 0.2, 0, false, true)); //up
                 this.animations.push(new Animator(this.spritesheet, 29, 0, 32, 32, 1, 0.2, 0, false, true)); //up right
