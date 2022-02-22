@@ -24,6 +24,8 @@ class GameEngine {
         this.mouse = null;
         this.wheel = null;
 
+        this.myReportCard = new ReportCard(this);
+
         //controls
         this.left = null;   //A
         this.right = null;  //D
@@ -171,6 +173,11 @@ class GameEngine {
         this.ctx.canvas.addEventListener("keydown", function (e) {
             e.preventDefault(); //prevent scrolling from pressing a key
             switch (e.code) {
+                case "Escape":
+                    //no pause menu on title or transition screen
+                    PAUSED = !PAUSED;
+                    ASSET_MANAGER.playAsset(SFX.CLICK);
+                    break;
                 case "KeyD":
                 case "ArrowRight":
                     that.right = true;
@@ -250,7 +257,7 @@ class GameEngine {
             this.background2.push(e);
         else if (e instanceof AbstractInteractable)
             this.interactables.push(e);
-        else if (e instanceof Secret) 
+        else if (e instanceof Secret)
             this.secrets.push(e);
         else if (e instanceof AbstractBackFeature)
             this.foreground1.push(entity);
@@ -295,9 +302,9 @@ class GameEngine {
         this.drawLayer(this.interactables);
         this.drawLayer(this.enemies);
         this.drawLayer(this.entities);
-        this.drawLayer(this.foreground2);
-        this.drawLayer(this.secrets);
         this.drawLayer(this.projectiles);
+        this.drawLayer(this.foreground2);
+        this.drawLayer(this.secrets);    
         this.drawLayer(this.information);
 
         if (PARAMS.DEBUG) {
@@ -309,11 +316,12 @@ class GameEngine {
             this.drawDebug(this.projectiles);
             this.drawDebug(this.secrets);
             this.drawDebug(this.information);
-            
+
         }
 
         //update the camera (scene manager)
         this.camera.draw(this.ctx);
+
     };
 
     drawLayer(layer) {
@@ -329,28 +337,40 @@ class GameEngine {
     }
 
     update() {
-        this.updateLayer(this.enemies);
-        this.updateLayer(this.interactables);
-        this.updateLayer(this.entities);
-        this.updateLayer(this.projectiles);
-        this.updateLayer(this.foreground1);
-        this.updateLayer(this.information);
-        this.updateLayer(this.secrets);
+        if (!PAUSED) {
+            this.updateLayer(this.enemies);
+            this.updateLayer(this.interactables);
+            this.updateLayer(this.entities);
+            this.updateLayer(this.projectiles);
+            this.updateLayer(this.foreground1);
+            this.updateLayer(this.information);
+            this.updateLayer(this.secrets);
 
-        this.removeFromLayer(this.background1);
-        this.removeFromLayer(this.background2);
-        this.removeFromLayer(this.foreground1);
-        this.removeFromLayer(this.interactables);
-        this.removeFromLayer(this.foreground2);
-        this.removeFromLayer(this.enemies);
-        this.removeFromLayer(this.entities);
-        this.removeFromLayer(this.projectiles);
-        this.removeFromLayer(this.information);
-        this.removeFromLayer(this.secrets);
+            this.removeFromLayer(this.background1);
+            this.removeFromLayer(this.background2);
+            this.removeFromLayer(this.foreground1);
+            this.removeFromLayer(this.interactables);
+            this.removeFromLayer(this.foreground2);
+            this.removeFromLayer(this.enemies);
+            this.removeFromLayer(this.entities);
+            this.removeFromLayer(this.projectiles);
+            this.removeFromLayer(this.information);
+            this.removeFromLayer(this.secrets);
 
-        //update the camera (scene manager)
-        this.camera.update();
+            //update the camera (scene manager)
+            this.camera.update();
+        } else {
+            //any updates you want to work when paused put here
+            this.resetControls();
+        }
     };
+
+    resetControls() {
+        this.left = false;
+        this.right = false;
+        this.up = false;
+        this.down = false;
+    }
 
     updateLayer(layer) {
         let entitiesCount = layer.length;

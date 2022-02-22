@@ -73,7 +73,9 @@ class Chest extends AbstractInteractable {
                 // varaibles needed for GUI to display amount
                 //that.potionStorage = 1 + Math.floor(Math.random() * 3);      // Gives random amount of hp potions 1-3
                 //that.arrowStorage = 1 + Math.floor(Math.random() * 15);     // Gives random amount of arrows 1-15
-                that.diamondStorage = 1 + Math.floor(Math.random() * 15) + 10;     // Gives random amount of arrows 10-25
+                let randomAmount = 1 + Math.floor(Math.random() * 15) + 10;
+                that.diamondStorage = randomAmount;
+                that.game.myReportCard.myDiamondsEarned += randomAmount;  
 
                 //entity.myInventory.potions += that.potionStorage;
                 //entity.myInventory.arrows += that.arrowStorage;

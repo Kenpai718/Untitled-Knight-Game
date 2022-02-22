@@ -43,7 +43,7 @@ class AbstractPlayer extends AbstractEntity {
         if (this.myInventory.arrows > 0) {
             //try to position starting arrow at the waist of the knight
             const target = this.chooseArrowTarget();
-            this.game.addEntityToFront(new Arrow(this.game, this.x + this.offsetxBB + 20, (this.BB.top + this.BB.height / 4), target));
+            this.game.addEntityToFront(new Arrow(this.game, this.x + this.offsetxBB + 20, (this.BB.top + this.BB.height / 4), target, this.myInventory.arrowUpgrade));
             this.myInventory.arrows--;
             ASSET_MANAGER.playAsset(SFX.BOW_SHOT);
 
@@ -186,6 +186,7 @@ class AbstractPlayer extends AbstractEntity {
         //falling collisions and gravity
         super.handleGravity();
         if (this.animations[this.facing][this.action].isDone()) {
+            this.game.myReportCard.myDeathes += 1;
             this.restartGame();
         }
     }
@@ -406,14 +407,18 @@ class AbstractPlayer extends AbstractEntity {
                 //attacked by an enemy
                 if (entity.HB && self.BB.collide(entity.HB)) {
                     //console.log("knight hit by enemy");
-                    self.takeDamage(entity.getDamageValue(), false);
+                    let dmg = entity.getDamageValue();
+                    if(self.canTakeDamage()) self.game.myReportCard.myDamageTaken += dmg;
+                    self.takeDamage(dmg, false);
 
                 }
 
                 //attacked an enemy
                 if (self.HB != null && entity.BB && self.HB.collide(entity.BB)) {
                     //console.log("knight hit an enemy");
-                    entity.takeDamage(self.getDamageValue(), self.critical);
+                    let dmg = self.getDamageValue();
+                    if(entity.canTakeDamage()) self.game.myReportCard.myDamageDealt += dmg;
+                    entity.takeDamage(dmg, self.critical);
                 }
 
             }

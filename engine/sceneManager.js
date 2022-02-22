@@ -22,6 +22,7 @@ class SceneManager {
         //how many kills needed to pass the level
         this.killCount = 0;
         this.killsRequired = 0;
+        this.levelTimer = 0;
 
         //levels array to load levels by calling levels[0], levels[1], etc
         this.makeTextBox();
@@ -170,8 +171,10 @@ class SceneManager {
         // save the state of the enemies and interactables for the current level
         if (!this.title && !this.restart && !this.transition) {
             // save level state
-            this.levelState[this.currentLevel] = { enemies: [...this.game.enemies], interactables: [...this.game.interactables],
-                secrets: [...this.game.secrets], killCount: this.killCount};
+            this.levelState[this.currentLevel] = {
+                enemies: [...this.game.enemies], interactables: [...this.game.interactables],
+                secrets: [...this.game.secrets], killCount: this.killCount
+            };
             // save player state
             this.lastPlayer = this.player;
             // save initial player hp and inventory upon entering a level
@@ -236,6 +239,11 @@ class SceneManager {
      * Update the camera and gui elements
      */
     update() {
+        //timer for the level
+        if (!this.title && !this.transition) {
+            this.levelTimer += this.game.clockTick;
+        }
+
         if (!this.title && !this.transition) {
             //debug key toggle, flip state of debug checkbox
             if (this.game.debug) {
@@ -289,21 +297,26 @@ class SceneManager {
                 ASSET_MANAGER.playAsset(SFX.CLICK);
                 if (this.nextLevelBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     // load next level code goes here when level 2 is added
+                    this.game.myReportCard.reset();
+                    this.levelTimer = 0;
                 } else if (this.restartLevelBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     this.currentLevel = 1;
                     this.levelState = [];
                     this.lastPlayer = null;
                     this.game.attack = false;
                     this.loadLevel(this.currentLevel, false);
+                    this.game.myReportCard.reset();
                 } else if (this.returnToMenuBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     this.currentLevel = 1;
                     this.levelState = [];
                     this.lastPlayer = null;
                     this.title = true;
+                    this.game.myReportCard.reset();
                 }
                 this.game.click = null;
             }
         }
+
     };
 
     BBCamera() {
@@ -438,6 +451,7 @@ class SceneManager {
 
 
     draw(ctx) {
+
         if (!this.title && !this.transition) {
             //current level
             ctx.font = PARAMS.BIG_FONT; //this is size 20 font
@@ -447,12 +461,17 @@ class SceneManager {
             //level label
             let levelLabel = "Level:" + this.level.label;
             let offset = getRightTextOffset(levelLabel, 20);
-            ctx.fillText(levelLabel, this.game.surfaceWidth - offset, 30);
+            let yOffset = 35;
+            ctx.fillText(levelLabel, this.game.surfaceWidth - offset, yOffset);
+            //level timer label: converted to HH:MM:SS
+            let currentTime = "Time:" + Math.round(this.levelTimer).toString().toHHMMSS();
+            offset = getRightTextOffset(currentTime, 20);
+            ctx.fillText(currentTime, this.game.surfaceWidth - offset, yOffset * 2);
             //quota label
             let quotaLabel = "Kill Quota:" + this.killCount + "/" + this.killsRequired;
             offset = getRightTextOffset(quotaLabel, 20);
             if (this.killCount >= this.killsRequired) ctx.fillStyle = "SpringGreen";
-            ctx.fillText(quotaLabel, this.game.surfaceWidth - offset, 65);
+            ctx.fillText(quotaLabel, this.game.surfaceWidth - offset, yOffset * 3);
 
             //draw gui like hearts, inventory etc
             this.drawGUI(ctx);
@@ -500,6 +519,20 @@ class SceneManager {
             ctx.fillText("Restart Level", this.restartLevelBB.x, this.restartLevelBB.y);
             ctx.fillStyle = this.textColor == 3 ? "Grey" : "White";
             ctx.fillText("Return To Menu", this.returnToMenuBB.x, this.returnToMenuBB.y);
+
+            this.game.myReportCard.drawReportCard(ctx);
+        }
+
+        //pause screen
+        if (PAUSED) {
+            var fontSize = 60;
+            ctx.font = fontSize + 'px "Press Start 2P"';
+
+            let title = "PAUSED";
+            ctx.fillStyle = "Orchid";
+            ctx.fillText(title, (this.game.surfaceWidth / 2) - ((fontSize * title.length) / 2) + 5, fontSize * 9 + 5);
+            ctx.fillStyle = "GhostWhite";
+            ctx.fillText(title, (this.game.surfaceWidth / 2) - ((fontSize * title.length) / 2), fontSize * 9);
         }
     };
 
@@ -754,6 +787,10 @@ class SceneManager {
         entity.x = x * PARAMS.BLOCKDIM - entity.BB.left;
         entity.y = y * PARAMS.BLOCKDIM - entity.BB.bottom;
         entity.updateBoxes();
+    }
+
+    getLevelTimer() {
+        return Math.round(this.levelTimer).toString().toHHMMSS();
     }
 
     //keyboard input
@@ -1084,7 +1121,7 @@ class Minimap {
 
                     if (s instanceof SecretBricks)
                         ctx.fillStyle = self.colors.brick;
-                    ctx.fillRect(self.x + myX, myY -self.y + (self.h-3) * PARAMS.SCALE, myW, myH);
+                    ctx.fillRect(self.x + myX, myY - self.y + (self.h - 3) * PARAMS.SCALE, myW, myH);
 
                 });
 
