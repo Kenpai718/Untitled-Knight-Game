@@ -20,6 +20,7 @@ class SceneManager {
         //how many kills needed to pass the level
         this.killCount = 0;
         this.killsRequired = 0;
+        this.levelTimer = 0;
 
         //levels array to load levels by calling levels[0], levels[1], etc
         this.makeTextBox();
@@ -168,8 +169,10 @@ class SceneManager {
         // save the state of the enemies and interactables for the current level
         if (!this.title && !this.restart && !this.transition) {
             // save level state
-            this.levelState[this.currentLevel] = { enemies: [...this.game.enemies], interactables: [...this.game.interactables],
-                secrets: [...this.game.secrets], killCount: this.killCount};
+            this.levelState[this.currentLevel] = {
+                enemies: [...this.game.enemies], interactables: [...this.game.interactables],
+                secrets: [...this.game.secrets], killCount: this.killCount
+            };
             // save player state
             this.lastPlayer = this.player;
             // save initial player hp and inventory upon entering a level
@@ -234,6 +237,11 @@ class SceneManager {
      * Update the camera and gui elements
      */
     update() {
+        //timer for the level
+        if (!this.title && !this.transition) {
+            this.levelTimer += this.game.clockTick;
+        }
+
         if (!this.title && !this.transition) {
             //debug key toggle, flip state of debug checkbox
             if (this.game.debug) {
@@ -346,12 +354,17 @@ class SceneManager {
             //level label
             let levelLabel = "Level:" + this.level.label;
             let offset = getRightTextOffset(levelLabel, 20);
-            ctx.fillText(levelLabel, this.game.surfaceWidth - offset, 30);
+            let yOffset = 35;
+            ctx.fillText(levelLabel, this.game.surfaceWidth - offset, yOffset);
+            //level timer label: converted to HH:MM:SS
+            let currentTime = "Time:" + Math.round(this.levelTimer).toString().toHHMMSS();
+            offset = getRightTextOffset(currentTime, 20);
+            ctx.fillText(currentTime, this.game.surfaceWidth - offset, yOffset * 2);
             //quota label
             let quotaLabel = "Kill Quota:" + this.killCount + "/" + this.killsRequired;
             offset = getRightTextOffset(quotaLabel, 20);
             if (this.killCount >= this.killsRequired) ctx.fillStyle = "SpringGreen";
-            ctx.fillText(quotaLabel, this.game.surfaceWidth - offset, 65);
+            ctx.fillText(quotaLabel, this.game.surfaceWidth - offset, yOffset * 3);
 
             //draw gui like hearts, inventory etc
             this.drawGUI(ctx);
@@ -402,10 +415,10 @@ class SceneManager {
         }
 
         //pause screen
-        if(PAUSED) {
+        if (PAUSED) {
             var fontSize = 60;
             ctx.font = fontSize + 'px "Press Start 2P"';
-            
+
             let title = "PAUSED";
             ctx.fillStyle = "Orchid";
             ctx.fillText(title, (this.game.surfaceWidth / 2) - ((fontSize * title.length) / 2) + 5, fontSize * 9 + 5);
@@ -997,7 +1010,7 @@ class Minimap {
 
                     if (s instanceof SecretBricks)
                         ctx.fillStyle = self.colors.brick;
-                    ctx.fillRect(self.x + myX, myY -self.y + (self.h-3) * PARAMS.SCALE, myW, myH);
+                    ctx.fillRect(self.x + myX, myY - self.y + (self.h - 3) * PARAMS.SCALE, myW, myH);
 
                 });
 
