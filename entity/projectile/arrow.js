@@ -1,18 +1,17 @@
 class Arrow extends AbstractEntity {
-    constructor(game, x, y, target, team) {
+    constructor(game, x, y, target, type, team) {
         super(game, x, y, STATS.ARROW.NAME, STATS.ARROW.MAX_HP, STATS.ARROW.WIDTH, STATS.ARROW.HEIGHT, STATS.ARROW.SCALE);
-        Object.assign(this, { game, x, y, target });
+        Object.assign(this, { game, x, y, target, type});
         this.radius = 15;
         this.smooth = false;
 
         this.arrowWidth = 32;
         this.arrowHeight = 32;
 
-        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/projectile/arrow.png");
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/projectile/arrows.png");
 
         var dist = distance(this, this.target);
-        this.maxSpeed = 1000; // pixels per second
-
+        this.maxSpeed = 1000 + (this.type * 100); //pixels per second, upgraded arrows fly a bit faster
         this.velocity = { x: (this.target.x - this.x) / dist * this.maxSpeed, y: (this.target.y - this.y) / dist * this.maxSpeed };
 
         this.cache = [];
@@ -31,6 +30,7 @@ class Arrow extends AbstractEntity {
         this.stuck = false; //stuck = true, hit something like ground and cannot move. Can be picked up by player.
         this.hit = false; //false = not hit an enemy, true = hit enemy. This is needed so an arrow doesn't multi hit during collision.
         this.damage = STATS.ARROW.DAMAGE; //how much hp this arrow will take away if it hits something
+        this.upgradeDmg = 2; //upgrade multiplier
 
         this.updateBB();
     };
@@ -71,7 +71,7 @@ class Arrow extends AbstractEntity {
                     self.removeFromWorld = true;
                     self.hit = true;
                     entity.takeDamage(self.getDamageValue(), self.critical);
-                    if(entity instanceof AbstractEnemy) entity.setDamagedState();
+                    if (entity instanceof AbstractEnemy) entity.setDamagedState();
                     if (!entity.aggro) entity.aggro = true;
                 }
 
@@ -81,9 +81,9 @@ class Arrow extends AbstractEntity {
         let w = this.game.surfaceWidth;
         let h = this.game.surfaceHeight;
         //remove from world if outside the canvas
-        if (this.x > 3/2*w + this.game.camera.x || this.x + w / 2 < this.game.camera.x ||
+        if (this.x > 3 / 2 * w + this.game.camera.x || this.x + w / 2 < this.game.camera.x ||
             this.y > h + w / 2 + this.game.camera.y || this.y + w / 2 < this.game.camera.y)
-        this.removeFromWorld = true;
+            this.removeFromWorld = true;
 
 
     };
@@ -123,6 +123,11 @@ class Arrow extends AbstractEntity {
 
     getDamageValue() {
         let dmg = this.damage;
+
+        //if upgraded arrow increase the damage
+        if(this.type != 0) {
+            dmg += (this.upgradeDmg * this.type);
+        }
         //critical bonus
         if (this.isCriticalHit()) {
             dmg = dmg * PARAMS.CRITICAL_BONUS;
@@ -132,11 +137,47 @@ class Arrow extends AbstractEntity {
 
 
     loadAnimations() {
-        this.animations.push(new Animator(this.spritesheet, 0, 0, 32, 32, 1, 0.2, 0, false, true)); //up
-        this.animations.push(new Animator(this.spritesheet, 40, 0, 32, 32, 1, 0.2, 0, false, true)); //up right
-        this.animations.push(new Animator(this.spritesheet, 80, 0, 32, 32, 1, 0.2, 0, false, true)); //right
-        this.animations.push(new Animator(this.spritesheet, 120, 0, 32, 32, 1, 0.2, 0, false, true)); //down right
-        this.animations.push(new Animator(this.spritesheet, 160, 0, 32, 32, 1, 0.2, 0, false, true)); //down
+        switch (this.type) {
+            case 1: //iron arrow
+                this.animations.push(new Animator(this.spritesheet, 0, 154, 32, 36, 1, 0.2, 0, false, true)); //up
+                this.animations.push(new Animator(this.spritesheet, 32, 154, 37, 36, 1, 0.2, 0, false, true)); //up right
+                this.animations.push(new Animator(this.spritesheet, 75, 154, 43, 36, 1, 0.2, 0, false, true)); //right
+                this.animations.push(new Animator(this.spritesheet, 119, 154, 37, 36, 1, 0.2, 0, false, true)); //down right
+                this.animations.push(new Animator(this.spritesheet, 166, 154, 32, 36, 1, 0.2, 0, false, true)); //down
+                break;
+            case 2: //gold arrow
+                this.animations.push(new Animator(this.spritesheet, 0, 34, 32, 39, 1, 0.2, 0, false, true)); //up
+                this.animations.push(new Animator(this.spritesheet, 32, 34, 36, 37, 1, 0.2, 0, false, true)); //up right
+                this.animations.push(new Animator(this.spritesheet, 75, 34, 40, 32, 1, 0.2, 0, false, true)); //right
+                this.animations.push(new Animator(this.spritesheet, 119, 34, 36, 37, 1, 0.2, 0, false, true)); //down right
+                this.animations.push(new Animator(this.spritesheet, 166, 34, 32, 37, 1, 0.2, 0, false, true)); //down
+                break;
+            case 3: //diamond arrow
+                this.animations.push(new Animator(this.spritesheet, 0, 72, 32, 39, 1, 0.2, 0, false, true)); //up
+                this.animations.push(new Animator(this.spritesheet, 32, 72, 37, 37, 1, 0.2, 0, false, true)); //up right
+                this.animations.push(new Animator(this.spritesheet, 75, 72, 43, 32, 1, 0.2, 0, false, true)); //right
+                this.animations.push(new Animator(this.spritesheet, 119, 72, 37, 37, 1, 0.2, 0, false, true)); //down right
+                this.animations.push(new Animator(this.spritesheet, 166, 72, 32, 38, 1, 0.2, 0, false, true)); //down
+                break;
+            case 4: //netherite arrow
+                this.animations.push(new Animator(this.spritesheet, 0, 115, 32, 36, 1, 0.2, 0, false, true)); //up
+                this.animations.push(new Animator(this.spritesheet, 32, 115, 37, 36, 1, 0.2, 0, false, true)); //up right
+                this.animations.push(new Animator(this.spritesheet, 75, 115, 43, 36, 1, 0.2, 0, false, true)); //right
+                this.animations.push(new Animator(this.spritesheet, 119, 115, 37, 36, 1, 0.2, 0, false, true)); //down right
+                this.animations.push(new Animator(this.spritesheet, 166, 115, 32, 36, 1, 0.2, 0, false, true)); //down
+                break;
+            default: //base arrow
+                this.type = 0;
+                this.animations.push(new Animator(this.spritesheet, 0, 0, 32, 32, 1, 0.2, 0, false, true)); //up
+                this.animations.push(new Animator(this.spritesheet, 29, 0, 32, 32, 1, 0.2, 0, false, true)); //up right
+                this.animations.push(new Animator(this.spritesheet, 76, 0, 36, 32, 1, 0.2, 0, false, true)); //right
+                this.animations.push(new Animator(this.spritesheet, 117, 0, 32, 32, 1, 0.2, 0, false, true)); //down right
+                this.animations.push(new Animator(this.spritesheet, 160, 0, 32, 32, 1, 0.2, 0, false, true)); //down
+                break;
+
+
+
+        }
     }
 
     drawAngle(ctx, angle) {

@@ -8,6 +8,8 @@ class SceneManager {
         this.game.camera = this; //add scene manager as an entity to game engine
         this.x = 0;
         this.y = 0;
+        this.velocity = {x: 0, y: 0};
+        this.anchor = {right: false, bottom: false};
         this.defaultMusic = MUSIC.CHASING_DAYBREAK;
 
         //game status
@@ -20,6 +22,7 @@ class SceneManager {
         //how many kills needed to pass the level
         this.killCount = 0;
         this.killsRequired = 0;
+        this.levelTimer = 0;
 
         //levels array to load levels by calling levels[0], levels[1], etc
         this.makeTextBox();
@@ -141,15 +144,19 @@ class SceneManager {
         let spawnX = theX * PARAMS.BLOCKDIM;
         let spawnY = theY * PARAMS.BLOCKDIM;
 
-        this.player = new Knight(this.game, 0, 0);
-        if (this.lastHp) this.player.hp = this.lastHp;
-        if (this.lastInventory) this.player.myInventory = this.lastInventory;
-        this.player.x = spawnX - this.player.BB.left;
-        this.player.y = spawnY - this.player.BB.bottom;
+        this.player = this.lastPlayer ? this.lastPlayer : new Knight(this.game, 0, 0);
+        if (this.lastPlayer) {
+            this.player.removeFromWorld = false;
+            this.player.x = 0;
+            this.player.y = 0;
+            this.player.updateBB();
+        }
+        this.player.x = spawnX;
+        this.player.y = spawnY - this.player.BB.height - PARAMS.BLOCKDIM;
         this.inventory = this.player.myInventory;
         this.heartsbar = new HeartBar(this.game, this.player);
         this.vignette = new Vignette(this.game);
-        this.game.addEntity(this.player);
+        if (!this.lastPlayer) this.game.addEntity(this.player);
     };
 
     /**
@@ -163,11 +170,25 @@ class SceneManager {
     loadLevel(number, usedDoor, doorExitX, doorExitY) {
         // save the state of the enemies and interactables for the current level
         if (!this.title && !this.restart && !this.transition) {
-            this.levelState[this.currentLevel] = { enemies: [...this.game.enemies], interactables: [...this.game.interactables],
-                secrets: [...this.game.secrets], killCount: this.killCount};
-            this.lastInventory = this.player.myInventory;
-            this.lastHp = this.player.hp;
+            // save level state
+            this.levelState[this.currentLevel] = {
+                enemies: [...this.game.enemies], interactables: [...this.game.interactables],
+                secrets: [...this.game.secrets], killCount: this.killCount
+            };
+            // save player state
+            this.lastPlayer = this.player;
+            // save initial player hp and inventory upon entering a level
+            this.lastHP = this.player.hp;
+            this.lastInventory = new Inventory(this.game);
+            this.lastInventory.copyInventory(this.player.myInventory);
         } else {
+            // if player dies reset their hp and inventory to what it was upon entering the level
+            if (this.restart && this.lastPlayer) {
+                this.player.hp = this.lastHP;
+                this.player.myInventory = new Inventory(this.game)
+                this.player.myInventory.copyInventory(this.lastInventory);
+                this.player.dead = false;
+            }
             this.title = false;
             this.restart = false;
             this.transition = false;
@@ -178,8 +199,6 @@ class SceneManager {
         } else {
             console.log("Loading level " + number);
             this.killCount = !this.levelState[number] ? 0 : this.levelState[number].killCount;
-            console.log(this.killCount);
-            console.log(this.levelState[number]);
             this.currentLevel = number;
             let lvlData = this.levels[number];
             if (usedDoor) {
@@ -201,6 +220,7 @@ class SceneManager {
         this.clearLayer(this.game.foreground2);
         this.clearLayer(this.game.enemies);
         this.clearLayer(this.game.entities);
+        this.clearLayer(this.game.secrets);
         this.clearLayer(this.game.projectiles);
         this.clearLayer(this.game.information);
     };
@@ -219,6 +239,11 @@ class SceneManager {
      * Update the camera and gui elements
      */
     update() {
+        //timer for the level
+        if (!this.title && !this.transition) {
+            this.levelTimer += this.game.clockTick;
+        }
+
         if (!this.title && !this.transition) {
             //debug key toggle, flip state of debug checkbox
             if (this.game.debug) {
@@ -228,18 +253,7 @@ class SceneManager {
             PARAMS.DEBUG = document.getElementById("debug").checked;
             this.updateAudio();
             this.updateGUI();
-
-            if (this.player.BB.left < 0) this.player.x -= this.player.BB.left;
-            else if (this.player.BB.right > this.level.width * PARAMS.BLOCKDIM) this.player.x -= this.player.BB.right - this.level.width * PARAMS.BLOCKDIM;
-            if (this.x < this.player.x - this.game.surfaceWidth * 9 / 16 && this.x + this.game.surfaceWidth < this.level.width * PARAMS.BLOCKDIM) this.x = this.player.x - this.game.surfaceWidth * 9 / 16;
-            else if (this.x > this.player.x - this.game.surfaceWidth * 7 / 16 && this.x > 0) this.x = this.player.x - this.game.surfaceWidth * 7 / 16;
-
-            if (this.x < 0) this.x = 0;
-            else if (this.x + this.game.surfaceWidth > this.level.width * PARAMS.BLOCKDIM) this.x = this.level.width * PARAMS.BLOCKDIM - this.game.surfaceWidth;
-            if (this.y < this.player.y - this.game.surfaceHeight * 3 / 16 && this.y + this.game.surfaceHeight < this.level.height * PARAMS.BLOCKDIM) this.y = this.player.y - this.game.surfaceHeight * 3 / 16;
-            else if (this.y > this.player.y - this.game.surfaceHeight * 1 / 16 && this.y > 0) this.y = this.player.y - this.game.surfaceHeight * 1 / 16;
-            if (this.y < 0) this.y = 0;
-            else if (this.y + this.game.surfaceHeight > this.level.height * PARAMS.BLOCKDIM) this.y = this.level.height * PARAMS.BLOCKDIM - this.game.surfaceHeight;
+            this.BBCamera();
 
             this.x = Math.round(this.x);
             this.y = Math.round(this.y);
@@ -283,19 +297,135 @@ class SceneManager {
                 ASSET_MANAGER.playAsset(SFX.CLICK);
                 if (this.nextLevelBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     // load next level code goes here when level 2 is added
+                    this.game.myReportCard.reset();
+                    this.levelTimer = 0;
                 } else if (this.restartLevelBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     this.currentLevel = 1;
                     this.levelState = [];
+                    this.lastPlayer = null;
+                    this.game.attack = false;
                     this.loadLevel(this.currentLevel, false);
+                    this.game.myReportCard.reset();
                 } else if (this.returnToMenuBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     this.currentLevel = 1;
                     this.levelState = [];
+                    this.lastPlayer = null;
                     this.title = true;
+                    this.game.myReportCard.reset();
                 }
                 this.game.click = null;
             }
         }
+
     };
+
+    BBCamera() {
+        if (this.player.BB.left < 0) this.player.x -= this.player.BB.left;
+        else if (this.player.BB.right > this.level.width * PARAMS.BLOCKDIM) this.player.x -= this.player.BB.right - this.level.width * PARAMS.BLOCKDIM;
+        if (this.x < this.player.x - this.game.surfaceWidth * 9 / 16 && this.x + this.game.surfaceWidth < this.level.width * PARAMS.BLOCKDIM) this.x = this.player.x - this.game.surfaceWidth * 9 / 16;
+        else if (this.x > this.player.x - this.game.surfaceWidth * 7 / 16 && this.x > 0) this.x = this.player.x - this.game.surfaceWidth * 7 / 16;
+
+        if (this.x < 0) this.x = 0;
+        else if (this.x + this.game.surfaceWidth > this.level.width * PARAMS.BLOCKDIM) this.x = this.level.width * PARAMS.BLOCKDIM - this.game.surfaceWidth;
+        if (this.y < this.player.y - this.game.surfaceHeight * 3 / 16 && this.y + this.game.surfaceHeight < this.level.height * PARAMS.BLOCKDIM) this.y = this.player.y - this.game.surfaceHeight * 3 / 16;
+        else if (this.y > this.player.y - this.game.surfaceHeight * 1 / 16 && this.y > 0) this.y = this.player.y - this.game.surfaceHeight * 1 / 16;
+        if (this.y < 0) this.y = 0;
+        else if (this.y + this.game.surfaceHeight > this.level.height * PARAMS.BLOCKDIM) this.y = this.level.height * PARAMS.BLOCKDIM - this.game.surfaceHeight;
+    }
+
+    velCamera() {
+        if (this.player.velocity.y >= 0) {
+            this.scrollTime = 0;
+        }
+        if (this.x + this.game.surfaceWidth < this.player.BB.right) {
+            this.x = this.player.BB.right - this.game.surfaceWidth * 10 / 16;
+        }
+        else if (this.x > this.player.BB.left) {
+            this.x = this.player.BB.left - this.game.surfaceWidth * 6 / 16;
+        }
+
+        if (this.game.right && !this.game.left) {
+            this.anchor.right = true;
+        }
+        if (this.game.left && !this.game.right) {
+            this.anchor.right = false;
+        }
+        if(this.anchor.right) {
+            if (this.x + this.game.surfaceWidth * 6 / 16 < this.player.BB.left) {
+                if (this.player.facing == this.player.dir.right)
+                    this.x += (this.player.velocity.x + Math.abs(this.player.velocity.x) * 3 / 4) * this.game.clockTick;
+                else
+                    this.x += (this.player.velocity.x + Math.abs(this.player.velocity.x) * 1 / 4) * this.game.clockTick;
+            }
+            else if (this.x + this.game.surfaceWidth * 6 / 16 < this.player.BB.right) 
+                this.x += this.player.velocity.x * this.game.clockTick;
+        }
+        else {
+            if (this.x + this.game.surfaceWidth * 10 / 16 > this.player.BB.right) {
+                if (this.player.facing == this.player.dir.left)
+                    this.x += (this.player.velocity.x - Math.abs(this.player.velocity.x) * 3 / 4) * this.game.clockTick;
+                else
+                    this.x += (this.player.velocity.x - Math.abs(this.player.velocity.x) * 1 / 4) * this.game.clockTick;
+            }
+            else if (this.x + this.game.surfaceWidth * 10 / 16 > this.player.BB.left) 
+                this.x += this.player.velocity.x * this.game.clockTick;
+        }
+
+        if (this.x <= 0) {
+            this.x = 0;
+            this.anchor.right = true;
+        }
+        else if (this.x + this.game.surfaceWidth >= this.level.width * PARAMS.BLOCKDIM) {
+            this.x = this.level.width * PARAMS.BLOCKDIM - this.game.surfaceWidth;
+            this.anchor.right = false;
+        }
+
+        if (this.y + this.game.surfaceHeight < this.player.BB.bottom) {
+            this.y = this.player.BB.bottom + this.game.surfaceWidth * 10 / 16;
+        }
+        else if (this.y > this.player.BB.top) {
+            this.y = this.player.BB.bottom - this.game.surfaceWidth * 6 / 16;
+        }
+
+        if (this.player.velocity.y < 0) {
+            this.scrollTime += this.game.clockTick;
+            this.anchor.bottom = false;
+        }
+        if (this.player.velocity.y >= 450) {
+            this.anchor.bottom = true;
+        }
+
+        if (this.anchor.bottom) {
+            if (this.y + this.game.surfaceHeight * 4 / 16 < this.player.BB.top) 
+                this.y += (this.player.velocity.y + Math.abs(this.player.velocity.y) * 3 / 4) * this.game.clockTick;
+            else if (this.y + this.game.surfaceHeight * 4 / 16 < this.player.BB.bottom)
+                this.y += this.player.velocity.y * this.game.clockTick;
+        }
+        else {
+            if (this.scrollTime > .15) {
+                if (this.y + this.game.surfaceHeight * 12 / 16 > this.player.BB.bottom)
+                    this.y += (this.player.velocity.y - Math.abs(this.player.velocity.y) * 6 / 4) * this.game.clockTick;
+                else if (this.y + this.game.surfaceHeight * 12 / 16 > this.player.BB.top) 
+                    this.y += this.player.velocity.y * this.game.clockTick;
+            }
+        }
+
+        if (this.y <= 0) {
+            this.y = 0;
+            this.anchor.bottom = true;
+        }
+        else if (this.y + this.game.surfaceHeight >= this.level.height * PARAMS.BLOCKDIM) {
+            this.y = this.level.height * PARAMS.BLOCKDIM - this.game.surfaceHeight;
+            this.anchor.bottom = false;
+        }
+
+        if (this.player.BB.left < 0) this.player.x -= this.player.BB.left;
+        else if (this.player.BB.right > this.level.width * PARAMS.BLOCKDIM) {
+            this.player.x -= this.player.BB.right - this.level.width * PARAMS.BLOCKDIM;
+        }
+        
+
+    }
 
     updateGUI() {
         this.vignette.update();
@@ -321,6 +451,7 @@ class SceneManager {
 
 
     draw(ctx) {
+
         if (!this.title && !this.transition) {
             //current level
             ctx.font = PARAMS.BIG_FONT; //this is size 20 font
@@ -330,12 +461,17 @@ class SceneManager {
             //level label
             let levelLabel = "Level:" + this.level.label;
             let offset = getRightTextOffset(levelLabel, 20);
-            ctx.fillText(levelLabel, this.game.surfaceWidth - offset, 30);
+            let yOffset = 35;
+            ctx.fillText(levelLabel, this.game.surfaceWidth - offset, yOffset);
+            //level timer label: converted to HH:MM:SS
+            let currentTime = "Time:" + Math.round(this.levelTimer).toString().toHHMMSS();
+            offset = getRightTextOffset(currentTime, 20);
+            ctx.fillText(currentTime, this.game.surfaceWidth - offset, yOffset * 2);
             //quota label
             let quotaLabel = "Kill Quota:" + this.killCount + "/" + this.killsRequired;
             offset = getRightTextOffset(quotaLabel, 20);
             if (this.killCount >= this.killsRequired) ctx.fillStyle = "SpringGreen";
-            ctx.fillText(quotaLabel, this.game.surfaceWidth - offset, 65);
+            ctx.fillText(quotaLabel, this.game.surfaceWidth - offset, yOffset * 3);
 
             //draw gui like hearts, inventory etc
             this.drawGUI(ctx);
@@ -383,6 +519,20 @@ class SceneManager {
             ctx.fillText("Restart Level", this.restartLevelBB.x, this.restartLevelBB.y);
             ctx.fillStyle = this.textColor == 3 ? "Grey" : "White";
             ctx.fillText("Return To Menu", this.returnToMenuBB.x, this.returnToMenuBB.y);
+
+            this.game.myReportCard.drawReportCard(ctx);
+        }
+
+        //pause screen
+        if (PAUSED) {
+            var fontSize = 60;
+            ctx.font = fontSize + 'px "Press Start 2P"';
+
+            let title = "PAUSED";
+            ctx.fillStyle = "Orchid";
+            ctx.fillText(title, (this.game.surfaceWidth / 2) - ((fontSize * title.length) / 2) + 5, fontSize * 9 + 5);
+            ctx.fillStyle = "GhostWhite";
+            ctx.fillText(title, (this.game.surfaceWidth / 2) - ((fontSize * title.length) / 2), fontSize * 9);
         }
     };
 
@@ -544,13 +694,11 @@ class SceneManager {
             if (this.level.secrets) {
                 for (var i = 0; i < this.level.secrets.length; i++) {
                     let secret = this.level.secrets[i];
-                    if (!secret.found) {
-                        let secrets = [];
-                        for (var j = 0; j < secret.bricks.length; j++) {
-                            let bricks = secret.bricks[j];
-                            secrets.push(new SecretBricks(this.game, bricks.x, h - bricks.y - 1, bricks.width, bricks.height, false));
-                        }
-                        this.game.addEntity(new Secret(this.game, secrets, false));
+                    let secrets = [];
+                    for (var j = 0; j < secret.bricks.length; j++) {
+                        let bricks = secret.bricks[j];
+                        secrets.push(new SecretBricks(this.game, bricks.x, h - bricks.y - 1, bricks.width, bricks.height, false, secret.indicate));                
+                        this.game.addEntity(new Secret(this.game, secrets, false, secret.indicate));
                     }
                 }
             }
@@ -639,6 +787,10 @@ class SceneManager {
         entity.x = x * PARAMS.BLOCKDIM - entity.BB.left;
         entity.y = y * PARAMS.BLOCKDIM - entity.BB.bottom;
         entity.updateBoxes();
+    }
+
+    getLevelTimer() {
+        return Math.round(this.levelTimer).toString().toHHMMSS();
     }
 
     //keyboard input
@@ -857,7 +1009,7 @@ class Minimap {
                 let myY = brick.y * PARAMS.SCALE;
                 let myW = brick.width * PARAMS.SCALE;
                 let myH = brick.height * PARAMS.SCALE;
-                
+
                 ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);
             }
         }
@@ -966,14 +1118,14 @@ class Minimap {
                     let myY = s.y * PARAMS.SCALE;
                     let myW = s.w * PARAMS.SCALE;
                     let myH = s.h * PARAMS.SCALE;
-                    
+
                     if (s instanceof SecretBricks)
                         ctx.fillStyle = self.colors.brick;
-                    ctx.fillRect(self.x + myX, myY -self.y + (self.h-3) * PARAMS.SCALE, myW, myH);
-                    
+                    ctx.fillRect(self.x + myX, myY - self.y + (self.h - 3) * PARAMS.SCALE, myW, myH);
+
                 });
-                
-                
+
+
             }
         });
 

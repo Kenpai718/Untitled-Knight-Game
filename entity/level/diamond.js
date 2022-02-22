@@ -34,6 +34,7 @@ class Diamond extends AbstractInteractable {
         this.game.entities.forEach(function (entity) {
             if (entity.BB && that.BB.collide(entity.BB) && entity instanceof AbstractPlayer && that.amount > 0) {
                 entity.myInventory.diamonds += that.amount;
+                that.game.myReportCard.myDiamondsEarned += that.amount;
                 that.amount -= that.amount;
                 that.removeFromWorld = true;
                 ASSET_MANAGER.playAsset(SFX.ITEM_PICKUP);
@@ -51,7 +52,7 @@ class Diamond extends AbstractInteractable {
         // An expert will change physics later :P
         //While there is no collision -> fall (simple slow gravity)
         if(!this.collision){
-            this.y += 0.2;
+            this.y += 50 * this.game.clockTick;
             this.updateBB();
         }
 

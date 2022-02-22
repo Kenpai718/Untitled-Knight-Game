@@ -63,8 +63,8 @@ class Skeleton extends AbstractEnemy {
     };
 
     updateHB() {
-        let offsetxBB = 30 * this.scale;
-        let offsetyBB = 20 * this.scale;
+        let offsetxBB = 25 * this.scale;
+        let offsetyBB = 15 * this.scale;
         let heightBB = (this.height / 3) * this.scale;
 
         if (this.direction == this.directions.left) offsetxBB = (offsetxBB * -1) - (this.width / 2); //flip hitbox offset

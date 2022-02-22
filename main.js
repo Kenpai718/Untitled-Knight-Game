@@ -6,7 +6,9 @@ const ASSET_MANAGER = new AssetManager();
 //main character
 ASSET_MANAGER.queueDownload("./sprites/knight/knightLeft.png");
 ASSET_MANAGER.queueDownload("./sprites/knight/knightRight.png");
-ASSET_MANAGER.queueDownload("./sprites/projectile/arrow.png");
+ASSET_MANAGER.queueDownload("./sprites/knight/armorLeft.png");
+ASSET_MANAGER.queueDownload("./sprites/knight/armorRight.png");
+ASSET_MANAGER.queueDownload("./sprites/projectile/arrows.png");
 ASSET_MANAGER.queueDownload("./sprites/projectile/arrowupgrades.png");
 ASSET_MANAGER.queueDownload("./sprites/projectile/bladeBeam.png");
 ASSET_MANAGER.queueDownload("./sprites/Hearts.png");
