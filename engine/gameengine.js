@@ -175,7 +175,7 @@ class GameEngine {
                     //no pause menu on title or transition screen
                     PAUSED = !PAUSED;
                     ASSET_MANAGER.playAsset(SFX.CLICK);
-
+                    break;
                 case "KeyD":
                 case "ArrowRight":
                     that.right = true;
