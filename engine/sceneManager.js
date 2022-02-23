@@ -255,6 +255,13 @@ class SceneManager {
      * Update the camera and gui elements
      */
     update() {
+        this.updateAudio();
+        PARAMS.DEBUG = document.getElementById("debug").checked;
+        if (this.game.debug) {
+            this.game.debug = false;
+            document.getElementById("debug").checked = !document.getElementById("debug").checked;
+        }
+
         //timer for the level
         if (!this.title && !this.transition) {
             this.levelTimer += this.game.clockTick;
@@ -262,12 +269,6 @@ class SceneManager {
 
         if (!this.title && !this.transition) {
             //debug key toggle, flip state of debug checkbox
-            if (this.game.debug) {
-                this.game.debug = false;
-                document.getElementById("debug").checked = !document.getElementById("debug").checked;
-            }
-            PARAMS.DEBUG = document.getElementById("debug").checked;
-            this.updateAudio();
             this.updateGUI();
             this.BBCamera();
 
