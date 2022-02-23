@@ -213,6 +213,7 @@ class AbstractEnemy extends AbstractEntity {
         if (this.animations[this.state][this.direction].isDone()) {
             this.removeFromWorld = true;
             this.game.camera.killCount++;
+            this.game.myReportCard.myEnemiesDefeated++;
         }
     }
 
