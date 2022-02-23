@@ -166,6 +166,16 @@ const STATS = {
         DAMAGE: 2.5
     },
 
+    DEMON_SLIME: {
+        NAME: "Demon Slime",
+        MAX_HP: 200,
+        WIDTH: 288,
+        HEIGHT: 160,
+        DAMAGE: 20,
+        SCALE: 3,
+        PHYSICS: {MAX_RUN: 200, MAX_FALL: 500}
+    }
+
 }
 
 /* Global sfx paths */
