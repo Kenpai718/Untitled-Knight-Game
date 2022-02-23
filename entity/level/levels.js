@@ -26,16 +26,16 @@ var testLevel = {
     ID: 0,
     label: "Testing Room",
     width: 24, height: 14,
-    player: { x: 1, y: 1 },
+    player: { x: 0, y: 1 },
     music: MUSIC.FODLAN_WINDS,
 
     //quick access to all levels
     doors: [
 
-        { x: 1, y: 3, killQuota: 0, exitLocation: { x: 5, y: 2, levelNum: 1 }, transition: false }, //door to level 1
-        { x: 5, y: 3, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition: false }, //door to level 2
+        { x: 0, y: 3, killQuota: 0, exitLocation: { x: 5, y: 2, levelNum: 1 }, transition: false }, //door to level 1
+        { x: 6, y: 3, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition: false }, //door to level 2
         { x: 9, y: 3, killQuota: 0, exitLocation: { x: 4, y: 1, levelNum: 3 }, transition: false }, //door to level 3
-        { x: 13, y: 3, killQuota: 0, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: false }, //door to level 4
+        { x: 12, y: 3, killQuota: 0, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: false }, //door to level 4
         { x: 20, y: 3, killQuota: 0, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: true }, //door to level 4
     ],
 
@@ -45,10 +45,14 @@ var testLevel = {
 
     signs: [
         {
-            x: 3.5, y: 2,
-            title: "TOP SECRET: DEVELOPER ROOM",
-            text: ["This room is for developers to test mechanics",
-                "If you are not a developer then... 🔫😬"]
+            x: 3, y: 2,
+            title: "  DEV-MODE-OPTIONS",
+            text: ["console.log(\'here\'):",
+                    "-This room is for developers to test mechanics",
+                   "-If you are not a developer then... 🔫😬",
+                  "-Press [CTRL] in this room to instantly get",
+                  " MAX DIAMONDS. This is to test the shop.",
+            ]
 
         },
 
@@ -87,19 +91,21 @@ var testLevel = {
         { x: 25, y: 14, height: 14, type: 2 }
     ],
     obelisks: [
-        { x: 6.5, y: 1, brickX: 15, brickY: 1, brickWidth: 1, brickHeight: 1 }
+        { x: 4.5, y: 1, brickX: 15, brickY: 1, brickWidth: 1, brickHeight: 1 }
     ],
     shrooms: [
         { x: 16, y: 1, guard: true }
     ],
     goblins: [
-        //{ x: 12, y: 1, guard: false }
+        { x: 17, y: 1, guard: false }
     ],
     skeletons: [
-        { x: 12, y: 7, guard: true }
+        { x: 12, y: 7, guard: true },
+        { x: 13, y: 7, guard: true }
     ],
     flyingeyes: [
-        //{ x: 12, y: 5, guard: false }
+        { x: 17, y: 5, guard: false },
+        { x: 15, y: 7, guard: true }
     ]
 }
 

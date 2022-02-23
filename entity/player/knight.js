@@ -50,6 +50,7 @@ class Knight extends AbstractPlayer {
         this.bladeBeam1 = true;
         this.bladeBeam2 = true;
         this.berserk = false;
+        this.berserkBonus = 1.3;
         this.berserkTimer = 0;
         this.berserkFilter = 0.6;
         //these two audio variables control which sound effect is playing during the attack combo
@@ -754,6 +755,9 @@ class Knight extends AbstractPlayer {
         } else if (this.action == this.states.crouch_atk) {
             dmg = STATS.PLAYER.DMG_CROUCHATK * super.getAttackBonus();
         }
+
+        //beserker bonus
+        if(this.berserk) dmg = (dmg * this.berserkBonus);
 
         //critical bonus
         if (this.isCriticalHit()) {
