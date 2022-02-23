@@ -9,6 +9,12 @@ class Knight extends AbstractPlayer {
         // get spritesheets
         this.spritesheetRight = ASSET_MANAGER.getAsset("./sprites/knight/knightRight.png");
         this.spritesheetLeft = ASSET_MANAGER.getAsset("./sprites/knight/knightLeft.png");
+        this.spritesheetRight1 = ASSET_MANAGER.getAsset("./sprites/knight/knightRight1.png");
+        this.spritesheetLeft1 = ASSET_MANAGER.getAsset("./sprites/knight/knightLeft1.png");
+        this.spritesheetRight2 = ASSET_MANAGER.getAsset("./sprites/knight/knightRight2.png");
+        this.spritesheetLeft2 = ASSET_MANAGER.getAsset("./sprites/knight/knightLeft2.png");
+        this.spritesheetRight3 = ASSET_MANAGER.getAsset("./sprites/knight/knightRight3.png");
+        this.spritesheetLeft3 = ASSET_MANAGER.getAsset("./sprites/knight/knightLeft3.png");
         this.armorRight = ASSET_MANAGER.getAsset("./sprites/knight/armorRight.png");
         this.armorLeft = ASSET_MANAGER.getAsset("./sprites/knight/armorLeft.png");
 
@@ -69,8 +75,8 @@ class Knight extends AbstractPlayer {
         //animations
         this.animations = [];
         this.loadAnimations();
-        this.armor = [];
-        this.loadArmor();
+        //this.armor = [];
+        //this.loadArmor();
         this.updateBB();
     };
 
@@ -142,6 +148,8 @@ class Knight extends AbstractPlayer {
 
     /**Draws player to the canvas */
     draw(ctx) {
+
+
         //flicker if the knight was damaged
         if (!this.vulnerable && !this.game.roll && !this.berserk) {
             ctx.filter = "drop-shadow(0 0 0.2rem crimson) opacity(100%)"; //red border to indicate damaged
@@ -149,9 +157,9 @@ class Knight extends AbstractPlayer {
             if (this.flickerFlag) {
                 ctx.filter = "drop-shadow(0 0 0.2rem crimson) opacity(85%)";
             }
-            this.animations[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
+            this.animations[this.facing][this.action][this.myInventory.armorUpgrade].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
             //ctx.filter = "saturate(500%) hue-rotate(135deg)"; // use this for knight's armor color
-            this.armor[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
+            //this.armor[this.facing][this.action][this.myInventory.armorUpgrade].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
             this.flickerFlag = !this.flickerFlag;
         } else {
             if (this.berserk) {
@@ -159,9 +167,10 @@ class Knight extends AbstractPlayer {
             }
             //white border to indicate roll invincibility
             //if(this.game.roll) ctx.filter = "drop-shadow(0 0 0.15rem ghostwhite)";
-            this.animations[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
-            //ctx.filter = "saturate(500%) hue-rotate(135deg)"; // use this for knight's armor color
-            this.armor[this.facing][this.action].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
+            console.log("Facing: " + this.facing + ", Action: " + this.action + ", Armor: " + this.myInventory.armorUpgrade);
+            this.animations[this.facing][this.action][this.myInventory.armorUpgrade].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
+            //ctx.filter = visableArmor[this.myInventory.armorUpgrade]; // use this for knight's armor color
+            //this.armor[this.facing][this.action][this.myInventory.armorUpgrade].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
             //ctx.filter = "none";
         }
 
@@ -216,7 +225,7 @@ class Knight extends AbstractPlayer {
                 if (this.game.up) {
                     this.action = this.states.wall_climb;
                     this.y -= 3 * this.scale;
-                    if (this.animations[this.facing][this.action].isDone()) {
+                    if (this.animations[this.facing][this.action][this.myInventory.armorUpgrade].isDone()) {
                         this.resetAnimationTimers(this.action);
                     }
                 }
@@ -226,9 +235,9 @@ class Knight extends AbstractPlayer {
                 }
             }
             if (this.action == this.states.wall_climb) {
-                if (this.animations[this.facing][this.action].currentFrame() < 4)
+                if (this.animations[this.facing][this.action][this.myInventory.armorUpgrade].currentFrame() < 4)
                     this.velocity.y = -250;
-                else if (this.animations[this.facing][this.action].currentFrame() == 4)
+                else if (this.animations[this.facing][this.action][this.myInventory.armorUpgrade].currentFrame() == 4)
                     this.velocity.y = -125;
             }
         } else if (this.inAir && this.action != this.states.shoot) { //player is falling and not shooting an arrow
@@ -269,7 +278,7 @@ class Knight extends AbstractPlayer {
             }
             if (this.action == this.states.wall_climb) {
                 this.velocity.x = (this.facing == 1 ? 50 : -50) * this.scale;
-                if (this.animations[this.facing][this.action].isDone()) {
+                if (this.animations[this.facing][this.action][this.myInventory.armorUpgrade].isDone()) {
                     if (this.touchHole()) {
                         this.action = this.states.crouch;
                     }
@@ -382,9 +391,9 @@ class Knight extends AbstractPlayer {
 
         if (this.inAir) {
             // //logic to handle switching between jump animations
-            if (this.animations[this.facing][this.states.jump_to_fall].isDone()) { //falling in between finished transition to falling
+            if (this.animations[this.facing][this.states.jump_to_fall][this.myInventory.armorUpgrade].isDone()) { //falling in between finished transition to falling
                 this.action = this.states.falling;                                 //set to falling until reach ground
-            } else if (this.animations[this.facing][this.states.jump].isDone()) {  //jump finished transition to falling
+            } else if (this.animations[this.facing][this.states.jump][this.myInventory.armorUpgrade].isDone()) {  //jump finished transition to falling
                 this.action = this.states.jump_to_fall;                            //set to falling-in-between
             }
 
@@ -504,7 +513,7 @@ class Knight extends AbstractPlayer {
             } else { //standing or jumping attack
                 //set action based on combo counter.
                 //If attack button was pressed more than once change action to the second attack after the animation is complete
-                this.combo = (this.game.comboCounter > 1 && this.animations[this.facing][this.states.attack1].isDone()) ? true : false;
+                this.combo = (this.game.comboCounter > 1 && this.animations[this.facing][this.states.attack1][this.myInventory.armorUpgrade].isDone()) ? true : false;
                 this.action = (this.combo) ? this.states.attack2 : this.states.attack1; //if comboing switch to the second animation
 
                 //play the second attack sound if the first sword swing is done
@@ -517,7 +526,7 @@ class Knight extends AbstractPlayer {
             if (this.bladeBeam1 && this.berserk) {
                 this.bladeBeam1 = false;
                 super.bladeBeam();
-            } else if (this.bladeBeam2 && this.animations[this.facing][this.states.attack1].isDone() && this.berserk) {
+            } else if (this.bladeBeam2 && this.animations[this.facing][this.states.attack1][this.myInventory.armorUpgrade].isDone() && this.berserk) {
                 this.bladeBeam2 = false;
                 super.bladeBeam();
             }
@@ -528,7 +537,7 @@ class Knight extends AbstractPlayer {
                 if (this.action == this.states.attack1 || this.action == this.states.crouch_atk) ASSET_MANAGER.playAsset(SFX.SLASH1);
             }
 
-            let done = this.animations[this.facing][this.action].isDone();
+            let done = this.animations[this.facing][this.action][this.myInventory.armorUpgrade].isDone();
             //console.log(this.action + " " + this.game.comboCounter + " " + this.combo);
 
             if (done) {
@@ -560,17 +569,17 @@ class Knight extends AbstractPlayer {
                     this.action = this.states.crouch_pluck;
                 else this.action = this.states.pluck;
             }
-            let done = this.animations[this.facing][this.action].isDone();
+            let done = this.animations[this.facing][this.action][this.myInventory.armorUpgrade].isDone();
 
             // shoot arrow
-            if (this.animations[this.facing][this.action].currentFrame() == 2 && !this.arrow) {
+            if (this.animations[this.facing][this.action][this.myInventory.armorUpgrade].currentFrame() == 2 && !this.arrow) {
                 if (this.myInventory.arrows > 0)
                     this.arrow = true;
                 super.shootArrow();
             }
 
             //only adjust the direction if using the mouse to shoot
-            let time = this.animations[this.facing][this.action].elapsedTime;
+            let time = this.animations[this.facing][this.action][this.myInventory.armorUpgrade].elapsedTime;
             if (!this.game.shootButton) {
                 let x = this.game.mouse.x + this.game.camera.x;
                 if (x < this.x + this.width / 2)
@@ -578,7 +587,7 @@ class Knight extends AbstractPlayer {
                 if (x > this.x + this.width / 2)
                     this.facing = this.dir.right;
             }
-            this.animations[this.facing][this.action].elapsedTime = time;
+            this.animations[this.facing][this.action][this.myInventory.armorUpgrade].elapsedTime = time;
 
             if (done) {
                 this.action = this.game.down || this.touchHole() ? this.states.crouch : this.DEFAULT_ACTION; //back to idle; added case for crouch attacks
@@ -640,7 +649,7 @@ class Knight extends AbstractPlayer {
                 this.vulnerable = false;
             }
 
-            if (this.animations[this.facing][this.states.roll].isDone()) {
+            if (this.animations[this.facing][this.states.roll][this.myInventory.armorUpgrade].isDone()) {
                 this.action = this.states.idle;
                 this.game.roll = false;
                 this.vulnerable = true;
@@ -664,7 +673,7 @@ class Knight extends AbstractPlayer {
                 this.velocity.y += this.slideAcc * TICK;
                 break;
             case this.action == this.states.wall_climb:
-                if (this.animations[this.facing][this.action].currentFrame() >= 3)
+                if (this.animations[this.facing][this.action][this.myInventory.armorUpgrade].currentFrame() >= 3)
                     this.velocity.y += this.fallAcc * TICK;
                 break;
             case this.states.wall_hang:
@@ -701,10 +710,10 @@ class Knight extends AbstractPlayer {
 
     //reset the animation timer in both direction
     resetAnimationTimers(action) {
-        this.animations[0][action].elapsedTime = 0;
-        this.animations[1][action].elapsedTime = 0;
-        this.armor[0][action].elapsedTime = 0;
-        this.armor[1][action].elapsedTime = 0;
+        this.animations[0][action][this.myInventory.armorUpgrade].elapsedTime = 0;
+        this.animations[1][action][this.myInventory.armorUpgrade].elapsedTime = 0;
+        //this.armor[0][action][this.myInventory.armorUpgrade].elapsedTime = 0;
+        //this.armor[1][action][this.myInventory.armorUpgrade].elapsedTime = 0;
     }
 
     /**Attack/Damage Logic helper methods */
@@ -822,87 +831,7 @@ class Knight extends AbstractPlayer {
     }
 
 
-    loadAnimations() {
-        let numDir = 2;
-        let numStates = 21;
-        for (var i = 0; i < numDir; i++) {
-            this.animations.push([]);
-            for (var j = 0; j < numStates; j++) {
-                this.animations[i].push([]);
-            }
-        }
-
-        //states: 1-10
-        // idle = 0
-        this.animations[0][this.states.idle] = new Animator(this.spritesheetLeft, 245, 560, 120, 80, 10, 0.1, 0, true, true, false);
-        this.animations[1][this.states.idle] = new Animator(this.spritesheetRight, -5, 560, 120, 80, 10, 0.1, 0, false, true, false);
-        // run = 1
-        this.animations[0][this.states.run] = new Animator(this.spritesheetLeft, 245, 880, 120, 80, 10, 0.1, 0, true, true, false);
-        this.animations[1][this.states.run] = new Animator(this.spritesheetRight, -5, 880, 120, 80, 10, 0.1, 0, false, true, false);
-        // crouch = 2
-        this.animations[0][this.states.crouch] = new Animator(this.spritesheetLeft, 1205, 80, 120, 80, 1, 1, 0, true, true, false);
-        this.animations[1][this.states.crouch] = new Animator(this.spritesheetRight, 115, 80, 120, 80, 1, 1, 0, false, true, false);
-        // crouch walk = 3
-        this.animations[0][this.states.crouch_walk] = new Animator(this.spritesheetLeft, 485, 240, 120, 80, 8, 0.1, 0, true, true, false);
-        this.animations[1][this.states.crouch_walk] = new Animator(this.spritesheetRight, -5, 240, 120, 80, 8, 0.1, 0, false, true, false);
-        // crouch attack = 4
-        this.animations[0][this.states.crouch_atk] = new Animator(this.spritesheetLeft, 965, 160, 120, 80, 4, 0.08, 0, true, false, false);
-        this.animations[1][this.states.crouch_atk] = new Animator(this.spritesheetRight, -5, 160, 120, 80, 4, 0.08, 0, false, false, false);
-        // crouch pluck = 6
-        this.animations[0][this.states.crouch_shoot] = new Animator(this.spritesheetLeft, 965, 1440, 120, 80, 4, 0.1, 0, true, false, false);
-        this.animations[1][this.states.crouch_shoot] = new Animator(this.spritesheetRight, -5, 1440, 120, 80, 4, 0.1, 0, false, false, false);
-        // crouch shoot = 5
-        this.animations[0][this.states.crouch_pluck] = new Animator(this.spritesheetLeft, 965, 1600, 120, 80, 4, 0.1, 0, true, false, false);
-        this.animations[1][this.states.crouch_pluck] = new Animator(this.spritesheetRight, -5, 1600, 120, 80, 4, 0.1, 0, false, false, false);
-        // roll = 7
-        this.animations[0][this.states.roll] = new Animator(this.spritesheetLeft, 0, 800, 120, 80, 12, 0.083, 0, true, false, false);
-        this.animations[1][this.states.roll] = new Animator(this.spritesheetRight, 0, 800, 120, 80, 12, 0.083, 0, false, false, false);
-        // wall climb = 8
-        this.animations[0][this.states.wall_climb] = new Animator(this.spritesheetLeft, 608, 1120, 120, 80, 7, 0.1, 0, true, false, false);
-        this.animations[1][this.states.wall_climb] = new Animator(this.spritesheetRight, -8, 1120, 120, 80, 7, 0.1, 0, false, false, false);
-        // wall hang = 9
-        this.animations[0][this.states.wall_hang] = new Animator(this.spritesheetLeft, 1323, 1200, 120, 80, 1, 0.2, 0, true, true, false);
-        this.animations[1][this.states.wall_hang] = new Animator(this.spritesheetRight, -3, 1200, 120, 80, 1, 0.2, 0, false, true, false);
-        // wall slide = 10
-        this.animations[0][this.states.wall_slide] = new Animator(this.spritesheetLeft, 1081, 1280, 120, 80, 3, 0.1, 0, true, true, false);
-        this.animations[1][this.states.wall_slide] = new Animator(this.spritesheetRight, -2, 1280, 120, 80, 3, 0.1, 0, false, true, false);
-        // jump -> jump/fall inbetween -> fall
-        // jump = 11
-        this.animations[0][this.states.jump] = new Animator(this.spritesheetLeft, 1085, 640, 120, 80, 3, 0.1, 0, true, false, false);
-        this.animations[1][this.states.jump] = new Animator(this.spritesheetRight, -5, 640, 120, 80, 3, 0.1, 0, false, false, false);
-        // jump/fall inbetween = 12
-        this.animations[0][this.states.jump_to_fall] = new Animator(this.spritesheetLeft, 1205, 720, 120, 80, 2, 0.1, 0, true, false, false);
-        this.animations[1][this.states.jump_to_fall] = new Animator(this.spritesheetRight, -5, 720, 120, 80, 2, 0.1, 0, false, false, false);
-        // fall = 13
-        this.animations[0][this.states.falling] = new Animator(this.spritesheetLeft, 1085, 480, 120, 80, 3, 0.1, 0, true, true, false);
-        this.animations[1][this.states.falling] = new Animator(this.spritesheetRight, -5, 480, 120, 80, 3, 0.1, 0, false, true, false);
-        // turn around = 14
-        this.animations[0][this.states.turn_around] = new Animator(this.spritesheetLeft, 1085, 1040, 120, 80, 3, 0.1, 0, true, false, false);
-        this.animations[1][this.states.turn_around] = new Animator(this.spritesheetRight, -5, 1040, 120, 80, 3, 0.1, 0, false, false, false);
-        // slide = 15
-        this.animations[0][this.states.slide] = new Animator(this.spritesheetLeft, 960, 960, 120, 80, 4, 0.1, 0, true, true, false);
-        this.animations[1][this.states.slide] = new Animator(this.spritesheetRight, 0, 960, 120, 80, 4, 0.1, 0, false, true, false);
-
-        //attack combo (on ground or in air)
-        //Note: Slash 1 is a faster attack but less damage. Slash 2 is slower but more damage
-        //slash 1 = 16
-        this.animations[0][this.states.attack1] = new Animator(this.spritesheetLeft, 725, 0, 120, 80, 6, 0.09, 0, true, false, false);
-        this.animations[1][this.states.attack1] = new Animator(this.spritesheetRight, -5, 0, 120, 80, 6, 0.09, 0, false, false, false);
-        //slash 2 = 17
-        this.animations[0][this.states.attack2] = new Animator(this.spritesheetLeft, 245, 0, 120, 80, 6, 0.1, 0, true, false, false);
-        this.animations[1][this.states.attack2] = new Animator(this.spritesheetRight, 475, 0, 120, 80, 6, 0.1, 0, false, false, false);
-        //shoot = 18
-        this.animations[0][this.states.shoot] = new Animator(this.spritesheetLeft, 965, 1360, 120, 80, 4, 0.1, 0, true, false, false);
-        this.animations[1][this.states.shoot] = new Animator(this.spritesheetRight, -5, 1360, 120, 80, 4, 0.1, 0, false, false, false);
-        // pluck = 19
-        this.animations[0][this.states.pluck] = new Animator(this.spritesheetLeft, 965, 1520, 120, 80, 4, 0.1, 0, true, false, false);
-        this.animations[1][this.states.pluck] = new Animator(this.spritesheetRight, -5, 1520, 120, 80, 4, 0.1, 0, false, false, false);
-
-        // death = 19 (special property so might be better to just have it called only when the player dies)
-        this.animations[0][this.states.death] = new Animator(this.spritesheetLeft, 365, 400, 120, 80, 9, 0.1, 0, true, false, false);
-        this.animations[1][this.states.death] = new Animator(this.spritesheetRight, -5, 400, 120, 80, 9, 0.1, 0, false, false, false);
-    };
-
+    /*
     loadArmor() {
         let numDir = 2;
         let numStates = 21;
@@ -983,10 +912,11 @@ class Knight extends AbstractPlayer {
         this.armor[0][this.states.death] = new Animator(this.armorLeft, 365, 400, 120, 80, 9, 0.1, 0, true, false, false);
         this.armor[1][this.states.death] = new Animator(this.armorRight, -5, 400, 120, 80, 9, 0.1, 0, false, false, false);
     };
+    */
 
     /**Offset the bounding box based on action state */
     getOffsets() {
-        const frame = this.animations[this.facing][this.action].currentFrame();
+        const frame = this.animations[this.facing][this.action][this.myInventory.armorUpgrade].currentFrame();
         switch (this.action) {
             // idle, running and jumping BB offsets
             case this.states.idle:
@@ -1068,5 +998,312 @@ class Knight extends AbstractPlayer {
                 else this.HB = null;
                 break;
         }
+    };
+
+    loadAnimations() {
+        let numDir = 2;
+        let numStates = 21;
+        let armorUpgrades = 4;
+        for (var i = 0; i < numDir; i++) {
+            this.animations.push([]);
+            for (var j = 0; j < numStates; j++) {
+                this.animations[i].push([]);
+                for (var k = 0; k < armorUpgrades; k++) {
+                    this.animations[i][j].push([]);
+                }
+            }
+        }
+
+        //states: 1-10
+        // idle = 0
+        this.animations[0][this.states.idle][0] = new Animator(this.spritesheetLeft, 245, 560, 120, 80, 10, 0.1, 0, true, true, false);
+        this.animations[1][this.states.idle][0] = new Animator(this.spritesheetRight, -5, 560, 120, 80, 10, 0.1, 0, false, true, false);
+        // run = 1
+        this.animations[0][this.states.run][0] = new Animator(this.spritesheetLeft, 245, 880, 120, 80, 10, 0.1, 0, true, true, false);
+        this.animations[1][this.states.run][0] = new Animator(this.spritesheetRight, -5, 880, 120, 80, 10, 0.1, 0, false, true, false);
+        // crouch = 2
+        this.animations[0][this.states.crouch][0] = new Animator(this.spritesheetLeft, 1205, 80, 120, 80, 1, 1, 0, true, true, false);
+        this.animations[1][this.states.crouch][0] = new Animator(this.spritesheetRight, 115, 80, 120, 80, 1, 1, 0, false, true, false);
+        // crouch walk = 3
+        this.animations[0][this.states.crouch_walk][0] = new Animator(this.spritesheetLeft, 485, 240, 120, 80, 8, 0.1, 0, true, true, false);
+        this.animations[1][this.states.crouch_walk][0] = new Animator(this.spritesheetRight, -5, 240, 120, 80, 8, 0.1, 0, false, true, false);
+        // crouch attack = 4
+        this.animations[0][this.states.crouch_atk][0] = new Animator(this.spritesheetLeft, 965, 160, 120, 80, 4, 0.08, 0, true, false, false);
+        this.animations[1][this.states.crouch_atk][0] = new Animator(this.spritesheetRight, -5, 160, 120, 80, 4, 0.08, 0, false, false, false);
+        // crouch pluck = 6
+        this.animations[0][this.states.crouch_shoot][0] = new Animator(this.spritesheetLeft, 965, 1440, 120, 80, 4, 0.1, 0, true, false, false);
+        this.animations[1][this.states.crouch_shoot][0] = new Animator(this.spritesheetRight, -5, 1440, 120, 80, 4, 0.1, 0, false, false, false);
+        // crouch shoot = 5
+        this.animations[0][this.states.crouch_pluck][0] = new Animator(this.spritesheetLeft, 965, 1600, 120, 80, 4, 0.1, 0, true, false, false);
+        this.animations[1][this.states.crouch_pluck][0] = new Animator(this.spritesheetRight, -5, 1600, 120, 80, 4, 0.1, 0, false, false, false);
+        // roll = 7
+        this.animations[0][this.states.roll][0] = new Animator(this.spritesheetLeft, 0, 800, 120, 80, 12, 0.083, 0, true, false, false);
+        this.animations[1][this.states.roll][0] = new Animator(this.spritesheetRight, 0, 800, 120, 80, 12, 0.083, 0, false, false, false);
+        // wall climb = 8
+        this.animations[0][this.states.wall_climb][0] = new Animator(this.spritesheetLeft, 608, 1120, 120, 80, 7, 0.1, 0, true, false, false);
+        this.animations[1][this.states.wall_climb][0] = new Animator(this.spritesheetRight, -8, 1120, 120, 80, 7, 0.1, 0, false, false, false);
+        // wall hang = 9
+        this.animations[0][this.states.wall_hang][0] = new Animator(this.spritesheetLeft, 1323, 1200, 120, 80, 1, 0.2, 0, true, true, false);
+        this.animations[1][this.states.wall_hang][0] = new Animator(this.spritesheetRight, -3, 1200, 120, 80, 1, 0.2, 0, false, true, false);
+        // wall slide = 10
+        this.animations[0][this.states.wall_slide][0] = new Animator(this.spritesheetLeft, 1081, 1280, 120, 80, 3, 0.1, 0, true, true, false);
+        this.animations[1][this.states.wall_slide][0] = new Animator(this.spritesheetRight, -2, 1280, 120, 80, 3, 0.1, 0, false, true, false);
+        // jump -> jump/fall inbetween -> fall
+        // jump = 11
+        this.animations[0][this.states.jump][0] = new Animator(this.spritesheetLeft, 1085, 640, 120, 80, 3, 0.1, 0, true, false, false);
+        this.animations[1][this.states.jump][0] = new Animator(this.spritesheetRight, -5, 640, 120, 80, 3, 0.1, 0, false, false, false);
+        // jump/fall inbetween = 12
+        this.animations[0][this.states.jump_to_fall][0] = new Animator(this.spritesheetLeft, 1205, 720, 120, 80, 2, 0.1, 0, true, false, false);
+        this.animations[1][this.states.jump_to_fall][0] = new Animator(this.spritesheetRight, -5, 720, 120, 80, 2, 0.1, 0, false, false, false);
+        // fall = 13
+        this.animations[0][this.states.falling][0] = new Animator(this.spritesheetLeft, 1085, 480, 120, 80, 3, 0.1, 0, true, true, false);
+        this.animations[1][this.states.falling][0] = new Animator(this.spritesheetRight, -5, 480, 120, 80, 3, 0.1, 0, false, true, false);
+        // turn around = 14
+        this.animations[0][this.states.turn_around][0] = new Animator(this.spritesheetLeft, 1085, 1040, 120, 80, 3, 0.1, 0, true, false, false);
+        this.animations[1][this.states.turn_around][0] = new Animator(this.spritesheetRight, -5, 1040, 120, 80, 3, 0.1, 0, false, false, false);
+        // slide = 15
+        this.animations[0][this.states.slide][0] = new Animator(this.spritesheetLeft, 960, 960, 120, 80, 4, 0.1, 0, true, true, false);
+        this.animations[1][this.states.slide][0] = new Animator(this.spritesheetRight, 0, 960, 120, 80, 4, 0.1, 0, false, true, false);
+
+        //attack combo (on ground or in air)
+        //Note: Slash 1 is a faster attack but less damage. Slash 2 is slower but more damage
+        //slash 1 = 16
+        this.animations[0][this.states.attack1][0] = new Animator(this.spritesheetLeft, 725, 0, 120, 80, 6, 0.09, 0, true, false, false);
+        this.animations[1][this.states.attack1][0] = new Animator(this.spritesheetRight, -5, 0, 120, 80, 6, 0.09, 0, false, false, false);
+        //slash 2 = 17
+        this.animations[0][this.states.attack2][0] = new Animator(this.spritesheetLeft, 245, 0, 120, 80, 6, 0.1, 0, true, false, false);
+        this.animations[1][this.states.attack2][0] = new Animator(this.spritesheetRight, 475, 0, 120, 80, 6, 0.1, 0, false, false, false);
+        //shoot = 18
+        this.animations[0][this.states.shoot][0] = new Animator(this.spritesheetLeft, 965, 1360, 120, 80, 4, 0.1, 0, true, false, false);
+        this.animations[1][this.states.shoot][0] = new Animator(this.spritesheetRight, -5, 1360, 120, 80, 4, 0.1, 0, false, false, false);
+        // pluck = 19
+        this.animations[0][this.states.pluck][0] = new Animator(this.spritesheetLeft, 965, 1520, 120, 80, 4, 0.1, 0, true, false, false);
+        this.animations[1][this.states.pluck][0] = new Animator(this.spritesheetRight, -5, 1520, 120, 80, 4, 0.1, 0, false, false, false);
+
+        // death = 19 (special property so might be better to just have it called only when the player dies)
+        this.animations[0][this.states.death][0] = new Animator(this.spritesheetLeft, 365, 400, 120, 80, 9, 0.1, 0, true, false, false);
+        this.animations[1][this.states.death][0] = new Animator(this.spritesheetRight, -5, 400, 120, 80, 9, 0.1, 0, false, false, false);
+
+
+        //________________________________________________________GOLD________________________________________________________________________
+
+
+
+        //states: 1-10
+        // idle = 0
+        this.animations[0][this.states.idle][1] = new Animator(this.spritesheetLeft1, 245, 560, 120, 80, 10, 0.1, 0, true, true, false);
+        this.animations[1][this.states.idle][1] = new Animator(this.spritesheetRight1, -5, 560, 120, 80, 10, 0.1, 0, false, true, false);
+        // run = 1
+        this.animations[0][this.states.run][1] = new Animator(this.spritesheetLeft1, 245, 880, 120, 80, 10, 0.1, 0, true, true, false);
+        this.animations[1][this.states.run][1] = new Animator(this.spritesheetRight1, -5, 880, 120, 80, 10, 0.1, 0, false, true, false);
+        // crouch = 2
+        this.animations[0][this.states.crouch][1] = new Animator(this.spritesheetLeft1, 1205, 80, 120, 80, 1, 1, 0, true, true, false);
+        this.animations[1][this.states.crouch][1] = new Animator(this.spritesheetRight1, 115, 80, 120, 80, 1, 1, 0, false, true, false);
+        // crouch walk = 3
+        this.animations[0][this.states.crouch_walk][1] = new Animator(this.spritesheetLeft1, 485, 240, 120, 80, 8, 0.1, 0, true, true, false);
+        this.animations[1][this.states.crouch_walk][1] = new Animator(this.spritesheetRight1, -5, 240, 120, 80, 8, 0.1, 0, false, true, false);
+        // crouch attack = 4
+        this.animations[0][this.states.crouch_atk][1] = new Animator(this.spritesheetLeft1, 965, 160, 120, 80, 4, 0.08, 0, true, false, false);
+        this.animations[1][this.states.crouch_atk][1] = new Animator(this.spritesheetRight1, -5, 160, 120, 80, 4, 0.08, 0, false, false, false);
+        // crouch pluck = 6
+        this.animations[0][this.states.crouch_shoot][1] = new Animator(this.spritesheetLeft1, 965, 1440, 120, 80, 4, 0.1, 0, true, false, false);
+        this.animations[1][this.states.crouch_shoot][1] = new Animator(this.spritesheetRight1, -5, 1440, 120, 80, 4, 0.1, 0, false, false, false);
+        // crouch shoot = 5
+        this.animations[0][this.states.crouch_pluck][1] = new Animator(this.spritesheetLeft1, 965, 1600, 120, 80, 4, 0.1, 0, true, false, false);
+        this.animations[1][this.states.crouch_pluck][1] = new Animator(this.spritesheetRight1, -5, 1600, 120, 80, 4, 0.1, 0, false, false, false);
+        // roll = 7
+        this.animations[0][this.states.roll][1] = new Animator(this.spritesheetLeft1, 0, 800, 120, 80, 12, 0.083, 0, true, false, false);
+        this.animations[1][this.states.roll][1] = new Animator(this.spritesheetRight1, 0, 800, 120, 80, 12, 0.083, 0, false, false, false);
+        // wall climb = 8
+        this.animations[0][this.states.wall_climb][1] = new Animator(this.spritesheetLeft1, 608, 1120, 120, 80, 7, 0.1, 0, true, false, false);
+        this.animations[1][this.states.wall_climb][1] = new Animator(this.spritesheetRight1, -8, 1120, 120, 80, 7, 0.1, 0, false, false, false);
+        // wall hang = 9
+        this.animations[0][this.states.wall_hang][1] = new Animator(this.spritesheetLeft1, 1323, 1200, 120, 80, 1, 0.2, 0, true, true, false);
+        this.animations[1][this.states.wall_hang][1] = new Animator(this.spritesheetRight1, -3, 1200, 120, 80, 1, 0.2, 0, false, true, false);
+        // wall slide = 10
+        this.animations[0][this.states.wall_slide][1] = new Animator(this.spritesheetLeft1, 1081, 1280, 120, 80, 3, 0.1, 0, true, true, false);
+        this.animations[1][this.states.wall_slide][1] = new Animator(this.spritesheetRight1, -2, 1280, 120, 80, 3, 0.1, 0, false, true, false);
+        // jump -> jump/fall inbetween -> fall
+        // jump = 11
+        this.animations[0][this.states.jump][1] = new Animator(this.spritesheetLeft1, 1085, 640, 120, 80, 3, 0.1, 0, true, false, false);
+        this.animations[1][this.states.jump][1] = new Animator(this.spritesheetRight1, -5, 640, 120, 80, 3, 0.1, 0, false, false, false);
+        // jump/fall inbetween = 12
+        this.animations[0][this.states.jump_to_fall][1] = new Animator(this.spritesheetLeft1, 1205, 720, 120, 80, 2, 0.1, 0, true, false, false);
+        this.animations[1][this.states.jump_to_fall][1] = new Animator(this.spritesheetRight1, -5, 720, 120, 80, 2, 0.1, 0, false, false, false);
+        // fall = 13
+        this.animations[0][this.states.falling][1] = new Animator(this.spritesheetLeft1, 1085, 480, 120, 80, 3, 0.1, 0, true, true, false);
+        this.animations[1][this.states.falling][1] = new Animator(this.spritesheetRight1, -5, 480, 120, 80, 3, 0.1, 0, false, true, false);
+        // turn around = 14
+        this.animations[0][this.states.turn_around][1] = new Animator(this.spritesheetLeft1, 1085, 1040, 120, 80, 3, 0.1, 0, true, false, false);
+        this.animations[1][this.states.turn_around][1] = new Animator(this.spritesheetRight1, -5, 1040, 120, 80, 3, 0.1, 0, false, false, false);
+        // slide = 15
+        this.animations[0][this.states.slide][1] = new Animator(this.spritesheetLeft1, 960, 960, 120, 80, 4, 0.1, 0, true, true, false);
+        this.animations[1][this.states.slide][1] = new Animator(this.spritesheetRight1, 0, 960, 120, 80, 4, 0.1, 0, false, true, false);
+
+        //attack combo (on ground or in air)
+        //Note: Slash 1 is a faster attack but less damage. Slash 2 is slower but more damage
+        //slash 1 = 16
+        this.animations[0][this.states.attack1][1] = new Animator(this.spritesheetLeft1, 725, 0, 120, 80, 6, 0.09, 0, true, false, false);
+        this.animations[1][this.states.attack1][1] = new Animator(this.spritesheetRight, -5, 0, 120, 80, 6, 0.09, 0, false, false, false);
+        //slash 2 = 17
+        this.animations[0][this.states.attack2][1] = new Animator(this.spritesheetLeft1, 245, 0, 120, 80, 6, 0.1, 0, true, false, false);
+        this.animations[1][this.states.attack2][1] = new Animator(this.spritesheetRight1, 475, 0, 120, 80, 6, 0.1, 0, false, false, false);
+        //shoot = 18
+        this.animations[0][this.states.shoot][1] = new Animator(this.spritesheetLeft1, 965, 1360, 120, 80, 4, 0.1, 0, true, false, false);
+        this.animations[1][this.states.shoot][1] = new Animator(this.spritesheetRight1, -5, 1360, 120, 80, 4, 0.1, 0, false, false, false);
+        // pluck = 19
+        this.animations[0][this.states.pluck][1] = new Animator(this.spritesheetLeft1, 965, 1520, 120, 80, 4, 0.1, 0, true, false, false);
+        this.animations[1][this.states.pluck][1] = new Animator(this.spritesheetRight1, -5, 1520, 120, 80, 4, 0.1, 0, false, false, false);
+
+        // death = 19 (special property so might be better to just have it called only when the player dies)
+        this.animations[0][this.states.death][1] = new Animator(this.spritesheetLeft1, 365, 400, 120, 80, 9, 0.1, 0, true, false, false);
+        this.animations[1][this.states.death][1] = new Animator(this.spritesheetRight1, -5, 400, 120, 80, 9, 0.1, 0, false, false, false);
+
+
+        //___________________________________________________________DIAMOND________________________________________________________________________
+
+        //states: 1-10
+        // idle = 0
+        this.animations[0][this.states.idle][2] = new Animator(this.spritesheetLeft2, 245, 560, 120, 80, 10, 0.1, 0, true, true, false);
+        this.animations[1][this.states.idle][2] = new Animator(this.spritesheetRight2, -5, 560, 120, 80, 10, 0.1, 0, false, true, false);
+        // run = 1
+        this.animations[0][this.states.run][2] = new Animator(this.spritesheetLeft2, 245, 880, 120, 80, 10, 0.1, 0, true, true, false);
+        this.animations[1][this.states.run][2] = new Animator(this.spritesheetRight2, -5, 880, 120, 80, 10, 0.1, 0, false, true, false);
+        // crouch = 2
+        this.animations[0][this.states.crouch][2] = new Animator(this.spritesheetLeft2, 1205, 80, 120, 80, 1, 1, 0, true, true, false);
+        this.animations[1][this.states.crouch][2] = new Animator(this.spritesheetRight2, 115, 80, 120, 80, 1, 1, 0, false, true, false);
+        // crouch walk = 3
+        this.animations[0][this.states.crouch_walk][2] = new Animator(this.spritesheetLeft2, 485, 240, 120, 80, 8, 0.1, 0, true, true, false);
+        this.animations[1][this.states.crouch_walk][2] = new Animator(this.spritesheetRight2, -5, 240, 120, 80, 8, 0.1, 0, false, true, false);
+        // crouch attack = 4
+        this.animations[0][this.states.crouch_atk][2] = new Animator(this.spritesheetLeft2, 965, 160, 120, 80, 4, 0.08, 0, true, false, false);
+        this.animations[1][this.states.crouch_atk][2] = new Animator(this.spritesheetRight2, -5, 160, 120, 80, 4, 0.08, 0, false, false, false);
+        // crouch pluck = 6
+        this.animations[0][this.states.crouch_shoot][2] = new Animator(this.spritesheetLeft2, 965, 1440, 120, 80, 4, 0.1, 0, true, false, false);
+        this.animations[1][this.states.crouch_shoot][2] = new Animator(this.spritesheetRight2, -5, 1440, 120, 80, 4, 0.1, 0, false, false, false);
+        // crouch shoot = 5
+        this.animations[0][this.states.crouch_pluck][2] = new Animator(this.spritesheetLeft2, 965, 1600, 120, 80, 4, 0.1, 0, true, false, false);
+        this.animations[1][this.states.crouch_pluck][2] = new Animator(this.spritesheetRight2, -5, 1600, 120, 80, 4, 0.1, 0, false, false, false);
+        // roll = 7
+        this.animations[0][this.states.roll][2] = new Animator(this.spritesheetLeft2, 0, 800, 120, 80, 12, 0.083, 0, true, false, false);
+        this.animations[1][this.states.roll][2] = new Animator(this.spritesheetRight2, 0, 800, 120, 80, 12, 0.083, 0, false, false, false);
+        // wall climb = 8
+        this.animations[0][this.states.wall_climb][2] = new Animator(this.spritesheetLeft2, 608, 1120, 120, 80, 7, 0.1, 0, true, false, false);
+        this.animations[1][this.states.wall_climb][2] = new Animator(this.spritesheetRight2, -8, 1120, 120, 80, 7, 0.1, 0, false, false, false);
+        // wall hang = 9
+        this.animations[0][this.states.wall_hang][2] = new Animator(this.spritesheetLeft2, 1323, 1200, 120, 80, 1, 0.2, 0, true, true, false);
+        this.animations[1][this.states.wall_hang][2] = new Animator(this.spritesheetRight2, -3, 1200, 120, 80, 1, 0.2, 0, false, true, false);
+        // wall slide = 10
+        this.animations[0][this.states.wall_slide][2] = new Animator(this.spritesheetLeft2, 1081, 1280, 120, 80, 3, 0.1, 0, true, true, false);
+        this.animations[1][this.states.wall_slide][2] = new Animator(this.spritesheetRight2, -2, 1280, 120, 80, 3, 0.1, 0, false, true, false);
+        // jump -> jump/fall inbetween -> fall
+        // jump = 11
+        this.animations[0][this.states.jump][2] = new Animator(this.spritesheetLeft2, 1085, 640, 120, 80, 3, 0.1, 0, true, false, false);
+        this.animations[1][this.states.jump][2] = new Animator(this.spritesheetRight2, -5, 640, 120, 80, 3, 0.1, 0, false, false, false);
+        // jump/fall inbetween = 12
+        this.animations[0][this.states.jump_to_fall][2] = new Animator(this.spritesheetLeft2, 1205, 720, 120, 80, 2, 0.1, 0, true, false, false);
+        this.animations[1][this.states.jump_to_fall][2] = new Animator(this.spritesheetRight2, -5, 720, 120, 80, 2, 0.1, 0, false, false, false);
+        // fall = 13
+        this.animations[0][this.states.falling][2] = new Animator(this.spritesheetLeft2, 1085, 480, 120, 80, 3, 0.1, 0, true, true, false);
+        this.animations[1][this.states.falling][2] = new Animator(this.spritesheetRight2, -5, 480, 120, 80, 3, 0.1, 0, false, true, false);
+        // turn around = 14
+        this.animations[0][this.states.turn_around][2] = new Animator(this.spritesheetLeft2, 1085, 1040, 120, 80, 3, 0.1, 0, true, false, false);
+        this.animations[1][this.states.turn_around][2] = new Animator(this.spritesheetRight2, -5, 1040, 120, 80, 3, 0.1, 0, false, false, false);
+        // slide = 15
+        this.animations[0][this.states.slide][2] = new Animator(this.spritesheetLeft2, 960, 960, 120, 80, 4, 0.1, 0, true, true, false);
+        this.animations[1][this.states.slide][2] = new Animator(this.spritesheetRight2, 0, 960, 120, 80, 4, 0.1, 0, false, true, false);
+
+        //attack combo (on ground or in air)
+        //Note: Slash 1 is a faster attack but less damage. Slash 2 is slower but more damage
+        //slash 1 = 16
+        this.animations[0][this.states.attack1][2] = new Animator(this.spritesheetLeft2, 725, 0, 120, 80, 6, 0.09, 0, true, false, false);
+        this.animations[1][this.states.attack1][2] = new Animator(this.spritesheetRight2, -5, 0, 120, 80, 6, 0.09, 0, false, false, false);
+        //slash 2 = 17
+        this.animations[0][this.states.attack2][2] = new Animator(this.spritesheetLeft2, 245, 0, 120, 80, 6, 0.1, 0, true, false, false);
+        this.animations[1][this.states.attack2][2] = new Animator(this.spritesheetRight2, 475, 0, 120, 80, 6, 0.1, 0, false, false, false);
+        //shoot = 18
+        this.animations[0][this.states.shoot][2] = new Animator(this.spritesheetLeft2, 965, 1360, 120, 80, 4, 0.1, 0, true, false, false);
+        this.animations[1][this.states.shoot][2] = new Animator(this.spritesheetRight2, -5, 1360, 120, 80, 4, 0.1, 0, false, false, false);
+        // pluck = 19
+        this.animations[0][this.states.pluck][2] = new Animator(this.spritesheetLeft2, 965, 1520, 120, 80, 4, 0.1, 0, true, false, false);
+        this.animations[1][this.states.pluck][2] = new Animator(this.spritesheetRight2, -5, 1520, 120, 80, 4, 0.1, 0, false, false, false);
+
+        // death = 19 (special property so might be better to just have it called only when the player dies)
+        this.animations[0][this.states.death][2] = new Animator(this.spritesheetLeft2, 365, 400, 120, 80, 9, 0.1, 0, true, false, false);
+        this.animations[1][this.states.death][2] = new Animator(this.spritesheetRight2, -5, 400, 120, 80, 9, 0.1, 0, false, false, false);
+
+
+        //________________________________________________________NETHERITE___________________________________________________________________________
+
+        //states: 1-10
+        // idle = 0
+        this.animations[0][this.states.idle][3] = new Animator(this.spritesheetLeft3, 245, 560, 120, 80, 10, 0.1, 0, true, true, false);
+        this.animations[1][this.states.idle][3] = new Animator(this.spritesheetRight3, -5, 560, 120, 80, 10, 0.1, 0, false, true, false);
+        // run = 1
+        this.animations[0][this.states.run][3] = new Animator(this.spritesheetLeft3, 245, 880, 120, 80, 10, 0.1, 0, true, true, false);
+        this.animations[1][this.states.run][3] = new Animator(this.spritesheetRight3, -5, 880, 120, 80, 10, 0.1, 0, false, true, false);
+        // crouch = 2
+        this.animations[0][this.states.crouch][3] = new Animator(this.spritesheetLeft3, 1205, 80, 120, 80, 1, 1, 0, true, true, false);
+        this.animations[1][this.states.crouch][3] = new Animator(this.spritesheetRight3, 115, 80, 120, 80, 1, 1, 0, false, true, false);
+        // crouch walk = 3
+        this.animations[0][this.states.crouch_walk][3] = new Animator(this.spritesheetLeft3, 485, 240, 120, 80, 8, 0.1, 0, true, true, false);
+        this.animations[1][this.states.crouch_walk][3] = new Animator(this.spritesheetRight3, -5, 240, 120, 80, 8, 0.1, 0, false, true, false);
+        // crouch attack = 4
+        this.animations[0][this.states.crouch_atk][3] = new Animator(this.spritesheetLeft3, 965, 160, 120, 80, 4, 0.08, 0, true, false, false);
+        this.animations[1][this.states.crouch_atk][3] = new Animator(this.spritesheetRight3, -5, 160, 120, 80, 4, 0.08, 0, false, false, false);
+        // crouch pluck = 6
+        this.animations[0][this.states.crouch_shoot][3] = new Animator(this.spritesheetLeft3, 965, 1440, 120, 80, 4, 0.1, 0, true, false, false);
+        this.animations[1][this.states.crouch_shoot][3] = new Animator(this.spritesheetRight3, -5, 1440, 120, 80, 4, 0.1, 0, false, false, false);
+        // crouch shoot = 5
+        this.animations[0][this.states.crouch_pluck][3] = new Animator(this.spritesheetLeft3, 965, 1600, 120, 80, 4, 0.1, 0, true, false, false);
+        this.animations[1][this.states.crouch_pluck][3] = new Animator(this.spritesheetRight3, -5, 1600, 120, 80, 4, 0.1, 0, false, false, false);
+        // roll = 7
+        this.animations[0][this.states.roll][3] = new Animator(this.spritesheetLeft3, 0, 800, 120, 80, 12, 0.083, 0, true, false, false);
+        this.animations[1][this.states.roll][3] = new Animator(this.spritesheetRight3, 0, 800, 120, 80, 12, 0.083, 0, false, false, false);
+        // wall climb = 8
+        this.animations[0][this.states.wall_climb][3] = new Animator(this.spritesheetLeft3, 608, 1120, 120, 80, 7, 0.1, 0, true, false, false);
+        this.animations[1][this.states.wall_climb][3] = new Animator(this.spritesheetRight3, -8, 1120, 120, 80, 7, 0.1, 0, false, false, false);
+        // wall hang = 9
+        this.animations[0][this.states.wall_hang][3] = new Animator(this.spritesheetLeft3, 1323, 1200, 120, 80, 1, 0.2, 0, true, true, false);
+        this.animations[1][this.states.wall_hang][3] = new Animator(this.spritesheetRight3, -3, 1200, 120, 80, 1, 0.2, 0, false, true, false);
+        // wall slide = 10
+        this.animations[0][this.states.wall_slide][3] = new Animator(this.spritesheetLeft3, 1081, 1280, 120, 80, 3, 0.1, 0, true, true, false);
+        this.animations[1][this.states.wall_slide][3] = new Animator(this.spritesheetRight3, -2, 1280, 120, 80, 3, 0.1, 0, false, true, false);
+        // jump -> jump/fall inbetween -> fall
+        // jump = 11
+        this.animations[0][this.states.jump][3] = new Animator(this.spritesheetLeft3, 1085, 640, 120, 80, 3, 0.1, 0, true, false, false);
+        this.animations[1][this.states.jump][3] = new Animator(this.spritesheetRight3, -5, 640, 120, 80, 3, 0.1, 0, false, false, false);
+        // jump/fall inbetween = 12
+        this.animations[0][this.states.jump_to_fall][3] = new Animator(this.spritesheetLeft3, 1205, 720, 120, 80, 2, 0.1, 0, true, false, false);
+        this.animations[1][this.states.jump_to_fall][3] = new Animator(this.spritesheetRight3, -5, 720, 120, 80, 2, 0.1, 0, false, false, false);
+        // fall = 13
+        this.animations[0][this.states.falling][3] = new Animator(this.spritesheetLeft3, 1085, 480, 120, 80, 3, 0.1, 0, true, true, false);
+        this.animations[1][this.states.falling][3] = new Animator(this.spritesheetRight3, -5, 480, 120, 80, 3, 0.1, 0, false, true, false);
+        // turn around = 14
+        this.animations[0][this.states.turn_around][3] = new Animator(this.spritesheetLeft3, 1085, 1040, 120, 80, 3, 0.1, 0, true, false, false);
+        this.animations[1][this.states.turn_around][3] = new Animator(this.spritesheetRight3, -5, 1040, 120, 80, 3, 0.1, 0, false, false, false);
+        // slide = 15
+        this.animations[0][this.states.slide][3] = new Animator(this.spritesheetLeft3, 960, 960, 120, 80, 4, 0.1, 0, true, true, false);
+        this.animations[1][this.states.slide][3] = new Animator(this.spritesheetRight3, 0, 960, 120, 80, 4, 0.1, 0, false, true, false);
+
+        //attack combo (on ground or in air)
+        //Note: Slash 1 is a faster attack but less damage. Slash 2 is slower but more damage
+        //slash 1 = 16
+        this.animations[0][this.states.attack1][3] = new Animator(this.spritesheetLeft3, 725, 0, 120, 80, 6, 0.09, 0, true, false, false);
+        this.animations[1][this.states.attack1][3] = new Animator(this.spritesheetRight3, -5, 0, 120, 80, 6, 0.09, 0, false, false, false);
+        //slash 2 = 17
+        this.animations[0][this.states.attack2][3] = new Animator(this.spritesheetLeft3, 245, 0, 120, 80, 6, 0.1, 0, true, false, false);
+        this.animations[1][this.states.attack2][3] = new Animator(this.spritesheetRight3, 475, 0, 120, 80, 6, 0.1, 0, false, false, false);
+        //shoot = 18
+        this.animations[0][this.states.shoot][3] = new Animator(this.spritesheetLeft3, 965, 1360, 120, 80, 4, 0.1, 0, true, false, false);
+        this.animations[1][this.states.shoot][3] = new Animator(this.spritesheetRight3, -5, 1360, 120, 80, 4, 0.1, 0, false, false, false);
+        // pluck = 19
+        this.animations[0][this.states.pluck][3] = new Animator(this.spritesheetLeft3, 965, 1520, 120, 80, 4, 0.1, 0, true, false, false);
+        this.animations[1][this.states.pluck][3] = new Animator(this.spritesheetRight3, -5, 1520, 120, 80, 4, 0.1, 0, false, false, false);
+
+        // death = 19 (special property so might be better to just have it called only when the player dies)
+        this.animations[0][this.states.death][3] = new Animator(this.spritesheetLeft3, 365, 400, 120, 80, 9, 0.1, 0, true, false, false);
+        this.animations[1][this.states.death][3] = new Animator(this.spritesheetRight3, -5, 400, 120, 80, 9, 0.1, 0, false, false, false);
+        
     };
 }
