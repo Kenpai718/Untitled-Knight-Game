@@ -111,7 +111,7 @@ var levelLoader = {
     label: "Level-Loader",
     width: 24, height: 14,
     player: { x: 1, y: 3 },
-    music: MUSIC.FODLAN_WINDS,
+    music: MUSIC.TITLE,
 
     //quick access to all levels
     doors: [
@@ -219,7 +219,7 @@ var levelLoader = {
     width: 24, height: 14,
     //player: { x: 1, y: 3 },
     player: { x: 9.5, y: 10 },
-    music: MUSIC.FODLAN_WINDS,
+    music: MUSIC.TITLE,
 
     //quick access to all levels
     doors: [

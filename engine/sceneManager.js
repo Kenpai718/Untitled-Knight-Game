@@ -255,6 +255,13 @@ class SceneManager {
      * Update the camera and gui elements
      */
     update() {
+        this.updateAudio();
+        PARAMS.DEBUG = document.getElementById("debug").checked;
+        if (this.game.debug) {
+            this.game.debug = false;
+            document.getElementById("debug").checked = !document.getElementById("debug").checked;
+        }
+
         //timer for the level
         if (!this.title && !this.transition) {
             this.levelTimer += this.game.clockTick;
@@ -262,12 +269,6 @@ class SceneManager {
 
         if (!this.title && !this.transition) {
             //debug key toggle, flip state of debug checkbox
-            if (this.game.debug) {
-                this.game.debug = false;
-                document.getElementById("debug").checked = !document.getElementById("debug").checked;
-            }
-            PARAMS.DEBUG = document.getElementById("debug").checked;
-            this.updateAudio();
             this.updateGUI();
             this.BBCamera();
 
@@ -643,17 +644,20 @@ class SceneManager {
         //make a minimap for the level
         this.setupMinimap();
 
-        //play music
-        if (this.title) { //force play title music
-            ASSET_MANAGER.forcePlayMusic(MUSIC.TITLE);
-        } else if (scene.music) {
-            ASSET_MANAGER.pauseBackgroundMusic();
-            ASSET_MANAGER.autoRepeat(scene.music);
-            ASSET_MANAGER.playAsset(scene.music);
-        } else if (!scene.music) { //no music set play default music
-            ASSET_MANAGER.pauseBackgroundMusic();
-            ASSET_MANAGER.autoRepeat(this.defaultMusic);
-            ASSET_MANAGER.playAsset(this.defaultMusic);
+        //play the music if it is not already playing
+        if (!ASSET_MANAGER.isPlaying(scene.music)) {
+            if (this.title) { //force play title music
+                ASSET_MANAGER.pauseBackgroundMusic();
+                ASSET_MANAGER.forcePlayMusic(scene.music);
+            } else if (scene.music) {
+                ASSET_MANAGER.pauseBackgroundMusic();
+                ASSET_MANAGER.autoRepeat(scene.music);
+                ASSET_MANAGER.playAsset(scene.music);
+            } else if (!scene.music) { //no music set play default music
+                ASSET_MANAGER.pauseBackgroundMusic();
+                ASSET_MANAGER.autoRepeat(this.defaultMusic);
+                ASSET_MANAGER.playAsset(this.defaultMusic);
+            }
         }
 
         //play an entrance sound effect upon loading a level
