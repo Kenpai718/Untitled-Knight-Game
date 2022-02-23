@@ -43,7 +43,7 @@ class AbstractPlayer extends AbstractEntity {
         if (this.myInventory.arrows > 0) {
             //try to position starting arrow at the waist of the knight
             const target = this.chooseArrowTarget();
-            this.game.addEntityToFront(new Arrow(this.game, this.x + this.offsetxBB + 20, (this.BB.top + this.BB.height / 4), target, this.myInventory.arrowUpgrade));
+            this.game.addEntityToFront(new Arrow(this.game, this.x + this.offsetxBB + 20, (this.BB.top + this.BB.height / 4), target, this.myInventory.arrowUpgrade, true));
             this.myInventory.arrows--;
             ASSET_MANAGER.playAsset(SFX.BOW_SHOT);
 
