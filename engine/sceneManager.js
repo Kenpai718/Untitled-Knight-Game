@@ -106,7 +106,8 @@ class SceneManager {
         let levelOne = level1_1;
         let levelTwo = level1_2;
         let levelThree = level1_3;
-        this.levels = [levelZero, levelOne, levelTwo, levelThree];
+        let levelFour = level1_4;
+        this.levels = [levelZero, levelOne, levelTwo, levelThree, levelFour];
     }
 
     /**
@@ -320,6 +321,17 @@ class SceneManager {
                     this.game.myReportCard.reset();
                 }
                 this.game.click = null;
+            }
+        }
+
+        if(PARAMS.DEBUG) {
+            /**
+             * Debug tool
+             * gives diamonds by toggling debug mode
+             * use to test the shop!
+             */
+            if(this.currentLevel == 0) {
+                this.player.myInventory.diamonds = 999;
             }
         }
 
@@ -1121,17 +1133,15 @@ class Minimap {
             if (!secret.found) {
                 secret.secrets.forEach(function (s) {
                     let myX = s.x * PARAMS.SCALE;
-                    let myY = s.y * PARAMS.SCALE;
+                    let myY = (self.h - s.y - 4) * PARAMS.SCALE;
                     let myW = s.w * PARAMS.SCALE;
                     let myH = s.h * PARAMS.SCALE;
 
                     if (s instanceof SecretBricks)
                         ctx.fillStyle = self.colors.brick;
-                    ctx.fillRect(self.x + myX, myY - self.y + (self.h - 3) * PARAMS.SCALE, myW, myH);
+                    ctx.fillRect(self.x + myX, self.y + self.h * PARAMS.SCALE - myY, myW, myH);
 
                 });
-
-
             }
         });
 

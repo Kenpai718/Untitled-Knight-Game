@@ -44,6 +44,7 @@ ASSET_MANAGER.queueDownload("./sprites/GUI/interactables.png");
 ASSET_MANAGER.queueDownload(MUSIC.CHASING_DAYBREAK);
 ASSET_MANAGER.queueDownload(MUSIC.FODLAN_WINDS);
 ASSET_MANAGER.queueDownload(MUSIC.BETWEEN_HEAVEN_AND_EARTH);
+ASSET_MANAGER.queueDownload(MUSIC.LONG_WAY);
 
 
 //sfx
