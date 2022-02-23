@@ -43,7 +43,7 @@ var testLevel = {
             x: 4, y: 2,
             title: "TOP SECRET: DEVELOPER ROOM",
             text: ["This room is for developers to test mechanics",
-                  "If you are not a developer then... 🔫😬"]
+                "If you are not a developer then... 🔫😬"]
 
         },
 
@@ -85,16 +85,16 @@ var testLevel = {
         { x: 8, y: 1, brickX: 15, brickY: 1, brickWidth: 1, brickHeight: 1 }
     ],
     shrooms: [
-        { x: 16, y: 1, guard: true}
+        { x: 16, y: 1, guard: true }
     ],
     goblins: [
-        { x: 12, y: 1, guard: false}
+        { x: 12, y: 1, guard: false }
     ],
     skeletons: [
-        { x: 12, y: 7, guard: true}
+        { x: 12, y: 7, guard: true }
     ],
     flyingeyes: [
-        { x: 12, y: 5, guard: false}
+        { x: 12, y: 5, guard: false }
     ]
 }
 
@@ -262,14 +262,14 @@ var level1_1 = {
         { x: 120, y: 15, height: 16, type: 0 }
     ],
     secrets: [
-        {   
+        {
             indicate: true,
             bricks: [
-                {x: 94, y: 1, width: 1, height: 1},
-                {x: 99, y: 8, width: 4, height: 1},
-                {x: 97, y: 7, width: 8, height: 1},
-                {x: 96, y: 6, width: 10, height: 1},
-                {x: 95, y: 5, width: 12, height: 5}
+                { x: 94, y: 1, width: 1, height: 1 },
+                { x: 99, y: 8, width: 4, height: 1 },
+                { x: 97, y: 7, width: 8, height: 1 },
+                { x: 96, y: 6, width: 10, height: 1 },
+                { x: 95, y: 5, width: 12, height: 5 }
             ]
         }
     ],
@@ -285,15 +285,15 @@ var level1_1 = {
         { x: 115, y: 12 }
     ],
     shrooms: [
-        { x: 16, y: 2, guard: false},
+        { x: 16, y: 2, guard: false },
         { x: 62, y: 1, guard: false },
         { x: 72, y: 5, guard: false }
     ],
     goblins: [
-        { x: 105, y: 12, guard: true}
+        { x: 105, y: 12, guard: true }
     ],
     skeletons: [
-        { x: 47, y: 7, guard: true}
+        { x: 47, y: 7, guard: true }
     ],
 }
 
@@ -343,7 +343,7 @@ var level1_2 = {
     ],
 
     npcs: [
-        {x: 38, y: 22}
+        { x: 38, y: 22 }
     ],
 
     ground: [
@@ -356,7 +356,7 @@ var level1_2 = {
         { x: 4, y: 19, width: 1, height: 1, type: 0 },
         { x: 65, y: 18, width: 5, height: 1, type: 1 },
         { x: 80, y: 18, width: 4, height: 1, type: 1 },
-        
+
     ],
     bricks: [
         { x: 45, y: 0, width: 16, height: 1 },
@@ -380,12 +380,12 @@ var level1_2 = {
         { x: 65, y: 36, width: 55, height: 14 },
         { x: 65, y: 17, width: 5, height: 8 },
         { x: 70, y: 15, width: 10, height: 6 },
-        { x: 80, y: 17, width: 40, height: 8},
+        { x: 80, y: 17, width: 40, height: 8 },
         { x: 85, y: 22, width: 35, height: 5 },
         { x: 9, y: 28, width: 1, height: 1 }
     ],
 
-    spikes: [{x: 70, y: 16,  width: 10}],
+    spikes: [{ x: 70, y: 16, width: 10 }],
     walls: [
         { x: 41, y: 5, height: 2, type: 2 },
         { x: 40, y: 22, height: 4, type: 0 },
@@ -420,10 +420,10 @@ var level1_2 = {
     ],
     skeletons: [
         { x: 3, y: 26, guard: true },
-        { x: 70, y: 3, guard: true},
+        { x: 70, y: 3, guard: true },
         { x: 75, y: 3, guard: true },
         { x: 81, y: 22, guard: true },
-        { x: 100, y: 3, guard: true},
+        { x: 100, y: 3, guard: true },
     ],
     flyingeyes: [
         { x: 75, y: 21, guard: true },
@@ -582,7 +582,7 @@ var level1_3 = {
         },
 
     ],
-    npcs: [{x: 51, y:10}
+    npcs: [{ x: 51, y: 10 }
 
     ],
 
@@ -624,7 +624,7 @@ var level1_3 = {
     ],
     chests: [
         { x: 77, y: 15, direction: 0 },
-        { x: 54, y: 5, directon: 0},
+        { x: 54, y: 5, directon: 0 },
     ],
     bricks: [
         { x: 120, y: 42, width: 1, height: 43 },
@@ -701,4 +701,100 @@ var level1_3 = {
         { x: 36, y: 1, width: 41 },
         { x: 84, y: 13, width: 15 }
     ]
+}
+
+var level1_4 = {
+    ID: 4,
+    label: "1-4",
+    width: 75, height: 50,
+    player: { x: 6, y: 5 },
+    music: MUSIC.FODLAN_WINDS,
+    doors: [
+        { x: 3, y: 6, killQuota: 0, exitLocation: { x: 115, y: 25, levelNum: 3 }, transition: false }, //starting door
+    ],
+
+    npcs: [
+    ],
+
+    chests: [
+        {x: 28, y: 1, direction: 0},
+        {x: 37, y: 12, direction: 1},
+        {x: 38.5, y: 12, direction: 1},
+
+    ],
+    ground: [
+        //{ x: 0, y: 0, width: 15, height: 1, type: 1 },
+        { x: 1, y: 3, width: 10, height: 1, type: 1 }, //starting ground
+        { x: 27, y: 0, width: 3, height: 1, type: 0 }, //bottom floor after jumps with chest on top
+        { x: 34, y: 1, width: 6, height: 1, type: 0 }, //right most bottom floor
+        { x: 34, y: 7, width: 2, height: 1, type: 0 }, //bottom floor wall holding obelisk
+
+
+    ],
+    bricks: [
+        //{ x: 30, y: 15, width: 90, height: 3 },
+        { x: 0, y: 2, width: 11, height: 4 }, //starting bricks
+        { x: 0, y: 22, width: 37, height: 13 }, //bottom floor ceiling
+        { x: 34, y: 0, width: 33, height: 1, type: 0 }, //right most bottom floor
+        { x: 36, y: 10, width: 5, height: 8, type: 0 }, //bottom floor crouch ceiling left
+        { x: 37, y: 11, width: 5, height: 1, type: 0 }, //secret floor
+        { x: 37, y: 15, width: 10, height: 1, type: 0 }, //secret floor ceiling
+        { x: 44, y: 14, width: 3, height: 12, type: 0 }, //bottom floor crouch ceiling right
+        { x: 44, y: 14, width: 3, height: 12, type: 0 }, //bottom floor
+        { x: 49, y: 11, width: 18, height: 2, type: 0 }, //right most middle floor bottom
+        { x: 52, y: 16, width: 13, height: 2, type: 0 }, //top ground of middle floor
+        { x: 55, y: 9, width: 12, height: 9, type: 0 }, //bottom right filler blocks
+        
+
+    ],
+    walls: [
+        //{ x: -1, y: 15, height: 16, type: 0 },
+        { x: 0, y: 10, height: 8, type: 0 }, //wall left first door
+        { x: 17, y: 2, height: 3, type: 0 }, //bottom floor first jump
+        { x: 24, y: 5, height: 6, type: 0 }, //bottom floor 2nd jump
+        { x: 36, y: 10, height: 8, type: 0 }, //first closing wall of bottom floor
+        { x: 41, y: 10, height: 8, type: 0 }, //secret room wall left
+        { x: 43, y: 14, height: 12, type: 0 }, //secret room wall right
+        { x: 47, y: 24, height: 22, type: 0 }, //wall right of secret room
+        { x: 54, y: 10, height: 10, type: 0 }, //bottom floor last right wall
+        { x: 51, y: 16, height: 4, type: 0 }, //middle floor first left wall
+
+        { x: 67, y: 21, height: 22, type: 0 }, //middle floor last right wall
+ 
+    ],
+
+    platforms: [
+        {x: 48, y: 7, width: 3, height: 2}
+    ],
+    secrets: [
+        {
+            indicate: true,
+            bricks: [
+                { x: 42, y: 10, width: 1, height: 8}, //hide secret walljump
+                { x: 37, y: 15, width: 10, height: 6}, //hide treasure room
+
+            ]
+        }
+    ],
+    backgroundWalls: [
+        { x: 0, y: 50, width: 75, height: 55}
+    ],
+
+    obelisks: [
+        //{ x: 34, y: 8, brickX: 36, brickY: 2, brickWidth: 4, brickHeight: 1 }, //bottom floor
+    ],
+
+    torches: [
+        //{ x: 31, y: 7 },
+    ],
+    shrooms: [
+        //{ x: 16, y: 2, guard: false },
+
+    ],
+    goblins: [
+        //{ x: 105, y: 12, guard: true }
+    ],
+    skeletons: [
+        //{ x: 47, y: 7, guard: true }
+    ],
 }
