@@ -304,8 +304,10 @@ class GameEngine {
         this.drawLayer(this.entities);
         this.drawLayer(this.projectiles);
         this.drawLayer(this.foreground2);
-        this.drawLayer(this.secrets);    
+        this.drawLayer(this.secrets);
+        this.drawHealth();
         this.drawLayer(this.information);
+        
 
         if (PARAMS.DEBUG) {
             this.drawDebug(this.foreground1);
@@ -333,6 +335,12 @@ class GameEngine {
     drawDebug(layer) {
         for (let i = layer.length - 1; i >= 0; i--) {
             layer[i].drawDebug(this.ctx, this);
+        }
+    }
+
+    drawHealth() {
+        for (let i = this.enemies.length - 1; i >= 0; i--) {
+            this.enemies[i].drawHealth(this.ctx, this);
         }
     }
 
