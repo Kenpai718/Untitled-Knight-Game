@@ -154,6 +154,8 @@ class SceneManager {
         this.player = this.lastPlayer ? this.lastPlayer : new Knight(this.game, 0, 0);
         if (this.lastPlayer) {
             this.player.removeFromWorld = false;
+            this.player.velocity.x = 0;
+            this.player.velocity.y = 0;
             
             this.player.action = this.player.states.idle;
             this.player.updateBB();
