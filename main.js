@@ -6,6 +6,12 @@ const ASSET_MANAGER = new AssetManager();
 //main character
 ASSET_MANAGER.queueDownload("./sprites/knight/knightLeft.png");
 ASSET_MANAGER.queueDownload("./sprites/knight/knightRight.png");
+ASSET_MANAGER.queueDownload("./sprites/knight/knightLeft1.png");
+ASSET_MANAGER.queueDownload("./sprites/knight/knightRight1.png");
+ASSET_MANAGER.queueDownload("./sprites/knight/knightLeft2.png");
+ASSET_MANAGER.queueDownload("./sprites/knight/knightRight2.png");
+ASSET_MANAGER.queueDownload("./sprites/knight/knightLeft3.png");
+ASSET_MANAGER.queueDownload("./sprites/knight/knightRight3.png");
 ASSET_MANAGER.queueDownload("./sprites/knight/armorLeft.png");
 ASSET_MANAGER.queueDownload("./sprites/knight/armorRight.png");
 ASSET_MANAGER.queueDownload("./sprites/projectile/arrows.png");
