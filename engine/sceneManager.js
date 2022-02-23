@@ -1133,17 +1133,15 @@ class Minimap {
             if (!secret.found) {
                 secret.secrets.forEach(function (s) {
                     let myX = s.x * PARAMS.SCALE;
-                    let myY = s.y * PARAMS.SCALE;
+                    let myY = (self.h - s.y - 4) * PARAMS.SCALE;
                     let myW = s.w * PARAMS.SCALE;
                     let myH = s.h * PARAMS.SCALE;
 
                     if (s instanceof SecretBricks)
                         ctx.fillStyle = self.colors.brick;
-                    ctx.fillRect(self.x + myX, myY - self.y + (self.h - 3) * PARAMS.SCALE, myW, myH);
+                    ctx.fillRect(self.x + myX, self.y + self.h * PARAMS.SCALE - myY, myW, myH);
 
                 });
-
-
             }
         });
 
