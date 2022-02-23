@@ -203,7 +203,7 @@ class AbstractPlayer extends AbstractEntity {
 
         //falling collisions and gravity
         super.handleGravity();
-        if (this.animations[this.facing][this.action].isDone()) {
+        if (this.animations[this.facing][this.action][this.myInventory.armorUpgrade].isDone()) {
             this.game.myReportCard.myDeathes += 1;
             this.restartGame();
         }
