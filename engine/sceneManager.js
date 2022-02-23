@@ -287,19 +287,22 @@ class SceneManager {
                 }
             }
             if (this.game.click) {
-                ASSET_MANAGER.playAsset(SFX.CLICK);
                 if (this.startGameBB.collideMouse(this.game.click.x, this.game.click.y)) {
+                    ASSET_MANAGER.playAsset(SFX.CLICK);
                     this.game.attack = false;
                     this.loadLevel(this.currentLevel, false);
                 } else if (this.controlsBB.collideMouse(this.game.click.x, this.game.click.y)) {
+                    ASSET_MANAGER.playAsset(SFX.CLICK);
                     this.credits = false;
                     this.controls = !this.controls;
                 } else if (this.creditsBB.collideMouse(this.game.click.x, this.game.click.y)) {
+                    ASSET_MANAGER.playAsset(SFX.CLICK);
                     this.controls = false;
                     this.credits = !this.credits;
                 } else if (this.levelSelectBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     //hide the button after you click it
                     if (!this.usingLevelSelect) {
+                        ASSET_MANAGER.playAsset(SFX.CLICK);
                         this.loadLevelSelect();
                     }
                 }
@@ -317,14 +320,16 @@ class SceneManager {
                 }
             }
             if (this.game.click) {
-                ASSET_MANAGER.playAsset(SFX.CLICK);
                 if (this.nextLevelBB.collideMouse(this.game.click.x, this.game.click.y)) {
+                    ASSET_MANAGER.playAsset(SFX.CLICK);
                     // load next level code goes here when level 2 is added
                     this.game.myReportCard.reset();
                     this.levelTimer = 0;
                 } else if (this.restartLevelBB.collideMouse(this.game.click.x, this.game.click.y)) {
+                    ASSET_MANAGER.playAsset(SFX.CLICK);
                     this.restartLevel();
                 } else if (this.returnToMenuBB.collideMouse(this.game.click.x, this.game.click.y)) {
+                    ASSET_MANAGER.playAsset(SFX.CLICK);
                     this.returnToMenu();
                 }
                 this.game.click = null;
