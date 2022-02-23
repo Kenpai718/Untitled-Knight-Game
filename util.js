@@ -174,6 +174,7 @@ const SFX = {
     ARROW_STICK: "./sound/sfx/arrow_stick.wav",
     BOW_SHOT: "./sound/sfx/bow_shoot.mp3",
     CLICK: "./sound/sfx/click.wav",
+    DISTRACT: "./sound/sfx/distract.mp3",
     ITEM_PICKUP: "./sound/sfx/item_pickup.mp3",
     SLASH1: "./sound/sfx/slash1.wav",
     SLASH2: "./sound/sfx/slash2.wav",
