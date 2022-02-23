@@ -106,7 +106,8 @@ class SceneManager {
         let levelOne = level1_1;
         let levelTwo = level1_2;
         let levelThree = level1_3;
-        this.levels = [levelZero, levelOne, levelTwo, levelThree];
+        let levelFour = level1_4;
+        this.levels = [levelZero, levelOne, levelTwo, levelThree, levelFour];
     }
 
     /**
@@ -320,6 +321,17 @@ class SceneManager {
                     this.game.myReportCard.reset();
                 }
                 this.game.click = null;
+            }
+        }
+
+        if(PARAMS.DEBUG) {
+            /**
+             * Debug tool
+             * gives diamonds by toggling debug mode
+             * use to test the shop!
+             */
+            if(this.currentLevel == 0) {
+                this.player.myInventory.diamonds = 999;
             }
         }
 

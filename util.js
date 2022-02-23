@@ -208,6 +208,7 @@ const MUSIC = {
     CHASING_DAYBREAK: "./sound/music/FE3H_Chasing_Daybreak.mp3",
     FODLAN_WINDS: "./sound/music/FE3H_Fodlan_Winds.mp3",
     BETWEEN_HEAVEN_AND_EARTH: "./sound/music/FE3H_Between_Heaven_And_Earth.mp3",
+    LONG_WAY: "./sound/music/P4_Long_Way.mp3",
 
 }
 

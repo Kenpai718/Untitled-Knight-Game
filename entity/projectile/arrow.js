@@ -80,7 +80,7 @@ class Arrow extends AbstractEntity {
         });
 
         //unstick arrow if the wall that it hit is no longer there (like through an obelisk)
-        if(this.stuck && !hitWall) this.stuck = false;
+        if (this.stuck && !hitWall) this.stuck = false;
 
         //hit an entity
         this.game.enemies.forEach(function (entity) {
@@ -89,7 +89,7 @@ class Arrow extends AbstractEntity {
                 if (entity instanceof AbstractEnemy && self.playerTeam) {
                     if (!self.hit && !self.stuck && !entity.dead) {
                         //log to report card
-                        if(entity.canTakeDamage()) self.game.myReportCard.myDamageDealt += self.getDamageValue();
+                        if (entity.canTakeDamage()) self.game.myReportCard.myDamageDealt += self.getDamageValue();
                         ASSET_MANAGER.playAsset(SFX.ARROW_HIT);
                         self.removeFromWorld = true;
                         self.hit = true;
@@ -98,14 +98,16 @@ class Arrow extends AbstractEntity {
                         if (!entity.aggro) entity.aggro = true;
 
                     }
-                } else if(entity instanceof AbstractPlayer && !self.playerTeam) {
-                    //do damage to player from enemy arrow
-                    //log to report card
-                    if(entity.canTakeDamage()) self.game.myReportCard.myDamageTaken += self.getDamageValue();
-                    ASSET_MANAGER.playAsset(SFX.ARROW_HIT);
-                    self.removeFromWorld = true;
-                    self.hit = true;
-                    entity.takeDamage(self.getDamageValue(), self.critical);
+                } else if (entity instanceof AbstractPlayer && !self.playerTeam) {
+                    if (!self.hit && !self.stuck && !entity.dead) {
+                        //do damage to player from enemy arrow
+                        //log to report card
+                        if (entity.canTakeDamage()) self.game.myReportCard.myDamageTaken += self.getDamageValue();
+                        ASSET_MANAGER.playAsset(SFX.ARROW_HIT);
+                        self.removeFromWorld = true;
+                        self.hit = true;
+                        entity.takeDamage(self.getDamageValue(), self.critical);
+                    }
 
                 }
             }
