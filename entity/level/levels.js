@@ -28,10 +28,14 @@ var testLevel = {
     width: 24, height: 14,
     player: { x: 1, y: 1 },
     music: MUSIC.FODLAN_WINDS,
+
+    //quick access to all levels
     doors: [
-        { x: 1, y: 3, killQuota: 0, exitLocation: { x: 5, y: 2, levelNum: 1 }, transition: false }, //door to level 3
-        { x: 6, y: 7, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition: false }, //door to level 2
-        { x: 21, y: 3, killQuota: 0, exitLocation: { x: 4, y: 1, levelNum: 3 }, transition: false } //door to level 1
+        
+        { x: 1, y: 3, killQuota: 0, exitLocation: { x: 5, y: 2, levelNum: 1 }, transition: false }, //door to level 1
+        { x: 5, y: 3, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition: false }, //door to level 2
+        { x: 9, y: 3, killQuota: 0, exitLocation: { x: 4, y: 1, levelNum: 3 }, transition: false }, //door to level 3
+        { x: 13, y: 3, killQuota: 0, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: false }, //door to level 4
     ],
 
     npcs: [
@@ -40,7 +44,7 @@ var testLevel = {
 
     signs: [
         {
-            x: 4, y: 2,
+            x: 3.5, y: 2,
             title: "TOP SECRET: DEVELOPER ROOM",
             text: ["This room is for developers to test mechanics",
                 "If you are not a developer then... 🔫😬"]
@@ -66,7 +70,7 @@ var testLevel = {
     ],
     ground: [
         { x: 0, y: 0, width: 30, height: 1, type: 1 },
-        { x: 3, y: 4, width: 5, height: 1, type: 2 },
+        { x: 3, y: 5, width: 3, height: 1, type: 2 },
         { x: 10, y: 6, width: 5, height: 1, type: 2 }
     ],
     chests: [
@@ -74,7 +78,7 @@ var testLevel = {
         { x: 13, y: 7, direction: 0 }
     ],
     bricks: [
-        { x: 10, y: 1, width: 1, height: 1 },
+        { x: 10, y: 7, width: 1, height: 1 },
     ],
     walls: [
         { x: -1, y: 14, height: 14, type: 2 },
@@ -82,19 +86,19 @@ var testLevel = {
         { x: 25, y: 14, height: 14, type: 2 }
     ],
     obelisks: [
-        { x: 8, y: 1, brickX: 15, brickY: 1, brickWidth: 1, brickHeight: 1 }
+        { x: 6.5, y: 1, brickX: 15, brickY: 1, brickWidth: 1, brickHeight: 1 }
     ],
     shrooms: [
         { x: 16, y: 1, guard: true }
     ],
     goblins: [
-        { x: 12, y: 1, guard: false }
+        //{ x: 12, y: 1, guard: false }
     ],
     skeletons: [
         { x: 12, y: 7, guard: true }
     ],
     flyingeyes: [
-        { x: 12, y: 5, guard: false }
+        //{ x: 12, y: 5, guard: false }
     ]
 }
 
@@ -588,7 +592,7 @@ var level1_3 = {
 
     doors: [
         { x: 1, y: 3, killQuota: 0, exitLocation: { x: 114, y: 1, levelNum: 2 }, transition: false }, //go back to level 2
-        { x: 117, y: 25, killQuota: 5, exitLocation: { x: 1, y: 3, levelNum: 3 }, transition: true }, // change to level 4 once theres a level 4
+        { x: 117, y: 25, killQuota: 8, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: false }, // change to level 4 once theres a level 4
         { x: 34, y: 35, killQuota: 1, exitLocation: { x: 1, y: 3, levelNum: 0 }, transition: false } // change to treasure room
     ],
     ground: [
@@ -707,25 +711,41 @@ var level1_4 = {
     ID: 4,
     label: "1-4",
     width: 75, height: 50,
-    player: { x: 6, y: 5 },
-    music: MUSIC.FODLAN_WINDS,
+    //player: { x: 65, y: 45 },
+    player: { x: 3.5, y: 4 },
+    music: MUSIC.LONG_WAY,
+    signs: [
+        {
+            x: 10, y: 5,
+            title: "[TUTORIAL: RAGE BOOST]",
+            text: [
+                "When you are desperate to survive:",
+                "-At low-hp you will tap into a secret power",
+                " called BESERKER MODE! Indicated by a red aura.",
+                "-This is a powerful state that deals extra damage",
+                " and shoots a blade beam projectile with each swing!",
+                "-However it only lasts for a short time and you can",
+                " easily die in one hit!"
+                
+
+            ]
+        },
+    ],
     doors: [
         { x: 3, y: 6, killQuota: 0, exitLocation: { x: 115, y: 25, levelNum: 3 }, transition: false }, //starting door
-        { x: 6, y: 26, killQuota: 10, exitLocation: { x: 115, y: 25, levelNum: 3 }, transition: false }, //exit door
+        { x: 6, y: 26, killQuota: 10, exitLocation: { x: 115, y: 25, levelNum: 3 }, transition: true }, //exit door
     ],
-
     npcs: [
-        {x: 52, y: 5},
-        {x: 64, y: 40},
+        {x: 6, y: 4},
+        {x: 64, y: 35},
     ],
-
     chests: [
         {x: 28, y: 1, direction: 0},    //bottom floor
         {x: 37, y: 12, direction: 1},   //secret room 
         {x: 38.5, y: 12, direction: 1}, //secret room
         {x: 65, y: 12, direction: 0},   //middle floor
-        { x: 1, y: 27, width: 3, height: 1, type: 1 }, //exit door plat (chest on top)
-
+        { x: 1, y: 27, direction: 0 }, //exit door plat (chest on top)
+        { x: 24, y: 34, direction: 0 }, //chest udner miniboss fight
     ],
     ground: [
         //{ x: 0, y: 0, width: 15, height: 1, type: 1 },
@@ -733,13 +753,16 @@ var level1_4 = {
         { x: 27, y: 0, width: 3, height: 1, type: 0 }, //bottom floor after jumps with chest on top
         { x: 34, y: 1, width: 6, height: 1, type: 0 }, //right most bottom floor
         { x: 34, y: 7, width: 2, height: 1, type: 0 }, //bottom floor wall holding obelisk
+        { x: 61, y: 16, width: 3, height: 1, type: 0 }, //right of middle floor spikes
         { x: 68, y: 21, width: 6, height: 1, type: 0 }, //top of middle floor right
         { x: 27, y: 30, width: 37, height: 1, type: 0 }, //under top floor spikes
+        { x: 16, y: 36, width: 10, height: 1, type: 0 }, //top left floor (boss fight)
 
 
     ],
     spikes: [
-        {x: 27, y: 31, width: 37} //top floor spikes
+        {x: 27, y: 31, width: 37}, //top floor spikes
+        {x: 52, y: 16, width: 9}, //top ground of middle floor
     ],
     bricks: [
         //{ x: 30, y: 15, width: 90, height: 3 },
@@ -752,7 +775,7 @@ var level1_4 = {
         { x: 44, y: 14, width: 3, height: 12, type: 0 }, //bottom floor crouch ceiling right
         { x: 44, y: 14, width: 3, height: 12, type: 0 }, //bottom floor
         { x: 49, y: 11, width: 18, height: 2, type: 0 }, //right most middle floor bottom
-        { x: 52, y: 16, width: 13, height: 2, type: 0 }, //top ground of middle floor
+        { x: 52, y: 15, width: 13, height: 1, type: 0 }, //top ground of middle floor
         { x: 55, y: 9, width: 12, height: 9, type: 0 }, //bottom right filler blocks
         { x: 37, y: 23, width: 10, height: 8, type: 0 }, //FILLER LEFT OF SECRET ROOM
         { x: 0, y: 23, width: 40, height: 1, type: 0 }, //filler between bottom and middle
@@ -780,13 +803,31 @@ var level1_4 = {
         { x: 67, y: 21, height: 22, type: 0 }, //middle floor last right wall
         { x: 74, y: 45, width: 1, height: 25, type: 0 }, //far most right wall
         { x: 0, y: 28, width: 1, height: 5, type: 0 }, //far left wall on top (exit)
+        { x: 48, y: 35, width: 1, height: 5, type: 0 }, //top floor spikes right wall (bottom)
+        { x: 48, y: 45, width: 1, height: 3, type: 0 }, //top floor spikes right wall (TOP)
+        { x: 45, y: 43, width: 1, height: 13, type: 0 }, //top floor spikes left wall
+        { x: 42, y: 45, width: 1, height: 7, type: 0 }, //top floor spikes right wall (TOP) 2 
+        { x: 38, y: 45, width: 1, height: 7, type: 0 }, //top floor spikes left wall (TOP) 2
+        { x: 35, y: 37, width: 1, height: 7, type: 0 }, //top floor spikes left (TOP) 3
+        { x: 26, y: 41, width: 1, height: 8, type: 0 }, //closing top wall right in top left
  
     ],
 
     platforms: [
         {x: 48, y: 7, width: 3, height: 1},             //bottom floor plat
         { x: 60, y: 21, width: 4, height: 1, type: 0 }, //middle floor plat
-        { x: 1, y: 26, width: 3, height: 1, type: 0 }, //exit door plat (chest on top)
+        { x: 1, y: 26, width: 3, height: 1,  type: 0 }, //exit door plat (chest on top)
+        { x: 60, y: 38, width: 2, height: 1, type: 0 }, //far right top plat over spikes
+        { x: 52, y: 41, width: 2, height: 1, type: 0 }, //far right top plat over spikes 2
+        { x: 39, y: 41, width: 2, height: 1, type: 0 }, //holds obelisk top floor
+        { x: 39, y: 34, width: 4, height: 1, type: 0 }, //middle floor plat
+        { x: 30, y: 33, width: 3, height: 1, type: 0 }, //middle floor plat top left over spikes
+    ],
+
+    obelisks: [
+        { x: 34, y: 8, brickX: 36, brickY: 2, brickWidth: 4, brickHeight: 1 }, //unlock bottom floor
+        { x: 62, y: 17, brickX: 65, brickY: 23, brickWidth: 2, brickHeight: 12 }, //unlock middle floor
+        { x: 39, y: 42.5, brickX: 35, brickY: 48, brickWidth: 1, brickHeight: 11 }, //unlock top floor
     ],
 
 
@@ -804,22 +845,52 @@ var level1_4 = {
         { x: 0, y: 50, width: 75, height: 55}
     ],
 
-    obelisks: [
-        //{ x: 34, y: 8, brickX: 36, brickY: 2, brickWidth: 4, brickHeight: 1 }, //unlock bottom floor
-        //{ x: 62, y: 17, brickX: 65, brickY: 23, brickWidth: 2, brickHeight: 12 }, //unlock middle floor
-    ],
 
     torches: [
         //{ x: 31, y: 7 },
     ],
     shrooms: [
-        //{ x: 16, y: 2, guard: false },
+        { x: 72, y: 24, guard: false },
 
     ],
     goblins: [
-        //{ x: 105, y: 12, guard: true }
+        //bottom
+        { x: 43, y: 4, guard: true },
+
+        //middle
+        { x: 53, y: 14, guard: true },
+        { x: 55, y: 14, guard: true },
+        { x: 57, y: 14, guard: true },
+        { x: 58, y: 14, guard: true },
+        { x: 60, y: 14, guard: false },
+
+        //top
+        { x: 3, y: 28, guard: true },
+
     ],
     skeletons: [
-        //{ x: 47, y: 7, guard: true }
+        //bottom
+        { x: 41, y: 4, guard: true },
+        //top
+        { x: 20, y: 35, guard: true }
     ],
+
+    flyingeyes: [
+        //bottom floor
+        { x: 15, y: 7, guard: false },
+        { x: 25, y: 8, guard: true },
+        { x: 32, y: 7, guard: true },
+
+        //middle floor
+        { x: 50, y: 23, guard: true },
+
+        //top floor left
+        { x: 31, y: 45, guard: true },
+        { x: 32, y: 45, guard: true },
+        //top floor right
+        { x: 60, y: 39, guard: true },
+        { x: 50, y: 41, guard: true },
+    ],
+
+    //NOTEa: place miniboss at x: 18, y: 38
 }
