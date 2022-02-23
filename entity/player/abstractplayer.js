@@ -29,6 +29,8 @@ class AbstractPlayer extends AbstractEntity {
             } else {
                 healed = amount;
             }
+            
+            healed = Math.round(100*healed)/100;
 
             this.hp += healed;
             ASSET_MANAGER.playAsset(SFX.HEAL);
@@ -125,8 +127,15 @@ class AbstractPlayer extends AbstractEntity {
      */
     getAttackBonus() {
         let bonusAttack = [1.0, 1.2, 1.4, 1.6, 2];
-        console.log(bonusAttack[this.myInventory.attackUpgrade]);
         return (bonusAttack[this.myInventory.attackUpgrade]);
+    }
+
+    /**
+     * Increases player defense
+     */
+    getDefenseBonus() {
+        let bonusDefense = [1.0, 0.9, 0.8, 0.7];
+        return (bonusDefense[this.myInventory.armorUpgrade]);
     }
 
     /**
@@ -416,7 +425,8 @@ class AbstractPlayer extends AbstractEntity {
                 //attacked by an enemy
                 if (entity.HB && self.BB.collide(entity.HB)) {
                     //console.log("knight hit by enemy");
-                    let dmg = entity.getDamageValue();
+                    let dmg = entity.getDamageValue() * self.getDefenseBonus();
+                    dmg = Math.round(100*dmg)/100; // Insures values to nearest hundredth 
                     if(self.canTakeDamage()) self.game.myReportCard.myDamageTaken += dmg;
                     self.takeDamage(dmg, false);
 

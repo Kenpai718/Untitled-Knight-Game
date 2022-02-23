@@ -750,6 +750,7 @@ class Knight extends AbstractPlayer {
         if (this.isCriticalHit()) {
             dmg = dmg * PARAMS.CRITICAL_BONUS * super.getAttackBonus();
         }
+        dmg = Math.round(100*dmg)/100;
         return dmg;
 
     }
