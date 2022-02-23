@@ -8,14 +8,15 @@ class SceneManager {
         this.game.camera = this; //add scene manager as an entity to game engine
         this.x = 0;
         this.y = 0;
-        this.velocity = {x: 0, y: 0};
-        this.anchor = {right: false, bottom: false};
+        this.velocity = { x: 0, y: 0 };
+        this.anchor = { right: false, bottom: false };
         this.defaultMusic = MUSIC.CHASING_DAYBREAK;
 
         //game status
         this.title = false;
         this.transition = false;
         this.gameOver = false;
+        this.usingLevelSelect = false;
 
         this.levelH = 0;
         this.levelW = 0;
@@ -44,6 +45,9 @@ class SceneManager {
         x = (this.game.surfaceWidth / 2) - ((40 * 7) / 2);
         y = (this.game.surfaceHeight / 2) + 40 * 3;
         this.creditsBB = new BoundingBox(x, y, 40 * 7, -40);
+        x = (this.game.surfaceWidth / 2) - ((40 * 12) / 2);
+        y = (this.game.surfaceHeight / 2) + 40 * 6;
+        this.levelSelectBB = new BoundingBox(x, y, 40 * 12, -40);
 
         //text boxes for the title screen
         let controlInfo =
@@ -75,6 +79,9 @@ class SceneManager {
         let controlY = 1220;
         this.myControlBox = new SceneTextBox(this.game, controlX, controlY, controlInfo);
         this.myCreditBox = new SceneTextBox(this.game, creditX, creditY, creditInfo);
+
+        //load title animation
+        this.loadTitleScene();
     };
 
 
@@ -156,7 +163,6 @@ class SceneManager {
             this.player.removeFromWorld = false;
             this.player.velocity.x = 0;
             this.player.velocity.y = 0;
-            
             this.player.action = this.player.states.idle;
             this.player.updateBB();
         }
@@ -218,6 +224,7 @@ class SceneManager {
         }
     }
 
+
     /**
      * Clear the entities list
      */
@@ -275,6 +282,8 @@ class SceneManager {
                     this.textColor = 2;
                 } else if (this.creditsBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
                     this.textColor = 3;
+                } else if (this.levelSelectBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
+                    this.textColor = 4;
                 }
             }
             if (this.game.click) {
@@ -288,6 +297,11 @@ class SceneManager {
                 } else if (this.creditsBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     this.controls = false;
                     this.credits = !this.credits;
+                } else if (this.levelSelectBB.collideMouse(this.game.click.x, this.game.click.y)) {
+                    //hide the button after you click it
+                    if (!this.usingLevelSelect) {
+                        this.loadLevelSelect();
+                    }
                 }
                 this.game.click = null;
             }
@@ -309,35 +323,61 @@ class SceneManager {
                     this.game.myReportCard.reset();
                     this.levelTimer = 0;
                 } else if (this.restartLevelBB.collideMouse(this.game.click.x, this.game.click.y)) {
-                    this.currentLevel = 1;
-                    this.levelState = [];
-                    this.lastPlayer = null;
-                    this.game.attack = false;
-                    this.loadLevel(this.currentLevel, false);
-                    this.game.myReportCard.reset();
+                    this.restartLevel();
                 } else if (this.returnToMenuBB.collideMouse(this.game.click.x, this.game.click.y)) {
-                    this.currentLevel = 1;
-                    this.levelState = [];
-                    this.lastPlayer = null;
-                    this.title = true;
-                    this.game.myReportCard.reset();
+                    this.returnToMenu();
                 }
                 this.game.click = null;
             }
         }
 
-        if(PARAMS.DEBUG) {
+        if (PARAMS.DEBUG) {
             /**
              * Debug tool
              * gives diamonds by toggling debug mode
              * use to test the shop!
              */
-            if(this.currentLevel == 0) {
+            if (this.currentLevel == 0) {
                 this.player.myInventory.diamonds = 999;
             }
         }
 
     };
+
+    /**
+     * Menu Options
+     */
+    returnToMenu() {
+        this.usingLevelSelect = false;
+        this.currentLevel = 1;
+        this.levelState = [];
+        this.lastPlayer = null;
+        this.title = true;
+        this.game.myReportCard.reset();
+    }
+
+    restartLevel() {
+        this.currentLevel = 1;
+        this.levelState = [];
+        this.lastPlayer = null;
+        this.game.attack = false;
+        this.loadLevel(this.currentLevel, false);
+        this.game.myReportCard.reset();
+    }
+
+    loadLevelSelect() {
+        this.usingLevelSelect = true;
+        this.controls = false;
+        this.credits = false;
+        this.clearEntities();
+        this.loadScene(levelLoader, levelLoader.player.x, levelLoader.player.y);
+    }
+
+    loadTitleScene() {
+        this.clearEntities();
+        this.loadScene(titleScene, titleScene.player.x, titleScene.player.y);
+    }
+
 
     BBCamera() {
         if (this.player.BB.left < 0) this.player.x -= this.player.BB.left;
@@ -370,14 +410,14 @@ class SceneManager {
         if (this.game.left && !this.game.right) {
             this.anchor.right = false;
         }
-        if(this.anchor.right) {
+        if (this.anchor.right) {
             if (this.x + this.game.surfaceWidth * 6 / 16 < this.player.BB.left) {
                 if (this.player.facing == this.player.dir.right)
                     this.x += (this.player.velocity.x + Math.abs(this.player.velocity.x) * 3 / 4) * this.game.clockTick;
                 else
                     this.x += (this.player.velocity.x + Math.abs(this.player.velocity.x) * 1 / 4) * this.game.clockTick;
             }
-            else if (this.x + this.game.surfaceWidth * 6 / 16 < this.player.BB.right) 
+            else if (this.x + this.game.surfaceWidth * 6 / 16 < this.player.BB.right)
                 this.x += this.player.velocity.x * this.game.clockTick;
         }
         else {
@@ -387,7 +427,7 @@ class SceneManager {
                 else
                     this.x += (this.player.velocity.x - Math.abs(this.player.velocity.x) * 1 / 4) * this.game.clockTick;
             }
-            else if (this.x + this.game.surfaceWidth * 10 / 16 > this.player.BB.left) 
+            else if (this.x + this.game.surfaceWidth * 10 / 16 > this.player.BB.left)
                 this.x += this.player.velocity.x * this.game.clockTick;
         }
 
@@ -416,7 +456,7 @@ class SceneManager {
         }
 
         if (this.anchor.bottom) {
-            if (this.y + this.game.surfaceHeight * 4 / 16 < this.player.BB.top) 
+            if (this.y + this.game.surfaceHeight * 4 / 16 < this.player.BB.top)
                 this.y += (this.player.velocity.y + Math.abs(this.player.velocity.y) * 3 / 4) * this.game.clockTick;
             else if (this.y + this.game.surfaceHeight * 4 / 16 < this.player.BB.bottom)
                 this.y += this.player.velocity.y * this.game.clockTick;
@@ -425,7 +465,7 @@ class SceneManager {
             if (this.scrollTime > .15) {
                 if (this.y + this.game.surfaceHeight * 12 / 16 > this.player.BB.bottom)
                     this.y += (this.player.velocity.y - Math.abs(this.player.velocity.y) * 6 / 4) * this.game.clockTick;
-                else if (this.y + this.game.surfaceHeight * 12 / 16 > this.player.BB.top) 
+                else if (this.y + this.game.surfaceHeight * 12 / 16 > this.player.BB.top)
                     this.y += this.player.velocity.y * this.game.clockTick;
             }
         }
@@ -443,7 +483,7 @@ class SceneManager {
         else if (this.player.BB.right > this.level.width * PARAMS.BLOCKDIM) {
             this.player.x -= this.player.BB.right - this.level.width * PARAMS.BLOCKDIM;
         }
-        
+
 
     }
 
@@ -508,14 +548,14 @@ class SceneManager {
             let gameTitle = "Untitled Knight Game";
 
             ctx.font = titleFont;
+            ctx.fillStyle = "Orchid";
+            ctx.fillText(gameTitle, (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2) + 5, fontSize * 3 + 5);
+            ctx.fillStyle = "GhostWhite";
             ctx.fillText(gameTitle, (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 3);
-            ctx.font = '40px "Press Start 2P"';
-            ctx.fillStyle = this.textColor == 1 ? "SpringGreen" : "White";
-            ctx.fillText("Start Game", this.startGameBB.x, this.startGameBB.y);
-            ctx.fillStyle = this.textColor == 2 ? "Grey" : "White";
-            ctx.fillText("Controls", this.controlsBB.x, this.controlsBB.y);
-            ctx.fillStyle = this.textColor == 3 ? "Grey" : "White";
-            ctx.fillText("Credits", this.creditsBB.x, this.creditsBB.y);
+            buildTextButton(ctx, "Start Game", this.startGameBB, this.textColor == 1, "DeepPink");
+            buildTextButton(ctx, "Controls", this.controlsBB, this.textColor == 2, "DeepSkyBlue");
+            buildTextButton(ctx, "Credits", this.creditsBB, this.textColor == 3, "DeepSkyBlue");
+            if (!this.usingLevelSelect) buildButton(ctx, "Level Select", this.levelSelectBB, this.textColor == 4);
             ctx.strokeStyle = "Red";
 
             if (this.controls) {
@@ -599,7 +639,9 @@ class SceneManager {
         this.setupMinimap();
 
         //play music
-        if (scene.music) { //level music when not on title
+        if (this.title) { //force play title music
+            ASSET_MANAGER.forcePlayMusic(MUSIC.TITLE);
+        } else if (scene.music) {
             ASSET_MANAGER.pauseBackgroundMusic();
             ASSET_MANAGER.autoRepeat(scene.music);
             ASSET_MANAGER.playAsset(scene.music);
@@ -717,7 +759,7 @@ class SceneManager {
                     let secrets = [];
                     for (var j = 0; j < secret.bricks.length; j++) {
                         let bricks = secret.bricks[j];
-                        secrets.push(new SecretBricks(this.game, bricks.x, h - bricks.y - 1, bricks.width, bricks.height, false, secret.indicate));                
+                        secrets.push(new SecretBricks(this.game, bricks.x, h - bricks.y - 1, bricks.width, bricks.height, false, secret.indicate));
                         this.game.addEntity(new Secret(this.game, secrets, false, secret.indicate));
                     }
                 }
