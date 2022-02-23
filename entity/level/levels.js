@@ -711,15 +711,20 @@ var level1_4 = {
     music: MUSIC.FODLAN_WINDS,
     doors: [
         { x: 3, y: 6, killQuota: 0, exitLocation: { x: 115, y: 25, levelNum: 3 }, transition: false }, //starting door
+        { x: 6, y: 26, killQuota: 10, exitLocation: { x: 115, y: 25, levelNum: 3 }, transition: false }, //exit door
     ],
 
     npcs: [
+        {x: 52, y: 5},
+        {x: 64, y: 40},
     ],
 
     chests: [
-        {x: 28, y: 1, direction: 0},
-        {x: 37, y: 12, direction: 1},
-        {x: 38.5, y: 12, direction: 1},
+        {x: 28, y: 1, direction: 0},    //bottom floor
+        {x: 37, y: 12, direction: 1},   //secret room 
+        {x: 38.5, y: 12, direction: 1}, //secret room
+        {x: 65, y: 12, direction: 0},   //middle floor
+        { x: 1, y: 27, width: 3, height: 1, type: 1 }, //exit door plat (chest on top)
 
     ],
     ground: [
@@ -728,8 +733,13 @@ var level1_4 = {
         { x: 27, y: 0, width: 3, height: 1, type: 0 }, //bottom floor after jumps with chest on top
         { x: 34, y: 1, width: 6, height: 1, type: 0 }, //right most bottom floor
         { x: 34, y: 7, width: 2, height: 1, type: 0 }, //bottom floor wall holding obelisk
+        { x: 68, y: 21, width: 6, height: 1, type: 0 }, //top of middle floor right
+        { x: 27, y: 30, width: 37, height: 1, type: 0 }, //under top floor spikes
 
 
+    ],
+    spikes: [
+        {x: 27, y: 31, width: 37} //top floor spikes
     ],
     bricks: [
         //{ x: 30, y: 15, width: 90, height: 3 },
@@ -744,8 +754,16 @@ var level1_4 = {
         { x: 49, y: 11, width: 18, height: 2, type: 0 }, //right most middle floor bottom
         { x: 52, y: 16, width: 13, height: 2, type: 0 }, //top ground of middle floor
         { x: 55, y: 9, width: 12, height: 9, type: 0 }, //bottom right filler blocks
+        { x: 37, y: 23, width: 10, height: 8, type: 0 }, //FILLER LEFT OF SECRET ROOM
+        { x: 0, y: 23, width: 40, height: 1, type: 0 }, //filler between bottom and middle
+        { x: 16, y: 29, width: 54, height: 6, type: 0 }, //top floor ground
+        { x: 64, y: 33, width: 3, height: 4, type: 1 }, //top floor above spikes
+        { x: 16, y: 33, width: 11, height: 4, type: 1 }, //left top floor (fight miniboss)
+        { x: 0, y: 53, width: 13, height: 25, type: 0 }, //top left filler above exit room
+        { x: 0, y: 53, width: 75, height: 8, type: 0 }, //top most ceiling
+        { x: 68, y: 20, width: 7, height: 21, type: 0 }, //right
+        { x: 75, y: 55, width: 10, height: 56, type: 0 }, //filler far right
         
-
     ],
     walls: [
         //{ x: -1, y: 15, height: 16, type: 0 },
@@ -758,14 +776,20 @@ var level1_4 = {
         { x: 47, y: 24, height: 22, type: 0 }, //wall right of secret room
         { x: 54, y: 10, height: 10, type: 0 }, //bottom floor last right wall
         { x: 51, y: 16, height: 4, type: 0 }, //middle floor first left wall
-
+        { x: 64, y: 21, width: 5, height: 6, type: 0 }, //right wall on middle floor
         { x: 67, y: 21, height: 22, type: 0 }, //middle floor last right wall
+        { x: 74, y: 45, width: 1, height: 25, type: 0 }, //far most right wall
+        { x: 0, y: 28, width: 1, height: 5, type: 0 }, //far left wall on top (exit)
  
     ],
 
     platforms: [
-        {x: 48, y: 7, width: 3, height: 2}
+        {x: 48, y: 7, width: 3, height: 1},             //bottom floor plat
+        { x: 60, y: 21, width: 4, height: 1, type: 0 }, //middle floor plat
+        { x: 1, y: 26, width: 3, height: 1, type: 0 }, //exit door plat (chest on top)
     ],
+
+
     secrets: [
         {
             indicate: true,
@@ -781,7 +805,8 @@ var level1_4 = {
     ],
 
     obelisks: [
-        //{ x: 34, y: 8, brickX: 36, brickY: 2, brickWidth: 4, brickHeight: 1 }, //bottom floor
+        //{ x: 34, y: 8, brickX: 36, brickY: 2, brickWidth: 4, brickHeight: 1 }, //unlock bottom floor
+        //{ x: 62, y: 17, brickX: 65, brickY: 23, brickWidth: 2, brickHeight: 12 }, //unlock middle floor
     ],
 
     torches: [
