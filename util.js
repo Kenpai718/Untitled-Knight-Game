@@ -209,6 +209,7 @@ const MUSIC = {
     FODLAN_WINDS: "./sound/music/FE3H_Fodlan_Winds.mp3",
     BETWEEN_HEAVEN_AND_EARTH: "./sound/music/FE3H_Between_Heaven_And_Earth.mp3",
     LONG_WAY: "./sound/music/P4_Long_Way.mp3",
+    TITLE: "./sound/music/Runescape_Main.mp3",
 
 }
 
@@ -355,3 +356,30 @@ String.prototype.toHHMMSS = function () {
     if (seconds < 10) {seconds = "0"+seconds;}
     return hours+':'+minutes+':'+seconds;
 }
+
+function buildButton(ctx, text, box, isSelected) {
+    //border
+    isSelected ? ctx.fillStyle = "DarkOrange" : ctx.fillStyle = "GhostWhite";
+    ctx.fillRect(box.x + 2, box.y + 2, box.width, box.height);
+    //box
+    isSelected ? ctx.fillStyle = "DarkSlateBlue" : ctx.fillStyle = "BlueViolet";
+    ctx.fillRect(box.x, box.y, box.width, box.height);
+
+    //text
+    ctx.fillStyle = "GhostWhite";
+    ctx.font = '40px "Press Start 2P"';
+    ctx.fillText(text, box.x, box.y);
+}
+
+function buildTextButton(ctx, text, box, isSelected, highlightColor) {
+    //text
+    
+    ctx.font = '40px "Press Start 2P"';
+    isSelected ? ctx.fillStyle = "GhostWhite" : ctx.fillStyle = "BlueViolet";
+    ctx.fillText(text, box.x + 5, box.y + 5);
+    isSelected ? ctx.fillStyle = highlightColor : ctx.fillStyle = "GhostWhite";
+    ctx.fillText(text, box.x, box.y);
+}
+
+
+
