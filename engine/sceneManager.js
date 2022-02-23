@@ -145,11 +145,17 @@ class SceneManager {
         let spawnX = theX * PARAMS.BLOCKDIM;
         let spawnY = theY * PARAMS.BLOCKDIM;
 
+        this.game.roll = false;
+        this.game.attack = false;
+        this.game.jump = false;
+        this.game.down = false;
+        this.game.shoot = false;
+
         this.player = this.lastPlayer ? this.lastPlayer : new Knight(this.game, 0, 0);
         if (this.lastPlayer) {
             this.player.removeFromWorld = false;
-            this.player.x = 0;
-            this.player.y = 0;
+            
+            this.player.action = this.player.states.idle;
             this.player.updateBB();
         }
         this.player.x = spawnX;

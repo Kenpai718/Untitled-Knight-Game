@@ -57,14 +57,14 @@ class NPC extends AbstractEntity {
                     self.state = self.states.awaking;
                     if (self.animations[self.state][self.direction].isDone()) {
                         self.state = self.states.active;
-                        console.log("NPC Fully Activated, ready for GUI...");;
+                        //console.log("NPC Fully Activated, ready for GUI...");;
                     }
                 }
             }
             if (self.states.active && !self.shopActive) { // Activates shop once player in range, NPC is active and player click w key
                 if (entity.BB && self.BB.collide(entity.BB) && entity instanceof AbstractPlayer) {
                     if (self.game.up) {
-                        console.log("Opening Shop...");
+                        //console.log("Opening Shop...");
                         self.shopActive = true;
                         self.shopGUI = new Shop(self.game);
                         self.game.addEntityToFront(self.shopGUI);
@@ -74,7 +74,7 @@ class NPC extends AbstractEntity {
             }
             else if (self.shopActive && entity.BB && !self.BB.collide(entity.BB) && entity instanceof AbstractPlayer) { // Deactivates shop when player NOT in range, and shop is active
                 self.shopActive = false;
-                console.log("Closing Shop...");
+                //console.log("Closing Shop...");
                 self.shopGUI.removeFromWorld = true;
             }
         });

@@ -6,6 +6,12 @@ const ASSET_MANAGER = new AssetManager();
 //main character
 ASSET_MANAGER.queueDownload("./sprites/knight/knightLeft.png");
 ASSET_MANAGER.queueDownload("./sprites/knight/knightRight.png");
+ASSET_MANAGER.queueDownload("./sprites/knight/knightLeft1.png");
+ASSET_MANAGER.queueDownload("./sprites/knight/knightRight1.png");
+ASSET_MANAGER.queueDownload("./sprites/knight/knightLeft2.png");
+ASSET_MANAGER.queueDownload("./sprites/knight/knightRight2.png");
+ASSET_MANAGER.queueDownload("./sprites/knight/knightLeft3.png");
+ASSET_MANAGER.queueDownload("./sprites/knight/knightRight3.png");
 ASSET_MANAGER.queueDownload("./sprites/knight/armorLeft.png");
 ASSET_MANAGER.queueDownload("./sprites/knight/armorRight.png");
 ASSET_MANAGER.queueDownload("./sprites/projectile/arrows.png");
@@ -24,6 +30,7 @@ ASSET_MANAGER.queueDownload("./sprites/enemy/flyingeye.png");
 ASSET_MANAGER.queueDownload("./sprites/environment/dark_castle_tileset.png");
 ASSET_MANAGER.queueDownload("./sprites/environment/moonlit_sky.png");
 ASSET_MANAGER.queueDownload("./sprites/environment/Obelisk_full.png");
+ASSET_MANAGER.queueDownload("./sprites/environment/distraction.png");
 ASSET_MANAGER.queueDownload("./sprites/environment/sign.png");
 
 //other
@@ -45,6 +52,7 @@ ASSET_MANAGER.queueDownload(SFX.ARROW_HIT);
 ASSET_MANAGER.queueDownload(SFX.BOW_SHOT);
 ASSET_MANAGER.queueDownload(SFX.ARROW_STICK);
 ASSET_MANAGER.queueDownload(SFX.CLICK);
+ASSET_MANAGER.queueDownload(SFX.DISTRACT);
 ASSET_MANAGER.queueDownload(SFX.ITEM_PICKUP);
 ASSET_MANAGER.queueDownload(SFX.SLASH1);
 ASSET_MANAGER.queueDownload(SFX.SLASH2);
