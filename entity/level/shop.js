@@ -8,16 +8,21 @@ class Shop {
         this.y = 1080/2 - this.height / 2 - 50;
 
         this.diamond_sprite = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
+        this.distract_sprite = ASSET_MANAGER.getAsset("./sprites/environment/distraction.png");
         this.armor_sprite = ASSET_MANAGER.getAsset("./sprites/GUI/armor.png");
         this.attack_sprite = ASSET_MANAGER.getAsset("./sprites/GUI/attack.png");
         this.interactables = ASSET_MANAGER.getAsset("./sprites/GUI/interactables.png");
         this.health_sprite = ASSET_MANAGER.getAsset("./sprites/Hearts.png");
         this.arrow_sprite = ASSET_MANAGER.getAsset("./sprites/projectile/arrowupgrades.png");
+        
 
         // GUI objects
         this.diamond = [];
         this.button = [];
         this.progressbutton = [];
+        this.progressbutton2 = [];
+        this.maxed = false;
+        this.distract;
 
         // GUI icons and cost
         this.health = [];
@@ -28,7 +33,7 @@ class Shop {
         this.arrowCost = [30, 60, 90, 120, "MAX"];
         this.arrowPackCost = [10, 20, 30, 40, 50];
         this.armor = [];
-        this.armorCost = [30, 60, 90, 120, "MAX"];
+        this.armorCost = [60, 90, 120, "MAX"];
 
         // animations speeds
         this.seconds = 0;
@@ -126,15 +131,24 @@ class Shop {
                 if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= that.armorCost[entity.myInventory.armorUpgrade]){
                     entity.myInventory.diamonds -= that.armorCost[entity.myInventory.armorUpgrade];
                     entity.myInventory.armorUpgrade += 1;
-                    ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
-                }
+                    ASSET_MANAGER.playAsset(SFX.NEW_ITEM);                }
             }
+            else if(entity instanceof AbstractPlayer &&
+                entity.myInventory.healthUpgrade >= 4 &&
+                entity.myInventory.attackUpgrade >= 4 &&
+                entity.myInventory.arrowUpgrade >= 4 &&
+                entity.myInventory.armorUpgrade >= 3 &&
+                that.maxed == false && entity.myInventory.maxxed == false) {
+                    that.maxed = true;
+                    entity.myInventory.maxxed = true;
+                    ASSET_MANAGER.playAsset(SFX.DISTRACT);
+                }
+                
 
             //if(that.game.click) console.log(that.game.mouse.x + ", " + that.game.mouse.y);
 
             that.game.click = false;
         });
-
 
     };
 
@@ -181,6 +195,13 @@ class Shop {
         this.progressbutton[3] = new Animator(this.interactables, 533,   292, 216, 71, 1, 0, 0, false, false, false);
         this.progressbutton[4] = new Animator(this.interactables, 533,   365, 216, 71, 1, 0, 0, false, false, false);
 
+        this.progressbutton2[0] = new Animator(this.interactables, 575,   511, 174, 71, 1, 0, 0, false, false, false);
+        this.progressbutton2[1] = new Animator(this.interactables, 575,   584, 174, 71, 1, 0, 0, false, false, false);
+        this.progressbutton2[2] = new Animator(this.interactables, 575,   657, 174, 71, 1, 0, 0, false, false, false);
+        this.progressbutton2[3] = new Animator(this.interactables, 575,   730, 174, 71, 1, 0, 0, false, false, false);
+
+        this.distract = new Animator(this.distract_sprite, 1, 0, 70, 70, 26, .08, 0, false, false, false);
+
     };
 
     draw(ctx) {
@@ -192,7 +213,8 @@ class Shop {
         ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
         ctx.fillRect(this.x, this.y, this.width, this.height);
         ctx.strokeRect(this.x, this.y, this.width, this.height);
-        
+
+        /* Removed horizontal lines
         ctx.strokeStyle = 'rgba(50, 0, 107, 1)';
         ctx.strokeRect(this.x, this.y + this.height / 7 * 1, this.width, 0);
         ctx.strokeRect(this.x, this.y + this.height / 7 * 2, this.width, 0);
@@ -200,6 +222,7 @@ class Shop {
         ctx.strokeRect(this.x, this.y + this.height / 7 * 4, this.width, 0);
         ctx.strokeRect(this.x, this.y + this.height / 7 * 5, this.width, 0);
         ctx.strokeRect(this.x, this.y + this.height / 7 * 6, this.width, 0);
+        */
 
         ctx.strokeStyle = 'rgba(50, 0, 107, 1)';
         ctx.strokeRect(this.x, this.y, this.width, this.height);
@@ -214,9 +237,9 @@ class Shop {
         ctx.fillText("Arrow Pack",      this.x + 10, this.y + this.height / 7 * 1.3);
         ctx.fillText("Health Potion",    this.x + 10, this.y + this.height / 7 * 2.3);
         ctx.fillText("Max-Health Upgrade",  this.x + 10, this.y + this.height / 7 * 3.3);
-        ctx.fillText("Attack Upgrade [NOT IMPLEMENTED]",  this.x + 10, this.y + this.height / 7 * 4.3);
+        ctx.fillText("Attack Upgrade",  this.x + 10, this.y + this.height / 7 * 4.3);
         ctx.fillText("Arrow Upgrade",   this.x + 10, this.y + this.height / 7 * 5.3);
-        ctx.fillText("Armor Upgrade  [NOT IMPLEMENTED]",   this.x + 10, this.y + this.height / 7 * 6.3);
+        ctx.fillText("Armor Upgrade",   this.x + 10, this.y + this.height / 7 * 6.3);
 
 
         // Shop Icons
@@ -232,9 +255,12 @@ class Shop {
         this.arrow[this.seconds%4].drawFrame(this.game.clockTick,      ctx, this.x + 5 + 10, this.y + this.height / 7 * 5.4, 1.8);
         this.armor[this.seconds%4].drawFrame(this.game.clockTick,       ctx, this.x + 5, this.y + this.height / 7 * 6.45, 1);
 
+        if(this.maxed){
+            this.distract.drawFrame(this.game.clockTick, ctx, 1220, 161, 1);
+        }
+
         this.manageButtons(ctx);
         this.manageProgress(ctx);
-
 
         ctx.fillStyle = tempFill; 
         ctx.font = tempFont; 
@@ -250,7 +276,7 @@ class Shop {
                 that.progressbutton[entity.myInventory.healthUpgrade].drawFrame(that.game.clockTick, ctx, that.x + that.width /6 * 4, that.y + that.height / 7 * 3.36, 0.5);
                 that.progressbutton[entity.myInventory.attackUpgrade].drawFrame(that.game.clockTick, ctx, that.x + that.width /6 * 4, that.y + that.height / 7 * 4.36, 0.5);
                 that.progressbutton[entity.myInventory.arrowUpgrade].drawFrame(that.game.clockTick, ctx, that.x + that.width /6 * 4, that.y + that.height / 7 * 5.36, 0.5);
-                that.progressbutton[entity.myInventory.armorUpgrade].drawFrame(that.game.clockTick, ctx, that.x + that.width /6 * 4, that.y + that.height / 7 * 6.36, 0.5);
+                that.progressbutton2[entity.myInventory.armorUpgrade].drawFrame(that.game.clockTick, ctx, that.x + that.width /6 * 4 + 10, that.y + that.height / 7 * 6.36, 0.5);
 
             }
         });

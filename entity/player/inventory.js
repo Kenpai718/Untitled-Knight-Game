@@ -12,6 +12,7 @@ class Inventory {
         const STARTING_ARMOR_UPGRADE = 0;
         this.maxStack = 999;
         this.maxUpgrade = 4;
+        this.maxxed = false;
 
         //inventory
         this.arrows = STARTING_ARROWS;
@@ -61,8 +62,8 @@ class Inventory {
         if(this.arrowUpgrade > this.maxUpgrade) {
             this.arrowUpgrade = this.maxUpgrade;
         }
-        if(this.armorUpgrade > this.maxUpgrade) {
-            this.armorUpgrade = this.maxUpgrade;
+        if(this.armorUpgrade > 3) {
+            this.armorUpgrade = 3;
         }
     };
 

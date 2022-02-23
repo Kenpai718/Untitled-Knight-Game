@@ -24,6 +24,7 @@ ASSET_MANAGER.queueDownload("./sprites/enemy/flyingeye.png");
 ASSET_MANAGER.queueDownload("./sprites/environment/dark_castle_tileset.png");
 ASSET_MANAGER.queueDownload("./sprites/environment/moonlit_sky.png");
 ASSET_MANAGER.queueDownload("./sprites/environment/Obelisk_full.png");
+ASSET_MANAGER.queueDownload("./sprites/environment/distraction.png");
 ASSET_MANAGER.queueDownload("./sprites/environment/sign.png");
 
 //other
@@ -44,6 +45,7 @@ ASSET_MANAGER.queueDownload(SFX.ARROW_HIT);
 ASSET_MANAGER.queueDownload(SFX.BOW_SHOT);
 ASSET_MANAGER.queueDownload(SFX.ARROW_STICK);
 ASSET_MANAGER.queueDownload(SFX.CLICK);
+ASSET_MANAGER.queueDownload(SFX.DISTRACT);
 ASSET_MANAGER.queueDownload(SFX.ITEM_PICKUP);
 ASSET_MANAGER.queueDownload(SFX.SLASH1);
 ASSET_MANAGER.queueDownload(SFX.SLASH2);
