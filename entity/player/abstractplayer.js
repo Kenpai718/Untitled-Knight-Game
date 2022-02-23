@@ -121,6 +121,15 @@ class AbstractPlayer extends AbstractEntity {
     }
 
     /**
+     * Increases player attack
+     */
+    getAttackBonus() {
+        let bonusAttack = [1.0, 1.2, 1.4, 1.6, 2];
+        console.log(bonusAttack[this.myInventory.attackUpgrade]);
+        return (bonusAttack[this.myInventory.attackUpgrade]);
+    }
+
+    /**
      * Basic jump execution
      */
     doJump() {

@@ -739,16 +739,16 @@ class Knight extends AbstractPlayer {
     getDamageValue() {
         let dmg = 0;
         if (this.action == this.states.attack1) {
-            dmg = STATS.PLAYER.DMG_SLASH1;
+            dmg = STATS.PLAYER.DMG_SLASH1 * super.getAttackBonus();
         } else if (this.action == this.states.attack2) {
-            dmg = STATS.PLAYER.DMG_SLASH2;
+            dmg = STATS.PLAYER.DMG_SLASH2 * super.getAttackBonus();
         } else if (this.action == this.states.crouch_atk) {
-            dmg = STATS.PLAYER.DMG_CROUCHATK;
+            dmg = STATS.PLAYER.DMG_CROUCHATK * super.getAttackBonus();
         }
 
         //critical bonus
         if (this.isCriticalHit()) {
-            dmg = dmg * PARAMS.CRITICAL_BONUS;
+            dmg = dmg * PARAMS.CRITICAL_BONUS * super.getAttackBonus();
         }
         return dmg;
 
