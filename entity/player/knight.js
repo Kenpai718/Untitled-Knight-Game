@@ -1144,7 +1144,7 @@ class Knight extends AbstractPlayer {
         //Note: Slash 1 is a faster attack but less damage. Slash 2 is slower but more damage
         //slash 1 = 16
         this.animations[0][this.states.attack1][1] = new Animator(this.spritesheetLeft1, 725, 0, 120, 80, 6, 0.09, 0, true, false, false);
-        this.animations[1][this.states.attack1][1] = new Animator(this.spritesheetRight, -5, 0, 120, 80, 6, 0.09, 0, false, false, false);
+        this.animations[1][this.states.attack1][1] = new Animator(this.spritesheetRight1, -5, 0, 120, 80, 6, 0.09, 0, false, false, false);
         //slash 2 = 17
         this.animations[0][this.states.attack2][1] = new Animator(this.spritesheetLeft1, 245, 0, 120, 80, 6, 0.1, 0, true, false, false);
         this.animations[1][this.states.attack2][1] = new Animator(this.spritesheetRight1, 475, 0, 120, 80, 6, 0.1, 0, false, false, false);
