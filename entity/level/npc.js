@@ -60,6 +60,9 @@ class NPC extends AbstractEntity {
                         //console.log("NPC Fully Activated, ready for GUI...");;
                     }
                 }
+
+                self.direction = entity.BB.right < self.BB.left ? self.directions.left : self.directions.right;
+                
             }
             if (self.states.active && !self.shopActive) { // Activates shop once player in range, NPC is active and player click w key
                 if (entity.BB && self.BB.collide(entity.BB) && entity instanceof AbstractPlayer) {
