@@ -148,7 +148,7 @@ var levelLoader = {
 
     banners: [
         { x: 4, y: 5 },
-        { x: 20, y: 4 }
+        { x: 20, y: 5 }
     ],
 
     chains: [
@@ -255,7 +255,7 @@ var titleScene = {
 
     banners: [
         { x: 4, y: 5 },
-        { x: 20, y: 4 }
+        { x: 20, y: 5 }
     ],
 
     chains: [
@@ -799,7 +799,7 @@ var level1_3 = {
                 "OBELISK DEVICE:",
                 "-These strange devices can unlock inaccessible/secret areas!",
                 "-To activate: hit them with your sword or arrow!",
-                " or you could press \'W'\ next to it."
+                " Or you could press \'W'\ next to it."
             ]
         },
         {
@@ -994,8 +994,10 @@ var level1_4 = {
         { x: 37, y: 12, direction: 1 },   //secret room 
         { x: 38.5, y: 12, direction: 1 }, //secret room
         { x: 40, y: 12, direction: 1 }, //secret room
+        { x: 52, y: 12, direction: 1 },   //middle floor
         { x: 65, y: 12, direction: 0 },   //middle floor
-        { x: 1, y: 27, direction: 0 }, //exit door plat (chest on top)
+        { x: 52, y: 42, direction: 1 },   //top floor right
+        { x: 1, y: 27, direction: 1 }, //exit door plat (chest on top)
         { x: 24, y: 34, direction: 0 }, //chest udner miniboss fight
     ],
     ground: [
@@ -1048,6 +1050,7 @@ var level1_4 = {
         { x: 24, y: 5, height: 7, type: 0 }, //bottom floor 2nd jump
         { x: 25, y: 5, height: 7, type: 0 }, //bottom floor 2nd jump 2
         { x: 36, y: 10, height: 8, type: 0 }, //first closing wall of bottom floor
+        { x: 37, y: 3, height: 1, type: 0 }, //first closing wall of bottom floor
         { x: 41, y: 10, height: 7, type: 0 }, //secret room wall left
         { x: 43, y: 14, height: 11, type: 0 }, //secret room wall right
         { x: 47, y: 24, height: 22, type: 0 }, //bottom floor last right wall
@@ -1061,7 +1064,8 @@ var level1_4 = {
         { x: 48, y: 45, width: 1, height: 3, type: 0 }, //top floor spikes right wall (TOP)
         { x: 45, y: 43, width: 1, height: 13, type: 0 }, //top floor spikes left wall
         { x: 42, y: 45, width: 1, height: 7, type: 0 }, //top floor spikes right wall (TOP) 2 
-        { x: 38, y: 43, width: 1, height: 5, type: 0 }, //top floor spikes left wall (TOP) 2
+        { x: 38, y: 42, width: 1, height: 5, type: 0 }, //top floor spikes left wall (TOP) 2
+        { x: 38, y: 45, width: 1, height: 1, type: 0 }, //top floor spikes left wall (TOP) 2
         { x: 35, y: 37, width: 1, height: 7, type: 0 }, //top floor spikes left (TOP) 3
         { x: 26, y: 41, width: 1, height: 8, type: 0 }, //closing top wall right in top left
 
@@ -1091,7 +1095,7 @@ var level1_4 = {
             indicate: true,
             bricks: [
                 { x: 42, y: 10, width: 1, height: 8 }, //hide secret walljump
-                { x: 37, y: 15, width: 10, height: 6 }, //hide treasure room
+                { x: 37, y: 15, width: 6, height: 6 }, //hide treasure room
                 { x: 41, y: 3, width: 3, height: 1 }, //hide treasure bottom
 
             ]
@@ -1132,7 +1136,7 @@ var level1_4 = {
         {x: 59, y: 14},
 
         //top
-        {x: 68, y: 33},
+        {x: 68, y: 32},
 
         //exit
         {x: 11, y: 26}
@@ -1152,8 +1156,8 @@ var level1_4 = {
         { x: 2, y: 6 },
         //bottom right
         { x: 35, y: 4 },
-        { x: 49, y: 5 },
-        { x: 52, y: 5 },
+        { x: 49, y: 3 },
+        { x: 52, y: 3 },
         //secret room
         { x: 39, y: 13 },
 
@@ -1193,7 +1197,7 @@ var level1_4 = {
     ],
 
     windows: [
-        {x:50, y: 5, width: 2, height: 2},
+        {x:50, y: 3, width: 2, height: 2},
         //middle goblin room
         {x:60, y: 14, width: 4, height: 3},
         //top floor

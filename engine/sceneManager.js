@@ -747,11 +747,11 @@ class SceneManager {
 
         //play the music if it is not already playing
         if (!this.title) {
-            if (scene.music) {
+            if (scene.music && !ASSET_MANAGER.isPlaying(scene.music)) {
                 ASSET_MANAGER.pauseBackgroundMusic();
                 ASSET_MANAGER.autoRepeat(scene.music);
                 ASSET_MANAGER.playAsset(scene.music);
-            } else if (!scene.music) { //no music set play default music
+            } else if (!scene.music && !ASSET_MANAGER.isPlaying(this.defaultMusic)) { //no music set play default music
                 ASSET_MANAGER.pauseBackgroundMusic();
                 ASSET_MANAGER.autoRepeat(this.defaultMusic);
                 ASSET_MANAGER.playAsset(this.defaultMusic);
@@ -1226,18 +1226,6 @@ class Minimap {
             }
         }
 
-        if (this.level.obelisks) {
-            for (var i = 0; i < this.level.obelisks.length; i++) {
-                let obelisk = this.level.obelisks[i];
-                let myX = obelisk.brickX * PARAMS.SCALE;
-                let myY = obelisk.brickY * PARAMS.SCALE;
-                let myW = obelisk.brickWidth * PARAMS.SCALE;
-                let myH = obelisk.brickHeight * PARAMS.SCALE;
-
-                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);
-            }
-        }
-
         //spike
         ctx.fillStyle = this.colors.spike;
         if (this.level.spikes) {
@@ -1316,10 +1304,10 @@ class Minimap {
                 let obelisk = this.level.obelisks[i];
                 let myX = obelisk.x * PARAMS.SCALE;
                 let myY = obelisk.y * PARAMS.SCALE;
-                let myW = PARAMS.SCALE / 2;
-                let myH = PARAMS.SCALE;
+                let myW = PARAMS.SCALE * 2;
+                let myH = PARAMS.SCALE * 2;
 
-                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 1) * PARAMS.SCALE, 3 * myW, 3 * myH);
+                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 2) * PARAMS.SCALE, myW, myH);
             }
         }
         let self = this;
