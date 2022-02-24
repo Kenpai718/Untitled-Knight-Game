@@ -167,7 +167,6 @@ class Knight extends AbstractPlayer {
             }
             //white border to indicate roll invincibility
             //if(this.game.roll) ctx.filter = "drop-shadow(0 0 0.15rem ghostwhite)";
-            console.log("Facing: " + this.facing + ", Action: " + this.action + ", Armor: " + this.myInventory.armorUpgrade);
             this.animations[this.facing][this.action][this.myInventory.armorUpgrade].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
             //ctx.filter = visableArmor[this.myInventory.armorUpgrade]; // use this for knight's armor color
             //this.armor[this.facing][this.action][this.myInventory.armorUpgrade].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
