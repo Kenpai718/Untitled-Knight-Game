@@ -379,8 +379,6 @@ class Goblin extends AbstractEnemy {
         if (this.dead) {
             super.drawWithFadeOut(ctx, this.animations[this.state][this.direction]);
         } else {
-            this.healthbar.draw(ctx); //only show healthbar when not dead
-
             switch (this.state) { // Prefecting Refections... Might just remove anyways.
                 case 0: // Idle
                     if (this.direction == 1) this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - 16 - this.game.camera.x, this.y - this.game.camera.y, this.scale);

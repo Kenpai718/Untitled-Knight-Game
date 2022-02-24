@@ -406,8 +406,6 @@ class Skeleton extends AbstractEnemy {
         if (this.dead) {
             super.drawWithFadeOut(ctx, this.animations[this.state][this.direction]);
         } else {
-            this.healthbar.draw(ctx); //only show healthbar when not dead
-
             switch (this.state) {
                 case 0: // Idle
                     if (this.direction == 1)
