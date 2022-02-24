@@ -35,6 +35,15 @@ class AbstractBarrier {
     };
 }
 
+class Barrier extends AbstractBarrier {
+    constructor(game, x, y, w, h) {
+        super(game, x, y, w, h, 0, 0);
+        this.scale = PARAMS.BLOCKDIM;
+        this.ctx = null;
+        this.canvas = null;
+        this.updateBB();
+    };
+};
 
 
 class Ground extends AbstractBarrier {

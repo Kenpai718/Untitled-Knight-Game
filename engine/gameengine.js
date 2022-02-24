@@ -15,7 +15,7 @@ class GameEngine {
         this.enemies = [];
         this.interactables = [];
         this.entities = [];
-        this.secrets = [];
+        this.events = [];
         this.projectiles = [];
         this.information = [];
 
@@ -257,8 +257,8 @@ class GameEngine {
             this.background2.push(e);
         else if (e instanceof AbstractInteractable)
             this.interactables.push(e);
-        else if (e instanceof Secret)
-            this.secrets.push(e);
+        else if (e instanceof Event)
+            this.events.push(e);
         else if (e instanceof AbstractBackFeature)
             this.foreground1.push(e);
         else if (e instanceof AbstractBarrier)
@@ -281,8 +281,8 @@ class GameEngine {
             this.background2.unshift(e);
         else if (e instanceof AbstractInteractable)
             this.interactables.unshift(e);
-        else if (e instanceof Secret)
-            this.secrets.unshift(e);
+        else if (e instanceof Event)
+            this.event.unshift(e);
         else if (e instanceof AbstractBackFeature)
             this.foreground1.unshift(e);
         else if (e instanceof AbstractBarrier)
@@ -304,7 +304,7 @@ class GameEngine {
         this.drawLayer(this.entities);
         this.drawLayer(this.projectiles);
         this.drawLayer(this.foreground2);
-        this.drawLayer(this.secrets);
+        this.drawLayer(this.events);
         this.drawHealth();
         this.drawLayer(this.information);
         
@@ -316,7 +316,7 @@ class GameEngine {
             this.drawDebug(this.entities);
             this.drawDebug(this.foreground2);
             this.drawDebug(this.projectiles);
-            this.drawDebug(this.secrets);
+            this.drawDebug(this.events);
             this.drawDebug(this.information);
 
         }
@@ -352,7 +352,7 @@ class GameEngine {
             this.updateLayer(this.projectiles);
             this.updateLayer(this.foreground1);
             this.updateLayer(this.information);
-            this.updateLayer(this.secrets);
+            this.updateLayer(this.events);
 
             this.removeFromLayer(this.background1);
             this.removeFromLayer(this.background2);
@@ -363,7 +363,7 @@ class GameEngine {
             this.removeFromLayer(this.entities);
             this.removeFromLayer(this.projectiles);
             this.removeFromLayer(this.information);
-            this.removeFromLayer(this.secrets);
+            this.removeFromLayer(this.events);
 
             //update the camera (scene manager)
             this.camera.update();

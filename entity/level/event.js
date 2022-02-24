@@ -42,22 +42,18 @@ class Event {
         if (this.activated && !this.active) {
             this.active = true;
             if (this.blocks) {
-                this.blocks.forEach(function (block) {
-                    self.game.addEntity(block);
-                });
+                this.blocks.forEach(block => self.game.addEntity(block));
             }
             if (this.entities) {
-                this.entities.forEach(function (entity) {
-                    self.game.addEntity(entity);
-                })
+                this.entities.forEach(entity => self.game.addEntity(entity));
             }
         }
         else if (this.activated && this.active) {
             if (this.entities) {
                 let count = 0;
                 this.entities.forEach(function (entity1) {
-                    this.game.entities.forEach(function (entity2) {
-                        if (entity1 === entity2)
+                    self.game.enemies.forEach(function (entity2) {
+                        if (entity1 == entity2)
                             count++;
                     });
                 })
@@ -66,6 +62,11 @@ class Event {
             }
         }
         if (this.finished) {
+            if (this.blocks) {
+                this.blocks.forEach(function (block) {
+                    block.removeFromWorld = true;
+                });
+            }
             this.removeFromWorld = true;
         }
     }
