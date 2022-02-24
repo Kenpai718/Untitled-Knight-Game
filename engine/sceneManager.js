@@ -428,6 +428,7 @@ class SceneManager {
         this.levelState = [];
         this.lastPlayer = null;
         this.title = true;
+        this.transition = false;
         this.controls = false;
         this.credits = false;
         this.myControlBox.show = false;
