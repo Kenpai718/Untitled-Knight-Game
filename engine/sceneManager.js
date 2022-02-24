@@ -61,6 +61,7 @@ class SceneManager {
                 "SPACE: Jump",
                 "P/Left-Click: Melee Attack",
                 "O/Right-Click: Shoot Arrow",
+                "ESC: Pause Game",
             ];
         let creditInfo =
             ["Developed by:",
@@ -77,7 +78,7 @@ class SceneManager {
         let creditX = 860;
         let creditY = 1220;
         let controlX = 870;
-        let controlY = 1220;
+        let controlY = 1280;
         this.myControlBox = new SceneTextBox(this.game, controlX, controlY, controlInfo);
         this.myCreditBox = new SceneTextBox(this.game, creditX, creditY, creditInfo);
 
