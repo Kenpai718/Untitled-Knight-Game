@@ -74,6 +74,7 @@ class Knight extends AbstractPlayer {
         this.diffy = { hi: 0, lo: 0 };
         this.jumpTime = 0;
         this.slideTime = 0;
+        this.wallSliding = false;
 
         //animations
         this.animations = [];
@@ -232,7 +233,10 @@ class Knight extends AbstractPlayer {
                 }
                 else if (this.game.down) {
                     this.action = this.states.wall_slide;
-                    this.slideTime = 50;
+                    if (!this.wallSliding) {
+                        this.slideTime = 10;
+                        this.wallSliding = true;
+                    }
                     this.facing = this.facing == this.dir.right ? this.dir.left : this.dir.right;
                 }
             }
@@ -362,6 +366,7 @@ class Knight extends AbstractPlayer {
             }
             this.action = this.DEFAULT_ACTION;
             this.crouch = false;
+            this.wallSliding = false;
         }
         //jump press
         if (this.game.jump && !this.action.jump && !this.touchCeiling()) {
@@ -383,6 +388,7 @@ class Knight extends AbstractPlayer {
                     if (Math.abs(this.velocity.x) > PLAYER_PHYSICS.MAX_WALK) {
                         this.velocity.x += PLAYER_PHYSICS.ACC_RUN * TICK;
                     } else this.velocity.x += PLAYER_PHYSICS.ACC_WALK * TICK;
+                    this.wallSliding = false;
                 }
                 else this.slideTime -= 100 * TICK;
             } else if (this.game.left && !this.game.right) {
@@ -390,6 +396,7 @@ class Knight extends AbstractPlayer {
                     if (Math.abs(this.velocity.x) > PLAYER_PHYSICS.MAX_WALK) {
                         this.velocity.x -= PLAYER_PHYSICS.ACC_RUN * TICK;
                     } else this.velocity.x -= PLAYER_PHYSICS.ACC_WALK * TICK;
+                    this.wallSliding = false;
                 }
                 else this.slideTime -= 100 * TICK;
             }
@@ -421,12 +428,18 @@ class Knight extends AbstractPlayer {
                         if (this.collisions.lo_left) {
                             this.action = this.states.wall_slide;
                             this.facing = this.dir.right;
-                            this.slideTime = 50;
+                            if (!this.wallSliding) {
+                                this.slideTime = 50;
+                                this.wallSliding = true;
+                            }
                         }
                         else if (this.collisions.lo_right) {
                             this.action = this.states.wall_slide;
                             this.facing = this.dir.left;
-                            this.slideTime = 50;
+                            if (!this.wallSliding) {
+                                this.slideTime = 50;
+                                this.wallSliding = true;
+                            }
                         }
                     }
                 }
