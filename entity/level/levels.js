@@ -971,7 +971,7 @@ var level1_4 = {
             ]
         },
         {
-            x: 70, y: 23,
+            x: 69, y: 23,
             title: "[TUTORIAL: LONG WALL-JUMP]",
             text: [
                 "ADVANCED WALLJUMP:",
@@ -986,7 +986,7 @@ var level1_4 = {
         { x: 6, y: 26, killQuota: 8, exitLocation: { x: 115, y: 25, levelNum: 3 }, transition: true }, //exit door
     ],
     npcs: [
-        { x: 6, y: 4 },
+        { x: 5, y: 4 },
         { x: 64, y: 35 },
     ],
     chests: [
@@ -1002,7 +1002,7 @@ var level1_4 = {
         //{ x: 0, y: 0, width: 15, height: 1, type: 1 },
         { x: 1, y: 3, width: 10, height: 1, type: 1 }, //starting ground
         { x: 28, y: 0, width: 3, height: 1, type: 0 }, //bottom floor after jumps with chest on top
-        { x: 34, y: 1, width: 6, height: 1, type: 0 }, //right most bottom floor
+        { x: 34, y: 1, width: 5, height: 1, type: 0 }, //right most bottom floor
         { x: 34, y: 7, width: 2, height: 1, type: 0 }, //bottom floor wall holding obelisk
         { x: 61, y: 16, width: 3, height: 1, type: 0 }, //right of middle floor spikes
         { x: 68, y: 21, width: 6, height: 1, type: 0 }, //top of middle floor right
@@ -1020,12 +1020,14 @@ var level1_4 = {
         { x: 0, y: 2, width: 11, height: 4 }, //starting bricks
         { x: 0, y: 22, width: 37, height: 13 }, //bottom floor ceiling
         { x: 34, y: 0, width: 33, height: 1, type: 0 }, //right most bottom floor
-        { x: 36, y: 10, width: 5, height: 8, type: 0 }, //bottom floor crouch ceiling left
+        { x: 37, y: 10, width: 4, height: 7, type: 0 }, //bottom floor crouch ceiling left
         { x: 37, y: 11, width: 5, height: 1, type: 0 }, //secret floor
         { x: 37, y: 15, width: 10, height: 1, type: 0 }, //secret floor ceiling
+        { x: 40, y: 3, width: 1, height: 1, type: 0 }, //bottom floor crouch ceiling right
         { x: 44, y: 14, width: 3, height: 12, type: 0 }, //bottom floor crouch ceiling right
         { x: 44, y: 14, width: 3, height: 12, type: 0 }, //bottom floor
         { x: 49, y: 11, width: 18, height: 2, type: 0 }, //right most middle floor bottom
+        { x: 50, y: 16, width: 2, height: 2, type: 0 }, //middle floor first left wall
         { x: 52, y: 15, width: 13, height: 1, type: 0 }, //top ground of middle floor
         { x: 55, y: 9, width: 12, height: 9, type: 0 }, //bottom right filler blocks
         { x: 37, y: 23, width: 10, height: 8, type: 0 }, //FILLER LEFT OF SECRET ROOM
@@ -1046,11 +1048,11 @@ var level1_4 = {
         { x: 24, y: 5, height: 7, type: 0 }, //bottom floor 2nd jump
         { x: 25, y: 5, height: 7, type: 0 }, //bottom floor 2nd jump 2
         { x: 36, y: 10, height: 8, type: 0 }, //first closing wall of bottom floor
-        { x: 41, y: 10, height: 8, type: 0 }, //secret room wall left
-        { x: 43, y: 14, height: 12, type: 0 }, //secret room wall right
-        { x: 47, y: 24, height: 22, type: 0 }, //wall right of secret room
-        { x: 54, y: 10, height: 10, type: 0 }, //bottom floor last right wall
-        { x: 51, y: 16, height: 5, type: 0 }, //middle floor first left wall
+        { x: 41, y: 10, height: 7, type: 0 }, //secret room wall left
+        { x: 43, y: 14, height: 11, type: 0 }, //secret room wall right
+        { x: 47, y: 24, height: 22, type: 0 }, //bottom floor last right wall
+        { x: 49, y: 15, height: 4, type: 0 }, //middle floor first left wall
+        { x: 50, y: 14, height: 5, type: 0 }, //middle floor first left wall
         { x: 64, y: 21, width: 5, height: 6, type: 0 }, //right wall on middle floor
         { x: 67, y: 21, height: 22, type: 0 }, //middle floor last right wall
         { x: 74, y: 45, width: 1, height: 25, type: 0 }, //far most right wall
@@ -1059,26 +1061,26 @@ var level1_4 = {
         { x: 48, y: 45, width: 1, height: 3, type: 0 }, //top floor spikes right wall (TOP)
         { x: 45, y: 43, width: 1, height: 13, type: 0 }, //top floor spikes left wall
         { x: 42, y: 45, width: 1, height: 7, type: 0 }, //top floor spikes right wall (TOP) 2 
-        { x: 38, y: 45, width: 1, height: 7, type: 0 }, //top floor spikes left wall (TOP) 2
+        { x: 38, y: 43, width: 1, height: 5, type: 0 }, //top floor spikes left wall (TOP) 2
         { x: 35, y: 37, width: 1, height: 7, type: 0 }, //top floor spikes left (TOP) 3
         { x: 26, y: 41, width: 1, height: 8, type: 0 }, //closing top wall right in top left
 
     ],
 
     platforms: [
-        { x: 48, y: 7, width: 3, height: 1 },             //bottom floor plat
+        { x: 48, y: 7, width: 3, height: 1, type: 0},             //bottom floor plat
         { x: 60, y: 21, width: 4, height: 1, type: 0 }, //middle floor plat
         { x: 1, y: 26, width: 3, height: 1, type: 0 }, //exit door plat (chest on top)
         { x: 60, y: 38, width: 2, height: 1, type: 0 }, //far right top plat over spikes
         { x: 52, y: 41, width: 2, height: 1, type: 0 }, //far right top plat over spikes 2
-        { x: 39, y: 41, width: 2, height: 1, type: 0 }, //holds obelisk top floor
+        { x: 39, y: 41, width: 3, height: 1, type: 0 }, //holds obelisk top floor
         { x: 39, y: 34, width: 4, height: 1, type: 0 }, //middle floor plat
         { x: 30, y: 33, width: 3, height: 1, type: 0 }, //middle floor plat top left over spikes
         { x: 53, y: 34, width: 1, height: 1, type: 0 }, //middle floor plat top left over spikes
     ],
 
     obelisks: [
-        { x: 34, y: 8, brickX: 36, brickY: 2, brickWidth: 4, brickHeight: 1 }, //unlock bottom floor
+        { x: 34, y: 8, brickX: 36, brickY: 2, brickWidth: 1, brickHeight: 1 }, //unlock bottom floor
         { x: 62, y: 17, brickX: 65, brickY: 23, brickWidth: 2, brickHeight: 12 }, //unlock middle floor
         { x: 39, y: 42.5, brickX: 35, brickY: 48, brickWidth: 1, brickHeight: 11 }, //unlock top floor
     ],
@@ -1090,6 +1092,7 @@ var level1_4 = {
             bricks: [
                 { x: 42, y: 10, width: 1, height: 8 }, //hide secret walljump
                 { x: 37, y: 15, width: 10, height: 6 }, //hide treasure room
+                { x: 41, y: 3, width: 3, height: 1 }, //hide treasure bottom
 
             ]
         }
@@ -1212,7 +1215,8 @@ var level1_4 = {
     ],
     goblins: [
         //bottom
-        { x: 43, y: 4, guard: true },
+        { x: 42, y: 4, guard: true },
+        { x: 44, y: 4, guard: false },
 
         //middle
         { x: 53, y: 14, guard: true },
