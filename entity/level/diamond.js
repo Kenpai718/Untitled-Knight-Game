@@ -36,7 +36,7 @@ class Diamond extends AbstractInteractable {
         });
         // If collides with ground, stop
         if(!this.collision){ // If statement prevents constant searching
-            this.game.foreground2.forEdddddaach(function (entity) {
+            this.game.foreground2.forEach(function (entity) {
                 if(entity.BB && that.BB.collide(entity.BB) && entity instanceof AbstractBarrier){ // A poor attempt in collision detection
                     that.collision = true;
                 }
