@@ -138,9 +138,9 @@ const STATS = {
 
     WIZARD: {
         NAME: "Wizard",
-        MAX_HP: 80,
+        MAX_HP: 500,
         SCALE: 3,
-        WIDTH: 80,
+        WIDTH: 10,
         HEIGHT: 80,
         DAMAGE: 20,
         PHYSICS: {MAX_RUN: 500, MAX_FALL: 400}

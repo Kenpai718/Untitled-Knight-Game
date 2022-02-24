@@ -127,7 +127,8 @@ class SceneManager {
         let levelTwo = level1_2;
         let levelThree = level1_3;
         let levelFour = level1_4;
-        this.levels = [levelZero, levelOne, levelTwo, levelThree, levelFour];
+        let boss1 = levelBoss1;
+        this.levels = [levelZero, levelOne, levelTwo, levelThree, levelFour, boss1];
     }
 
     /**
@@ -201,7 +202,7 @@ class SceneManager {
             // save level state
             this.levelState[this.currentLevel] = {
                 enemies: [...this.game.enemies], interactables: [...this.game.interactables],
-                secrets: [...this.game.secrets], killCount: this.killCount
+                events: [...this.game.events], killCount: this.killCount
             };
             // save player state
             this.lastPlayer = this.player;
@@ -249,7 +250,7 @@ class SceneManager {
         this.clearLayer(this.game.foreground2);
         this.clearLayer(this.game.enemies);
         this.clearLayer(this.game.entities);
-        this.clearLayer(this.game.secrets);
+        this.clearLayer(this.game.events);
         this.clearLayer(this.game.projectiles);
         this.clearLayer(this.game.information);
     };
@@ -760,121 +761,44 @@ class SceneManager {
         //play an entrance sound effect upon loading a level
         ASSET_MANAGER.playAsset(SFX.DOOR_ENTER);
 
-
-        //load environment entities
-        if (this.level.ground) {
-            for (var i = 0; i < this.level.ground.length; i++) {
-                let ground = this.level.ground[i];
-                this.game.addEntity(new Ground(this.game, ground.x, h - ground.y - 1, ground.width, 1, ground.type));
-            }
-        }
-        if (this.level.bricks) {
-            for (var i = 0; i < this.level.bricks.length; i++) {
-                let bricks = this.level.bricks[i];
-                this.game.addEntity(new Brick(this.game, bricks.x, h - bricks.y - 1, bricks.width, bricks.height));
-            }
-        }
-        if (this.level.platforms) {
-            for (var i = 0; i < this.level.platforms.length; i++) {
-                let platforms = this.level.platforms[i];
-                this.game.addEntity(new Platform(this.game, platforms.x, h - platforms.y - 1, platforms.width, platforms.height));
-            }
-        }
-        if (this.level.walls) {
-            for (var i = 0; i < this.level.walls.length; i++) {
-                let walls = this.level.walls[i];
-                this.game.addEntity(new Walls(this.game, walls.x, h - walls.y - 1, 1, walls.height, walls.type));
-            }
-        }
-        if (this.level.signs) {
-            for (var i = 0; i < this.level.signs.length; i++) {
-                let sign = this.level.signs[i];
-                this.game.addEntity(new Sign(this.game, sign.x, h - sign.y, sign.text, sign.title));
-            }
-        }
-
-        //npc
-        if (this.level.npcs) {
-            for (var i = 0; i < this.level.npcs.length; i++) {
-                let npc = this.level.npcs[i];
-                let e = new NPC(this.game, 0, 0);
-                this.positionEntity(e, npc.x, h - npc.y);
-                this.game.addEntity(e);
-            }
-        }
+        let entities = [];
+        this.loadEnvironment(h, entities, this.level);
+        this.loadStaticEntities(h, entities, this.level);
 
         // if the level being loaded hasnt been saved, load enemies and interactables like normal
         // ANY NEW ENEMIES MUST BE ADDED HERE
         if (!this.levelState[this.currentLevel]) {
-            if (this.level.chests) {
-                for (var i = 0; i < this.level.chests.length; i++) {
-                    let chest = this.level.chests[i];
-                    this.game.addEntity(new Chest(this.game, chest.x, h - chest.y - 1, chest.direction));
-                }
-            }
-            if (this.level.obelisks) {
-                for (var i = 0; i < this.level.obelisks.length; i++) {
-                    let obelisk = this.level.obelisks[i];
-                    this.game.addEntity(new Obelisk(this.game, obelisk.x, h - obelisk.y - 1 - 3, obelisk.brickX, obelisk.brickY, obelisk.brickWidth, obelisk.brickHeight));
-                }
-            }
-            if (this.level.shrooms) {
-                for (var i = 0; i < scene.shrooms.length; i++) {
-                    let shroom = scene.shrooms[i];
-                    let e = new Mushroom(this.game, 0, 0, shroom.guard);
-                    this.positionEntity(e, shroom.x, h - shroom.y);
-                    this.game.addEntity(e);
-                }
-            }
-            if (this.level.goblins) {
-                for (var i = 0; i < scene.goblins.length; i++) {
-                    let goblin = scene.goblins[i];
-                    let e = new Goblin(this.game, 0, 0, goblin.guard);
-                    this.positionEntity(e, goblin.x, h - goblin.y);
-                    this.game.addEntity(e);
-                }
-            }
-            if (this.level.skeletons) {
-                for (var i = 0; i < scene.skeletons.length; i++) {
-                    let skeleton = scene.skeletons[i];
-                    let e = new Skeleton(this.game, 0, 0, skeleton.guard);
-                    this.positionEntity(e, skeleton.x, h - skeleton.y);
-                    this.game.addEntity(e);
-                }
-            }
-            if (this.level.flyingeyes) {
-                for (var i = 0; i < scene.flyingeyes.length; i++) {
-                    let flyingeye = scene.flyingeyes[i];
-                    let e = new FlyingEye(this.game, 0, 0, flyingeye.guard);
-                    this.positionEntity(e, flyingeye.x, h - flyingeye.y);
-                    this.game.addEntity(e);
-                }
-            }
-            if (this.level.doors) {
-                for (var i = 0; i < this.level.doors.length; i++) {
-                    let door = this.level.doors[i];
-                    this.game.addEntity(new Door(this.game, door.x, h - door.y - 1, door.killQuota, door.exitLocation, door.transition));
+            this.loadDynamicEntities(h, entities, this.level);
+            this.loadEnemies(h, entities, this.level);
 
-                    //update the kill requirement for the level based on the max door
-                    this.killsRequired = Math.max(door.killQuota, this.killsRequired);
-                }
-            }
             if (this.level.secrets) {
                 for (var i = 0; i < this.level.secrets.length; i++) {
                     let secret = this.level.secrets[i];
                     let secrets = [];
-                    for (var j = 0; j < secret.bricks.length; j++) {
-                        let bricks = secret.bricks[j];
-                        secrets.push(new SecretBricks(this.game, bricks.x, h - bricks.y - 1, bricks.width, bricks.height, false, secret.indicate));
-                        this.game.addEntity(new Secret(this.game, secrets, false, secret.indicate));
+                    this.loadEnvironment(h, secrets, secret);
+                    this.game.addEntity(new Secret(this.game, secrets, false, secret.indicate));
+                }
+            }
+            if (this.level.events) {
+                for (var i = 0; i < this.level.events.length; i++) {
+                    let event = this.level.events[i];
+                    let space = [];
+                    for (var j = 0; j < event.space.length; j++) {
+                        let s = event.space[j];
+                        space.push(new Barrier(this.game, s.x, h - s.y - 1, s.width, s.height));
                     }
+                    let blocks = [];
+                    let enemies = [];
+                    this.loadEnvironment(h, blocks, event);
+                    this.loadEnemies(h, enemies, event);
+                    this.game.addEntity(new Event(this.game, space, blocks, enemies, false, false));
                 }
             }
         } else { // load the enemies and interactables from their previous state
             this.game.enemies = [...this.levelState[this.currentLevel].enemies];
             this.game.enemies.forEach(enemy => enemy.removeFromWorld = false);
-            this.game.secrets = [...this.levelState[this.currentLevel].secrets];
-            this.game.secrets.forEach(secret => secret.removeFromWorld = false);
+            this.game.events = [...this.levelState[this.currentLevel].events];
+            this.game.events.forEach(events => events.removeFromWorld = false);
             this.game.interactables = [...this.levelState[this.currentLevel].interactables];
             var that = this;
             this.game.interactables.forEach(interactable => {
@@ -888,60 +812,179 @@ class SceneManager {
                 interactable.removeFromWorld = false
             });
         }
-        //load backgroound assets
-        if (this.level.torches) {
-            for (var i = 0; i < this.level.torches.length; i++) {
-                let torch = this.level.torches[i];
-                this.game.addEntity(new Torch(this.game, torch.x, h - torch.y - 1));
+        this.loadBackground(h, entities, this.level);
+        let self = this;
+        entities.forEach(entity => self.game.addEntity(entity));
+        
+    }
+
+    loadEnvironment(h, array, dict) {
+        //load environment entities
+        if (dict.ground) {
+            for (var i = 0; i < dict.ground.length; i++) {
+                let ground = dict.ground[i];
+                array.push(new Ground(this.game, ground.x, h - ground.y - 1, ground.width, 1, ground.type));
             }
         }
-        if (this.level.windows) {
-            for (var i = 0; i < this.level.windows.length; i++) {
-                let w = this.level.windows[i];
-                this.game.addEntity(new Window(this.game, w.x, h - w.y - 1, w.width, w.height));
+        if (dict.bricks) {
+            for (var i = 0; i < dict.bricks.length; i++) {
+                let bricks = dict.bricks[i];
+                array.push(new Brick(this.game, bricks.x, h - bricks.y - 1, bricks.width, bricks.height));
             }
         }
-        if (this.level.banners) {
-            for (var i = 0; i < this.level.banners.length; i++) {
-                let banner = this.level.banners[i];
-                this.game.addEntity(new Banner(this.game, banner.x, h - banner.y - 1));
+        if (dict.platforms) {
+            for (var i = 0; i < dict.platforms.length; i++) {
+                let platforms = dict.platforms[i];
+                array.push(new Platform(this.game, platforms.x, h - platforms.y - 1, platforms.width, platforms.height));
+            }
+        }
+        if (dict.walls) {
+            for (var i = 0; i < dict.walls.length; i++) {
+                let walls = dict.walls[i];
+                array.push(new Walls(this.game, walls.x, h - walls.y - 1, 1, walls.height, walls.type));
+            }
+        }
+    }
+
+    loadStaticEntities(h, array, dict) {
+        if (dict.signs) {
+            for (var i = 0; i < dict.signs.length; i++) {
+                let sign = dict.signs[i];
+                array.push(new Sign(this.game, sign.x, h - sign.y, sign.text, sign.title));
             }
         }
 
-        if (this.level.spikes) {
-            for (var i = 0; i < this.level.spikes.length; i++) {
+        //npc
+        if (dict.npcs) {
+            for (var i = 0; i < dict.npcs.length; i++) {
+                let npc = dict.npcs[i];
+                let e = new NPC(this.game, 0, 0);
+                this.positionEntity(e, npc.x, h - npc.y);
+                array.push(e);
+            }
+        }
+    }
+
+    loadDynamicEntities(h, array, dict) {
+        if (dict.chests) {
+            for (var i = 0; i < dict.chests.length; i++) {
+                let chest = dict.chests[i];
+                array.push(new Chest(this.game, chest.x, h - chest.y - 1, chest.direction));
+            }
+        }
+        if (dict.obelisks) {
+            for (var i = 0; i < dict.obelisks.length; i++) {
+                let obelisk = dict.obelisks[i];
+                array.push(new Obelisk(this.game, obelisk.x, h - obelisk.y - 1 - 3, obelisk.brickX, obelisk.brickY, obelisk.brickWidth, obelisk.brickHeight));
+            }
+        }
+        if (dict.doors) {
+            for (var i = 0; i < dict.doors.length; i++) {
+                let door = dict.doors[i];
+                array.push(new Door(this.game, door.x, h - door.y - 1, door.killQuota, door.exitLocation, door.transition));
+
+                //update the kill requirement for the level based on the max door
+                this.killsRequired = Math.max(door.killQuota, this.killsRequired);
+            }
+        }
+    }
+
+    loadEnemies(h, array, dict) {
+        if (dict.shrooms) {
+            for (var i = 0; i < dict.shrooms.length; i++) {
+                let shroom = dict.shrooms[i];
+                let e = new Mushroom(this.game, 0, 0, shroom.guard);
+                this.positionEntity(e, shroom.x, h - shroom.y);
+                array.push(e);
+            }
+        }
+        if (dict.goblins) {
+            for (var i = 0; i < dict.goblins.length; i++) {
+                let goblin = dict.goblins[i];
+                let e = new Goblin(this.game, 0, 0, goblin.guard);
+                this.positionEntity(e, goblin.x, h - goblin.y);
+                array.push(e);
+            }
+        }
+        if (dict.skeletons) {
+            for (var i = 0; i < dict.skeletons.length; i++) {
+                let skeleton = dict.skeletons[i];
+                let e = new Skeleton(this.game, 0, 0, skeleton.guard);
+                this.positionEntity(e, skeleton.x, h - skeleton.y);
+                array.push(e);
+            }
+        }
+        if (dict.flyingeyes) {
+            for (var i = 0; i < dict.flyingeyes.length; i++) {
+                let flyingeye = dict.flyingeyes[i];
+                let e = new FlyingEye(this.game, 0, 0, flyingeye.guard);
+                this.positionEntity(e, flyingeye.x, h - flyingeye.y);
+                array.push(e);
+            }
+        }
+        if (dict.wizard) {
+            let wizard = dict.wizard;
+            let e = new Wizard(this.game, 0, 0, wizard.left, wizard.right, wizard.top, wizard.bottom, h);
+            this.positionEntity(e, wizard.x, h - wizard.y);
+            array.push(e);
+        }
+    }
+
+    loadBackground(h, array, dict) {
+        //load backgroound assets
+        if (dict.torches) {
+            for (var i = 0; i < dict.torches.length; i++) {
+                let torch = dict.torches[i];
+                array.push(new Torch(this.game, torch.x, h - torch.y - 1));
+            }
+        }
+        if (dict.windows) {
+            for (var i = 0; i < dict.windows.length; i++) {
+                let w = dict.windows[i];
+                array.push(new Window(this.game, w.x, h - w.y - 1, w.width, w.height));
+            }
+        }
+        if (dict.banners) {
+            for (var i = 0; i < dict.banners.length; i++) {
+                let banner = dict.banners[i];
+                array.push(new Banner(this.game, banner.x, h - banner.y - 1));
+            }
+        }
+
+        if (dict.spikes) {
+            for (var i = 0; i < dict.spikes.length; i++) {
                 let spike = this.level.spikes[i];
-                this.game.addEntity(new Spike(this.game, spike.x, h - spike.y - 1, spike.width, 0.5));
+                array.push(new Spike(this.game, spike.x, h - spike.y - 1, spike.width, 0.5));
             }
         }
-        if (this.level.columns) {
-            for (var i = 0; i < this.level.columns.length; i++) {
-                let column = this.level.columns[i];
-                this.game.addEntity(new Column(this.game, column.x, h - column.y - 1, column.height));
+        if (dict.columns) {
+            for (var i = 0; i < dict.columns.length; i++) {
+                let column = dict.columns[i];
+                array.push(new Column(this.game, column.x, h - column.y - 1, column.height));
             }
         }
-        if (this.level.supports) {
-            for (var i = 0; i < this.level.supports.length; i++) {
-                let support = this.level.supports[i];
-                this.game.addEntity(new Support(this.game, support.x * PARAMS.BLOCKDIM, (h - support.y - 1) * PARAMS.BLOCKDIM, support.width * PARAMS.BLOCKDIM));
+        if (dict.supports) {
+            for (var i = 0; i < dict.supports.length; i++) {
+                let support = dict.supports[i];
+                array.push(new Support(this.game, support.x * PARAMS.BLOCKDIM, (h - support.y - 1) * PARAMS.BLOCKDIM, support.width * PARAMS.BLOCKDIM));
             }
         }
-        if (this.level.chains) {
-            for (var i = 0; i < this.level.chains.length; i++) {
-                let chain = this.level.chains[i];
-                this.game.addEntity(new Chain(this.game, chain.x * PARAMS.BLOCKDIM, (h - chain.y - 1) * PARAMS.BLOCKDIM));
+        if (dict.chains) {
+            for (var i = 0; i < dict.chains.length; i++) {
+                let chain = dict.chains[i];
+                array.push(new Chain(this.game, chain.x * PARAMS.BLOCKDIM, (h - chain.y - 1) * PARAMS.BLOCKDIM));
             }
         }
-        if (this.level.ceilingChains) {
-            for (var i = 0; i < this.level.ceilingChains.length; i++) {
-                let ceilingChain = this.level.ceilingChains[i];
-                this.game.addEntity(new CeilingChain(this.game, ceilingChain.x * PARAMS.BLOCKDIM, (h - ceilingChain.y - 1) * PARAMS.BLOCKDIM, ceilingChain.height));
+        if (dict.ceilingChains) {
+            for (var i = 0; i < dict.ceilingChains.length; i++) {
+                let ceilingChain = dict.ceilingChains[i];
+                array.push(new CeilingChain(this.game, ceilingChain.x * PARAMS.BLOCKDIM, (h - ceilingChain.y - 1) * PARAMS.BLOCKDIM, ceilingChain.height));
             }
         }
-        if (this.level.backgroundWalls) {
-            for (var i = 0; i < this.level.backgroundWalls.length; i++) {
-                let bw = this.level.backgroundWalls[i];
-                this.game.addEntity(new BackgroundWalls(this.game, bw.x, h - bw.y - 1, bw.width, bw.height));
+        if (dict.backgroundWalls) {
+            for (var i = 0; i < dict.backgroundWalls.length; i++) {
+                let bw = dict.backgroundWalls[i];
+                array.push(new BackgroundWalls(this.game, bw.x, h - bw.y - 1, bw.width, bw.height));
             }
         }
     }
@@ -1280,15 +1323,15 @@ class Minimap {
             }
         }
         let self = this;
-        this.game.secrets.forEach(function (secret) {
-            if (!secret.found) {
-                secret.secrets.forEach(function (s) {
+        this.game.events.forEach(function (secret) {
+            if (!secret.finished) {
+                secret.space.forEach(function (s) {
                     let myX = s.x * PARAMS.SCALE;
                     let myY = (self.h - s.y - 4) * PARAMS.SCALE;
                     let myW = s.w * PARAMS.SCALE;
                     let myH = s.h * PARAMS.SCALE;
 
-                    if (s instanceof SecretBricks)
+                    if (s instanceof Brick)
                         ctx.fillStyle = self.colors.brick;
                     ctx.fillRect(self.x + myX, self.y + self.h * PARAMS.SCALE - myY, myW, myH);
 

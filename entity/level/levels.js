@@ -1259,3 +1259,114 @@ var level1_4 = {
 
     //NOTEa: place miniboss at x: 18, y: 38
 }
+var levelBoss1 = {
+    ID: 100,
+    label: "Final Room",
+    width: 120, height: 20,
+    player: { x: 40, y: 1 },
+    music: MUSIC.BETWEEN_HEAVEN_AND_EARTH,
+
+    wizard: {x: 75, y: 2, left: 61, right: 102, top: 6, bottom: 1},
+    events: [
+        {
+            space: [
+                { x: 62, y: 20, width: 39, height: 20}
+            ],
+            walls: [
+                {x: 60, y: 5, height: 5, type: 2}, // temporary
+                {x: 102, y: 5, height: 5, type: 0}, // temporary
+                {x: 103, y: 5, height: 5, type: 2}, // temporary
+                {x: 59, y: 5, height: 5, type: 0}, // temporary
+            ],
+            shrooms: [
+                {x: 70, y: 1, guard: false},
+                {x: 60, y: 1, guard: false}
+            ]
+        }
+    ],
+    doors: [
+        { x: 1, y: 3, killQuota: 0, exitLocation: { x: -2, y: 1, levelNum: 1 }, transition: true }, //door to level 1
+    ],
+    ground: [
+        {x: 0, y: 0, width: 120, height: 1, type: 1},
+    ],
+    bricks: [
+        {x: 0, y: 20, width: 60, height: 15},
+        {x: 103, y: 20, width: 20, height: 15},
+    ],
+    walls: [
+        {x: 60, y: 20, height: 15, type: 2},
+        {x: 102, y: 20, height: 15, type: 0},
+    ],
+    torches: [
+        {x: 0, y: 3},
+        {x: 3, y: 3},
+        {x: 9, y: 3},
+        {x: 15, y: 3},
+        {x: 21, y: 3},
+        {x: 27, y: 3},
+        {x: 33, y: 3},
+        {x: 39, y: 3},
+        {x: 45, y: 3},
+        {x: 51, y: 3},
+        {x: 57, y: 3},
+
+        {x: 66, y: 9},
+        {x: 72, y: 9},
+        {x: 78, y: 9},
+        {x: 84, y: 9},
+        {x: 90, y: 9},
+        {x: 96, y: 9},
+    ],
+    backgroundWalls: [
+        {x: 0, y: 20, width: 120, height: 20},
+    ],
+    columns: [
+        {x: 6, y: 4, width: 1, height: 4},
+        {x: 12, y: 4, width: 1, height: 4},
+        {x: 18, y: 4, width: 1, height: 4},
+        {x: 24, y: 4, width: 1, height: 4},
+        {x: 30, y: 4, width: 1, height: 4},
+        {x: 36, y: 4, width: 1, height: 4},
+        {x: 42, y: 4, width: 1, height: 4},
+        {x: 48, y: 4, width: 1, height: 4},
+        {x: 54, y: 4, width: 1, height: 4},
+        {x: 60, y: 4, width: 1, height: 4},
+
+        {x: 61, y: 20, width: 1, height: 20},
+        {x: 65, y: 20, width: 1, height: 20},
+        {x: 67, y: 20, width: 1, height: 20},
+        {x: 71, y: 20, width: 1, height: 20},
+        {x: 73, y: 20, width: 1, height: 20},
+        {x: 77, y: 20, width: 1, height: 20},
+        {x: 79, y: 20, width: 1, height: 20},
+        {x: 83, y: 20, width: 1, height: 20},
+        {x: 85, y: 20, width: 1, height: 20},
+        {x: 89, y: 20, width: 1, height: 20},
+        {x: 91, y: 20, width: 1, height: 20},
+        {x: 95, y: 20, width: 1, height: 20},
+        {x: 97, y: 20, width: 1, height: 20},
+        {x: 101, y: 20, width: 1, height: 20},
+    ],
+    supports: [
+        {x:0, y: 5, width: 61, height: 1},
+    ],
+    windows: [
+        {x: 62, y: 12, width: 3, height: 10},
+        {x: 68, y: 12, width: 3, height: 10},
+        {x: 74, y: 12, width: 3, height: 10},
+        {x: 80, y: 12, width: 3, height: 10},
+        {x: 86, y: 12, width: 3, height: 10},
+        {x: 92, y: 12, width: 3, height: 10},
+        {x: 98, y: 12, width: 3, height: 10},
+    ],
+    banners: [
+        {x: 66, y: 8},
+        {x: 72, y: 8},
+        {x: 78, y: 8},
+        {x: 84, y: 8},
+        {x: 90, y: 8},
+        {x: 96, y: 8},
+    ],
+    
+}

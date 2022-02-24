@@ -403,7 +403,6 @@ class FlyingEye extends AbstractEnemy {
                 this.velocity.x = 0;
                 this.velocity.y = 0;
             }
-            this.healthbar.draw(ctx);
         }
     }
 }

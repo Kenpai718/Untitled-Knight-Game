@@ -115,7 +115,6 @@ class Mushroom extends AbstractEnemy {
             super.drawWithFadeOut(ctx, this.animations[this.state][this.direction]);
         } else {
             this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
-            this.healthbar.draw(ctx); //only show healthbar when not dead
         }
     };
 
