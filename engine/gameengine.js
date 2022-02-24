@@ -367,9 +367,12 @@ class GameEngine {
 
             //update the camera (scene manager)
             this.camera.update();
+
         } else {
             //any updates you want to work when paused put here
             this.resetControls();
+            //update the camera (scene manager)
+            this.camera.update();
         }
     };
 

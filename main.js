@@ -25,6 +25,7 @@ ASSET_MANAGER.queueDownload("./sprites/enemy/skeleton.png");
 ASSET_MANAGER.queueDownload("./sprites/enemy/goblin.png");
 ASSET_MANAGER.queueDownload("./sprites/enemy/mushroom.png");
 ASSET_MANAGER.queueDownload("./sprites/enemy/flyingeye.png");
+ASSET_MANAGER.queueDownload("./sprites/enemy/demon_slime.png");
 
 //environment
 ASSET_MANAGER.queueDownload("./sprites/environment/dark_castle_tileset.png");
@@ -45,6 +46,7 @@ ASSET_MANAGER.queueDownload(MUSIC.CHASING_DAYBREAK);
 ASSET_MANAGER.queueDownload(MUSIC.FODLAN_WINDS);
 ASSET_MANAGER.queueDownload(MUSIC.BETWEEN_HEAVEN_AND_EARTH);
 ASSET_MANAGER.queueDownload(MUSIC.LONG_WAY);
+ASSET_MANAGER.queueDownload(MUSIC.TITLE);
 
 
 //sfx

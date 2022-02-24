@@ -18,13 +18,7 @@ class Diamond extends AbstractInteractable {
     };
 
     updateBB() {
-        this.BB = new BoundingBox(this.x, this.y, this.width * this.scale, this.height * this.scale)
-    };
-
-    viewBoundingBox(ctx) {
-        // This is the Bounding Box, defines space where chest is and can be opened
-        ctx.strokeStyle = "Red";
-        ctx.strokeRect(this.x - this.game.camera.x, this.y - this.game.camera.y, this.width, this.height);
+        this.BB = new BoundingBox(this.x +1, this.y, this.width * this.scale, this.height * this.scale)
     };
 
     update() {
@@ -70,7 +64,7 @@ class Diamond extends AbstractInteractable {
             this.velocity.y = 0;
         }
         if(this.collisions.top) this.velocity.y = 0; //bonk on ceiling halt momentum
-        if (this.collisions.lo_left && this.velocity.x < 0) this.velocity.x = 0;
+        if (this.collisions.lao_left && this.velocity.x < 0) this.velocity.x = 0;
         if (this.collisions.lo_right && this.velocity.x > 0) this.velocity.x = 0;
 
 
@@ -87,7 +81,7 @@ class Diamond extends AbstractInteractable {
 
     drawDebug(ctx) {
         ctx.strokeStyle = "Red";
-        ctx.strokeRect(this.x - this.game.camera.x, this.y - this.game.camera.y, this.width * this.scale, this.height * this.scale);
+        ctx.strokeRect(this.x - this.game.camera.x + 1, this.y - this.game.camera.y, this.width * this.scale, this.height * this.scale);
     }
 
 

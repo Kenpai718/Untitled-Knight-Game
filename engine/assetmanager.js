@@ -118,6 +118,11 @@ class AssetManager {
         });
     };
 
+    isPlaying(path) {
+        var aud = this.cache[path];
+        return !aud.paused;
+    }
+
     /**
      * This will keep an interval that will try to play the bg music
      * until it works. This is a temporary solution until a title screen is made.

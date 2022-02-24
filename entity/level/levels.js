@@ -26,16 +26,17 @@ var testLevel = {
     ID: 0,
     label: "Testing Room",
     width: 24, height: 14,
-    player: { x: 1, y: 1 },
+    player: { x: 1, y: 2 },
     music: MUSIC.FODLAN_WINDS,
 
     //quick access to all levels
     doors: [
-        
-        { x: 1, y: 3, killQuota: 0, exitLocation: { x: 5, y: 2, levelNum: 1 }, transition: false }, //door to level 1
-        { x: 5, y: 3, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition: false }, //door to level 2
+
+        { x: 0, y: 3, killQuota: 0, exitLocation: { x: 5, y: 2, levelNum: 1 }, transition: false }, //door to level 1
+        { x: 6, y: 3, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition: false }, //door to level 2
         { x: 9, y: 3, killQuota: 0, exitLocation: { x: 4, y: 1, levelNum: 3 }, transition: false }, //door to level 3
-        { x: 13, y: 3, killQuota: 0, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: false }, //door to level 4
+        { x: 12, y: 3, killQuota: 0, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: false }, //door to level 4
+        { x: 20, y: 3, killQuota: 0, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: true }, //door to level 4
     ],
 
     npcs: [
@@ -44,10 +45,14 @@ var testLevel = {
 
     signs: [
         {
-            x: 3.5, y: 2,
-            title: "TOP SECRET: DEVELOPER ROOM",
-            text: ["This room is for developers to test mechanics",
-                "If you are not a developer then... 🔫😬"]
+            x: 3, y: 2,
+            title: "  DEV-MODE-OPTIONS",
+            text: ["console.log(\'here\'):",
+                "-This room is for developers to test mechanics",
+                "-If you are not a developer then... 🔫😬",
+                "-Press [CTRL] in this room to instantly get",
+                " MAX DIAMONDS. This is to test the shop.",
+            ]
 
         },
 
@@ -86,21 +91,254 @@ var testLevel = {
         { x: 25, y: 14, height: 14, type: 2 }
     ],
     obelisks: [
-        { x: 6.5, y: 1, brickX: 15, brickY: 1, brickWidth: 1, brickHeight: 1 }
+        { x: 4.5, y: 1, brickX: 15, brickY: 1, brickWidth: 1, brickHeight: 1 }
     ],
     shrooms: [
         { x: 16, y: 1, guard: true }
     ],
     goblins: [
-        //{ x: 12, y: 1, guard: false }
+        { x: 17, y: 1, guard: false }
     ],
     skeletons: [
-        { x: 12, y: 7, guard: true }
+        { x: 12, y: 7, guard: true },
+        { x: 13, y: 7, guard: true }
     ],
     flyingeyes: [
-        //{ x: 12, y: 5, guard: false }
+        { x: 17, y: 5, guard: false },
+        { x: 15, y: 7, guard: true }
     ]
 }
+
+/**
+ * Level with doors to all levels
+ */
+var levelLoader = {
+    ID: 0,
+    label: "Level-Loader",
+    width: 24, height: 14,
+    player: { x: 1, y: 3 },
+    music: MUSIC.TITLE,
+
+    //quick access to all levels
+    doors: [
+        { x: 0.5, y: 4, killQuota: 0, exitLocation: { x: 1, y: 3, levelNum: 0 }, transition: false }, //door to level 0 (DEVELOPER ROOM)
+        { x: 7, y: 4, killQuota: 0, exitLocation: { x: 1, y: 4, levelNum: 1 }, transition: false }, //door to level 1
+        { x: 10, y: 4, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition: false }, //door to level 2
+        { x: 13, y: 4, killQuota: 0, exitLocation: { x: 4, y: 1, levelNum: 3 }, transition: false }, //door to level 3
+        { x: 16, y: 4, killQuota: 0, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: false }, //door to level 4
+    ],
+
+    torches: [
+        //one above each door left
+        { x: 3, y: 4 },
+        { x: 5, y: 4 },
+        { x: 7.5, y: 6 },
+        { x: 10.5, y: 6 },
+        { x: 13.5, y: 6 },
+        { x: 16.5, y: 6 },
+        //one above each door right
+        { x: 19, y: 4 },
+        { x: 21, y: 4 },
+        //top floor
+        { x: 5.5, y: 11 },
+        { x: 9.5, y: 11 },
+        { x: 13.5, y: 11 },
+        { x: 17.5, y: 11 },
+    ],
+
+    banners: [
+        { x: 4, y: 5 },
+        { x: 20, y: 4 }
+    ],
+
+    chains: [
+        { x: 8, y: 7 },
+        { x: 15.5, y: 7 },
+    ],
+
+    supports: [
+        { x: 0, y: 13, width: 25 },
+        { x: 0, y: 6, width: 3 },
+        { x: 0, y: 8, width: 25 }
+    ],
+
+    columns: [
+        { x: 2, y: 15, height: 7 },
+        { x: 21, y: 15, height: 7 },
+        { x: 6, y: 8, height: 10 },
+        { x: 18, y: 8, height: 10 }
+    ],
+
+    windows: [
+        { x: 0, y: 12, width: 2, height: 3 },
+        { x: 3, y: 12, width: 2, height: 3 },
+        { x: 7, y: 12, width: 2, height: 3 },
+        { x: 11, y: 12, width: 2, height: 3 },
+        { x: 15, y: 12, width: 2, height: 3 },
+        { x: 19, y: 12, width: 2, height: 3 },
+        { x: 22, y: 12, width: 2, height: 3 },
+
+    ],
+
+    npcs: [
+        { x: 0, y: 7 },
+    ],
+
+    signs: [
+        {
+            x: 4, y: 3,
+            title: "   LEVEL SELECT",
+            text: ["-Stand next to the door of the level",
+                   " you want to enter and press W!"]
+        },
+    ],
+
+    backgroundWalls: [
+        { x: 0, y: 14, width: 24, height: 24 }
+    ],
+    ground: [
+        { x: 0, y: 1, width: 30, height: 1, type: 1 },
+        { x: 0, y: 9, width: 25, height: 1, type: 1 }
+    ],
+    platforms: [
+        //{x: 4, y: 10.8, width: 16, height: 0.5}
+        { x: 0, y: 6, width: 3, height: 1, type: 0 },
+        { x: 21, y: 6, width: 3, height: 1, type: 2 },
+    ],
+    walls: [
+        { x: -1, y: 14, height: 14, type: 2 },
+        { x: 24, y: 14, height: 14, type: 2 },
+    ],
+
+    bricks: [
+        { x: 0, y: 16, width: 25, height: 2, type: 0 },
+        { x: 0, y: 0, width: 25, height: 5, type: 0 }
+    ],
+}
+
+/**
+ * Title Screen scene
+ */
+var titleScene = {
+    ID: 0,
+    label: "Title-Screen",
+    width: 24, height: 14,
+    //player: { x: 1, y: 3 },
+    player: { x: 9.5, y: 10 },
+    music: MUSIC.TITLE,
+
+    //quick access to all levels
+    doors: [
+        { x: 7, y: 4, killQuota: 0, exitLocation: { x: 1, y: 4, levelNum: 1 }, transition: false }, //door to level 1
+        { x: 10, y: 4, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition: false }, //door to level 2
+        { x: 13, y: 4, killQuota: 0, exitLocation: { x: 4, y: 1, levelNum: 3 }, transition: false }, //door to level 3
+        { x: 16, y: 4, killQuota: 0, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: false }, //door to level 4
+    ],
+
+    torches: [
+        //one above each door left
+        { x: 3, y: 4 },
+        { x: 5, y: 4 },
+        { x: 7.5, y: 6 },
+        { x: 10.5, y: 6 },
+        { x: 13.5, y: 6 },
+        { x: 16.5, y: 6 },
+        //one above each door right
+        { x: 19, y: 4 },
+        { x: 21, y: 4 },
+        //top floor
+        { x: 5.5, y: 11 },
+        { x: 9.5, y: 11 },
+        { x: 13.5, y: 11 },
+        { x: 17.5, y: 11 },
+    ],
+
+    banners: [
+        { x: 4, y: 5 },
+        { x: 20, y: 4 }
+    ],
+
+    chains: [
+        { x: 8, y: 7 },
+        { x: 15.5, y: 7 },
+    ],
+
+    supports: [
+        { x: 0, y: 13, width: 25 },
+        { x: 0, y: 6, width: 3 },
+        { x: 0, y: 8, width: 25 }
+    ],
+
+    columns: [
+        { x: 2, y: 15, height: 7 },
+        { x: 21, y: 15, height: 7 },
+        { x: 6, y: 8, height: 10 },
+        { x: 18, y: 8, height: 10 }
+    ],
+
+    windows: [
+        { x: 0, y: 12, width: 2, height: 3 },
+        { x: 3, y: 12, width: 2, height: 3 },
+        { x: 7, y: 12, width: 2, height: 3 },
+        { x: 11, y: 12, width: 2, height: 3 },
+        { x: 15, y: 12, width: 2, height: 3 },
+        { x: 19, y: 12, width: 2, height: 3 },
+        { x: 22, y: 12, width: 2, height: 3 },
+
+    ],
+
+    npcs: [
+        //{ x: 0, y: 7 }
+    ],
+
+    signs: [
+        { x: 22, y: 3, title: "VERSION 1.0 (BETA)", text: "" }
+    ],
+
+    backgroundWalls: [
+        { x: 0, y: 14, width: 24, height: 14 }
+    ],
+    ground: [
+        { x: 0, y: 1, width: 30, height: 1, type: 1 },
+        { x: 0, y: 9, width: 25, height: 1, type: 1 }
+    ],
+    platforms: [
+        //{x: 4, y: 10.8, width: 16, height: 0.5}
+        { x: 0, y: 6, width: 3, height: 1, type: 0 },
+        { x: 21, y: 6, width: 3, height: 1, type: 2 },
+    ],
+    chests: [
+        { x: 0, y: 7, direction: 1 },
+        { x: 22.5, y: 7, direction: 0 }
+    ],
+    walls: [
+        { x: -1, y: 14, height: 14, type: 2 },
+        { x: 24, y: 14, height: 14, type: 2 },
+    ],
+
+    bricks: [
+        { x: 0, y: 16, width: 25, height: 2, type: 0 }
+    ],
+
+    skeletons: [
+        { x: 2, y: 8, guard: true }
+    ],
+
+    shrooms: [
+        { x: 4, y: 2, guard: true }
+    ],
+
+    goblins: [
+        { x: 21, y: 7, guard: true }
+    ],
+
+    flyingeyes: [
+        { x: 20, y: 3, guard: true }
+    ],
+
+}
+
+
 
 /**
  * Levels below
@@ -109,7 +347,7 @@ var level1_1 = {
     ID: 1,
     label: "1-1",
     width: 120, height: 15,
-    player: { x: 1, y: 1 },
+    player: { x: 2, y: 3 },
     music: MUSIC.FODLAN_WINDS,
     doors: [
         { x: 116, y: 12, killQuota: 3, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition: false }, //door to level 2
@@ -135,6 +373,7 @@ var level1_1 = {
                 "     *Hold [W] to shoot diagonally up or [S] down.",
                 "-[SHIFT] to roll and dodge attacks.",
                 " *Recommend to disable sticky keys!",
+                "-[ESC] to pause the game",
                 "",
                 "KEYBOARD + MOUSE CONTROLS:",
                 "*NOTE: Keep mouse cursor within game screen!",
@@ -186,9 +425,11 @@ var level1_1 = {
 
         {
             x: 100, y: 2,
-            title: "Secrets!!!",
+            title: "    Secrets!!!",
             text: [
-                "You may find secrets in unexpected places!",
+                "-You may find secrets in unexpected places!",
+                "-Secret room blocks will slightly blink.",
+                "-Keep an eye out for them for great loot!"
             ]
         },
 
@@ -305,7 +546,7 @@ var level1_2 = {
     ID: 2,
     label: "1-2",
     width: 120, height: 36,
-    player: { x: 1, y: 1 },
+    player: { x: 1, y: 2 },
     music: MUSIC.CHASING_DAYBREAK,
     doors: [
         { x: 116, y: 3, killQuota: 7, exitLocation: { x: 4, y: 1, levelNum: 3 }, transition: false }, //next level to 3
@@ -557,7 +798,8 @@ var level1_3 = {
             text: [
                 "OBELISK DEVICE:",
                 "-These strange devices can unlock inaccessible/secret areas!",
-                "-To activate: hit them or press \'W'\ next to it."
+                "-To activate: hit them with your sword or arrow!",
+                " or you could press \'W'\ next to it."
             ]
         },
         {
@@ -696,7 +938,7 @@ var level1_3 = {
     ],
     columns: [
         { x: 5, y: 8, height: 8 },
-        { x: 15, y: 9, height: 9 },
+        { x: 22, y: 9, height: 5 },
         { x: 26, y: 11, height: 11 },
         { x: 35, y: 9, height: 9 }
     ],
@@ -712,45 +954,54 @@ var level1_4 = {
     label: "1-4",
     width: 75, height: 50,
     //player: { x: 65, y: 45 },
-    player: { x: 3.5, y: 4 },
+    player: { x: 3, y: 5 },
     music: MUSIC.LONG_WAY,
     signs: [
         {
             x: 10, y: 5,
             title: "[TUTORIAL: RAGE BOOST]",
             text: [
-                "When you are desperate to survive:",
+                "When in a pinch:",
                 "-At low-hp you will tap into a secret power",
                 " called BESERKER MODE! Indicated by a red aura.",
                 "-This is a powerful state that deals extra damage",
                 " and shoots a blade beam projectile with each swing!",
                 "-However it only lasts for a short time and you can",
                 " easily die in one hit!"
-                
-
+            ]
+        },
+        {
+            x: 70, y: 23,
+            title: "[TUTORIAL: LONG WALL-JUMP]",
+            text: [
+                "ADVANCED WALLJUMP:",
+                "-Right after a wall jump hold the direction",
+                " you are jumping towards to go farther!",
+                "-This will allow you to scale wide gaps!"
             ]
         },
     ],
     doors: [
         { x: 3, y: 6, killQuota: 0, exitLocation: { x: 115, y: 25, levelNum: 3 }, transition: false }, //starting door
-        { x: 6, y: 26, killQuota: 10, exitLocation: { x: 115, y: 25, levelNum: 3 }, transition: true }, //exit door
+        { x: 6, y: 26, killQuota: 8, exitLocation: { x: 115, y: 25, levelNum: 3 }, transition: true }, //exit door
     ],
     npcs: [
-        {x: 6, y: 4},
-        {x: 64, y: 35},
+        { x: 6, y: 4 },
+        { x: 64, y: 35 },
     ],
     chests: [
-        {x: 28, y: 1, direction: 0},    //bottom floor
-        {x: 37, y: 12, direction: 1},   //secret room 
-        {x: 38.5, y: 12, direction: 1}, //secret room
-        {x: 65, y: 12, direction: 0},   //middle floor
+        { x: 29, y: 1, direction: 0 },    //bottom floor
+        { x: 37, y: 12, direction: 1 },   //secret room 
+        { x: 38.5, y: 12, direction: 1 }, //secret room
+        { x: 40, y: 12, direction: 1 }, //secret room
+        { x: 65, y: 12, direction: 0 },   //middle floor
         { x: 1, y: 27, direction: 0 }, //exit door plat (chest on top)
         { x: 24, y: 34, direction: 0 }, //chest udner miniboss fight
     ],
     ground: [
         //{ x: 0, y: 0, width: 15, height: 1, type: 1 },
         { x: 1, y: 3, width: 10, height: 1, type: 1 }, //starting ground
-        { x: 27, y: 0, width: 3, height: 1, type: 0 }, //bottom floor after jumps with chest on top
+        { x: 28, y: 0, width: 3, height: 1, type: 0 }, //bottom floor after jumps with chest on top
         { x: 34, y: 1, width: 6, height: 1, type: 0 }, //right most bottom floor
         { x: 34, y: 7, width: 2, height: 1, type: 0 }, //bottom floor wall holding obelisk
         { x: 61, y: 16, width: 3, height: 1, type: 0 }, //right of middle floor spikes
@@ -761,8 +1012,8 @@ var level1_4 = {
 
     ],
     spikes: [
-        {x: 27, y: 31, width: 37}, //top floor spikes
-        {x: 52, y: 16, width: 9}, //top ground of middle floor
+        { x: 27, y: 31, width: 37 }, //top floor spikes
+        { x: 52, y: 16, width: 9 }, //top ground of middle floor
     ],
     bricks: [
         //{ x: 30, y: 15, width: 90, height: 3 },
@@ -786,42 +1037,44 @@ var level1_4 = {
         { x: 0, y: 53, width: 75, height: 8, type: 0 }, //top most ceiling
         { x: 68, y: 20, width: 7, height: 21, type: 0 }, //right
         { x: 75, y: 55, width: 10, height: 56, type: 0 }, //filler far right
-        
+
     ],
     walls: [
         //{ x: -1, y: 15, height: 16, type: 0 },
         { x: 0, y: 10, height: 8, type: 0 }, //wall left first door
-        { x: 17, y: 2, height: 3, type: 0 }, //bottom floor first jump
-        { x: 24, y: 5, height: 6, type: 0 }, //bottom floor 2nd jump
+        { x: 17, y: 2, height: 4, type: 0 }, //bottom floor first jump
+        { x: 24, y: 5, height: 7, type: 0 }, //bottom floor 2nd jump
+        { x: 25, y: 5, height: 7, type: 0 }, //bottom floor 2nd jump 2
         { x: 36, y: 10, height: 8, type: 0 }, //first closing wall of bottom floor
         { x: 41, y: 10, height: 8, type: 0 }, //secret room wall left
         { x: 43, y: 14, height: 12, type: 0 }, //secret room wall right
         { x: 47, y: 24, height: 22, type: 0 }, //wall right of secret room
         { x: 54, y: 10, height: 10, type: 0 }, //bottom floor last right wall
-        { x: 51, y: 16, height: 4, type: 0 }, //middle floor first left wall
+        { x: 51, y: 16, height: 5, type: 0 }, //middle floor first left wall
         { x: 64, y: 21, width: 5, height: 6, type: 0 }, //right wall on middle floor
         { x: 67, y: 21, height: 22, type: 0 }, //middle floor last right wall
         { x: 74, y: 45, width: 1, height: 25, type: 0 }, //far most right wall
         { x: 0, y: 28, width: 1, height: 5, type: 0 }, //far left wall on top (exit)
-        { x: 48, y: 35, width: 1, height: 5, type: 0 }, //top floor spikes right wall (bottom)
+        { x: 48, y: 36, width: 1, height: 6, type: 0 }, //top floor spikes right wall (bottom)
         { x: 48, y: 45, width: 1, height: 3, type: 0 }, //top floor spikes right wall (TOP)
         { x: 45, y: 43, width: 1, height: 13, type: 0 }, //top floor spikes left wall
         { x: 42, y: 45, width: 1, height: 7, type: 0 }, //top floor spikes right wall (TOP) 2 
         { x: 38, y: 45, width: 1, height: 7, type: 0 }, //top floor spikes left wall (TOP) 2
         { x: 35, y: 37, width: 1, height: 7, type: 0 }, //top floor spikes left (TOP) 3
         { x: 26, y: 41, width: 1, height: 8, type: 0 }, //closing top wall right in top left
- 
+
     ],
 
     platforms: [
-        {x: 48, y: 7, width: 3, height: 1},             //bottom floor plat
+        { x: 48, y: 7, width: 3, height: 1 },             //bottom floor plat
         { x: 60, y: 21, width: 4, height: 1, type: 0 }, //middle floor plat
-        { x: 1, y: 26, width: 3, height: 1,  type: 0 }, //exit door plat (chest on top)
+        { x: 1, y: 26, width: 3, height: 1, type: 0 }, //exit door plat (chest on top)
         { x: 60, y: 38, width: 2, height: 1, type: 0 }, //far right top plat over spikes
         { x: 52, y: 41, width: 2, height: 1, type: 0 }, //far right top plat over spikes 2
         { x: 39, y: 41, width: 2, height: 1, type: 0 }, //holds obelisk top floor
         { x: 39, y: 34, width: 4, height: 1, type: 0 }, //middle floor plat
         { x: 30, y: 33, width: 3, height: 1, type: 0 }, //middle floor plat top left over spikes
+        { x: 53, y: 34, width: 1, height: 1, type: 0 }, //middle floor plat top left over spikes
     ],
 
     obelisks: [
@@ -835,22 +1088,126 @@ var level1_4 = {
         {
             indicate: true,
             bricks: [
-                { x: 42, y: 10, width: 1, height: 8}, //hide secret walljump
-                { x: 37, y: 15, width: 10, height: 6}, //hide treasure room
+                { x: 42, y: 10, width: 1, height: 8 }, //hide secret walljump
+                { x: 37, y: 15, width: 10, height: 6 }, //hide treasure room
 
             ]
         }
     ],
     backgroundWalls: [
-        { x: 0, y: 50, width: 75, height: 55}
+        { x: 0, y: 50, width: 75, height: 40 }, //top
+        { x: 0, y: 10, width: 8, height: 11 }, //bottom left
+        { x: 34, y: 10, width: 30, height: 11 }, //bottom right
+    ],
+
+    columns: [
+        {x: 8, y: 10, height: 8}, //bottom left floor near door
+        {x: 34, y: 10, height: 9}, //bottom right
+        {x: 65, y: 24, height: 13}, //middle room
+        {x: 66, y: 24, height: 13}, //middle room
+        {x: 66, y: 45, height: 12}, //top floor right
+        {x: 25, y: 45, height: 9}, //top floor left
+
+    ],
+
+    supports: [
+        {x:0, y: 9, width: 36}, //bottom floor left
+        {x: 48, y: 23, width: 22}, //middle
+        {x: 13, y: 45, width: 75 }, //top
+    ],
+
+    chains: [
+        //middle top
+        {x: 52, y: 21},
+        {x: 55, y: 21},
+        {x: 58, y: 21},
+
+        //middle goblin room
+        {x: 54, y: 14},
+        {x: 56, y: 14},
+        {x: 5, y: 14},
+        {x: 59, y: 14},
+
+        //top
+        {x: 68, y: 33},
+
+        //exit
+        {x: 11, y: 26}
+
+     ],
+
+    ceilingChains: [
+        {x:73, y: 53, height: 20},
+        {x: 14, y: 45, height: 20},
+        {x: 53, y: 10, height: 20}
     ],
 
 
     torches: [
-        //{ x: 31, y: 7 },
+        //near entrance
+        { x: 5, y: 6 },
+        { x: 2, y: 6 },
+        //bottom right
+        { x: 35, y: 4 },
+        { x: 49, y: 5 },
+        { x: 52, y: 5 },
+        //secret room
+        { x: 39, y: 13 },
+
+        //middle room
+        {x: 61, y: 19},
+        //middle goblin room
+        {x: 53, y: 14},
+        {x: 58, y: 14},
+        //top parkour
+        {x: 31, y: 36},
+        {x: 40, y: 44},
+        {x: 45, y: 46},
+        {x: 48, y: 38},
+        {x: 52, y: 44},
+        {x: 65, y: 37},
+        //exit
+        {x: 24, y: 35},
+        {x: 6.5, y: 28},
+    ],
+
+    banners: [
+        {x:38, y: 14},
+        { x: 40, y: 14 },
+        //middle room
+        {x: 51, y: 21},
+        {x: 54, y: 21},
+        {x: 56, y: 21},
+        {x: 59, y: 21},
+        //exit
+        {x: 5, y: 26},
+        {x: 8, y: 26},
+        {x: 11, y: 26},
+        {x: 14, y: 26},
+        {x: 13, y: 40},
+        {x: 19, y: 40},
+        {x: 25, y: 40},
+    ],
+
+    windows: [
+        {x:50, y: 5, width: 2, height: 2},
+        //middle goblin room
+        {x:60, y: 14, width: 4, height: 3},
+        //top floor
+        {x: 71, y: 25, width: 2, height: 2},
+        {x: 71, y: 32, width: 2, height: 2},
+        {x: 71, y: 39, width: 2, height: 2},
+
+        {x: 40, y: 38, width: 2, height: 3},
+
+        //exit
+        {x: 14, y: 42, width: 5, height: 5},
+        {x: 20, y: 42, width: 5, height: 5},
+        {x: 12, y: 26, width: 2, height: 2},
     ],
     shrooms: [
         { x: 72, y: 24, guard: false },
+        { x: 21, y: 39, guard: false },
 
     ],
     goblins: [
@@ -866,13 +1223,15 @@ var level1_4 = {
 
         //top
         { x: 3, y: 28, guard: true },
+        { x: 21, y: 39, guard: true},
 
     ],
     skeletons: [
         //bottom
         { x: 41, y: 4, guard: true },
         //top
-        { x: 20, y: 35, guard: true }
+        { x: 20, y: 35, guard: true },
+        { x: 19, y: 39, guard: true }
     ],
 
     flyingeyes: [
@@ -883,6 +1242,7 @@ var level1_4 = {
 
         //middle floor
         { x: 50, y: 23, guard: true },
+        { x: 55, y: 23, guard: true },
 
         //top floor left
         { x: 31, y: 45, guard: true },
@@ -890,6 +1250,7 @@ var level1_4 = {
         //top floor right
         { x: 60, y: 39, guard: true },
         { x: 50, y: 41, guard: true },
+        { x: 53, y: 37, guard: true },
     ],
 
     //NOTEa: place miniboss at x: 18, y: 38
