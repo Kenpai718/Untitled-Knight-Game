@@ -717,9 +717,9 @@ class SceneManager {
                     let secrets = [];
                     for (var j = 0; j < secret.bricks.length; j++) {
                         let bricks = secret.bricks[j];
-                        secrets.push(new SecretBricks(this.game, bricks.x, h - bricks.y - 1, bricks.width, bricks.height, false, secret.indicate));                
-                        this.game.addEntity(new Secret(this.game, secrets, false, secret.indicate));
+                        secrets.push(new Brick(this.game, bricks.x, h - bricks.y - 1, bricks.width, bricks.height));
                     }
+                    this.game.addEntity(new Secret(this.game, secrets, false, secret.indicate));
                 }
             }
         } else { // load the enemies and interactables from their previous state
@@ -1134,13 +1134,13 @@ class Minimap {
         let self = this;
         this.game.secrets.forEach(function (secret) {
             if (!secret.found) {
-                secret.secrets.forEach(function (s) {
+                secret.space.forEach(function (s) {
                     let myX = s.x * PARAMS.SCALE;
                     let myY = (self.h - s.y - 4) * PARAMS.SCALE;
                     let myW = s.w * PARAMS.SCALE;
                     let myH = s.h * PARAMS.SCALE;
 
-                    if (s instanceof SecretBricks)
+                    if (s instanceof Brick)
                         ctx.fillStyle = self.colors.brick;
                     ctx.fillRect(self.x + myX, self.y + self.h * PARAMS.SCALE - myY, myW, myH);
 

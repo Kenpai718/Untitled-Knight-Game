@@ -260,11 +260,11 @@ class GameEngine {
         else if (e instanceof Secret)
             this.secrets.push(e);
         else if (e instanceof AbstractBackFeature)
-            this.foreground1.push(entity);
+            this.foreground1.push(e);
         else if (e instanceof AbstractBarrier)
-            this.foreground2.push(entity);
+            this.foreground2.push(e);
         else
-            this.information.push(entity);
+            this.information.push(e);
     };
 
     addEntityToFront(entity) {
@@ -281,14 +281,14 @@ class GameEngine {
             this.background2.unshift(e);
         else if (e instanceof AbstractInteractable)
             this.interactables.unshift(e);
-        else if (e instanceof AbstractSecret)
+        else if (e instanceof Secret)
             this.secrets.unshift(e);
         else if (e instanceof AbstractBackFeature)
-            this.foreground1.unshift(entity);
+            this.foreground1.unshift(e);
         else if (e instanceof AbstractBarrier)
-            this.foreground2.unshift(entity);
+            this.foreground2.unshift(e);
         else
-            this.information.unshift(entity);
+            this.information.unshift(e);
     };
 
     draw() {
