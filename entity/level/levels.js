@@ -938,7 +938,7 @@ var level1_3 = {
     ],
     columns: [
         { x: 5, y: 8, height: 8 },
-        { x: 22, y: 9, height: 5 },
+        { x: 15, y: 9, height: 9 },
         { x: 26, y: 11, height: 11 },
         { x: 35, y: 9, height: 9 }
     ],
