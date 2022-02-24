@@ -304,7 +304,7 @@ class GameEngine {
         this.drawLayer(this.entities);
         this.drawLayer(this.projectiles);
         this.drawLayer(this.foreground2);
-        this.drawLayer(this.secrets);    
+        this.drawLayer(this.secrets);
         this.drawLayer(this.information);
 
         if (PARAMS.DEBUG) {
@@ -356,12 +356,13 @@ class GameEngine {
             this.removeFromLayer(this.projectiles);
             this.removeFromLayer(this.information);
             this.removeFromLayer(this.secrets);
-
-            //update the camera (scene manager)
             this.camera.update();
+
         } else {
             //any updates you want to work when paused put here
             this.resetControls();
+            //update the camera (scene manager)
+            this.camera.update();
         }
     };
 
