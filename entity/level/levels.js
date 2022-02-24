@@ -951,8 +951,8 @@ var level1_4 = {
     ID: 4,
     label: "1-4",
     width: 75, height: 50,
-    player: { x: 65, y: 45 },
-    //player: { x: 3, y: 5 },
+    //player: { x: 65, y: 45 },
+    player: { x: 3, y: 5 },
     music: MUSIC.LONG_WAY,
     signs: [
         {
