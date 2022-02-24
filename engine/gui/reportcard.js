@@ -33,8 +33,8 @@
             "--------------------------",
             this.game.camera.getLevelTimer() + " to complete!",
             this.myEnemiesDefeated + " enemies defeated",
-            this.myDamageTaken + " damage taken",
-            this.myDamageDealt + " damage dealt",
+            Math.round(this.myDamageTaken) + " damage taken",
+            Math.round(this.myDamageDealt) + " damage dealt",
             this.myDiamondsEarned + " diamonds earned",
             this.myDeathes + " times died",
         ];
