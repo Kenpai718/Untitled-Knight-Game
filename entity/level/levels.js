@@ -189,7 +189,7 @@ var levelLoader = {
             x: 4, y: 3,
             title: "   LEVEL SELECT",
             text: ["-Stand next to the door of the level",
-                " you want to enter and press W!"]
+                   " you want to enter and press W!"]
         },
     ],
 
@@ -425,9 +425,11 @@ var level1_1 = {
 
         {
             x: 100, y: 2,
-            title: "Secrets!!!",
+            title: "    Secrets!!!",
             text: [
-                "You may find secrets in unexpected places!",
+                "-You may find secrets in unexpected places!",
+                "-Secret room blocks will slightly blink.",
+                "-Keep an eye out for them for great loot!"
             ]
         },
 
@@ -966,21 +968,29 @@ var level1_4 = {
                 " and shoots a blade beam projectile with each swing!",
                 "-However it only lasts for a short time and you can",
                 " easily die in one hit!"
-
-
+            ]
+        },
+        {
+            x: 70, y: 23,
+            title: "[TUTORIAL: LONG WALL-JUMP]",
+            text: [
+                "ADVANCED WALLJUMP:",
+                "-Right after a wall jump hold the direction",
+                " you are jumping towards to go farther!",
+                "-This will allow you to scale wide gaps!"
             ]
         },
     ],
     doors: [
         { x: 3, y: 6, killQuota: 0, exitLocation: { x: 115, y: 25, levelNum: 3 }, transition: false }, //starting door
-        { x: 6, y: 26, killQuota: 10, exitLocation: { x: 115, y: 25, levelNum: 3 }, transition: true }, //exit door
+        { x: 6, y: 26, killQuota: 8, exitLocation: { x: 115, y: 25, levelNum: 3 }, transition: true }, //exit door
     ],
     npcs: [
         { x: 6, y: 4 },
         { x: 64, y: 35 },
     ],
     chests: [
-        { x: 28, y: 1, direction: 0 },    //bottom floor
+        { x: 29, y: 1, direction: 0 },    //bottom floor
         { x: 37, y: 12, direction: 1 },   //secret room 
         { x: 38.5, y: 12, direction: 1 }, //secret room
         { x: 40, y: 12, direction: 1 }, //secret room
@@ -991,7 +1001,7 @@ var level1_4 = {
     ground: [
         //{ x: 0, y: 0, width: 15, height: 1, type: 1 },
         { x: 1, y: 3, width: 10, height: 1, type: 1 }, //starting ground
-        { x: 27, y: 0, width: 3, height: 1, type: 0 }, //bottom floor after jumps with chest on top
+        { x: 28, y: 0, width: 3, height: 1, type: 0 }, //bottom floor after jumps with chest on top
         { x: 34, y: 1, width: 6, height: 1, type: 0 }, //right most bottom floor
         { x: 34, y: 7, width: 2, height: 1, type: 0 }, //bottom floor wall holding obelisk
         { x: 61, y: 16, width: 3, height: 1, type: 0 }, //right of middle floor spikes
@@ -1032,8 +1042,9 @@ var level1_4 = {
     walls: [
         //{ x: -1, y: 15, height: 16, type: 0 },
         { x: 0, y: 10, height: 8, type: 0 }, //wall left first door
-        { x: 17, y: 2, height: 3, type: 0 }, //bottom floor first jump
-        { x: 24, y: 5, height: 6, type: 0 }, //bottom floor 2nd jump
+        { x: 17, y: 2, height: 4, type: 0 }, //bottom floor first jump
+        { x: 24, y: 5, height: 7, type: 0 }, //bottom floor 2nd jump
+        { x: 25, y: 5, height: 7, type: 0 }, //bottom floor 2nd jump 2
         { x: 36, y: 10, height: 8, type: 0 }, //first closing wall of bottom floor
         { x: 41, y: 10, height: 8, type: 0 }, //secret room wall left
         { x: 43, y: 14, height: 12, type: 0 }, //secret room wall right
