@@ -244,13 +244,13 @@ class Shop {
 
         // Shop Icons
         ctx.font = ctx.font.replace(/\d+px/, "25px");
-        ctx.fillText("🏹 x" + 10,   this.x + 10, this.y + this.height / 7 * 1.7);
-        ctx.fillText("⚗️ x" + 1,    this.x + 10, this.y + this.height / 7 * 2.7);
-        ctx.fillText("󠀠󠀠󠀠❤️ x1",       this.x + 10, this.y + this.height / 7 * 3.7);
+        ctx.fillText("🏹 x" + 10,   this.x + 10, this.y + this.height / 7 * 1.75);
+        ctx.fillText("⚗️ x" + 1,    this.x + 10, this.y + this.height / 7 * 2.75);
+        ctx.fillText("󠀠󠀠󠀠❤️ x1",       this.x + 10, this.y + this.height / 7 * 3.75);
 
 
         // Item Animations
-        this.health[this.secondsx2%5].drawFrame(this.game.clockTick,    ctx, this.x + 5 + 8, this.y + this.height / 7 * 3.5, 1.7);
+        this.health[this.secondsx2%5].drawFrame(this.game.clockTick,    ctx, this.x + 5 + 8, this.y + this.height / 7 * 3.55, 1.7);
         this.attack[this.secondsx2%4].drawFrame(this.game.clockTick,       ctx, this.x + 5 + 10, this.y + this.height / 7 * 4.3, 1.6);
         this.arrow[this.seconds%4].drawFrame(this.game.clockTick,      ctx, this.x + 5 + 10, this.y + this.height / 7 * 5.4, 1.8);
         this.armor[this.seconds%4].drawFrame(this.game.clockTick,       ctx, this.x + 5, this.y + this.height / 7 * 6.45, 1);
@@ -284,16 +284,95 @@ class Shop {
 
     manageButtons(ctx){
 
-        // Buttons
-        this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 1.23, this.buttonscale);
-        this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 2.23, this.buttonscale);
-        this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 3.23, this.buttonscale);
-        this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 4.23, this.buttonscale);
-        this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 5.23, this.buttonscale);
-        this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 6.23, this.buttonscale);
+        let tempFilter = ctx.filter;
 
-        // Purchasing
+        
+        
+        
+        // determine if player able to purchase item
         let that = this;
+
+        let item1 = false;
+        let item2 = false;
+        let item3 = false;
+        let item4 = false;
+        let item5 = false;
+        let item6 = false;
+        this.game.entities.forEach(function (entity) {
+            if(entity instanceof AbstractPlayer){
+
+                
+                if(entity.myInventory.diamonds >= that.arrowPackCost[entity.myInventory.arrowUpgrade])  // Arrow pack
+                    item1 = true;
+                if(entity.myInventory.diamonds >= 10)                                                   // Health potion
+                    item2 = true;
+                if(entity.myInventory.diamonds >= that.healthCost[entity.myInventory.arrowUpgrade])  // Max Health potion
+                    item3 = true;
+                if(entity.myInventory.diamonds >= that.attackCost[entity.myInventory.arrowUpgrade])  // Attack Upgrade
+                    item4 = true;
+                if(entity.myInventory.diamonds >= that.arrowCost[entity.myInventory.arrowUpgrade])  // Arrow Upgrade
+                    item5 = true;
+                if(entity.myInventory.diamonds >= that.armorCost[entity.myInventory.arrowUpgrade])  // Armor Upgrade
+                    item6 = true;
+                    
+
+            }
+        });
+
+        
+        
+        
+
+        /*
+            this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 1.23, this.buttonscale);
+            this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 2.23, this.buttonscale);
+            this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 3.23, this.buttonscale);
+            this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 4.23, this.buttonscale);
+            this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 5.23, this.buttonscale);
+            this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 6.23, this.buttonscale);
+        
+        */
+
+
+        // Buttons
+        if(!item1){
+            ctx.filter = "grayscale(1)";
+        }
+        this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 1.23, this.buttonscale);
+        ctx.filter = tempFilter;
+
+        if(!item2){
+            ctx.filter = "grayscale(1)";
+        }    
+        this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 2.23, this.buttonscale);
+        ctx.filter = tempFilter; 
+
+        if(!item3){
+            ctx.filter = "grayscale(1)";
+        }
+        this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 3.23, this.buttonscale);
+        ctx.filter = tempFilter;
+
+        if(!item4){
+            ctx.filter = "grayscale(1)";
+        }
+            this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 4.23, this.buttonscale);
+            ctx.filter = tempFilter;
+
+        if(!item5){
+            ctx.filter = "grayscale(1)";
+        }
+            this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 5.23, this.buttonscale);
+            ctx.filter = tempFilter;
+
+        if(!item6){
+            ctx.filter = "grayscale(1)";
+        }
+        this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 6.23, this.buttonscale);
+        ctx.filter = tempFilter;
+        
+
+        // Purchasing cost text
         this.game.entities.forEach(function (entity) {
             if(entity instanceof AbstractPlayer){
 
@@ -309,6 +388,45 @@ class Shop {
             }
         });
 
+
+        // Displays diamond on button - grey if player doesnt have enough diamond for purchase
+        if(!item1){
+            ctx.filter = "grayscale(1)";
+        }
+        this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 19, this.y + this.height / 7 * 1.39, 3.4);
+        ctx.filter = tempFilter;
+        
+        if(!item2){
+            ctx.filter = "grayscale(1)";
+        }
+        this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 19, this.y + this.height / 7 * 2.39, 3.4);
+        ctx.filter = tempFilter;
+
+        if(!item3){
+            ctx.filter = "grayscale(1)";
+        }
+        this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 19, this.y + this.height / 7 * 3.39, 3.4);
+        ctx.filter = tempFilter;
+
+        if(!item4){
+            ctx.filter = "grayscale(1)";
+        }
+        this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 19, this.y + this.height / 7 * 4.39, 3.4);
+        ctx.filter = tempFilter;
+
+        if(!item5){
+            ctx.filter = "grayscale(1)";
+        }
+        this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 19, this.y + this.height / 7 * 5.39, 3.4);
+        ctx.filter = tempFilter;
+
+        if(!item6){
+            ctx.filter = "grayscale(1)";
+        }
+        this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 19, this.y + this.height / 7 * 6.39, 3.4);
+        ctx.filter = tempFilter;
+
+        /*
         // Diamonds
         this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 19, this.y + this.height / 7 * 1.39, 3.4);
         this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 19, this.y + this.height / 7 * 2.39, 3.4);
@@ -316,6 +434,10 @@ class Shop {
         this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 19, this.y + this.height / 7 * 4.39, 3.4);
         this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 19, this.y + this.height / 7 * 5.39, 3.4);
         this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 19, this.y + this.height / 7 * 6.39, 3.4);
+        */
+
+
+        ctx.filter = tempFilter;
     };
 
     updateBoxes(){
