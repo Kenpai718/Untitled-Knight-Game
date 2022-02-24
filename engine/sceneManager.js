@@ -308,6 +308,15 @@ class SceneManager {
 
     updateTitleScreen() {
         if (this.title) {
+            //keep attemping to play title music until the user clicks
+            if(!ASSET_MANAGER.isPlaying(MUSIC.TITLE)) {
+                //console.log("attempting to play title music");
+                ASSET_MANAGER.pauseBackgroundMusic();
+                ASSET_MANAGER.autoRepeat(MUSIC.TITLE);
+                ASSET_MANAGER.playAsset(MUSIC.TITLE);
+            }
+            
+            //update menu buttons
             this.textColor = 0;
             if (this.game.mouse) {
                 if (this.startGameBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
@@ -733,11 +742,8 @@ class SceneManager {
         this.setupMinimap();
 
         //play the music if it is not already playing
-        if (!ASSET_MANAGER.isPlaying(scene.music)) {
-            if (this.title) { //force play title music
-                ASSET_MANAGER.pauseBackgroundMusic();
-                ASSET_MANAGER.forcePlayMusic(scene.music);
-            } else if (scene.music) {
+        if (!this.title) {
+            if (scene.music) {
                 ASSET_MANAGER.pauseBackgroundMusic();
                 ASSET_MANAGER.autoRepeat(scene.music);
                 ASSET_MANAGER.playAsset(scene.music);
