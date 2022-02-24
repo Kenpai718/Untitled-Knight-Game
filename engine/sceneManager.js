@@ -311,13 +311,13 @@ class SceneManager {
     updateTitleScreen() {
         if (this.title) {
             //keep attemping to play title music until the user clicks
-            if(!ASSET_MANAGER.isPlaying(MUSIC.TITLE)) {
+            if (!ASSET_MANAGER.isPlaying(MUSIC.TITLE)) {
                 //console.log("attempting to play title music");
                 ASSET_MANAGER.pauseBackgroundMusic();
                 ASSET_MANAGER.autoRepeat(MUSIC.TITLE);
                 ASSET_MANAGER.playAsset(MUSIC.TITLE);
             }
-            
+
             //update menu buttons
             this.textColor = 0;
             if (this.game.mouse) {
@@ -428,6 +428,7 @@ class SceneManager {
         this.levelState = [];
         this.lastPlayer = null;
         this.title = true;
+        this.transition = false;
         this.controls = false;
         this.credits = false;
         this.myControlBox.show = false;
@@ -747,11 +748,11 @@ class SceneManager {
 
         //play the music if it is not already playing
         if (!this.title) {
-            if (scene.music) {
+            if (scene.music && !ASSET_MANAGER.isPlaying(scene.music)) {
                 ASSET_MANAGER.pauseBackgroundMusic();
                 ASSET_MANAGER.autoRepeat(scene.music);
                 ASSET_MANAGER.playAsset(scene.music);
-            } else if (!scene.music) { //no music set play default music
+            } else if (!scene.music && !ASSET_MANAGER.isPlaying(this.defaultMusic)) { //no music set play default music
                 ASSET_MANAGER.pauseBackgroundMusic();
                 ASSET_MANAGER.autoRepeat(this.defaultMusic);
                 ASSET_MANAGER.playAsset(this.defaultMusic);
@@ -815,7 +816,7 @@ class SceneManager {
         this.loadBackground(h, entities, this.level);
         let self = this;
         entities.forEach(entity => self.game.addEntity(entity));
-        
+
     }
 
     loadEnvironment(h, array, dict) {
@@ -1105,11 +1106,13 @@ class Minimap {
             spike: "orange",
             player: "blue",
             enemy: "red",
+            projectile: "turquoise",
             npc: "green",
             chest: "yellow",
             door: "SpringGreen",
             sign: "bisque",
-            obelisk: "DarkSlateBlue"
+            obelisk: "DarkSlateBlue",
+            obeliskBrick: "CornflowerBlue"
         }
 
 
@@ -1153,6 +1156,13 @@ class Minimap {
                 ctx.fillStyle = this.colors.enemy;
                 this.drawEntity(ctx, entity);
             }
+        }
+
+        let myProjectiles = this.game.projectiles;
+        for (var i = 0; i < myProjectiles.length; i++) {
+            let entity = myProjectiles[i];
+            ctx.fillStyle = this.colors.projectile;
+            this.drawEntity(ctx, entity);
         }
     }
 
@@ -1221,18 +1231,6 @@ class Minimap {
                 let myY = brick.y * PARAMS.SCALE;
                 let myW = brick.width * PARAMS.SCALE;
                 let myH = brick.height * PARAMS.SCALE;
-
-                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);
-            }
-        }
-
-        if (this.level.obelisks) {
-            for (var i = 0; i < this.level.obelisks.length; i++) {
-                let obelisk = this.level.obelisks[i];
-                let myX = obelisk.brickX * PARAMS.SCALE;
-                let myY = obelisk.brickY * PARAMS.SCALE;
-                let myW = obelisk.brickWidth * PARAMS.SCALE;
-                let myH = obelisk.brickHeight * PARAMS.SCALE;
 
                 ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);
             }
@@ -1313,13 +1311,23 @@ class Minimap {
         ctx.fillStyle = this.colors.obelisk;
         if (this.level.obelisks) {
             for (var i = 0; i < this.level.obelisks.length; i++) {
+                ctx.fillStyle = this.colors.obelisk;
                 let obelisk = this.level.obelisks[i];
+                //draw obelisk
                 let myX = obelisk.x * PARAMS.SCALE;
                 let myY = obelisk.y * PARAMS.SCALE;
-                let myW = PARAMS.SCALE / 2;
-                let myH = PARAMS.SCALE;
+                let myW = PARAMS.SCALE * 2;
+                let myH = PARAMS.SCALE * 2;
+                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 2) * PARAMS.SCALE, myW, myH);
 
-                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 1) * PARAMS.SCALE, 3 * myW, 3 * myH);
+                //draw obelisk bricks
+                ctx.fillStyle = this.colors.obeliskBrick;
+                myX = obelisk.brickX * PARAMS.SCALE;
+                myY = obelisk.brickY * PARAMS.SCALE;
+                myW = obelisk.brickWidth * PARAMS.SCALE;
+                myH = obelisk.brickHeight * PARAMS.SCALE;
+
+                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);
             }
         }
         let self = this;
