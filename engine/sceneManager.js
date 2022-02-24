@@ -30,6 +30,7 @@ class SceneManager {
         this.currentLevel = 1; // CHANGE TO 1 BEFORE SUBMISSION
         this.setupAllLevels();
         this.loadTitle();
+        this.loadPaused();
     };
 
     loadTitle() {
@@ -103,12 +104,23 @@ class SceneManager {
         this.returnToMenuBB = new BoundingBox(x, y, 40 * 14, -40);
     };
 
+    loadPaused() {
+        var x = (this.game.surfaceWidth / 2) - ((40 * 8) / 2);
+        var y = (this.game.surfaceHeight / 2) - 40;
+        this.controlsPauseBB = new BoundingBox(x, y, 40 * 8, -40);
+        x = (this.game.surfaceWidth / 2) - ((40 * 8) / 2);
+        y = (this.game.surfaceHeight / 2) + 40;
+        this.restartPauseBB = new BoundingBox(x, y, 40 * 8, -40);
+        x = (this.game.surfaceWidth / 2) - ((40 * 9) / 2);
+        y = (this.game.surfaceHeight / 2) + 40 * 3;
+        this.returnMenuPauseBB = new BoundingBox(x, y, 40 * 9, -40);
+    }
+
     /**
      * MUST BE CALLED BEFORE LOADING A LEVEL!!!
      * Initialize all levels into levels array
      */
     setupAllLevels() {
-        var self = this;
         let levelZero = testLevel;
         let levelOne = level1_1;
         let levelTwo = level1_2;
@@ -255,6 +267,7 @@ class SceneManager {
      * Update the camera and gui elements
      */
     update() {
+        //updates from outside canvas (debug or volume)
         this.updateAudio();
         PARAMS.DEBUG = document.getElementById("debug").checked;
         if (this.game.debug) {
@@ -262,19 +275,39 @@ class SceneManager {
             document.getElementById("debug").checked = !document.getElementById("debug").checked;
         }
 
-        //timer for the level
-        if (!this.title && !this.transition) {
-            this.levelTimer += this.game.clockTick;
-        }
-
-        if (!this.title && !this.transition) {
-            //debug key toggle, flip state of debug checkbox
+        //update game camera in terms of ints
+        if (!this.title && !this.transition && !PAUSED) {
             this.updateGUI();
             this.BBCamera();
 
             this.x = Math.round(this.x);
             this.y = Math.round(this.y);
-        } else if (this.title) {
+        }
+
+        //update related screen menus
+        this.updateTitleScreen();
+        this.updateResultScreen();
+        this.updatePauseMenu();
+
+        //update game timer
+        if (!this.transition && !this.title && !PAUSED) this.levelTimer += this.game.clockTick;
+
+        //debugging camera updates
+        if (PARAMS.DEBUG) {
+            /**
+             * Debug tool
+             * gives diamonds by toggling debug mode
+             * use to test the shop!
+             */
+            if (this.currentLevel == 0) {
+                this.player.myInventory.diamonds = 999;
+            }
+        }
+
+    };
+
+    updateTitleScreen() {
+        if (this.title) {
             this.textColor = 0;
             if (this.game.mouse) {
                 if (this.startGameBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
@@ -309,7 +342,43 @@ class SceneManager {
                 }
                 this.game.click = null;
             }
-        } else if (this.transition) {
+        }
+    }
+    updatePauseMenu() {
+        if (PAUSED) {
+            this.textColor = 0;
+            if (this.game.mouse) {
+                if (this.controlsPauseBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
+                    this.textColor = 1;
+                    //console.log("hovering pause");
+                } else if (this.restartPauseBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
+                    //console.log("hovering restart");
+                    this.textColor = 2;
+                } else if (this.returnMenuPauseBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
+                    //console.log("hovering menu");
+                    this.textColor = 3;
+                }
+            }
+            if (this.game.click) {
+                if (this.controlsPauseBB.collideMouse(this.game.click.x, this.game.click.y)) {
+                    ASSET_MANAGER.playAsset(SFX.CLICK);
+                    this.controls = !this.controls;
+                } else if (this.restartPauseBB.collideMouse(this.game.click.x, this.game.click.y)) {
+                    ASSET_MANAGER.playAsset(SFX.CLICK);
+                    PAUSED = false;
+                    this.loadLevel(this.currentLevel);
+                } else if (this.returnMenuPauseBB.collideMouse(this.game.click.x, this.game.click.y)) {
+                    ASSET_MANAGER.playAsset(SFX.CLICK);
+                    PAUSED = false;
+                    this.returnToMenu();
+                }
+                this.game.click = null;
+            }
+        }
+    }
+
+    updateResultScreen() {
+        if (this.transition) {
             this.textColor = 0;
             if (this.game.mouse) {
                 if (this.nextLevelBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
@@ -336,19 +405,7 @@ class SceneManager {
                 this.game.click = null;
             }
         }
-
-        if (PARAMS.DEBUG) {
-            /**
-             * Debug tool
-             * gives diamonds by toggling debug mode
-             * use to test the shop!
-             */
-            if (this.currentLevel == 0) {
-                this.player.myInventory.diamonds = 999;
-            }
-        }
-
-    };
+    }
 
     /**
      * Menu Options
@@ -360,6 +417,10 @@ class SceneManager {
         this.lastPlayer = null;
         this.title = true;
         this.game.myReportCard.reset();
+        this.myControlBox.show = false;
+        this.myCreditBox.show = false;
+        this.resetCamera();
+        this.loadTitle();
     }
 
     restartLevel() {
@@ -384,6 +445,10 @@ class SceneManager {
         this.loadScene(titleScene, titleScene.player.x, titleScene.player.y);
     }
 
+    resetCamera() {
+        this.x = 0;
+        this.y = 0;
+    }
 
     BBCamera() {
         if (this.player.BB.left < 0) this.player.x -= this.player.BB.left;
@@ -507,7 +572,7 @@ class SceneManager {
         ASSET_MANAGER.adjustVolume(volume);
     };
 
-    drawGUI(ctx) {
+    drawHUD(ctx) {
         ctx.fillStyle = "White";
         this.vignette.draw(ctx);
         this.inventory.draw(ctx);
@@ -517,7 +582,13 @@ class SceneManager {
 
 
     draw(ctx) {
+        this.drawGameplayGUI(ctx);
+        this.drawTitleGUI(ctx);
+        this.drawResultsGUI(ctx);
 
+    };
+
+    drawGameplayGUI(ctx) {
         if (!this.title && !this.transition) {
             //current level
             ctx.font = PARAMS.BIG_FONT; //this is size 20 font
@@ -540,13 +611,38 @@ class SceneManager {
             ctx.fillText(quotaLabel, this.game.surfaceWidth - offset, yOffset * 3);
 
             //draw gui like hearts, inventory etc
-            this.drawGUI(ctx);
+            this.drawHUD(ctx);
+
+            //pause screen
+            if (PAUSED) {
+                var fontSize = 60;
+                ctx.font = fontSize + 'px "Press Start 2P"';
+
+                let title = "PAUSED";
+                ctx.fillStyle = "Orchid";
+                ctx.fillText(title, (this.game.surfaceWidth / 2) - ((fontSize * title.length) / 2) + 5, fontSize * 7 + 5);
+                ctx.fillStyle = "GhostWhite";
+                ctx.fillText(title, (this.game.surfaceWidth / 2) - ((fontSize * title.length) / 2), fontSize * 7);
+
+                buildButton(ctx, "Controls", this.controlsPauseBB, this.textColor == 1);
+                buildButton(ctx, "Restart", this.restartPauseBB, this.textColor == 2);
+                buildButton(ctx, "Main Menu", this.returnMenuPauseBB, this.textColor == 3);
+
+                if (this.controls) {
+                    this.myControlBox.show = true;
+                    this.myControlBox.draw(ctx);
+                }
+            }
 
             if (PARAMS.DEBUG) {
                 this.viewDebug(ctx);
                 this.minimap.draw(ctx);
             }
-        } else if (this.title) {
+        }
+    }
+
+    drawTitleGUI(ctx) {
+        if (this.title) {
             var fontSize = 60;
             var titleFont = fontSize + 'px "Press Start 2P"';
             ctx.font = "Bold" + titleFont;
@@ -572,7 +668,11 @@ class SceneManager {
                 this.myCreditBox.show = true;
                 this.myCreditBox.draw(ctx);
             }
-        } else if (this.transition) {
+        }
+    }
+
+    drawResultsGUI(ctx) {
+        if (this.transition) {
             var fontSize = 60;
             ctx.font = fontSize + 'px "Press Start 2P"';
             ctx.fillStyle = "White";
@@ -588,19 +688,7 @@ class SceneManager {
 
             this.game.myReportCard.drawReportCard(ctx);
         }
-
-        //pause screen
-        if (PAUSED) {
-            var fontSize = 60;
-            ctx.font = fontSize + 'px "Press Start 2P"';
-
-            let title = "PAUSED";
-            ctx.fillStyle = "Orchid";
-            ctx.fillText(title, (this.game.surfaceWidth / 2) - ((fontSize * title.length) / 2) + 5, fontSize * 9 + 5);
-            ctx.fillStyle = "GhostWhite";
-            ctx.fillText(title, (this.game.surfaceWidth / 2) - ((fontSize * title.length) / 2), fontSize * 9);
-        }
-    };
+    }
 
     /**
      * How many kills left for the level

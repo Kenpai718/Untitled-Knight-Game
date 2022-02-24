@@ -373,6 +373,7 @@ var level1_1 = {
                 "     *Hold [W] to shoot diagonally up or [S] down.",
                 "-[SHIFT] to roll and dodge attacks.",
                 " *Recommend to disable sticky keys!",
+                "-[ESC] to pause the game",
                 "",
                 "KEYBOARD + MOUSE CONTROLS:",
                 "*NOTE: Keep mouse cursor within game screen!",
@@ -981,6 +982,7 @@ var level1_4 = {
         { x: 28, y: 1, direction: 0 },    //bottom floor
         { x: 37, y: 12, direction: 1 },   //secret room 
         { x: 38.5, y: 12, direction: 1 }, //secret room
+        { x: 40, y: 12, direction: 1 }, //secret room
         { x: 65, y: 12, direction: 0 },   //middle floor
         { x: 1, y: 27, direction: 0 }, //exit door plat (chest on top)
         { x: 24, y: 34, direction: 0 }, //chest udner miniboss fight
