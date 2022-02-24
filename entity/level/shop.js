@@ -306,13 +306,13 @@ class Shop {
                     item1 = true;
                 if(entity.myInventory.diamonds >= 10)                                                   // Health potion
                     item2 = true;
-                if(entity.myInventory.diamonds >= that.healthCost[entity.myInventory.arrowUpgrade])  // Max Health potion
+                if(entity.myInventory.diamonds >= that.healthCost[entity.myInventory.healthUpgrade])  // Max Health potion
                     item3 = true;
-                if(entity.myInventory.diamonds >= that.attackCost[entity.myInventory.arrowUpgrade])  // Attack Upgrade
+                if(entity.myInventory.diamonds >= that.attackCost[entity.myInventory.attackUpgrade])  // Attack Upgrade
                     item4 = true;
                 if(entity.myInventory.diamonds >= that.arrowCost[entity.myInventory.arrowUpgrade])  // Arrow Upgrade
                     item5 = true;
-                if(entity.myInventory.diamonds >= that.armorCost[entity.myInventory.arrowUpgrade])  // Armor Upgrade
+                if(entity.myInventory.diamonds >= that.armorCost[entity.myInventory.armorUpgrade])  // Armor Upgrade
                     item6 = true;
                     
 

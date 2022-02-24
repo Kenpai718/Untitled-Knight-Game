@@ -364,7 +364,7 @@ class AbstractPlayer extends AbstractEntity {
         }*/
         // instances where there are collisons along horizontal, but need ignoring
         // currently only when there's a crawl space to allow auto-crawl
-        if (this.touchFloor() && this.touchHole()) {
+        if (this.touchFloor() && this.touchHole() || this.action == this.states.wall_climb) {
             if (!this.collisions.lo_right && !this.collisions.lo_left)
                 dist.x = 0;
         }

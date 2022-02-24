@@ -75,6 +75,7 @@ class Knight extends AbstractPlayer {
         this.jumpTime = 0;
         this.slideTime = 0;
         this.wallSliding = false;
+        this.wasFloor = true;
 
         //animations
         this.animations = [];
@@ -137,7 +138,10 @@ class Knight extends AbstractPlayer {
                     (this.action == this.states.wall_slide && !(this.collisions.lo_left || this.collisions.lo_right))) {
                     this.action = this.states.falling;
                     this.inAir = true;
-                    this.jumpTime = 10;
+                    if (this.wasFloor) {
+                        this.jumpTime = 10;
+                        this.wasFloor = false;
+                    }
                 }
             }
 
@@ -146,6 +150,10 @@ class Knight extends AbstractPlayer {
              * are handled by the AbstractPlayer superclass
              */
             super.handleCollisions(TICK);
+
+            if (this.touchFloor()) {
+                this.wasFloor = true;
+            }
         }
     }
 
@@ -242,9 +250,9 @@ class Knight extends AbstractPlayer {
             }
             if (this.action == this.states.wall_climb) {
                 if (this.animations[this.facing][this.action][this.myInventory.armorUpgrade].currentFrame() < 4)
-                    this.velocity.y = -250;
+                    this.velocity.y = -225;
                 else if (this.animations[this.facing][this.action][this.myInventory.armorUpgrade].currentFrame() == 4)
-                    this.velocity.y = -125;
+                    this.velocity.y = -75;
             }
         } else if (this.inAir && this.action != this.states.shoot) { //player is falling and not shooting an arrow
             //adjust the direction depending on how the player is drifting
@@ -371,6 +379,8 @@ class Knight extends AbstractPlayer {
         //jump press
         if (this.game.jump && !this.action.jump && !this.touchCeiling()) {
             super.doJump();
+            this.wasFloor = false;
+            this.jumpTime = 0;
         }
         if (this.action != this.states.turn_around) this.resetAnimationTimers(this.states.turn_around);
     }
@@ -486,6 +496,7 @@ class Knight extends AbstractPlayer {
             if (this.jumpTime > 0) {
                 super.doJump();
                 this.jumpTime = 0;
+                this.wasFloor = false;
             }
 
             //do a double jump if the player is in the air and hasn't double jumped while in air
@@ -503,6 +514,8 @@ class Knight extends AbstractPlayer {
                     this.velocity.y = -PLAYER_PHYSICS.JUMP_HEIGHT / 2;
                 }
                 this.action = this.states.jump;
+                this.wasFloor = false;
+                this.jumpTime = 0;
 
                 //handle double jump x velocity
                 let isLeft = this.facing == this.dir.left;
