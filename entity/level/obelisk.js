@@ -3,10 +3,10 @@
 class Obelisk extends AbstractInteractable {
     constructor(game, x, y, brickX, brickY, brickWidth, brickHeight) {
         super(game, x, y);
-        this.bricks = new Brick (this.game, brickX, this.game.camera.level.height - brickY - 1, brickWidth, brickHeight);
+        this.bricks = new Brick(this.game, brickX, this.game.camera.level.height - brickY - 1, brickWidth, brickHeight);
         this.game.addEntity(this.bricks);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/Obelisk_full.png");
-        this.states = { idle : 0, notIdle : 1 };
+        this.states = { idle: 0, notIdle: 1 };
         this.state = this.states.idle;
         this.width = 190;
         this.height = 380;
@@ -21,24 +21,52 @@ class Obelisk extends AbstractInteractable {
     update() {
         if (!this.activated) {
             var self = this;
+            //activate from player approaching
             this.game.entities.forEach(function (entity) {
-                if (entity.BB && self.BB.collide(entity.BB) && entity instanceof Knight) {
-                    self.state = self.states.notIdle;
-                    self.activated = true;
-                    self.playSound = true;
+                if (entity instanceof AbstractPlayer) {
+                    let playerNear = entity.BB && self.BB.collide(entity.BB);
+                    let playerInteract = playerNear && self.game.up;
+                    let playerHit = entity.HB && self.BB.collide(entity.HB);
+                    if (playerHit || playerInteract) {
+                        ASSET_MANAGER.playAsset(SFX.CLICK)
+                        self.setActivated();
+                    }
+                }
+            });
+
+            //activate from an array
+            this.game.projectiles.forEach(function (entity) {
+                if (entity instanceof Arrow) {
+                    if (entity.BB && self.BB.collide(entity.BB)) {
+                        entity.hit = true;
+                        entity.removeFromWorld = true;
+                        ASSET_MANAGER.playAsset(SFX.CLICK)
+                        ASSET_MANAGER.playAsset(SFX.ARROW_HIT);
+                        self.setActivated();
+                    }
                 }
             });
         } else if (this.animations[this.states.notIdle].isDone()) {
-            this.state = this.states.idle;
-            this.bricks.removeFromWorld = true;
+            this.removeBlocks();
 
         }
 
-        if(this.playSound) {
+        if (this.playSound) {
             this.playSound = false;
             ASSET_MANAGER.playAsset(SFX.OBELISK_ON);
         }
     };
+
+    setActivated() {
+        this.state = this.states.notIdle;
+        this.activated = true;
+        this.playSound = true;
+    }
+
+    removeBlocks() {
+        this.state = this.states.idle;
+        this.bricks.removeFromWorld = true;
+    }
 
 
     draw(ctx) {

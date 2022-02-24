@@ -332,6 +332,7 @@ class SceneManager {
             if (this.game.click) {
                 if (this.startGameBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     ASSET_MANAGER.playAsset(SFX.CLICK);
+                    this.game.myReportCard.reset();
                     this.game.attack = false;
                     this.loadLevel(this.currentLevel, false);
                 } else if (this.controlsBB.collideMouse(this.game.click.x, this.game.click.y)) {
@@ -425,7 +426,8 @@ class SceneManager {
         this.levelState = [];
         this.lastPlayer = null;
         this.title = true;
-        this.game.myReportCard.reset();
+        this.controls = false;
+        this.credits = false;
         this.myControlBox.show = false;
         this.myCreditBox.show = false;
         this.resetCamera();
