@@ -78,7 +78,12 @@ ASSET_MANAGER.queueDownload(SFX.CHEST_OPEN);
 ASSET_MANAGER.queueDownload(SFX.OBELISK_ON);
 ASSET_MANAGER.queueDownload(SFX.NEW_ITEM);
 ASSET_MANAGER.queueDownload(SFX.NEW_HEART);
+ASSET_MANAGER.queueDownload(SFX.ENCHANTMENT);
+ASSET_MANAGER.queueDownload(SFX.ANVIL);
+
+// Leave this SFX to suffer at the bottom >:D
 ASSET_MANAGER.queueDownload(SFX.PURCHASE);
+
 
 
 

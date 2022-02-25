@@ -1,7 +1,10 @@
 /**
  * This entity is used as the shopkeeper to buy equipment for the player
  */
+
+let setShop = false;
 class NPC extends AbstractEntity {
+
     constructor(game, x, y) {
         super(game, x, y, "Shopkeeper NPC", 10, 88, 88, 2.5)
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/wizard.png");
@@ -22,18 +25,32 @@ class NPC extends AbstractEntity {
         this.width = 88 * this.scale;
         this.height = 80 * this.scale;
         this.visionwidth = 700 * this.scale;
+        
+        
 
         // Shop
-        this.shopActive = false;
-        this.shopGUI = null;
         this.showText = false;
         this.fontSize = DEFAULT_FONT_SIZE;
+        this.shopGUI = null;
 
         // Other
         this.loadAnimations();
         this.updateBoxes();
         this.myHoverText = "Press \'W\' to shop";
 
+    };
+
+    activateShop() {
+        this.shopGUI = new Shop(this.game);
+        this.game.addEntityToFront(this.shopGUI);
+        setShop = true; 
+    };
+
+    deactivateShop() {
+
+        this.shopGUI.removeFromWorld = true;
+        setShop = false;
+        this.shopGUI = null;
     };
 
     updateBoxes() {
@@ -48,6 +65,14 @@ class NPC extends AbstractEntity {
     update() {
         const TICK = this.game.clockTick;
 
+        // Checks status of global setShop to determine whether to open instance of shop
+        if(setShop && this.shopGUI == null){
+            this.activateShop();
+        }
+        else if (!setShop && this.shopGUI != null){
+            this.deactivateShop();
+        }
+
         let self = this;
         //interactions with entities like player
         this.game.entities.forEach(function (entity) {
@@ -61,24 +86,19 @@ class NPC extends AbstractEntity {
                     }
                 }
 
-                self.direction = entity.BB.right < self.BB.left ? self.directions.left : self.directions.right;
+                if(self.state != 1)
+                    self.direction = entity.BB.right < self.BB.left ? self.directions.left : self.directions.right;
                 
             }
-            if (self.states.active && !self.shopActive) { // Activates shop once player in range, NPC is active and player click w key
+            if (self.states.active && !setShop) { // Activates shop once player in range, NPC is active and player click w key
                 if (entity.BB && self.BB.collide(entity.BB) && entity instanceof AbstractPlayer) {
                     if (self.game.up) {
-                        //console.log("Opening Shop...");
-                        self.shopActive = true;
-                        self.shopGUI = new Shop(self.game);
-                        self.game.addEntityToFront(self.shopGUI);
-
+                        self.activateShop();
                     }
                 }
             }
-            else if (self.shopActive && entity.BB && !self.BB.collide(entity.BB) && entity instanceof AbstractPlayer) { // Deactivates shop when player NOT in range, and shop is active
-                self.shopActive = false;
-                //console.log("Closing Shop...");
-                self.shopGUI.removeFromWorld = true;
+            else if (setShop && entity.BB && !self.BB.collide(entity.BB) && entity instanceof AbstractPlayer) { // Deactivates shop when player NOT in range, and shop is active
+                self.deactivateShop();
             }
         });
 
@@ -124,7 +144,7 @@ class NPC extends AbstractEntity {
 
     draw(ctx) {
         //text
-        if (!this.shopActive && this.state != this.states.inactive) {
+        if (!setShop && this.state != this.states.inactive) {
             ctx.fillStyle = "SpringGreen";
             ctx.fillText(" " + this.name,
                 (this.BB.x) - this.game.camera.x,
