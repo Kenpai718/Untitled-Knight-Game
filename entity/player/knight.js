@@ -77,7 +77,8 @@ class Knight extends AbstractPlayer {
         this.slideTime = 0;
         this.wallSliding = false;
         this.wasFloor = true;
-        this.climbheight = 0;
+        this.climbHeight = 0;
+        this.climbWidth = 0;
 
         //animations
         this.animations = [];
@@ -272,33 +273,32 @@ class Knight extends AbstractPlayer {
                 }
             }
             if (this.action == this.states.wall_climb) {
-                this.velocity.y = -15000 * TICK;
+                this.velocity.y = -30000 * TICK;
                 switch (this.animations[this.facing][this.action][this.myInventory.armorUpgrade].currentFrame()) {
                     case 0:
                         if (this.animations[this.facing][this.action][this.myInventory.armorUpgrade].elapsedTime == 0) {
-                            this.y = this.climbheight - 3 * this.scale;
+                            this.y = this.climbHeight - 3 * this.scale;
                             this.velocity.y = 0;
                         }
-                        if (this.y <= this.climbheight - 14 * this.scale) {
-                            this.y = this.climbheight - 14 * this.scale;
+                        if (this.y <= this.climbHeight - 14 * this.scale) {
+                            this.y = this.climbHeight - 14 * this.scale;
                             this.velocity.y = 0;
                         }
                         break;
                     case 1:
-                        if (this.y <= this.climbheight - 22 * this.scale) {
-                            this.y = this.climbheight - 22 * this.scale;
+                        if (this.y <= this.climbHeight - 22 * this.scale) {
+                            this.y = this.climbHeight - 22 * this.scale;
                             this.velocity.y = 0;
                         }
                         break;
                     case 2:
-                        if (this.y <= this.climbheight - 23 * this.scale) {
-                            this.y = this.climbheight - 23 * this.scale;
+                        if (this.y <= this.climbHeight - 25 * this.scale) {
+                            this.y = this.climbHeight - 25 * this.scale;
                             this.velocity.y = 0;
                         }
                         break;
                     default:
                         this.velocity.y = 0;
-                    
                 }                
             }
         } else if (this.inAir && this.action != this.states.shoot) { //player is falling and not shooting an arrow
@@ -336,7 +336,8 @@ class Knight extends AbstractPlayer {
                 }
             }
             if (this.action == this.states.wall_climb) {
-                this.velocity.x = (this.facing == 1 ? 5000 : -5000) * this.scale * TICK;
+                if (this.BB.left > this.climbWidth - PARAMS.BLOCKDIM && this.BB.right < this.climbWidth + PARAMS.BLOCKDIM)
+                    this.velocity.x = (this.facing == 1 ? 55000 : -55000) * this.scale * TICK;
                 if (this.animations[this.facing][this.action][this.myInventory.armorUpgrade].isDone()) {
                     if (this.touchHole()) {
                         this.action = this.states.crouch;
@@ -483,7 +484,8 @@ class Knight extends AbstractPlayer {
                             this.action = this.states.wall_hang;
                             if (!this.game.down) {
                                 this.y = this.y + this.diffy.hi - 8 * this.scale;
-                                this.climbheight = this.y;
+                                this.climbHeight = this.y;
+                                this.climbWidth = this.BB.left;
                                 this.velocity.x = 0;
                             }
                         }
@@ -798,6 +800,13 @@ class Knight extends AbstractPlayer {
         }
 
         //update the position and set the bounding box
+        
+        if (this.action == this.states.wall_climb) {
+            if (this.BB.left >= this.climbWidth + PARAMS.BLOCKDIM)
+                this.x = (this.x - this.BB.left) + this.climbWidth + PARAMS.BLOCKDIM;
+            else if (this.BB.left <= this.climbWidth - PARAMS.BLOCKDIM)
+                this.x = (this.x - this.BB.right) + this.climbWidth - PARAMS.BLOCKDIM + this.BB.width;
+        } 
         this.x += this.velocity.x * TICK;
         if (this.action != this.states.wall_hang || this.action != this.states.wall_climb)
             this.y += this.velocity.y * TICK;
@@ -1059,8 +1068,8 @@ class Knight extends AbstractPlayer {
         this.animations[0][this.states.roll][0] = new Animator(this.spritesheetLeft, 0, 800, 120, 80, 12, 0.083, 0, true, false, false);
         this.animations[1][this.states.roll][0] = new Animator(this.spritesheetRight, 0, 800, 120, 80, 12, 0.083, 0, false, false, false);
         // wall climb = 8
-        this.animations[0][this.states.wall_climb][0] = new Animator(this.spritesheetLeft, 608, 1120, 120, 80, 7, 0.075, 0, true, false, false);
-        this.animations[1][this.states.wall_climb][0] = new Animator(this.spritesheetRight, -8, 1120, 120, 80, 7, 0.075, 0, false, false, false);
+        this.animations[0][this.states.wall_climb][0] = new Animator(this.spritesheetLeft, 605, 1120, 120, 80, 7, 0.075, 0, true, false, false);
+        this.animations[1][this.states.wall_climb][0] = new Animator(this.spritesheetRight, -5, 1120, 120, 80, 7, 0.075, 0, false, false, false);
         // wall hang = 9
         this.animations[0][this.states.wall_hang][0] = new Animator(this.spritesheetLeft, 1323, 1200, 120, 80, 1, 0.2, 0, true, true, false);
         this.animations[1][this.states.wall_hang][0] = new Animator(this.spritesheetRight, -3, 1200, 120, 80, 1, 0.2, 0, false, true, false);
