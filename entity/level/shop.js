@@ -56,6 +56,7 @@ class Shop {
         this.buttonwidth = 330;
         this.buttonheight = 130;
         this.buttonscale = 0.5;
+        this.customPurchaseHeight = -10; // Set to 0 for correct placement for horizontal lines
 
         // Load Items
         this.loadAnimations();
@@ -273,8 +274,8 @@ class Shop {
         ctx.fillRect(this.x, this.y, this.width, this.height);
         ctx.strokeRect(this.x, this.y, this.width, this.height);
 
-        /* Removed horizontal lines
-        ctx.strokeStyle = 'rgba(50, 0, 107, 1)';
+        /* Horizonal Lines across shop
+        ctx.strokeStyle = 'rgba(50, 0, 107, 0.2)';
         ctx.strokeRect(this.x, this.y + this.height / 7 * 1, this.width, 0);
         ctx.strokeRect(this.x, this.y + this.height / 7 * 2, this.width, 0);
         ctx.strokeRect(this.x, this.y + this.height / 7 * 3, this.width, 0);
@@ -348,22 +349,22 @@ class Shop {
         ctx.fillStyle = "white";
 
         if(this.highlightB1){
-            ctx.fillRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 1.23, 330 * this.buttonscale, 130 * this.buttonscale -1);     
+            ctx.fillRect(this.ButtonBB1.x, this.ButtonBB1.y, this.ButtonBB1.width, this.ButtonBB1.height -1);     
         }
         else if(this.highlightB2){
-            ctx.fillRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 2.23, 330 * this.buttonscale, 130 * this.buttonscale -1);   
+            ctx.fillRect(this.ButtonBB2.x, this.ButtonBB2.y, this.ButtonBB1.width, this.ButtonBB1.height -1);   
         }
         else if(this.highlightB3){
-            ctx.fillRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 3.23 + 1, 330 * this.buttonscale, 130 * this.buttonscale -1);   
+            ctx.fillRect(this.ButtonBB3.x, this.ButtonBB3.y, this.ButtonBB1.width, this.ButtonBB1.height -1);   
         }
         else if(this.highlightB4){
-            ctx.fillRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 4.23 + 1, 330 * this.buttonscale, 130 * this.buttonscale -1);
+            ctx.fillRect(this.ButtonBB4.x, this.ButtonBB4.y, this.ButtonBB1.width, this.ButtonBB1.height -1);
         }
         else if(this.highlightB5){
-            ctx.fillRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 5.23, 330 * this.buttonscale, 130 * this.buttonscale -1);
+            ctx.fillRect(this.ButtonBB5.x, this.ButtonBB5.y, this.ButtonBB1.width, this.ButtonBB1.height -1);
         }
         else if(this.highlightB6){
-            ctx.fillRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 6.23, 330 * this.buttonscale, 130 * this.buttonscale);
+            ctx.fillRect(this.ButtonBB6.x, this.ButtonBB6.y, this.ButtonBB1.width, this.ButtonBB1.height);
         }
 
         ctx.fillStyle = tempFill;
@@ -393,10 +394,10 @@ class Shop {
         this.game.entities.forEach(function (entity) {
             if(entity instanceof AbstractPlayer){
 
-                that.progressbutton[entity.myInventory.healthUpgrade].drawFrame(that.game.clockTick, ctx, that.x + that.width /6 * 4, that.y + that.height / 7 * 3.36, 0.5);
-                that.progressbutton[entity.myInventory.attackUpgrade].drawFrame(that.game.clockTick, ctx, that.x + that.width /6 * 4, that.y + that.height / 7 * 4.36, 0.5);
-                that.progressbutton[entity.myInventory.arrowUpgrade].drawFrame(that.game.clockTick, ctx, that.x + that.width /6 * 4, that.y + that.height / 7 * 5.36, 0.5);
-                that.progressbutton2[entity.myInventory.armorUpgrade].drawFrame(that.game.clockTick, ctx, that.x + that.width /6 * 4 + 10, that.y + that.height / 7 * 6.36, 0.5);
+                that.progressbutton[entity.myInventory.healthUpgrade].drawFrame(that.game.clockTick, ctx, that.x + that.width /6 * 4, that.y + that.height / 7 * 3.36 + that.customPurchaseHeight, 0.5);
+                that.progressbutton[entity.myInventory.attackUpgrade].drawFrame(that.game.clockTick, ctx, that.x + that.width /6 * 4, that.y + that.height / 7 * 4.36 + that.customPurchaseHeight, 0.5);
+                that.progressbutton[entity.myInventory.arrowUpgrade].drawFrame(that.game.clockTick, ctx, that.x + that.width /6 * 4, that.y + that.height / 7 * 5.36 + that.customPurchaseHeight, 0.5);
+                that.progressbutton2[entity.myInventory.armorUpgrade].drawFrame(that.game.clockTick, ctx, that.x + that.width /6 * 4 + 10, that.y + that.height / 7 * 6.36 + that.customPurchaseHeight, 0.5);
 
             }
         });
@@ -437,52 +438,52 @@ class Shop {
         if(!item1){
             ctx.filter = "grayscale(1)";
         }
-        this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 1.23, this.buttonscale);
+        this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.ButtonBB1.x, this.ButtonBB1.y, this.buttonscale);
         ctx.filter = tempFilter;
 
         if(!item2){
             ctx.filter = "grayscale(1)";
         }    
-        this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 2.23, this.buttonscale);
+        this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.ButtonBB2.x, this.ButtonBB2.y, this.buttonscale);
         ctx.filter = tempFilter; 
 
         if(!item3){
             ctx.filter = "grayscale(1)";
         }
-        this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 3.23, this.buttonscale);
+        this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.ButtonBB3.x, this.ButtonBB3.y, this.buttonscale);
         ctx.filter = tempFilter;
 
         if(!item4){
             ctx.filter = "grayscale(1)";
         }
-            this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 4.23, this.buttonscale);
-            ctx.filter = tempFilter;
+        this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.ButtonBB4.x, this.ButtonBB4.y, this.buttonscale);
+        ctx.filter = tempFilter;
 
         if(!item5){
             ctx.filter = "grayscale(1)";
         }
-            this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 5.23, this.buttonscale);
-            ctx.filter = tempFilter;
+        this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.ButtonBB5.x, this.ButtonBB5.y, this.buttonscale);
+        ctx.filter = tempFilter;
 
         if(!item6){
             ctx.filter = "grayscale(1)";
         }
-        this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 6.23, this.buttonscale);
+        this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.ButtonBB6.x, this.ButtonBB6.y, this.buttonscale);
         ctx.filter = tempFilter;
         
-
+        
         // buttton purchasing cost text
         this.game.entities.forEach(function (entity) {
             if(entity instanceof AbstractPlayer){
 
                 // Shop Icons
                 ctx.font = ctx.font.replace(/\d+px/, "25px");
-                ctx.fillText("󠀠󠀠󠀠  x" + that.arrowPackCost[entity.myInventory.arrowUpgrade],           that.x + that.width /6 * 5 - 24, that.y + that.height / 7 * 1.63);
-                ctx.fillText("󠀠󠀠󠀠  x" + 10,                                                            that.x + that.width /6 * 5 - 24, that.y + that.height / 7 * 2.63);
-                ctx.fillText("󠀠󠀠󠀠  x" + that.healthCost[entity.myInventory.healthUpgrade],             that.x + that.width /6 * 5 - 24, that.y + that.height / 7 * 3.63);
-                ctx.fillText("󠀠󠀠󠀠  x" + that.attackCost[entity.myInventory.attackUpgrade],             that.x + that.width /6 * 5 - 24, that.y + that.height / 7 * 4.63);
-                ctx.fillText("󠀠󠀠󠀠  x" + that.arrowCost[entity.myInventory.arrowUpgrade],               that.x + that.width /6 * 5 - 24, that.y + that.height / 7 * 5.63);
-                ctx.fillText("󠀠󠀠󠀠  x" + that.armorCost[entity.myInventory.armorUpgrade],               that.x + that.width /6 * 5 - 24, that.y + that.height / 7 * 6.63);
+                ctx.fillText("󠀠󠀠󠀠  x" + that.arrowPackCost[entity.myInventory.arrowUpgrade],           that.x + that.width /6 * 5 - 24, that.y + that.height / 7 * 1.63 + that.customPurchaseHeight);
+                ctx.fillText("󠀠󠀠󠀠  x" + 10,                                                            that.x + that.width /6 * 5 - 24, that.y + that.height / 7 * 2.63 + that.customPurchaseHeight);
+                ctx.fillText("󠀠󠀠󠀠  x" + that.healthCost[entity.myInventory.healthUpgrade],             that.x + that.width /6 * 5 - 24, that.y + that.height / 7 * 3.63 + that.customPurchaseHeight);
+                ctx.fillText("󠀠󠀠󠀠  x" + that.attackCost[entity.myInventory.attackUpgrade],             that.x + that.width /6 * 5 - 24, that.y + that.height / 7 * 4.63 + that.customPurchaseHeight);
+                ctx.fillText("󠀠󠀠󠀠  x" + that.arrowCost[entity.myInventory.arrowUpgrade],               that.x + that.width /6 * 5 - 24, that.y + that.height / 7 * 5.63 + that.customPurchaseHeight);
+                ctx.fillText("󠀠󠀠󠀠  x" + that.armorCost[entity.myInventory.armorUpgrade],               that.x + that.width /6 * 5 - 24, that.y + that.height / 7 * 6.63 + that.customPurchaseHeight);
 
             }
         });
@@ -491,49 +492,49 @@ class Shop {
         if(!item1){
             ctx.filter = "grayscale(1)";
         }
-        this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 19, this.y + this.height / 7 * 1.39, 3.4);
+        this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 19, this.y + this.height / 7 * 1.39 + this.customPurchaseHeight, 3.4);
         ctx.filter = tempFilter;
         
         if(!item2){
             ctx.filter = "grayscale(1)";
         }
-        this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 19, this.y + this.height / 7 * 2.39, 3.4);
+        this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 19, this.y + this.height / 7 * 2.39 + this.customPurchaseHeight, 3.4);
         ctx.filter = tempFilter;
 
         if(!item3){
             ctx.filter = "grayscale(1)";
         }
-        this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 19, this.y + this.height / 7 * 3.39, 3.4);
+        this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 19, this.y + this.height / 7 * 3.39 + this.customPurchaseHeight, 3.4);
         ctx.filter = tempFilter;
 
         if(!item4){
             ctx.filter = "grayscale(1)";
         }
-        this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 19, this.y + this.height / 7 * 4.39, 3.4);
+        this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 19, this.y + this.height / 7 * 4.39 + this.customPurchaseHeight, 3.4);
         ctx.filter = tempFilter;
 
         if(!item5){
             ctx.filter = "grayscale(1)";
         }
-        this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 19, this.y + this.height / 7 * 5.39, 3.4);
+        this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 19, this.y + this.height / 7 * 5.39 + this.customPurchaseHeight, 3.4);
         ctx.filter = tempFilter;
 
         if(!item6){
             ctx.filter = "grayscale(1)";
         }
-        this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 19, this.y + this.height / 7 * 6.39, 3.4);
+        this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 19, this.y + this.height / 7 * 6.39 + this.customPurchaseHeight, 3.4);
         ctx.filter = tempFilter;
 
     };
 
     updateBoxes(){
 
-        this.ButtonBB1 = new BoundingBox(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 1.23, this.buttonwidth * this.buttonscale, this.buttonheight * this.buttonscale);
-        this.ButtonBB2 = new BoundingBox(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 2.23, this.buttonwidth * this.buttonscale, this.buttonheight * this.buttonscale);
-        this.ButtonBB3 = new BoundingBox(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 3.23, this.buttonwidth * this.buttonscale, this.buttonheight * this.buttonscale);
-        this.ButtonBB4 = new BoundingBox(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 4.23, this.buttonwidth * this.buttonscale, this.buttonheight * this.buttonscale);
-        this.ButtonBB5 = new BoundingBox(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 5.23, this.buttonwidth * this.buttonscale, this.buttonheight * this.buttonscale);
-        this.ButtonBB6 = new BoundingBox(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 6.23, this.buttonwidth * this.buttonscale, this.buttonheight * this.buttonscale);
+        this.ButtonBB1 = new BoundingBox(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 1.23 + this.customPurchaseHeight, this.buttonwidth * this.buttonscale, this.buttonheight * this.buttonscale);
+        this.ButtonBB2 = new BoundingBox(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 2.23 + this.customPurchaseHeight, this.buttonwidth * this.buttonscale, this.buttonheight * this.buttonscale);
+        this.ButtonBB3 = new BoundingBox(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 3.23 + this.customPurchaseHeight, this.buttonwidth * this.buttonscale, this.buttonheight * this.buttonscale);
+        this.ButtonBB4 = new BoundingBox(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 4.23 + this.customPurchaseHeight, this.buttonwidth * this.buttonscale, this.buttonheight * this.buttonscale);
+        this.ButtonBB5 = new BoundingBox(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 5.23 + this.customPurchaseHeight, this.buttonwidth * this.buttonscale, this.buttonheight * this.buttonscale);
+        this.ButtonBB6 = new BoundingBox(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 6.23 + this.customPurchaseHeight, this.buttonwidth * this.buttonscale, this.buttonheight * this.buttonscale);
         this.ExitBB = new BoundingBox(this.x + this.width - 60, this.y + 20, 40, 40);
 
     };
@@ -541,17 +542,17 @@ class Shop {
     drawDebug(ctx) {
         let tempStyle = ctx.strokeStyle;
         ctx.strokeStyle = "Red";
-        ctx.strokeRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 1.23, this.buttonwidth * this.buttonscale, this.buttonheight * this.buttonscale);
-        ctx.strokeRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 2.23, this.buttonwidth * this.buttonscale, this.buttonheight * this.buttonscale);
-        ctx.strokeRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 3.23, this.buttonwidth * this.buttonscale, this.buttonheight * this.buttonscale);
-        ctx.strokeRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 4.23, this.buttonwidth * this.buttonscale, this.buttonheight * this.buttonscale);
-        ctx.strokeRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 5.23, this.buttonwidth * this.buttonscale, this.buttonheight * this.buttonscale);
-        ctx.strokeRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 6.23, this.buttonwidth * this.buttonscale, this.buttonheight * this.buttonscale);
+        ctx.strokeRect(this.ButtonBB1.x, this.ButtonBB1.y, this.ButtonBB1.width, this.ButtonBB1.height);
+        ctx.strokeRect(this.ButtonBB2.x, this.ButtonBB2.y, this.ButtonBB2.width, this.ButtonBB2.height);
+        ctx.strokeRect(this.ButtonBB3.x, this.ButtonBB3.y, this.ButtonBB3.width, this.ButtonBB3.height);
+        ctx.strokeRect(this.ButtonBB4.x, this.ButtonBB4.y, this.ButtonBB4.width, this.ButtonBB4.height);
+        ctx.strokeRect(this.ButtonBB5.x, this.ButtonBB5.y, this.ButtonBB5.width, this.ButtonBB5.height);
+        ctx.strokeRect(this.ButtonBB6.x, this.ButtonBB6.y, this.ButtonBB6.width, this.ButtonBB6.height);
         
         ctx.strokeRect(this.game.mouse.x, this.game.mouse.y, 5, 5);
 
         ctx.strokeStyle = "White";
-        ctx.strokeRect(this.x + this.width - 60, this.y + 20, 40, 40);
+        ctx.strokeRect(this.ExitBB.x, this.ExitBB.y, this.ExitBB.width, this.ExitBB.height);
 
         ctx.strokeStyle = tempStyle;
     };
