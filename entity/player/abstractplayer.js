@@ -157,6 +157,9 @@ class AbstractPlayer extends AbstractEntity {
     * @param {*} damage
     */
     takeDamage(damage, isCritical) {
+
+        setShop = false;
+
         if (this.canTakeDamage()) {
             isCritical ? ASSET_MANAGER.playAsset(SFX.CRITICAL) : ASSET_MANAGER.playAsset(SFX.DAMAGED);
             this.takeKnockback();
