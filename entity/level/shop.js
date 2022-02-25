@@ -166,7 +166,8 @@ class Shop {
                 if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= that.armorCost[entity.myInventory.armorUpgrade] && that.game.click){
                     entity.myInventory.diamonds -= that.armorCost[entity.myInventory.armorUpgrade];
                     entity.myInventory.armorUpgrade += 1;
-                    ASSET_MANAGER.playAsset(SFX.ANVIL);                }
+                    ASSET_MANAGER.playAsset(SFX.ANVIL);
+                }
             }
             else {
                 that.highlightB1 = false;
