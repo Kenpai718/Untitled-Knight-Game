@@ -189,7 +189,7 @@ var levelLoader = {
             x: 4, y: 3,
             title: "   LEVEL SELECT",
             text: ["-Stand next to the door of the level",
-                   " you want to enter and press W!"]
+                " you want to enter and press W!"]
         },
     ],
 
@@ -409,6 +409,21 @@ var level1_1 = {
             ]
         },
 
+        {
+            x: 69, y: 6,
+            title: "[TUTORIAL: CHESTS]",
+            text: [
+                "OPENING CHESTS:",
+                "-Press W to open a chest!",
+                "-Chests are hidden throughout the map",
+                " and sometimes where you least expect it...",
+                "-Chests provide the most amount of diamonds",
+                " in the whole game!",
+                "-Make sure to explore each level for chests ",
+                " so you can afford upgrades from the shop!"
+            ]
+        },
+
 
         {
             x: 92, y: 2,
@@ -429,18 +444,17 @@ var level1_1 = {
             text: [
                 "-You may find secrets in unexpected places!",
                 "-Secret room blocks will slightly blink.",
-                "-Keep an eye out for them for great loot!"
+                "There is a secret room on every floor!",
+                "-So keep a look out!"
             ]
         },
 
         {
             x: 110, y: 11,
-            title: "[TUTORIAL: CHESTS/DOORS]",
+            title: "[TUTORIAL: DOORS]",
             text: [
-                "INTERACTING/PROGRESSING IN LEVEL:",
-                "-In general [W] is used to interact with the map.",
-                "-To open a chest get near it and press [W]",
-                "-Chests contain valuable resources so search for them!",
+                "PROGRESSING IN LEVEL:",
+                "-In general use W to interact with game objects.",
                 "-To progress to the next level press [W] next to door.",
                 "-A KILL QUOTA must be met to progress to next level!"
 
@@ -449,6 +463,7 @@ var level1_1 = {
     ],
 
     chests: [
+        { x: 76, y: 7, direction: 0 },
         { x: 112, y: 10, direction: 0 },
         { x: 104, y: 1, direction: 0 }
     ],
@@ -470,6 +485,12 @@ var level1_1 = {
         { x: 94, y: 9, width: 1, height: 1, type: 0 },
         { x: 95, y: 9, width: 25, height: 1, type: 1 }
     ],
+
+    platforms: [
+        { x: 68, y: 4, width: 3, height: 1 },
+        { x: 75, y: 6, width: 3, height: 1 },
+    ],
+
     bricks: [
         { x: 30, y: 15, width: 90, height: 3 },
         { x: 30, y: 12, width: 60, height: 2 },
@@ -524,7 +545,8 @@ var level1_1 = {
     torches: [
         { x: 31, y: 7 },
         { x: 59, y: 7 },
-        { x: 70, y: 5 },
+        { x: 68, y: 6 },
+        { x: 70, y: 6 },
         { x: 85, y: 3 },
         { x: 94, y: 12 },
         { x: 115, y: 12 }
@@ -578,24 +600,44 @@ var level1_2 = {
             "Never gonna tell a lie and hurt you"
         ],
     },
+    {
+        x: 64, y: 2,
+        title: "[TUTORIAL: RAGE BOOST]",
+        text: [
+            "When in a pinch:",
+            "-At low-hp you will tap into a secret power",
+            " called BESERKER MODE! Indicated by a red aura.",
+            "-This is a powerful state that deals extra damage",
+            " and shoots a blade beam projectile with each swing!",
+            "-However it only lasts for a short time and you can",
+            " easily die in one hit!"
+        ]
+    },
 
     ],
 
     chests: [
         { x: 2, y: 25, direction: 1 },
-        { x: 57, y: 7, direction: 0 },
-        { x: 82, y: 19, direction: 0 }
+        //{ x: 50, y: 7, direction: 0 },
+        { x: 82, y: 19, direction: 0 },
+        { x: 58, y: 1, direction: 1 }, //secret 
+        { x: 58, y: 4, direction: 1 },
+        { x: 58, y: 4, direction: 1 },
+        { x: 117, y: 8, direction: 0 },
+        { x: 118.5, y: 8, direction: 1 },
     ],
 
     npcs: [
+        { x: 7, y: 2 },
         { x: 38, y: 22 }
     ],
 
     ground: [
         { x: 0, y: 0, width: 45, height: 1, type: 1 },
+        { x: 58, y: 3, width: 1, height: 1, type: 1 }, //secret chest
         { x: 61, y: 0, width: 60, height: 1, type: 1 },
         { x: 45, y: 6, width: 1, height: 1, type: 0 },
-        { x: 46, y: 6, width: 14, height: 1, type: 1 },
+        { x: 46, y: 6, width: 13, height: 1, type: 1 },
         { x: 1, y: 6, width: 41, height: 1, type: 1 },
         { x: 5, y: 19, width: 35, height: 1, type: 1 },
         { x: 4, y: 19, width: 1, height: 1, type: 0 },
@@ -603,9 +645,30 @@ var level1_2 = {
         { x: 80, y: 18, width: 4, height: 1, type: 1 },
 
     ],
+
+    secrets: [
+        {
+            indicate: true,
+            bricks: [
+                { x: 58, y: 5, width: 2, height: 5 }, //blocks covering chests
+                //{ x: 59, y: 6, width: 1, height: 1 }, //entrance to fall into secret room
+                //{ x: 60, y: 4, width: 1, height: 1 }, //shortcut to right room
+            ],
+            ground: [
+                { x: 59, y: 6, width: 1, height: 1, type: 0 }, //entrance to fall into secret room
+            ],
+        },
+        {
+            indicate: true,
+            walls: [
+                { x: 60, y: 4, width: 1, height: 1, type: 2 },
+            ]
+        }
+    ],
+
     bricks: [
         { x: 45, y: 0, width: 16, height: 1 },
-        { x: 46, y: 5, width: 14, height: 5 },
+        { x: 46, y: 5, width: 12, height: 5 },
         { x: 0, y: 5, width: 41, height: 2 },
         { x: 5, y: 18, width: 55, height: 7 },
         { x: 57, y: 11, width: 3, height: 1 },
@@ -630,13 +693,23 @@ var level1_2 = {
         { x: 9, y: 28, width: 1, height: 1 }
     ],
 
+    platforms: [
+        { x: 75, y: 5, width: 2, height: 1 },
+        { x: 85, y: 6, width: 2, height: 1 },
+        { x: 91, y: 6, width: 2, height: 1 },
+        { x: 101, y: 6, width: 3, height: 1 },
+        { x: 112, y: 6, width: 2, height: 1 },
+        { x: 116, y: 7, width: 4, height: 1 },
+    ],
+
     spikes: [{ x: 70, y: 16, width: 10 }],
     walls: [
         { x: 41, y: 5, height: 2, type: 2 },
         { x: 40, y: 22, height: 4, type: 0 },
         { x: 64, y: 28, height: 6, type: 0 },
         { x: 64, y: 19, height: 15, type: 0 },
-        { x: 60, y: 24, height: 25, type: 2 },
+        { x: 60, y: 24, height: 20, type: 2 }, //wall dividing left and right room
+        { x: 60, y: 3, height: 3, type: 2 }, //wall dividing left and right room
         { x: 45, y: 5, height: 5, type: 0 },
         { x: 0, y: 24, height: 19, type: 2 },
         { x: 4, y: 18, height: 10, type: 0 },
@@ -665,6 +738,7 @@ var level1_2 = {
     ],
     skeletons: [
         { x: 3, y: 26, guard: true },
+        { x: 55, y: 9, guard: true },
         { x: 70, y: 3, guard: true },
         { x: 75, y: 3, guard: true },
         { x: 81, y: 22, guard: true },
@@ -718,7 +792,10 @@ var level1_2 = {
         { x: 71, y: 22 },
         { x: 1, y: 27 },
         { x: 7, y: 21 },
-        { x: 17, y: 22 }
+        { x: 17, y: 22 },
+        { x: 115, y: 2 },
+        { x: 118, y: 2 },
+
     ],
     chains: [
         { x: 16, y: 9 },
@@ -798,8 +875,10 @@ var level1_3 = {
             text: [
                 "OBELISK DEVICE:",
                 "-These strange devices can unlock inaccessible/secret areas!",
-                "-To activate: hit them with your sword or arrow!",
-                " Or you could press \'W'\ next to it."
+                "-To activate: hit them with your SWORD or ARROW!",
+                " ...or you could press \'W'\ next to it, but that's boring.",
+                "-Some obelisk puzzles can only be solved by hitting them",
+                " from afar with your bow and arrow!"
             ]
         },
         {
@@ -827,9 +906,30 @@ var level1_3 = {
             ]
         },
 
-    ],
-    npcs: [{ x: 51, y: 10 }
+        {
+            x: 15, y: 37,
+            title: "[You are a very curious player!]",
+            text: [
+                "Hope you are enjoying the game!",
+                "Take these chests as your reward!",
+                "-Ken was here :)",
+            ]
+        },
 
+    ],
+    npcs: [
+        { x: 51, y: 10 },
+        { x: 10, y: 16 }
+
+    ],
+
+    secrets: [
+        {
+            indicate: true,
+            bricks: [
+                { x: 6, y: 40, width: 11, height: 5 }, //hide treasure room
+            ]
+        }
     ],
 
     doors: [
@@ -838,12 +938,19 @@ var level1_3 = {
         { x: 34, y: 35, killQuota: 1, exitLocation: { x: 1, y: 3, levelNum: 0 }, transition: false } // change to treasure room
     ],
     ground: [
-        { x: 0, y: 0, width: 10, type: 1 }
+        { x: 0, y: 0, width: 10, type: 1 },
+        { x: 16, y: 10, width: 3, type: 1 },
+        //obelisk to right room
+        { x: 68, y: 21, width: 2, type: 1 }, //chest on top
+
     ],
     obelisks: [
-        { x: 7, y: 1, brickX: 10, brickY: 15, brickWidth: 3, brickHeight: 15 },
+        { x: 7, y: 1, brickX: 10, brickY: 12, brickWidth: 3, brickHeight: 13 },
         { x: 79, y: 15, brickX: 81, brickY: 17, brickWidth: 3, brickHeight: 3 },
-        { x: 100, y: 23, brickX: 105, brickY: 30, brickWidth: 11, brickHeight: 8 }
+        { x: 100, y: 23, brickX: 105, brickY: 30, brickWidth: 11, brickHeight: 8 },
+        { x: 17, y: 11, brickX: 19, brickY: 15, brickWidth: 6, brickHeight: 3 },
+        { x: 50, y: 35.5, brickX: 42, brickY: 37, brickWidth: 1, brickHeight: 5 },
+        { x: 68, y: 22.5, brickX: 70, brickY: 30, brickWidth: 2, brickHeight: 18 },
     ],
     shrooms: [
         { x: 107, y: 32, guard: false },
@@ -869,10 +976,29 @@ var level1_3 = {
         { x: 92, y: 19, guard: true },
     ],
     chests: [
+        //secret
+        { x: 7, y: 36, direction: 1 },
+        { x: 9, y: 36, direction: 1 },
+        { x: 11, y: 36, direction: 1 },
+        { x: 13, y: 36, direction: 1 },
+
         { x: 77, y: 15, direction: 0 },
         { x: 54, y: 5, directon: 0 },
+        { x: 29, y: 28, directon: 0 },
+        { x: 22, y: 35, direction: 0 },
+        { x: 22, y: 39, direction: 0 },
+
+        { x: 65, y: 36, direction: 0 }, //chest on top
+    ],
+    torches: [
+        { x: 6, y: 37 },
+        { x: 12, y: 37 },
+        { x: 50, y: 28 },
+        { x: 116, y: 24 },
+        { x: 119, y: 24 },
     ],
     bricks: [
+        { x: 20, y: 34, width: 4, height: 1 },
         { x: 120, y: 42, width: 1, height: 43 },
         { x: 105, y: 42, width: 1, height: 12 },
         { x: 115, y: 42, width: 1, height: 12 },
@@ -880,6 +1006,7 @@ var level1_3 = {
         { x: 13, y: 0, width: 20, height: 1 },
         { x: 33, y: 2, width: 3, height: 3 },
         { x: 36, y: 0, width: 48, height: 1 },
+        { x: 17, y: 42, width: 6, height: 2 },
         { x: 77, y: 14, width: 7, height: 14 },
         { x: 71, y: 25, width: 13, height: 8 },
         { x: 71, y: 17, width: 2, height: 1 },
@@ -895,7 +1022,7 @@ var level1_3 = {
         { x: 23, y: 42, width: 1, height: 7 },
         { x: 25, y: 42, width: 1, height: 33 },
         { x: 30, y: 30, width: 10, height: 1 },
-        { x: 31, y: 29, width: 7, height: 1 },
+        { x: 32, y: 29, width: 7, height: 1 },
         { x: 33, y: 28, width: 4, height: 1 },
         { x: 30, y: 33, width: 2, height: 1 },
         { x: 30, y: 37, width: 10, height: 1 },
@@ -905,8 +1032,14 @@ var level1_3 = {
         { x: 36, y: 27, width: 1, height: 17 },
         { x: 4, y: 42, width: 1, height: 33 },
         { x: 5, y: 42, width: 1, height: 34 },
-        { x: 15, y: 42, width: 1, height: 33 },
-        { x: 16, y: 42, width: 1, height: 31 },
+
+        //{ x: 15, y: 42, width: 1, height: 33 },
+        //{ x: 16, y: 42, width: 1, height: 31 },
+        { x: 0, y: 42, width: 120, height: 3 },
+        { x: 15, y: 35, width: 1, height: 26 },
+        { x: 16, y: 35, width: 1, height: 24 },
+        { x: 6, y: 35, width: 9, height: 1 },
+
         { x: 91, y: 42, width: 1, height: 18 },
         { x: 90, y: 42, width: 1, height: 16 },
         { x: 89, y: 42, width: 1, height: 10 },
@@ -918,6 +1051,25 @@ var level1_3 = {
     ],
     platforms: [
         { x: 22, y: 2, width: 2, height: 1 },
+        { x: 23, y: 7, width: 1, height: 1 },
+        //middle parkour left
+        { x: 17, y: 16, width: 2, height: 1 },
+        { x: 23, y: 20, width: 2, height: 1 },
+        { x: 17, y: 31, width: 1, height: 1 },
+        { x: 23, y: 31, width: 1, height: 1 },
+        { x: 22, y: 38, width: 1, height: 1 },
+
+        //middle parkour right
+        { x: 29, y: 7, width: 2, height: 1 },
+        { x: 28, y: 12, width: 1, height: 1 },
+        { x: 33, y: 18, width: 1, height: 1 },
+        { x: 31, y: 23, width: 1, height: 1 },
+        { x: 28, y: 27, width: 3, height: 1 },
+        //obelisk to treasure room
+        { x: 50, y: 34, width: 3, height: 1 },
+        { x: 57, y: 35, width: 3, height: 1 },
+        { x: 64, y: 35, width: 3, height: 1 }, //chest on top
+
         { x: 40, y: 7, width: 2, height: 1 },
         { x: 49, y: 12, width: 2, height: 1 },
         { x: 59, y: 22, width: 5, height: 1 },
@@ -931,7 +1083,10 @@ var level1_3 = {
     walls: [
         { x: 57, y: 22, height: 8, type: 0 },
         { x: 53, y: 25, height: 8, type: 2 },
-        { x: 70, y: 25, height: 12, type: 0 }
+        { x: 70, y: 25, height: 12, type: 0 },
+        { x: 19, y: 11, height: 2, type: 2 },
+        { x: 22, y: 26, height: 4, type: 2 },
+        { x: 20, y: 40, height: 5, type: 2 },
     ],
     backgroundWalls: [
         { x: 0, y: 42, width: 120, height: 42 }
@@ -958,19 +1113,6 @@ var level1_4 = {
     music: MUSIC.LONG_WAY,
     signs: [
         {
-            x: 10, y: 5,
-            title: "[TUTORIAL: RAGE BOOST]",
-            text: [
-                "When in a pinch:",
-                "-At low-hp you will tap into a secret power",
-                " called BESERKER MODE! Indicated by a red aura.",
-                "-This is a powerful state that deals extra damage",
-                " and shoots a blade beam projectile with each swing!",
-                "-However it only lasts for a short time and you can",
-                " easily die in one hit!"
-            ]
-        },
-        {
             x: 69, y: 23,
             title: "[TUTORIAL: LONG WALL-JUMP]",
             text: [
@@ -987,7 +1129,7 @@ var level1_4 = {
     ],
     npcs: [
         { x: 5, y: 4 },
-        { x: 64, y: 35 },
+        { x: 67, y: 35 },
     ],
     chests: [
         { x: 29, y: 1, direction: 0 },    //bottom floor
@@ -997,6 +1139,7 @@ var level1_4 = {
         { x: 52, y: 12, direction: 1 },   //middle floor
         { x: 65, y: 12, direction: 0 },   //middle floor
         { x: 52, y: 42, direction: 1 },   //top floor right
+        { x: 65, y: 34, direction: 1 },   //top floor right near right obelisk
         { x: 1, y: 27, direction: 1 }, //exit door plat (chest on top)
         { x: 24, y: 34, direction: 0 }, //chest udner miniboss fight
     ],
@@ -1010,6 +1153,8 @@ var level1_4 = {
         { x: 68, y: 21, width: 6, height: 1, type: 0 }, //top of middle floor right
         { x: 27, y: 30, width: 37, height: 1, type: 0 }, //under top floor spikes
         { x: 16, y: 36, width: 10, height: 1, type: 0 }, //top left floor (boss fight)
+
+        { x: 70, y: 37, width: 5, height: 1, type: 0 }, //right msot obelisk floor
 
 
     ],
@@ -1069,10 +1214,12 @@ var level1_4 = {
         { x: 35, y: 37, width: 1, height: 7, type: 0 }, //top floor spikes left (TOP) 3
         { x: 26, y: 41, width: 1, height: 8, type: 0 }, //closing top wall right in top left
 
+        { x: 70, y: 45, width: 1, height: 7, type: 2 }, //right most obelisk wall
+
     ],
 
     platforms: [
-        { x: 48, y: 7, width: 3, height: 1, type: 0},             //bottom floor plat
+        { x: 48, y: 7, width: 3, height: 1, type: 0 },             //bottom floor plat
         { x: 60, y: 21, width: 4, height: 1, type: 0 }, //middle floor plat
         { x: 1, y: 26, width: 3, height: 1, type: 0 }, //exit door plat (chest on top)
         { x: 60, y: 38, width: 2, height: 1, type: 0 }, //far right top plat over spikes
@@ -1087,6 +1234,7 @@ var level1_4 = {
         { x: 34, y: 8, brickX: 36, brickY: 2, brickWidth: 1, brickHeight: 1 }, //unlock bottom floor
         { x: 62, y: 17, brickX: 65, brickY: 23, brickWidth: 2, brickHeight: 12 }, //unlock middle floor
         { x: 39, y: 42.5, brickX: 35, brickY: 48, brickWidth: 1, brickHeight: 11 }, //unlock top floor
+        { x: 72, y: 38, brickX: 64, brickY: 48, brickWidth: 1, brickHeight: 15 }, //unlock top floor
     ],
 
 
@@ -1108,45 +1256,45 @@ var level1_4 = {
     ],
 
     columns: [
-        {x: 8, y: 10, height: 8}, //bottom left floor near door
-        {x: 34, y: 10, height: 9}, //bottom right
-        {x: 65, y: 24, height: 13}, //middle room
-        {x: 66, y: 24, height: 13}, //middle room
-        {x: 66, y: 45, height: 12}, //top floor right
-        {x: 25, y: 45, height: 9}, //top floor left
+        { x: 8, y: 10, height: 8 }, //bottom left floor near door
+        { x: 34, y: 10, height: 9 }, //bottom right
+        { x: 65, y: 24, height: 13 }, //middle room
+        { x: 66, y: 24, height: 13 }, //middle room
+        { x: 66, y: 45, height: 12 }, //top floor right
+        { x: 25, y: 45, height: 9 }, //top floor left
 
     ],
 
     supports: [
-        {x:0, y: 9, width: 36}, //bottom floor left
-        {x: 48, y: 23, width: 22}, //middle
-        {x: 13, y: 45, width: 75 }, //top
+        { x: 0, y: 9, width: 36 }, //bottom floor left
+        { x: 48, y: 23, width: 22 }, //middle
+        { x: 13, y: 45, width: 75 }, //top
     ],
 
     chains: [
         //middle top
-        {x: 52, y: 21},
-        {x: 55, y: 21},
-        {x: 58, y: 21},
+        { x: 52, y: 21 },
+        { x: 55, y: 21 },
+        { x: 58, y: 21 },
 
         //middle goblin room
-        {x: 54, y: 14},
-        {x: 56, y: 14},
-        {x: 5, y: 14},
-        {x: 59, y: 14},
+        { x: 54, y: 14 },
+        { x: 56, y: 14 },
+        { x: 5, y: 14 },
+        { x: 59, y: 14 },
 
         //top
-        {x: 68, y: 32},
+        { x: 68, y: 32 },
 
         //exit
-        {x: 11, y: 26}
+        { x: 11, y: 26 }
 
-     ],
+    ],
 
     ceilingChains: [
-        {x:73, y: 53, height: 20},
-        {x: 14, y: 45, height: 20},
-        {x: 53, y: 10, height: 20}
+        { x: 73, y: 53, height: 20 },
+        { x: 14, y: 45, height: 20 },
+        { x: 53, y: 10, height: 20 }
     ],
 
 
@@ -1162,55 +1310,55 @@ var level1_4 = {
         { x: 39, y: 13 },
 
         //middle room
-        {x: 61, y: 19},
+        { x: 61, y: 19 },
         //middle goblin room
-        {x: 53, y: 14},
-        {x: 58, y: 14},
+        { x: 53, y: 14 },
+        { x: 58, y: 14 },
         //top parkour
-        {x: 31, y: 36},
-        {x: 40, y: 44},
-        {x: 45, y: 46},
-        {x: 48, y: 38},
-        {x: 52, y: 44},
-        {x: 65, y: 37},
+        { x: 31, y: 36 },
+        { x: 40, y: 44 },
+        { x: 45, y: 46 },
+        { x: 48, y: 38 },
+        { x: 52, y: 44 },
+        { x: 65, y: 37 },
         //exit
-        {x: 24, y: 35},
-        {x: 6.5, y: 28},
+        { x: 24, y: 35 },
+        { x: 6.5, y: 28 },
     ],
 
     banners: [
-        {x:38, y: 14},
+        { x: 38, y: 14 },
         { x: 40, y: 14 },
         //middle room
-        {x: 51, y: 21},
-        {x: 54, y: 21},
-        {x: 56, y: 21},
-        {x: 59, y: 21},
+        { x: 51, y: 21 },
+        { x: 54, y: 21 },
+        { x: 56, y: 21 },
+        { x: 59, y: 21 },
         //exit
-        {x: 5, y: 26},
-        {x: 8, y: 26},
-        {x: 11, y: 26},
-        {x: 14, y: 26},
-        {x: 13, y: 40},
-        {x: 19, y: 40},
-        {x: 25, y: 40},
+        { x: 5, y: 26 },
+        { x: 8, y: 26 },
+        { x: 11, y: 26 },
+        { x: 14, y: 26 },
+        { x: 13, y: 40 },
+        { x: 19, y: 40 },
+        { x: 25, y: 40 },
     ],
 
     windows: [
-        {x:50, y: 3, width: 2, height: 2},
+        { x: 50, y: 3, width: 2, height: 2 },
         //middle goblin room
-        {x:60, y: 14, width: 4, height: 3},
+        { x: 60, y: 14, width: 4, height: 3 },
         //top floor
-        {x: 71, y: 25, width: 2, height: 2},
-        {x: 71, y: 32, width: 2, height: 2},
-        {x: 71, y: 39, width: 2, height: 2},
+        { x: 71, y: 25, width: 2, height: 2 },
+        { x: 71, y: 32, width: 2, height: 2 },
+        { x: 71, y: 39, width: 2, height: 2 },
 
-        {x: 40, y: 38, width: 2, height: 3},
+        { x: 40, y: 38, width: 2, height: 3 },
 
         //exit
-        {x: 14, y: 42, width: 5, height: 5},
-        {x: 20, y: 42, width: 5, height: 5},
-        {x: 12, y: 26, width: 2, height: 2},
+        { x: 14, y: 42, width: 5, height: 5 },
+        { x: 20, y: 42, width: 5, height: 5 },
+        { x: 12, y: 26, width: 2, height: 2 },
     ],
     shrooms: [
         { x: 72, y: 24, guard: false },
@@ -1231,7 +1379,7 @@ var level1_4 = {
 
         //top
         { x: 3, y: 28, guard: true },
-        { x: 21, y: 39, guard: true},
+        { x: 21, y: 39, guard: true },
 
     ],
     skeletons: [
@@ -1270,21 +1418,21 @@ var levelBoss1 = {
     player: { x: 40, y: 1 },
     music: MUSIC.BETWEEN_HEAVEN_AND_EARTH,
 
-    wizard: {x: 75, y: 2, left: 61, right: 102, top: 6, bottom: 1},
+    wizard: { x: 75, y: 2, left: 61, right: 102, top: 6, bottom: 1 },
     events: [
         {
             space: [
-                { x: 62, y: 20, width: 39, height: 20}
+                { x: 62, y: 20, width: 39, height: 20 }
             ],
             walls: [
-                {x: 60, y: 5, height: 5, type: 2}, // temporary
-                {x: 102, y: 5, height: 5, type: 0}, // temporary
-                {x: 103, y: 5, height: 5, type: 2}, // temporary
-                {x: 59, y: 5, height: 5, type: 0}, // temporary
+                { x: 60, y: 5, height: 5, type: 2 }, // temporary
+                { x: 102, y: 5, height: 5, type: 0 }, // temporary
+                { x: 103, y: 5, height: 5, type: 2 }, // temporary
+                { x: 59, y: 5, height: 5, type: 0 }, // temporary
             ],
             shrooms: [
-                {x: 70, y: 1, guard: false},
-                {x: 60, y: 1, guard: false}
+                { x: 70, y: 1, guard: false },
+                { x: 60, y: 1, guard: false }
             ]
         }
     ],
@@ -1292,85 +1440,85 @@ var levelBoss1 = {
         { x: 1, y: 3, killQuota: 0, exitLocation: { x: -2, y: 1, levelNum: 1 }, transition: true }, //door to level 1
     ],
     ground: [
-        {x: 0, y: 0, width: 120, height: 1, type: 1},
+        { x: 0, y: 0, width: 120, height: 1, type: 1 },
     ],
     bricks: [
-        {x: 0, y: 20, width: 60, height: 15},
-        {x: 103, y: 20, width: 20, height: 15},
+        { x: 0, y: 20, width: 60, height: 15 },
+        { x: 103, y: 20, width: 20, height: 15 },
     ],
     walls: [
-        {x: 60, y: 20, height: 15, type: 2},
-        {x: 102, y: 20, height: 15, type: 0},
+        { x: 60, y: 20, height: 15, type: 2 },
+        { x: 102, y: 20, height: 15, type: 0 },
     ],
     torches: [
-        {x: 0, y: 3},
-        {x: 3, y: 3},
-        {x: 9, y: 3},
-        {x: 15, y: 3},
-        {x: 21, y: 3},
-        {x: 27, y: 3},
-        {x: 33, y: 3},
-        {x: 39, y: 3},
-        {x: 45, y: 3},
-        {x: 51, y: 3},
-        {x: 57, y: 3},
+        { x: 0, y: 3 },
+        { x: 3, y: 3 },
+        { x: 9, y: 3 },
+        { x: 15, y: 3 },
+        { x: 21, y: 3 },
+        { x: 27, y: 3 },
+        { x: 33, y: 3 },
+        { x: 39, y: 3 },
+        { x: 45, y: 3 },
+        { x: 51, y: 3 },
+        { x: 57, y: 3 },
 
-        {x: 66, y: 9},
-        {x: 72, y: 9},
-        {x: 78, y: 9},
-        {x: 84, y: 9},
-        {x: 90, y: 9},
-        {x: 96, y: 9},
+        { x: 66, y: 9 },
+        { x: 72, y: 9 },
+        { x: 78, y: 9 },
+        { x: 84, y: 9 },
+        { x: 90, y: 9 },
+        { x: 96, y: 9 },
     ],
     backgroundWalls: [
-        {x: 0, y: 20, width: 120, height: 20},
+        { x: 0, y: 20, width: 120, height: 20 },
     ],
     columns: [
-        {x: 6, y: 4, width: 1, height: 4},
-        {x: 12, y: 4, width: 1, height: 4},
-        {x: 18, y: 4, width: 1, height: 4},
-        {x: 24, y: 4, width: 1, height: 4},
-        {x: 30, y: 4, width: 1, height: 4},
-        {x: 36, y: 4, width: 1, height: 4},
-        {x: 42, y: 4, width: 1, height: 4},
-        {x: 48, y: 4, width: 1, height: 4},
-        {x: 54, y: 4, width: 1, height: 4},
-        {x: 60, y: 4, width: 1, height: 4},
+        { x: 6, y: 4, width: 1, height: 4 },
+        { x: 12, y: 4, width: 1, height: 4 },
+        { x: 18, y: 4, width: 1, height: 4 },
+        { x: 24, y: 4, width: 1, height: 4 },
+        { x: 30, y: 4, width: 1, height: 4 },
+        { x: 36, y: 4, width: 1, height: 4 },
+        { x: 42, y: 4, width: 1, height: 4 },
+        { x: 48, y: 4, width: 1, height: 4 },
+        { x: 54, y: 4, width: 1, height: 4 },
+        { x: 60, y: 4, width: 1, height: 4 },
 
-        {x: 61, y: 20, width: 1, height: 20},
-        {x: 65, y: 20, width: 1, height: 20},
-        {x: 67, y: 20, width: 1, height: 20},
-        {x: 71, y: 20, width: 1, height: 20},
-        {x: 73, y: 20, width: 1, height: 20},
-        {x: 77, y: 20, width: 1, height: 20},
-        {x: 79, y: 20, width: 1, height: 20},
-        {x: 83, y: 20, width: 1, height: 20},
-        {x: 85, y: 20, width: 1, height: 20},
-        {x: 89, y: 20, width: 1, height: 20},
-        {x: 91, y: 20, width: 1, height: 20},
-        {x: 95, y: 20, width: 1, height: 20},
-        {x: 97, y: 20, width: 1, height: 20},
-        {x: 101, y: 20, width: 1, height: 20},
+        { x: 61, y: 20, width: 1, height: 20 },
+        { x: 65, y: 20, width: 1, height: 20 },
+        { x: 67, y: 20, width: 1, height: 20 },
+        { x: 71, y: 20, width: 1, height: 20 },
+        { x: 73, y: 20, width: 1, height: 20 },
+        { x: 77, y: 20, width: 1, height: 20 },
+        { x: 79, y: 20, width: 1, height: 20 },
+        { x: 83, y: 20, width: 1, height: 20 },
+        { x: 85, y: 20, width: 1, height: 20 },
+        { x: 89, y: 20, width: 1, height: 20 },
+        { x: 91, y: 20, width: 1, height: 20 },
+        { x: 95, y: 20, width: 1, height: 20 },
+        { x: 97, y: 20, width: 1, height: 20 },
+        { x: 101, y: 20, width: 1, height: 20 },
     ],
     supports: [
-        {x:0, y: 5, width: 61, height: 1},
+        { x: 0, y: 5, width: 61, height: 1 },
     ],
     windows: [
-        {x: 62, y: 12, width: 3, height: 10},
-        {x: 68, y: 12, width: 3, height: 10},
-        {x: 74, y: 12, width: 3, height: 10},
-        {x: 80, y: 12, width: 3, height: 10},
-        {x: 86, y: 12, width: 3, height: 10},
-        {x: 92, y: 12, width: 3, height: 10},
-        {x: 98, y: 12, width: 3, height: 10},
+        { x: 62, y: 12, width: 3, height: 10 },
+        { x: 68, y: 12, width: 3, height: 10 },
+        { x: 74, y: 12, width: 3, height: 10 },
+        { x: 80, y: 12, width: 3, height: 10 },
+        { x: 86, y: 12, width: 3, height: 10 },
+        { x: 92, y: 12, width: 3, height: 10 },
+        { x: 98, y: 12, width: 3, height: 10 },
     ],
     banners: [
-        {x: 66, y: 8},
-        {x: 72, y: 8},
-        {x: 78, y: 8},
-        {x: 84, y: 8},
-        {x: 90, y: 8},
-        {x: 96, y: 8},
+        { x: 66, y: 8 },
+        { x: 72, y: 8 },
+        { x: 78, y: 8 },
+        { x: 84, y: 8 },
+        { x: 90, y: 8 },
+        { x: 96, y: 8 },
     ],
-    
+
 }
