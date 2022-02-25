@@ -113,7 +113,7 @@ class NPC extends AbstractEntity {
         dist = super.checkEnvironmentCollisions(dist);
         super.updatePositionAndVelocity(dist);
         this.updateBoxes();
-
+        this.animations[this.state][this.direction].update(TICK);
     };
 
     loadAnimations() {

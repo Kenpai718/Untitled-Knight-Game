@@ -189,6 +189,79 @@ class Brick extends AbstractBarrier {
     };
 };
 
+class Block extends AbstractBarrier{
+    constructor(game, x, y, w, h) {
+        super(game, x, y, w, h, 16, 16);
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
+        // left is for left corner piece, middle is for middle piece, right is for right corner piece
+        this.types = { topleft : 0, topmiddle : 1, topright : 2,
+            left : 3, middle : 4, right : 5,
+            bottomleft : 6, bottommiddle : 7, bottomright : 8};
+        this.scale = PARAMS.BLOCKDIM;
+        this.updateBB();
+        this.loadImage();
+    };
+
+    getType(type) {
+        // switch expression to get the source coordinates depending on the type
+        switch (type) {
+            case this.types.topleft:
+                this.srcX = 16;
+                this.srcY = 16;
+                break;
+            case this.types.topmiddle:
+                this.srcX = 32;
+                this.srcY = 16;
+                break;
+            case this.types.topright:
+                this.srcX = 48;
+                this.srcY = 16;
+                break;
+            case this.types.left:
+                this.srcX = 16;
+                this.srcY = 32;
+                break;
+            case this.types.middle:
+                this.srcX = 32;
+                this.srcY = 32;
+                break;
+            case this.types.right:
+                this.srcX = 48;
+                this.srcY = 32;
+                break;
+                case this.types.bottomleft:
+                this.srcX = 16;
+                this.srcY = 48;
+                break;
+            case this.types.bottommiddle:
+                this.srcX = 32;
+                this.srcY = 48;
+                break;
+            case this.types.bottomright:
+                this.srcX = 48;
+                this.srcY = 48;
+                break;
+        }
+    }
+
+    loadImage() {
+        let sW = this.srcWidth;
+        let sH = this.srcHeight;
+        for (var i = 0; i < this.w; i++) {
+            let typeX = 0;
+            if (i > 0) typeX+= 1;
+            if (i == this.w - 1) typeX+= 1; 
+            for (var j = 0; j < this.h; j++) {
+                let typeY = 0;
+                if (j > 0) typeY += 3;
+                if (j == this.h - 1) typeY += 3;
+                this.getType(typeX + typeY);
+                this.ctx.drawImage(this.spritesheet, this.srcX, this.srcY, sW, sH, i * sW, j * sH, sW, sH);
+            }
+        }
+    }
+}
+
 class Platform extends AbstractBarrier {
     constructor(game, x, y, w, h) {
         super(game, x, y, w, h, 16, 13);
@@ -283,6 +356,10 @@ class Torch extends AbstractBackFeature {
         this.scale = 5;
         this.animation = new Animator(this.spritesheet, 19, 112, 17, 17, 3, 0.7, 4, false, true, false); // torch animation
     };
+
+    update() {
+        this.animation.update(this.game.clockTick);
+    }
 
     draw(ctx) {
         this.animation.drawFrame(this.game.clockTick, ctx, this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.scale);

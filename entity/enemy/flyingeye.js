@@ -308,6 +308,7 @@ class FlyingEye extends AbstractEnemy {
                 this.HB = null;
             }
         }
+        this.animations[this.state][this.direction].update(TICK);
     }
 
     checkSpikeCollisions(dist) {
@@ -466,6 +467,7 @@ class FlyingEyeProjectile extends AbstractEntity {
         this.x += this.velocity * TICK;
         this.updateBB();
         this.hit();
+        this.animations[this.state][this.dir].update(TICK);
     }
 
     hit() {
