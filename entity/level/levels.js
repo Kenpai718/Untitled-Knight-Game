@@ -907,7 +907,7 @@ var level1_3 = {
         },
 
         {
-            x: 15, y: 37,
+            x: 12, y: 37,
             title: "[You are a very curious player!]",
             text: [
                 "Hope you are enjoying the game!",
@@ -977,10 +977,10 @@ var level1_3 = {
     ],
     chests: [
         //secret
-        { x: 7, y: 36, direction: 1 },
+        { x: 6, y: 36, direction: 1 },
+        { x: 7.5, y: 36, direction: 1 },
         { x: 9, y: 36, direction: 1 },
-        { x: 11, y: 36, direction: 1 },
-        { x: 13, y: 36, direction: 1 },
+        { x: 10.5, y: 36, direction: 1 },
 
         { x: 77, y: 15, direction: 0 },
         { x: 54, y: 5, directon: 0 },
