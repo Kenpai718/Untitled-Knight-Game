@@ -209,6 +209,8 @@ const SFX = {
     NEW_ITEM: "./sound/sfx/zelda-new-item.mp3",
     NEW_HEART: "./sound/sfx/zelda-new-heart.mp3",
     PURCHASE: "./sound/sfx/ka-ching.mp3",
+    ENCHANTMENT: "./sound/sfx/enchantment.mp3",
+    ANVIL: "./sound/sfx/anvil.mp3",
 
 
 };
