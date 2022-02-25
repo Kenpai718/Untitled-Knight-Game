@@ -24,8 +24,6 @@ class NPC extends AbstractEntity {
         this.height = 80 * this.scale;
         this.visionwidth = 700 * this.scale;
 
-
-
         // Shop
         this.showText = false;
         this.fontSize = DEFAULT_FONT_SIZE;
@@ -50,7 +48,6 @@ class NPC extends AbstractEntity {
         this.shopGUI.removeFromWorld = true;
         SHOP_ACTIVE = false;
         this.shopGUI = null;
-        setShop = false;
     };
 
     updateBoxes() {
