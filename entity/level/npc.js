@@ -3,7 +3,6 @@
  */
 
 let setShop = false;
-
 class NPC extends AbstractEntity {
 
     constructor(game, x, y) {
@@ -66,6 +65,7 @@ class NPC extends AbstractEntity {
     update() {
         const TICK = this.game.clockTick;
 
+        // Checks status of global setShop to determine whether to open instance of shop
         if(setShop && this.shopGUI == null){
             this.activateShop();
         }
@@ -93,7 +93,6 @@ class NPC extends AbstractEntity {
             if (self.states.active && !setShop) { // Activates shop once player in range, NPC is active and player click w key
                 if (entity.BB && self.BB.collide(entity.BB) && entity instanceof AbstractPlayer) {
                     if (self.game.up) {
-                        console.log("Opening Shop...");
                         self.activateShop();
                     }
                 }

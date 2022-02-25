@@ -25,6 +25,14 @@ class Shop {
         this.exitButtonColor = 'rgba(190, 0, 0, 0.8)';
         this.distract;
 
+        // Button highlight
+        this.highlightB1 = false;
+        this.highlightB2 = false;
+        this.highlightB3 = false;
+        this.highlightB4 = false;
+        this.highlightB5 = false;
+        this.highlightB6 = false;
+
         // GUI icons and cost
         this.health = [];
         this.healthCost = [20, 40, 60, 80, "MAX"];
@@ -90,25 +98,34 @@ class Shop {
             }
             else that.exitButtonColor = 'rgba(190, 0, 0, 0.8)';
 
-            if(that.game.click && mouseBB.collide(that.ButtonBB1)){
+            if(mouseBB.collide(that.ButtonBB1)){
                 //console.log("Button 1 : Arrow Pack");
-                if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= that.arrowPackCost[entity.myInventory.arrowUpgrade]){
+
+                that.highlightB1 = true; 
+
+                if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= that.arrowPackCost[entity.myInventory.arrowUpgrade] && that.game.click){
                     entity.myInventory.diamonds -= that.arrowPackCost[entity.myInventory.arrowUpgrade];
                     entity.myInventory.arrows += 10;
                     ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
                 }
             }
-            else if(that.game.click && mouseBB.collide(that.ButtonBB2)){
+            else if(mouseBB.collide(that.ButtonBB2)){
                 //console.log("Button 2 : Health Potion");
-                if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= 10){
+
+                that.highlightB2 = true; 
+
+                if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= 10 && that.game.click){
                     entity.myInventory.diamonds -= 10;
                     entity.myInventory.potions += 1;
                     ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
                 }
             }
-            else if(that.game.click && mouseBB.collide(that.ButtonBB3)){
+            else if(mouseBB.collide(that.ButtonBB3)){
                 //console.log("Button 3 : Health Upgrade");
-                if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= that.healthCost[entity.myInventory.healthUpgrade]){
+
+                that.highlightB3 = true; 
+
+                if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= that.healthCost[entity.myInventory.healthUpgrade] && that.game.click){
                     entity.myInventory.diamonds -= that.healthCost[entity.myInventory.healthUpgrade];
                     entity.myInventory.healthUpgrade += 1;
 
@@ -118,31 +135,49 @@ class Shop {
                     ASSET_MANAGER.playAsset(SFX.NEW_HEART);
                 }
             }
-            else if(that.game.click && mouseBB.collide(that.ButtonBB4)){
+            else if(mouseBB.collide(that.ButtonBB4)){
                 //console.log("Button 4 : Attack Upgrade");
-                if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= that.attackCost[entity.myInventory.attackUpgrade]){
+
+                that.highlightB4 = true; 
+
+                if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= that.attackCost[entity.myInventory.attackUpgrade] && that.game.click){
                     entity.myInventory.diamonds -= that.attackCost[entity.myInventory.attackUpgrade];
                     entity.myInventory.attackUpgrade += 1;
-                    ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
+                    ASSET_MANAGER.playAsset(SFX.ENCHANTMENT);
                 }
             }
-            else if(that.game.click && mouseBB.collide(that.ButtonBB5)){
+            else if(mouseBB.collide(that.ButtonBB5)){
                 //console.log("Button 5 : Arrow Upgrade");
-                if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= that.arrowCost[entity.myInventory.arrowUpgrade]){
+
+                that.highlightB5 = true; 
+
+                if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= that.arrowCost[entity.myInventory.arrowUpgrade] && that.game.click){
                     entity.myInventory.diamonds -= that.arrowCost[entity.myInventory.arrowUpgrade];
                     entity.myInventory.arrowUpgrade += 1;
                     //entity.myInventory.arrows = Math.floor(entity.myInventory.arrows/2); 
                     ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
                 }
             }
-            else if(that.game.click && mouseBB.collide(that.ButtonBB6)){
+            else if(mouseBB.collide(that.ButtonBB6)){
                 //console.log("Button 6 : Armor Upgrade");
-                if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= that.armorCost[entity.myInventory.armorUpgrade]){
+
+                that.highlightB6 = true; 
+
+                if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= that.armorCost[entity.myInventory.armorUpgrade] && that.game.click){
                     entity.myInventory.diamonds -= that.armorCost[entity.myInventory.armorUpgrade];
                     entity.myInventory.armorUpgrade += 1;
-                    ASSET_MANAGER.playAsset(SFX.NEW_ITEM);                }
+                    ASSET_MANAGER.playAsset(SFX.ANVIL);                }
             }
-            else if(entity instanceof AbstractPlayer &&
+            else {
+                that.highlightB1 = false;
+                that.highlightB2 = false;
+                that.highlightB3 = false;
+                that.highlightB4 = false;
+                that.highlightB5 = false;
+                that.highlightB6 = false;
+            }
+            
+            if(entity instanceof AbstractPlayer &&
                 entity.myInventory.healthUpgrade >= 4 &&
                 entity.myInventory.attackUpgrade >= 4 &&
                 entity.myInventory.arrowUpgrade >= 4 &&
@@ -151,7 +186,7 @@ class Shop {
                     that.maxed = true;
                     entity.myInventory.maxxed = true;
                     ASSET_MANAGER.playAsset(SFX.DISTRACT);
-                }
+            }
 
             that.game.click = false;
         });
@@ -267,12 +302,54 @@ class Shop {
             this.distract.drawFrame(this.game.clockTick, ctx, 1220, 161, 1);
         }
 
+        this.buyButtonHighlight(ctx);
         this.manageButtons(ctx);
         this.manageProgress(ctx);
         this.manageExitButton(ctx);
+        
 
         ctx.fillStyle = tempFill; 
         ctx.font = tempFont; 
+    };
+
+    buyButtonHighlight(ctx) {
+
+        /*  Style 2
+            ctx.fillRect(this.x + this.width /6 * 5 - 25, this.y + this.height / 7 * 2.23 - 5, 330 * this.buttonscale - 10, 130 * this.buttonscale  + 10);
+            ctx.fillRect(this.x + this.width /6 * 5 - 35, this.y + this.height / 7 * 2.23 + 5, 330 * this.buttonscale + 10, 130 * this.buttonscale - 10);
+            ctx.fillRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 2.23, 330 * this.buttonscale, 130 * this.buttonscale);
+
+            Style 3
+            ctx.fillRect(this.x + this.width /6 * 5 - 20, this.y + this.height / 7 * 3.23 + 5, 330 * this.buttonscale - 15, 130 * this.buttonscale);
+            ctx.fillRect(this.x + this.width /6 * 5 - 25, this.y + this.height / 7 * 3.23 + 10, 330 * this.buttonscale, 130 * this.buttonscale - 15);
+            ctx.fillRect(this.x + this.width /6 * 5 - 25, this.y + this.height / 7 * 3.23 + 10, 330 * this.buttonscale - 5, 130 * this.buttonscale - 10);
+            ctx.fillRect(this.x + this.width /6 * 5 - 20, this.y + this.height / 7 * 3.23 + 5, 330 * this.buttonscale - 10, 130 * this.buttonscale - 5);
+        */
+
+        let tempFill = ctx.fillStyle;
+        ctx.fillStyle = "white";
+
+        if(this.highlightB1){
+            ctx.fillRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 1.23, 330 * this.buttonscale, 130 * this.buttonscale);     
+        }
+        else if(this.highlightB2){
+            ctx.fillRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 2.23, 330 * this.buttonscale, 130 * this.buttonscale);   
+        }
+        else if(this.highlightB3){
+            ctx.fillRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 3.23, 330 * this.buttonscale, 130 * this.buttonscale);   
+        }
+        else if(this.highlightB4){
+            ctx.fillRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 4.23, 330 * this.buttonscale, 130 * this.buttonscale);
+        }
+        else if(this.highlightB5){
+            ctx.fillRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 5.23, 330 * this.buttonscale, 130 * this.buttonscale);
+        }
+        else if(this.highlightB6){
+            ctx.fillRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 6.23, 330 * this.buttonscale, 130 * this.buttonscale);
+        }
+
+        ctx.fillStyle = tempFill;
+
     };
 
     manageExitButton(ctx) {
