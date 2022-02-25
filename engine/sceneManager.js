@@ -311,12 +311,12 @@ class SceneManager {
     updateTitleScreen() {
         if (this.title) {
             //keep attemping to play title music until the user clicks
-            if (!ASSET_MANAGER.isPlaying(MUSIC.TITLE)) {
+            if (!MUSIC_MANAGER.isPlaying(MUSIC.TITLE)) {
                 //console.log("attempting to play title music");
                 if (this.game.userInteracted) {
-                    ASSET_MANAGER.pauseBackgroundMusic();
-                    ASSET_MANAGER.autoRepeat(MUSIC.TITLE);
-                    ASSET_MANAGER.playAsset(MUSIC.TITLE);
+                    MUSIC_MANAGER.pauseBackgroundMusic();
+                    MUSIC_MANAGER.autoRepeat(MUSIC.TITLE);
+                    MUSIC_MANAGER.playAsset(MUSIC.TITLE);
                 }
             }
 
@@ -336,6 +336,7 @@ class SceneManager {
             if (this.game.click) {
                 if (this.startGameBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     ASSET_MANAGER.playAsset(SFX.CLICK);
+                    ASSET_MANAGER.playAsset(SFX.SELECT);
                     this.game.myReportCard.reset();
                     this.game.attack = false;
                     this.loadLevel(this.currentLevel, false);
@@ -351,6 +352,7 @@ class SceneManager {
                     //hide the button after you click it
                     if (!this.usingLevelSelect) {
                         ASSET_MANAGER.playAsset(SFX.CLICK);
+                        ASSET_MANAGER.playAsset(SFX.SELECT);
                         this.loadLevelSelect();
                     }
                 }
@@ -375,14 +377,14 @@ class SceneManager {
             }
             if (this.game.click) {
                 if (this.controlsPauseBB.collideMouse(this.game.click.x, this.game.click.y)) {
-                    ASSET_MANAGER.playAsset(SFX.CLICK);
+                    ASSET_MANAGER.playAsset(SFX.SELECT);
                     this.controls = !this.controls;
                 } else if (this.restartPauseBB.collideMouse(this.game.click.x, this.game.click.y)) {
-                    ASSET_MANAGER.playAsset(SFX.CLICK);
+                    ASSET_MANAGER.playAsset(SFX.SELECT);
                     PAUSED = false;
                     this.loadLevel(this.currentLevel);
                 } else if (this.returnMenuPauseBB.collideMouse(this.game.click.x, this.game.click.y)) {
-                    ASSET_MANAGER.playAsset(SFX.CLICK);
+                    ASSET_MANAGER.playAsset(SFX.SELECT);
                     PAUSED = false;
                     this.returnToMenu();
                 }
@@ -583,9 +585,13 @@ class SceneManager {
 
     updateAudio() {
         let mute = document.getElementById("mute").checked;
-        let volume = document.getElementById("volume").value;
+        let volume = document.getElementById("sfx-volume").value;
         ASSET_MANAGER.muteAudio(mute);
         ASSET_MANAGER.adjustVolume(volume);
+
+        volume = document.getElementById("music-volume").value;
+        MUSIC_MANAGER.muteAudio(mute);
+        MUSIC_MANAGER.adjustVolume(volume)
     };
 
     drawHUD(ctx) {
@@ -684,6 +690,11 @@ class SceneManager {
                 this.myCreditBox.show = true;
                 this.myCreditBox.draw(ctx);
             }
+
+            if(PAUSED) {
+                var fontSize = 20;
+                ctx.fillText("PAUSED", 15, 45);
+            }
         }
     }
 
@@ -698,8 +709,8 @@ class SceneManager {
             ctx.fillText("Level Complete!", (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 3);
             ctx.font = '40px "Press Start 2P"';
             buildTextButton(ctx, "Next Level", this.nextLevelBB, false, "gray"); //set this once there is another level
-            buildTextButton(ctx, "Restart Game?", this.restartLevelBB, this.textColor == 2, "SkyBlue");
-            buildTextButton(ctx, "Return To Menu?", this.returnToMenuBB, this.textColor == 3, "SkyBlue");
+            buildTextButton(ctx, "Restart Game", this.restartLevelBB, this.textColor == 2, "DeepSkyBlue");
+            buildTextButton(ctx, "Return To Menu", this.returnToMenuBB, this.textColor == 3, "DeepSkyBlue");
 
             this.game.myReportCard.drawReportCard(ctx);
         }
@@ -749,19 +760,16 @@ class SceneManager {
 
         //play the music if it is not already playing
         if (!this.title) {
-            if (scene.music && !ASSET_MANAGER.isPlaying(scene.music)) {
-                ASSET_MANAGER.pauseBackgroundMusic();
-                ASSET_MANAGER.autoRepeat(scene.music);
-                ASSET_MANAGER.playAsset(scene.music);
-            } else if (!scene.music && !ASSET_MANAGER.isPlaying(this.defaultMusic)) { //no music set play default music
-                ASSET_MANAGER.pauseBackgroundMusic();
-                ASSET_MANAGER.autoRepeat(this.defaultMusic);
-                ASSET_MANAGER.playAsset(this.defaultMusic);
+            if (scene.music && !MUSIC_MANAGER.isPlaying(scene.music)) {
+                MUSIC_MANAGER.pauseBackgroundMusic();
+                MUSIC_MANAGER.autoRepeat(scene.music);
+                MUSIC_MANAGER.playAsset(scene.music);
+            } else if (!scene.music && !MUSIC_MANAGER.isPlaying(this.defaultMusic)) { //no music set play default music
+                MUSIC_MANAGER.pauseBackgroundMusic();
+                MUSIC_MANAGER.autoRepeat(this.defaultMusic);
+                MUSIC_MANAGER.playAsset(this.defaultMusic);
             }
         }
-
-        //play an entrance sound effect upon loading a level
-        ASSET_MANAGER.playAsset(SFX.DOOR_ENTER);
 
         let entities = [];
         this.loadEnvironment(h, entities, this.level);
