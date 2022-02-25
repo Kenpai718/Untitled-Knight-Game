@@ -98,96 +98,112 @@ class Shop {
             }
             else that.exitButtonColor = 'rgba(190, 0, 0, 0.8)';
 
-            if(mouseBB.collide(that.ButtonBB1)){
-                //console.log("Button 1 : Arrow Pack");
+            if(entity instanceof AbstractPlayer) {
 
-                that.highlightB1 = true; 
+                if(mouseBB.collide(that.ButtonBB1)){
+                    //console.log("Button 1 : Arrow Pack");
 
-                if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= that.arrowPackCost[entity.myInventory.arrowUpgrade] && that.game.click){
-                    entity.myInventory.diamonds -= that.arrowPackCost[entity.myInventory.arrowUpgrade];
-                    entity.myInventory.arrows += 10;
-                    ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
+                    if(entity.myInventory.diamonds >= that.arrowPackCost[entity.myInventory.arrowUpgrade]){
+                        that.highlightB1 = true; 
+
+                        if(that.game.click){
+                            entity.myInventory.diamonds -= that.arrowPackCost[entity.myInventory.arrowUpgrade];
+                            entity.myInventory.arrows += 10;
+                            ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
+                        }
+                    }
+
                 }
-            }
-            else if(mouseBB.collide(that.ButtonBB2)){
-                //console.log("Button 2 : Health Potion");
+                else if(mouseBB.collide(that.ButtonBB2)){
+                    //console.log("Button 2 : Health Potion");
 
-                that.highlightB2 = true; 
+                    if(entity.myInventory.diamonds >= 10){
+                        that.highlightB2 = true; 
 
-                if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= 10 && that.game.click){
-                    entity.myInventory.diamonds -= 10;
-                    entity.myInventory.potions += 1;
-                    ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
+                        if(that.game.click){
+                            entity.myInventory.diamonds -= 10;
+                            entity.myInventory.potions += 1;
+                            ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
+                        }
+                    }
                 }
-            }
-            else if(mouseBB.collide(that.ButtonBB3)){
-                //console.log("Button 3 : Health Upgrade");
+                else if(mouseBB.collide(that.ButtonBB3)){
+                    //console.log("Button 3 : Health Upgrade");
 
-                that.highlightB3 = true; 
+                    if(entity.myInventory.diamonds >= that.healthCost[entity.myInventory.healthUpgrade]){
+                    that.highlightB3 = true; 
 
-                if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= that.healthCost[entity.myInventory.healthUpgrade] && that.game.click){
-                    entity.myInventory.diamonds -= that.healthCost[entity.myInventory.healthUpgrade];
-                    entity.myInventory.healthUpgrade += 1;
+                        if(that.game.click){
+                            entity.myInventory.diamonds -= that.healthCost[entity.myInventory.healthUpgrade];
+                            entity.myInventory.healthUpgrade += 1;
 
-                    //add hearts to heartbar and player
-                    let player_hearts = that.game.camera.heartsbar;
-                    player_hearts.addHeart();
-                    ASSET_MANAGER.playAsset(SFX.NEW_HEART);
+                            //add hearts to heartbar and player
+                            let player_hearts = that.game.camera.heartsbar;
+                            player_hearts.addHeart();
+                            ASSET_MANAGER.playAsset(SFX.NEW_HEART);
+                        }
+                    }
                 }
-            }
-            else if(mouseBB.collide(that.ButtonBB4)){
-                //console.log("Button 4 : Attack Upgrade");
+                else if(mouseBB.collide(that.ButtonBB4)){
+                    //console.log("Button 4 : Attack Upgrade");
 
-                that.highlightB4 = true; 
+                    if(entity.myInventory.diamonds >= that.attackCost[entity.myInventory.attackUpgrade]){
+                        that.highlightB4 = true; 
 
-                if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= that.attackCost[entity.myInventory.attackUpgrade] && that.game.click){
-                    entity.myInventory.diamonds -= that.attackCost[entity.myInventory.attackUpgrade];
-                    entity.myInventory.attackUpgrade += 1;
-                    ASSET_MANAGER.playAsset(SFX.ENCHANTMENT);
+                        if(that.game.click){
+                            entity.myInventory.diamonds -= that.attackCost[entity.myInventory.attackUpgrade];
+                            entity.myInventory.attackUpgrade += 1;
+                            ASSET_MANAGER.playAsset(SFX.ENCHANTMENT);
+                        }
+                    }
                 }
-            }
-            else if(mouseBB.collide(that.ButtonBB5)){
-                //console.log("Button 5 : Arrow Upgrade");
+                else if(mouseBB.collide(that.ButtonBB5)){
+                    //console.log("Button 5 : Arrow Upgrade");
 
-                that.highlightB5 = true; 
+                    if(entity.myInventory.diamonds >= that.arrowCost[entity.myInventory.arrowUpgrade]){
+                        that.highlightB5 = true; 
 
-                if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= that.arrowCost[entity.myInventory.arrowUpgrade] && that.game.click){
-                    entity.myInventory.diamonds -= that.arrowCost[entity.myInventory.arrowUpgrade];
-                    entity.myInventory.arrowUpgrade += 1;
-                    //entity.myInventory.arrows = Math.floor(entity.myInventory.arrows/2); 
-                    ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
+                        if(that.game.click){
+                            entity.myInventory.diamonds -= that.arrowCost[entity.myInventory.arrowUpgrade];
+                            entity.myInventory.arrowUpgrade += 1;
+                            //entity.myInventory.arrows = Math.floor(entity.myInventory.arrows/2); 
+                            ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
+                        }
+                    }
                 }
-            }
-            else if(mouseBB.collide(that.ButtonBB6)){
-                //console.log("Button 6 : Armor Upgrade");
+                else if(mouseBB.collide(that.ButtonBB6)){
+                    //console.log("Button 6 : Armor Upgrade");
 
-                that.highlightB6 = true; 
+                    if(entity.myInventory.diamonds >= that.armorCost[entity.myInventory.armorUpgrade]){
+                        that.highlightB6 = true; 
 
-                if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= that.armorCost[entity.myInventory.armorUpgrade] && that.game.click){
-                    entity.myInventory.diamonds -= that.armorCost[entity.myInventory.armorUpgrade];
-                    entity.myInventory.armorUpgrade += 1;
-                    ASSET_MANAGER.playAsset(SFX.ANVIL);
+                        if(that.game.click){
+                            entity.myInventory.diamonds -= that.armorCost[entity.myInventory.armorUpgrade];
+                            entity.myInventory.armorUpgrade += 1;
+                            ASSET_MANAGER.playAsset(SFX.ANVIL);
+                        }
+                    }
                 }
-            }
-            else {
-                that.highlightB1 = false;
-                that.highlightB2 = false;
-                that.highlightB3 = false;
-                that.highlightB4 = false;
-                that.highlightB5 = false;
-                that.highlightB6 = false;
-            }
-            
-            if(entity instanceof AbstractPlayer &&
-                entity.myInventory.healthUpgrade >= 4 &&
-                entity.myInventory.attackUpgrade >= 4 &&
-                entity.myInventory.arrowUpgrade >= 4 &&
-                entity.myInventory.armorUpgrade >= 3 &&
-                that.maxed == false && entity.myInventory.maxxed == false) {
-                    that.maxed = true;
-                    entity.myInventory.maxxed = true;
-                    ASSET_MANAGER.playAsset(SFX.DISTRACT);
-            }
+                else {
+                    that.highlightB1 = false;
+                    that.highlightB2 = false;
+                    that.highlightB3 = false;
+                    that.highlightB4 = false;
+                    that.highlightB5 = false;
+                    that.highlightB6 = false;
+                }
+                
+                if( entity.myInventory.healthUpgrade >= 4 &&
+                    entity.myInventory.attackUpgrade >= 4 &&
+                    entity.myInventory.arrowUpgrade >= 4 &&
+                    entity.myInventory.armorUpgrade >= 3 &&
+                    that.maxed == false && entity.myInventory.maxxed == false) {
+                        that.maxed = true;
+                        entity.myInventory.maxxed = true;
+                        ASSET_MANAGER.playAsset(SFX.DISTRACT);
+                }
+
+        }
 
             that.game.click = false;
         });
