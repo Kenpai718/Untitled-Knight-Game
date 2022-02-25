@@ -89,13 +89,17 @@ class NPC extends AbstractEntity {
                  * */
                  let playerNear = entity.BB && self.VB.collide(entity.BB);
                 if (playerNear) {
-                    if (self.state != self.states.active) { // If inactive (idle) and player is in vision range, awake
+                    
+                    if (self.state != self.states.awaking) {
+
+                        if(self.x + self.BB.width /2 > entity.BB.x  + entity.BB.width / 2)
+                            self.direction = self.directions.left;
+                        else self.direction = self.directions.right;
+                    }
+                    if (self.state == self.states.inactive) { // If inactive (idle) and player is in vision range, awake
                         self.state = self.states.awaking;
                     }
-                    if (self.state != 1)
-                        self.direction = entity.BB.right < self.BB.left ? self.directions.left : self.directions.right;
-
-                    if (self.states.active && !SHOP_ACTIVE) { // Activates shop once player in range, NPC is active and player click w key
+                    if (self.state == self.states.active && !SHOP_ACTIVE) { // Activates shop once player in range, NPC is active and player click w key
                         if (entity.BB && self.BB.collide(entity.BB)) {
                             if (self.game.up) {
                                 ASSET_MANAGER.playAsset(SFX.CLICK);
