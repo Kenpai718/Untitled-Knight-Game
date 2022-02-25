@@ -22,6 +22,7 @@ class Shop {
         this.progressbutton = [];
         this.progressbutton2 = [];
         this.maxed = false;
+        this.exitButtonColor = 'rgba(190, 0, 0, 0.8)';
         this.distract;
 
         // GUI icons and cost
@@ -31,7 +32,7 @@ class Shop {
         this.attackCost = [25, 50, 75, 100, "MAX"];
         this.arrow = [];
         this.arrowCost = [30, 60, 90, 120, "MAX"];
-        this.arrowPackCost = [10, 20, 30, 40, 50];
+        this.arrowPackCost = [10, 10, 10, 10, 10];
         this.armor = [];
         this.armorCost = [60, 90, 120, "MAX"];
 
@@ -78,11 +79,19 @@ class Shop {
         let that = this;
         this.game.entities.forEach(function (entity) {
             let mouseBB = new BoundingBox(that.game.mouse.x, that.game.mouse.y, 1, 1);
-
+            
             if(that.game.click) ASSET_MANAGER.playAsset(SFX.CLICK);
 
+            // Exit button interaction
+            if(mouseBB.collide(that.ExitBB)){
+                that.exitButtonColor = "Red"
+                if(that.game.click)
+                    setShop = false;
+            }
+            else that.exitButtonColor = 'rgba(190, 0, 0, 0.8)';
+
             if(that.game.click && mouseBB.collide(that.ButtonBB1)){
-                console.log("Button 1 : Arrow Pack");
+                //console.log("Button 1 : Arrow Pack");
                 if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= that.arrowPackCost[entity.myInventory.arrowUpgrade]){
                     entity.myInventory.diamonds -= that.arrowPackCost[entity.myInventory.arrowUpgrade];
                     entity.myInventory.arrows += 10;
@@ -90,7 +99,7 @@ class Shop {
                 }
             }
             else if(that.game.click && mouseBB.collide(that.ButtonBB2)){
-                console.log("Button 2 : Health Potion");
+                //console.log("Button 2 : Health Potion");
                 if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= 10){
                     entity.myInventory.diamonds -= 10;
                     entity.myInventory.potions += 1;
@@ -98,7 +107,7 @@ class Shop {
                 }
             }
             else if(that.game.click && mouseBB.collide(that.ButtonBB3)){
-                console.log("Button 3 : Health Upgrade");
+                //console.log("Button 3 : Health Upgrade");
                 if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= that.healthCost[entity.myInventory.healthUpgrade]){
                     entity.myInventory.diamonds -= that.healthCost[entity.myInventory.healthUpgrade];
                     entity.myInventory.healthUpgrade += 1;
@@ -110,7 +119,7 @@ class Shop {
                 }
             }
             else if(that.game.click && mouseBB.collide(that.ButtonBB4)){
-                console.log("Button 4 : Attack Upgrade");
+                //console.log("Button 4 : Attack Upgrade");
                 if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= that.attackCost[entity.myInventory.attackUpgrade]){
                     entity.myInventory.diamonds -= that.attackCost[entity.myInventory.attackUpgrade];
                     entity.myInventory.attackUpgrade += 1;
@@ -118,7 +127,7 @@ class Shop {
                 }
             }
             else if(that.game.click && mouseBB.collide(that.ButtonBB5)){
-                console.log("Button 5 : Arrow Upgrade");
+                //console.log("Button 5 : Arrow Upgrade");
                 if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= that.arrowCost[entity.myInventory.arrowUpgrade]){
                     entity.myInventory.diamonds -= that.arrowCost[entity.myInventory.arrowUpgrade];
                     entity.myInventory.arrowUpgrade += 1;
@@ -127,7 +136,7 @@ class Shop {
                 }
             }
             else if(that.game.click && mouseBB.collide(that.ButtonBB6)){
-                console.log("Button 6 : Armor Upgrade");
+                //console.log("Button 6 : Armor Upgrade");
                 if(entity instanceof AbstractPlayer && entity.myInventory.diamonds >= that.armorCost[entity.myInventory.armorUpgrade]){
                     entity.myInventory.diamonds -= that.armorCost[entity.myInventory.armorUpgrade];
                     entity.myInventory.armorUpgrade += 1;
@@ -143,9 +152,6 @@ class Shop {
                     entity.myInventory.maxxed = true;
                     ASSET_MANAGER.playAsset(SFX.DISTRACT);
                 }
-                
-
-            //if(that.game.click) console.log(that.game.mouse.x + ", " + that.game.mouse.y);
 
             that.game.click = false;
         });
@@ -224,6 +230,8 @@ class Shop {
         ctx.strokeRect(this.x, this.y + this.height / 7 * 6, this.width, 0);
         */
 
+
+
         ctx.strokeStyle = 'rgba(50, 0, 107, 1)';
         ctx.strokeRect(this.x, this.y, this.width, this.height);
         ctx.strokeRect(this.x-1, this.y+1, this.width+1, this.height+1);
@@ -261,9 +269,26 @@ class Shop {
 
         this.manageButtons(ctx);
         this.manageProgress(ctx);
+        this.manageExitButton(ctx);
 
         ctx.fillStyle = tempFill; 
         ctx.font = tempFont; 
+    };
+
+    manageExitButton(ctx) {
+
+        let tempFill = ctx.fillStyle;
+        ctx.fillStyle = this.exitButtonColor;
+        ctx.fillRect(this.x + this.width - 60, this.y + 20, 40, 40);
+        ctx.fillStyle = "white";
+        ctx.fillText("󠀠󠀠󠀠x", this.x + this.width - 60 + 8.8, this.y + 51);
+        ctx.fillStyle = "black";
+        ctx.fillRect(this.x + this.width - 60, this.y + 20, 5, 5);
+        ctx.fillRect(this.x + this.width - 60 + 35, this.y + 20, 5, 5);
+        ctx.fillRect(this.x + this.width - 60, this.y + 20 + 35, 5, 5);
+        ctx.fillRect(this.x + this.width - 60 + 35, this.y + 20 + 35, 5, 5);
+
+        ctx.fillStyle = tempFill;
     };
 
     manageProgress(ctx){
@@ -280,16 +305,13 @@ class Shop {
 
             }
         });
-    }
+    };
 
     manageButtons(ctx){
 
         let tempFilter = ctx.filter;
-
         
-        
-        
-        // determine if player able to purchase item
+        // determine if player is able to purchase an item
         let that = this;
 
         let item1 = false;
@@ -300,8 +322,7 @@ class Shop {
         let item6 = false;
         this.game.entities.forEach(function (entity) {
             if(entity instanceof AbstractPlayer){
-
-                
+  
                 if(entity.myInventory.diamonds >= that.arrowPackCost[entity.myInventory.arrowUpgrade])  // Arrow pack
                     item1 = true;
                 if(entity.myInventory.diamonds >= 10)                                                   // Health potion
@@ -314,27 +335,10 @@ class Shop {
                     item5 = true;
                 if(entity.myInventory.diamonds >= that.armorCost[entity.myInventory.armorUpgrade])  // Armor Upgrade
                     item6 = true;
-                    
-
             }
         });
 
-        
-        
-        
-
-        /*
-            this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 1.23, this.buttonscale);
-            this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 2.23, this.buttonscale);
-            this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 3.23, this.buttonscale);
-            this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 4.23, this.buttonscale);
-            this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 5.23, this.buttonscale);
-            this.button[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 6.23, this.buttonscale);
-        
-        */
-
-
-        // Buttons
+        // buttons
         if(!item1){
             ctx.filter = "grayscale(1)";
         }
@@ -372,7 +376,7 @@ class Shop {
         ctx.filter = tempFilter;
         
 
-        // Purchasing cost text
+        // buttton purchasing cost text
         this.game.entities.forEach(function (entity) {
             if(entity instanceof AbstractPlayer){
 
@@ -388,8 +392,7 @@ class Shop {
             }
         });
 
-
-        // Displays diamond on button - grey if player doesnt have enough diamond for purchase
+        // displays diamond on button - grey if player doesnt have enough diamond for purchase
         if(!item1){
             ctx.filter = "grayscale(1)";
         }
@@ -426,18 +429,6 @@ class Shop {
         this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 19, this.y + this.height / 7 * 6.39, 3.4);
         ctx.filter = tempFilter;
 
-        /*
-        // Diamonds
-        this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 19, this.y + this.height / 7 * 1.39, 3.4);
-        this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 19, this.y + this.height / 7 * 2.39, 3.4);
-        this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 19, this.y + this.height / 7 * 3.39, 3.4);
-        this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 19, this.y + this.height / 7 * 4.39, 3.4);
-        this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 19, this.y + this.height / 7 * 5.39, 3.4);
-        this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, this.x + this.width /6 * 5 - 19, this.y + this.height / 7 * 6.39, 3.4);
-        */
-
-
-        ctx.filter = tempFilter;
     };
 
     updateBoxes(){
@@ -448,10 +439,12 @@ class Shop {
         this.ButtonBB4 = new BoundingBox(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 4.23, this.buttonwidth * this.buttonscale, this.buttonheight * this.buttonscale);
         this.ButtonBB5 = new BoundingBox(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 5.23, this.buttonwidth * this.buttonscale, this.buttonheight * this.buttonscale);
         this.ButtonBB6 = new BoundingBox(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 6.23, this.buttonwidth * this.buttonscale, this.buttonheight * this.buttonscale);
+        this.ExitBB = new BoundingBox(this.x + this.width - 60, this.y + 20, 40, 40);
 
-    }
+    };
 
     drawDebug(ctx) {
+        let tempStyle = ctx.strokeStyle;
         ctx.strokeStyle = "Red";
         ctx.strokeRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 1.23, this.buttonwidth * this.buttonscale, this.buttonheight * this.buttonscale);
         ctx.strokeRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 2.23, this.buttonwidth * this.buttonscale, this.buttonheight * this.buttonscale);
@@ -459,7 +452,12 @@ class Shop {
         ctx.strokeRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 4.23, this.buttonwidth * this.buttonscale, this.buttonheight * this.buttonscale);
         ctx.strokeRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 5.23, this.buttonwidth * this.buttonscale, this.buttonheight * this.buttonscale);
         ctx.strokeRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 6.23, this.buttonwidth * this.buttonscale, this.buttonheight * this.buttonscale);
-
+        
         ctx.strokeRect(this.game.mouse.x, this.game.mouse.y, 5, 5);
+
+        ctx.strokeStyle = "White";
+        ctx.strokeRect(this.x + this.width - 60, this.y + 20, 40, 40);
+
+        ctx.strokeStyle = tempStyle;
     };
 };
