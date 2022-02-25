@@ -341,7 +341,7 @@ class Shop {
             ctx.fillRect(this.x + this.width /6 * 5 - 20, this.y + this.height / 7 * 3.23 + 5, 330 * this.buttonscale - 15, 130 * this.buttonscale);
             ctx.fillRect(this.x + this.width /6 * 5 - 25, this.y + this.height / 7 * 3.23 + 10, 330 * this.buttonscale, 130 * this.buttonscale - 15);
             ctx.fillRect(this.x + this.width /6 * 5 - 25, this.y + this.height / 7 * 3.23 + 10, 330 * this.buttonscale - 5, 130 * this.buttonscale - 10);
-            ctx.fillRect(this.x + this.width /6 * 5 - 20, this.y + this.height / 7 * 3.23 + 5, 330 * this.buttonscale - 10, 130 * this.buttonscale - 5);
+            ctx.fillRect(this.x + this.width /6 * 5 - 20, this.y + this.height / 7 * 3.23 + 5, 330 * this.buttonscale - 10, 130 * this.buttonscale - 5);d
         */
 
         let tempFill = ctx.fillStyle;
