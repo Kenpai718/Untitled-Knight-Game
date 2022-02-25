@@ -1,6 +1,7 @@
 const gameEngine = new GameEngine();
 
-const ASSET_MANAGER = new AssetManager();
+const ASSET_MANAGER = new AssetManager(); //used for images and sfx
+const MUSIC_MANAGER = new AssetManager(); //used strictly for music tracks
 
 //queue downloads
 //main character
@@ -42,18 +43,18 @@ ASSET_MANAGER.queueDownload("./sprites/GUI/attack.png");
 ASSET_MANAGER.queueDownload("./sprites/GUI/interactables.png");
 
 //music
-ASSET_MANAGER.queueDownload(MUSIC.CHASING_DAYBREAK);
-ASSET_MANAGER.queueDownload(MUSIC.FODLAN_WINDS);
-ASSET_MANAGER.queueDownload(MUSIC.BETWEEN_HEAVEN_AND_EARTH);
-ASSET_MANAGER.queueDownload(MUSIC.LONG_WAY);
-ASSET_MANAGER.queueDownload(MUSIC.TITLE);
-
+MUSIC_MANAGER.queueDownload(MUSIC.CHASING_DAYBREAK);
+MUSIC_MANAGER.queueDownload(MUSIC.FODLAN_WINDS);
+MUSIC_MANAGER.queueDownload(MUSIC.BETWEEN_HEAVEN_AND_EARTH);
+MUSIC_MANAGER.queueDownload(MUSIC.LONG_WAY);
+MUSIC_MANAGER.queueDownload(MUSIC.TITLE);
 
 //sfx
 ASSET_MANAGER.queueDownload(SFX.ARROW_HIT);
 ASSET_MANAGER.queueDownload(SFX.BOW_SHOT);
 ASSET_MANAGER.queueDownload(SFX.ARROW_STICK);
 ASSET_MANAGER.queueDownload(SFX.CLICK);
+ASSET_MANAGER.queueDownload(SFX.SELECT);
 ASSET_MANAGER.queueDownload(SFX.DISTRACT);
 ASSET_MANAGER.queueDownload(SFX.ITEM_PICKUP);
 ASSET_MANAGER.queueDownload(SFX.SLASH1);
@@ -80,6 +81,9 @@ ASSET_MANAGER.queueDownload(SFX.NEW_ITEM);
 ASSET_MANAGER.queueDownload(SFX.NEW_HEART);
 ASSET_MANAGER.queueDownload(SFX.ENCHANTMENT);
 ASSET_MANAGER.queueDownload(SFX.ANVIL);
+ASSET_MANAGER.queueDownload(SFX.BERSERK_ACTIVATE);
+ASSET_MANAGER.queueDownload(SFX.RESPAWN);
+ASSET_MANAGER.queueDownload(SFX.COMPLETE);
 
 // Leave this SFX to suffer at the bottom >:D
 ASSET_MANAGER.queueDownload(SFX.PURCHASE);
@@ -88,6 +92,7 @@ ASSET_MANAGER.queueDownload(SFX.PURCHASE);
 
 
 ASSET_MANAGER.downloadAll(() => {
+	MUSIC_MANAGER.downloadAll();
 	const canvas = document.getElementById("gameWorld");
 	const ctx = canvas.getContext("2d");
 	ctx.imageSmoothingEnabled = false;

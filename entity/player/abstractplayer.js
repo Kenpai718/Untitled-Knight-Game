@@ -222,6 +222,7 @@ class AbstractPlayer extends AbstractEntity {
         // set restart flag to true so self the state isn't saved
         this.game.camera.restart = true;
         this.game.camera.loadLevel(this.game.camera.currentLevel);
+        ASSET_MANAGER.playAsset(SFX.RESPAWN);
     }
 
 

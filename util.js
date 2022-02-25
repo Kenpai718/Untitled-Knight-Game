@@ -185,6 +185,7 @@ const SFX = {
     ARROW_STICK: "./sound/sfx/arrow_stick.wav",
     BOW_SHOT: "./sound/sfx/bow_shoot.mp3",
     CLICK: "./sound/sfx/click.wav",
+    SELECT: "./sound/sfx/pokemon_select.mp3",
     DISTRACT: "./sound/sfx/distract.mp3",
     ITEM_PICKUP: "./sound/sfx/item_pickup.mp3",
     SLASH1: "./sound/sfx/slash1.wav",
@@ -212,6 +213,9 @@ const SFX = {
     PURCHASE: "./sound/sfx/ka-ching.mp3",
     ANVIL: "./sound/sfx/anvil.mp3",
     ENCHANTMENT: "./sound/sfx/enchantment.mp3",
+    BERSERK_ACTIVATE: "./sound/sfx/sharingan.mp3",
+    RESPAWN: "./sound/sfx/re_zero_respawn.mp3",
+    COMPLETE: "./sound/sfx/finished.mp3",
     
 
 
