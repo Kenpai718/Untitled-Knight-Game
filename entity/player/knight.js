@@ -157,10 +157,10 @@ class Knight extends AbstractPlayer {
 
             
             if(this.action == this.states.idle){
-                if(this.game.mouse.x - this.game.camera.x > (this.BB.x  + this.BB.width / 2)- this.game.camera.x && this.facing == 0){
+                if(this.game.mouse.x > (this.BB.x  + this.BB.width / 2)- this.game.camera.x && this.facing == 0){
                     this.facing = 1;
                 }
-                else if(this.game.mouse.x - this.game.camera.x < (this.BB.x  + this.BB.width / 2)- this.game.camera.x && this.facing == 1){
+                else if(this.game.mouse.x < (this.BB.x  + this.BB.width / 2)- this.game.camera.x && this.facing == 1){
                     this.facing = 0;
                 }
             }

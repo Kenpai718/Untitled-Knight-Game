@@ -347,19 +347,19 @@ class Shop {
         ctx.fillStyle = "white";
 
         if(this.highlightB1){
-            ctx.fillRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 1.23, 330 * this.buttonscale, 130 * this.buttonscale);     
+            ctx.fillRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 1.23, 330 * this.buttonscale, 130 * this.buttonscale -1);     
         }
         else if(this.highlightB2){
-            ctx.fillRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 2.23, 330 * this.buttonscale, 130 * this.buttonscale);   
+            ctx.fillRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 2.23, 330 * this.buttonscale, 130 * this.buttonscale -1);   
         }
         else if(this.highlightB3){
-            ctx.fillRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 3.23, 330 * this.buttonscale, 130 * this.buttonscale);   
+            ctx.fillRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 3.23 + 1, 330 * this.buttonscale, 130 * this.buttonscale -1);   
         }
         else if(this.highlightB4){
-            ctx.fillRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 4.23, 330 * this.buttonscale, 130 * this.buttonscale);
+            ctx.fillRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 4.23 + 1, 330 * this.buttonscale, 130 * this.buttonscale -1);
         }
         else if(this.highlightB5){
-            ctx.fillRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 5.23, 330 * this.buttonscale, 130 * this.buttonscale);
+            ctx.fillRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 5.23, 330 * this.buttonscale, 130 * this.buttonscale -1);
         }
         else if(this.highlightB6){
             ctx.fillRect(this.x + this.width /6 * 5 - 30, this.y + this.height / 7 * 6.23, 330 * this.buttonscale, 130 * this.buttonscale);
