@@ -94,7 +94,7 @@ class Shop {
             if(mouseBB.collide(that.ExitBB)){
                 that.exitButtonColor = "Red"
                 if(that.game.click)
-                    setShop = false;
+                    SHOP_ACTIVE = false;
             }
             else that.exitButtonColor = 'rgba(190, 0, 0, 0.8)';
 
@@ -166,6 +166,7 @@ class Shop {
                         if(that.game.click){
                             entity.myInventory.diamonds -= that.arrowCost[entity.myInventory.arrowUpgrade];
                             entity.myInventory.arrowUpgrade += 1;
+                            entity.myInventory.arrows += 10;
                             //entity.myInventory.arrows = Math.floor(entity.myInventory.arrows/2); 
                             ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
                         }

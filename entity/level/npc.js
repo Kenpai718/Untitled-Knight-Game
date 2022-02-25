@@ -23,8 +23,8 @@ class NPC extends AbstractEntity {
         this.width = 88 * this.scale;
         this.height = 80 * this.scale;
         this.visionwidth = 700 * this.scale;
-        
-        
+
+
 
         // Shop
         this.showText = false;
@@ -43,11 +43,12 @@ class NPC extends AbstractEntity {
     activateShop() {
         this.shopGUI = new Shop(this.game);
         this.game.addEntityToFront(this.shopGUI);
-        setShop = true;
+        SHOP_ACTIVE = true;
     };
 
     deactivateShop() {
         this.shopGUI.removeFromWorld = true;
+        SHOP_ACTIVE = false;
         this.shopGUI = null;
         setShop = false;
     };
@@ -64,11 +65,11 @@ class NPC extends AbstractEntity {
     update() {
         const TICK = this.game.clockTick;
 
-        // Checks status of global setShop to determine whether to open instance of shop
-        if(setShop && this.shopGUI == null){
+        // Checks status of global SHOP_ACTIVE to determine whether to open instance of shop
+        if (SHOP_ACTIVE && this.shopGUI == null) {
             this.activateShop();
         }
-        else if (!setShop && this.shopGUI != null){
+        else if (!SHOP_ACTIVE && this.shopGUI != null) {
             this.deactivateShop();
         }
         
@@ -77,28 +78,38 @@ class NPC extends AbstractEntity {
         //interactions with entities like player
         this.game.entities.forEach(function (entity) {
 
-            if (entity.BB && self.VB.collide(entity.BB) && entity instanceof AbstractPlayer) {
-                if (self.state != self.states.active) { // If inactive (idle) and player is in vision range, awake
-                    self.state = self.states.awaking;
-                    if (self.animations[self.state][self.direction].isDone()) {
-                        self.state = self.states.active;
-                        //console.log("NPC Fully Activated, ready for GUI...");;
+            if (entity instanceof AbstractPlayer) {
+                /**
+                 * Only manage the state or opening/closing the shop while the player is near.
+                 * This is because the map could have multiple NPCs competing for the same shop setting
+                 * global. The vision box is big so we only want to control the shop with the one the
+                 * player is close to!
+                 * */
+                 let playerNear = entity.BB && self.VB.collide(entity.BB);
+                if (playerNear) {
+                    if (self.state != self.states.active) { // If inactive (idle) and player is in vision range, awake
+                        self.state = self.states.awaking;
+                        if (self.animations[self.state][self.direction].isDone()) {
+                            self.state = self.states.active;
+                            //console.log("NPC Fully Activated, ready for GUI...");;
+                        }
                     }
-                }
+                    if (self.state != 1)
+                        self.direction = entity.BB.right < self.BB.left ? self.directions.left : self.directions.right;
 
-                if(self.state != 1)
-                    self.direction = entity.BB.right < self.BB.left ? self.directions.left : self.directions.right;
-                
-            }
-            if (self.states.active && !setShop) { // Activates shop once player in range, NPC is active and player click w key
-                if (entity.BB && self.BB.collide(entity.BB) && entity instanceof AbstractPlayer) {
-                    if (self.game.up) {
-                        setShop = true;
+                    if (self.states.active && !SHOP_ACTIVE) { // Activates shop once player in range, NPC is active and player click w key
+                        if (entity.BB && self.BB.collide(entity.BB)) {
+                            if (self.game.up) {
+                                ASSET_MANAGER.playAsset(SFX.CLICK);
+                                self.activateShop();
+                            }
+                        }
+                    } else if (SHOP_ACTIVE && entity.BB && !self.BB.collide(entity.BB)) { 
+                        ASSET_MANAGER.playAsset(SFX.CLICK);
+                        self.deactivateShop();
                     }
+
                 }
-            }
-            else if (setShop && entity.BB && !self.BB.collide(entity.BB) && entity instanceof AbstractPlayer) { // Deactivates shop when player NOT in range, and shop is active
-                setShop = false;
             }
         });
 
@@ -144,7 +155,7 @@ class NPC extends AbstractEntity {
 
     draw(ctx) {
         //text
-        if (!setShop && this.state != this.states.inactive) {
+        if (!SHOP_ACTIVE && this.state != this.states.inactive) {
             ctx.fillStyle = "SpringGreen";
             ctx.fillText(" " + this.name,
                 (this.BB.x) - this.game.camera.x,
@@ -173,8 +184,8 @@ class NPC extends AbstractEntity {
 
     }
 
-    setDead(){
-        
+    setDead() {
+
     }
 
 };

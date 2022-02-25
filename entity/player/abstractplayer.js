@@ -134,7 +134,7 @@ class AbstractPlayer extends AbstractEntity {
      * Increases player defense
      */
     getDefenseBonus() {
-        let bonusDefense = [1.0, 0.9, 0.8, 0.7];
+        let bonusDefense = [1.0, 0.8, 0.7, 0.5];
         return (bonusDefense[this.myInventory.armorUpgrade]);
     }
 
@@ -157,8 +157,8 @@ class AbstractPlayer extends AbstractEntity {
     * @param {*} damage
     */
     takeDamage(damage, isCritical) {
-
-        setShop = false;
+        //close the shop if player took damage
+        SHOP_ACTIVE = false;
 
         if (this.canTakeDamage()) {
             isCritical ? ASSET_MANAGER.playAsset(SFX.CRITICAL) : ASSET_MANAGER.playAsset(SFX.DAMAGED);
@@ -222,6 +222,7 @@ class AbstractPlayer extends AbstractEntity {
         // set restart flag to true so self the state isn't saved
         this.game.camera.restart = true;
         this.game.camera.loadLevel(this.game.camera.currentLevel);
+        ASSET_MANAGER.playAsset(SFX.RESPAWN);
     }
 
 
