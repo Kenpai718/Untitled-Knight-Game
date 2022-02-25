@@ -219,7 +219,9 @@ class Wizard extends AbstractEnemy {
         if (this.teleporting) {
             this.teleport();
         }
-        
+
+
+        this.animations[this.state][this.direction].update(TICK);
     }
 
     teleport() {
