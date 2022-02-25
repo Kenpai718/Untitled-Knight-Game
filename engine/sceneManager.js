@@ -313,9 +313,11 @@ class SceneManager {
             //keep attemping to play title music until the user clicks
             if (!ASSET_MANAGER.isPlaying(MUSIC.TITLE)) {
                 //console.log("attempting to play title music");
-                ASSET_MANAGER.pauseBackgroundMusic();
-                ASSET_MANAGER.autoRepeat(MUSIC.TITLE);
-                ASSET_MANAGER.playAsset(MUSIC.TITLE);
+                if (this.game.userInteracted) {
+                    ASSET_MANAGER.pauseBackgroundMusic();
+                    ASSET_MANAGER.autoRepeat(MUSIC.TITLE);
+                    ASSET_MANAGER.playAsset(MUSIC.TITLE);
+                }
             }
 
             //update menu buttons
@@ -638,7 +640,7 @@ class SceneManager {
                 ctx.fillStyle = "GhostWhite";
                 ctx.fillText(title, (this.game.surfaceWidth / 2) - ((fontSize * title.length) / 2), fontSize * 7);
 
-                buildButton(ctx, "Controls", this.controlsPauseBB, this.textColor == 1);
+                buildButton(ctx, "Controls", this.controlsPauseBB, this.textColor == 1 || this.controls);
                 buildButton(ctx, "Restart", this.restartPauseBB, this.textColor == 2);
                 buildButton(ctx, "Main Menu", this.returnMenuPauseBB, this.textColor == 3);
 
@@ -669,8 +671,8 @@ class SceneManager {
             ctx.fillStyle = "GhostWhite";
             ctx.fillText(gameTitle, (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 3);
             buildTextButton(ctx, "Start Game", this.startGameBB, this.textColor == 1, "DeepPink");
-            buildTextButton(ctx, "Controls", this.controlsBB, this.textColor == 2, "DeepSkyBlue");
-            buildTextButton(ctx, "Credits", this.creditsBB, this.textColor == 3, "DeepSkyBlue");
+            buildTextButton(ctx, "Controls", this.controlsBB, this.textColor == 2 || this.controls, "DeepSkyBlue");
+            buildTextButton(ctx, "Credits", this.creditsBB, this.textColor == 3 || this.credits, "DeepSkyBlue");
             if (!this.usingLevelSelect) buildButton(ctx, "Level Select", this.levelSelectBB, this.textColor == 4);
             ctx.strokeStyle = "Red";
 
@@ -689,16 +691,15 @@ class SceneManager {
         if (this.transition) {
             var fontSize = 60;
             ctx.font = fontSize + 'px "Press Start 2P"';
-            ctx.fillStyle = "White";
+            ctx.fillStyle = "Orchid";
             let gameTitle = "Level Complete!";
+            ctx.fillText("Level Complete!", (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2) + 5, fontSize * 3 + 5);
+            ctx.fillStyle = "White";
             ctx.fillText("Level Complete!", (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 3);
             ctx.font = '40px "Press Start 2P"';
-            ctx.fillStyle = "Grey";
-            ctx.fillText("Next Level", this.nextLevelBB.x, this.nextLevelBB.y);
-            ctx.fillStyle = this.textColor == 2 ? "Grey" : "White";
-            ctx.fillText("Restart Level", this.restartLevelBB.x, this.restartLevelBB.y);
-            ctx.fillStyle = this.textColor == 3 ? "Grey" : "White";
-            ctx.fillText("Return To Menu", this.returnToMenuBB.x, this.returnToMenuBB.y);
+            buildTextButton(ctx, "Next Level", this.nextLevelBB, false, "gray"); //set this once there is another level
+            buildTextButton(ctx, "Restart Game?", this.restartLevelBB, this.textColor == 2, "SkyBlue");
+            buildTextButton(ctx, "Return To Menu?", this.returnToMenuBB, this.textColor == 3, "SkyBlue");
 
             this.game.myReportCard.drawReportCard(ctx);
         }
