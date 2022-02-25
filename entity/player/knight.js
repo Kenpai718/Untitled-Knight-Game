@@ -234,7 +234,7 @@ class Knight extends AbstractPlayer {
                 this.doubleJump = true;
                 if (this.game.up) {
                     this.action = this.states.wall_climb;
-                    this.y -= 3 * this.scale;
+                    //this.y -= 2000 * this.scale * TICK;
                     if (this.animations[this.facing][this.action][this.myInventory.armorUpgrade].isDone()) {
                         this.resetAnimationTimers(this.action);
                     }
@@ -250,7 +250,7 @@ class Knight extends AbstractPlayer {
             }
             if (this.action == this.states.wall_climb) {
                 if (this.animations[this.facing][this.action][this.myInventory.armorUpgrade].currentFrame() < 4)
-                    this.velocity.y = -225;
+                    this.velocity.y = -275;
                 else if (this.animations[this.facing][this.action][this.myInventory.armorUpgrade].currentFrame() == 4)
                     this.velocity.y = -75;
             }
