@@ -72,6 +72,9 @@ class GameEngine {
     };
 
     start() {
+
+        this.mouse = ({x: 1000, y: 0});
+
         this.running = true;
         const gameLoop = () => {
             this.loop();
