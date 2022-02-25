@@ -1,8 +1,6 @@
 /**
  * This entity is used as the shopkeeper to buy equipment for the player
  */
-
-let setShop = false;
 class NPC extends AbstractEntity {
 
     constructor(game, x, y) {
@@ -38,19 +36,20 @@ class NPC extends AbstractEntity {
         this.updateBoxes();
         this.myHoverText = "Press \'W\' to shop";
 
+        console.log("I AM CREATED!");
+
     };
 
     activateShop() {
         this.shopGUI = new Shop(this.game);
         this.game.addEntityToFront(this.shopGUI);
-        setShop = true; 
+        setShop = true;
     };
 
     deactivateShop() {
-
         this.shopGUI.removeFromWorld = true;
-        setShop = false;
         this.shopGUI = null;
+        setShop = false;
     };
 
     updateBoxes() {
@@ -72,6 +71,7 @@ class NPC extends AbstractEntity {
         else if (!setShop && this.shopGUI != null){
             this.deactivateShop();
         }
+        
 
         let self = this;
         //interactions with entities like player
@@ -93,12 +93,12 @@ class NPC extends AbstractEntity {
             if (self.states.active && !setShop) { // Activates shop once player in range, NPC is active and player click w key
                 if (entity.BB && self.BB.collide(entity.BB) && entity instanceof AbstractPlayer) {
                     if (self.game.up) {
-                        self.activateShop();
+                        setShop = true;
                     }
                 }
             }
             else if (setShop && entity.BB && !self.BB.collide(entity.BB) && entity instanceof AbstractPlayer) { // Deactivates shop when player NOT in range, and shop is active
-                self.deactivateShop();
+                setShop = false;
             }
         });
 

@@ -2,6 +2,7 @@
 /**This file holds helpful functions and global variables/objects used throughout the game */
 const DEFAULT_FONT_SIZE = 10;
 var PAUSED = false;
+let setShop = false;
 /**
  * @param {Number} r Red Value
  * @param {Number} g Green Value
