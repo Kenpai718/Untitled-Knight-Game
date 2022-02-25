@@ -444,7 +444,7 @@ var level1_1 = {
             text: [
                 "-You may find secrets in unexpected places!",
                 "-Secret room blocks will slightly blink.",
-                "There is a secret room on every floor!",
+                "-There is a secret room on every floor!",
                 "-So keep a look out!"
             ]
         },

@@ -23,6 +23,9 @@ class GameEngine {
         this.click = null;
         this.mouse = null;
         this.wheel = null;
+        //check when user interacts with the game for the first time. It is needed to prevent multiple attempts to play music and bypass
+        //browser restrictions!
+        this.userInteracted = false; 
 
         this.myReportCard = new ReportCard(this);
 
@@ -72,6 +75,9 @@ class GameEngine {
     };
 
     start() {
+
+        this.mouse = ({x: 1000, y: 0});
+
         this.running = true;
         const gameLoop = () => {
             this.loop();
@@ -104,6 +110,7 @@ class GameEngine {
             }
 
             this.click = getXandY(e);
+            this.userInteracted = true;
 
             //set attack
             switch (e.which) {

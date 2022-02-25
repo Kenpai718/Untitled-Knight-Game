@@ -6,8 +6,7 @@
 <body text="#ffffff" , style="background: rgb(36, 35, 35, 0.993)">
     <meta charset="utf-8">
     <title>Untitled Knight Game</title>
-    <link rel="stylesheet"
-    href="https://fonts.googleapis.com/css?family=Press+Start+2P">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Press+Start+2P">
 
     <!-- Util file goes first -->
     <script type="text/javascript" src="./util.js"></script>
@@ -67,13 +66,15 @@
     <body>
 
         <div>
-            <div><b>Untitled Webgame</b></div>
-            <p><i>Developed by Kenneth Ahrens, Andre Larson, Embert Pezzali and David Shcherbina</i></p>
+            <div><b>Untitled Knight Game</b></div>
+            <p><i>Play as a powerful Knight and defend a castle from dangerous monsters in this action-packed platforming
+                    adventure!</i></p>
             <canvas id="gameWorld" width="1920" height="1040" style="background: black; border: 1px solid white"
                 tabindex="0" autofocus></canvas>
             <div>
-                <input type="checkbox" id="debug"> Debug (toggle with "Ctrl") <input type="checkbox" id="mute"> Mute <input type="range"
-                    id="volume" min="0" max="1" value="0.3" step="0.05"> Volume
+                <input type="checkbox" id="debug"> Debug (toggle with "Ctrl") <input type="checkbox" id="mute"> Mute
+                <input type="range" id="sfx-volume" min="0" max="1" value="0.3" step="0.05"> SFX Volume <input
+                    type="range" id="music-volume" min="0" max="1" value="0.3" step="0.05"> Music Volume
 
             </div>
 
@@ -85,7 +86,8 @@
                 <li><b>(LShift)</b> to roll/dodge</li>
                 <li><b>(Left Click/P)</b> to melee attack with your sword</li>
                 <li><b>(Right Click)</b> Position your mouse and right click to shoot an arrow in your inventory</li>
-                <li>   Alternatively you can shoot an arrow with <b>(O)</b> and angle it diagonally with W (up) or S (down)</li>
+                <li> Alternatively you can shoot an arrow with <b>(O)</b> and angle it diagonally with W (up) or S
+                    (down)</li>
                 <li><b>(E)</b> Press E to heal if you have any potions in your inventory</li>
                 <li><b>(ESC)</b> to pause the game</li>
                 <p></p>
@@ -99,6 +101,22 @@
                 <li>Each hit has a chance to crit and do more damage! </li>
                 <li>You can pick up arrows stuck in the environment by walking up to it.</li>
             </ul>
+
+            <div>
+                <ul id="credits">
+                    <b><u>CREDITS:</u></b>
+                    <li><b>Knight Sprite by Aamatniekss </li>
+                    <li><b>Monsters (Skeleton, Goblin, Mushroom and Eye) by LuizMelo </li>
+                    <li><b>Wizard by Warren Clark </li>
+                    <li><b>Fire Demon by chierit</li>
+                    <li><b>Bow Shooting animation by Embert Pezzali</li>
+                    <li><b>Blade Beam animation by Andre Larson</li>
+                    <li><b>Arrow upgrade sprites by David Shcherbina/Kenneth Ahrens</b></li>
+                    <li><b>SFX borrowed from various games/anime like Minecraft and Pokemon</li>
+                    <li><b>Music from Fire Emblem, Runescape, and Persona 4</li>
+                    <p></p>
+                </ul>
+            </div>
 
     </body>
 </body>
