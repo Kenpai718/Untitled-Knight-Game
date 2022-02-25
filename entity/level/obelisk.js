@@ -85,6 +85,6 @@ class Obelisk extends AbstractInteractable {
     };
 
     updateBB() {
-        this.BB = new BoundingBox(this.x, this.y, this.width, this.height - 15);
+        this.BB = new BoundingBox(this.x, this.y + PARAMS.BLOCKDIM * 2, PARAMS.BLOCKDIM * 2, PARAMS.BLOCKDIM * 2);
     };
 }

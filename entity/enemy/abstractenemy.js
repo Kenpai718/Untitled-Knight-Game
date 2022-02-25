@@ -239,7 +239,10 @@ class AbstractEnemy extends AbstractEntity {
         }
     }
 
-
+    drawHealth(ctx) {
+        if (!this.dead)
+            this.healthbar.draw(ctx);
+    }
 
 
 }
