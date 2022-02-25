@@ -70,6 +70,11 @@ class NPC extends AbstractEntity {
             this.deactivateShop();
         }
         
+        // Allows the npc to move onto active animation without needed player to collided with npc VB again
+        if (this.animations[this.state][this.direction].isDone()) {
+            this.state = this.states.active;
+            //console.log("NPC Fully Activated, ready for GUI...");;
+        }
 
         let self = this;
         //interactions with entities like player
@@ -86,10 +91,6 @@ class NPC extends AbstractEntity {
                 if (playerNear) {
                     if (self.state != self.states.active) { // If inactive (idle) and player is in vision range, awake
                         self.state = self.states.awaking;
-                        if (self.animations[self.state][self.direction].isDone()) {
-                            self.state = self.states.active;
-                            //console.log("NPC Fully Activated, ready for GUI...");;
-                        }
                     }
                     if (self.state != 1)
                         self.direction = entity.BB.right < self.BB.left ? self.directions.left : self.directions.right;
