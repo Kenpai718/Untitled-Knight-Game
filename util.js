@@ -1,7 +1,8 @@
 
 /**This file holds helpful functions and global variables/objects used throughout the game */
 const DEFAULT_FONT_SIZE = 10;
-var PAUSED = false;
+var PAUSED = false;         //if game is paused or not
+var SHOP_ACTIVE = false;    //if shop menu is open or not
 /**
  * @param {Number} r Red Value
  * @param {Number} g Green Value
