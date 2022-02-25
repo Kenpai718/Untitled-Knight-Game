@@ -56,6 +56,7 @@ class Knight extends AbstractPlayer {
         //these two audio variables control which sound effect is playing during the attack combo
         this.playAttackSFX1 = true;
         this.playAttackSFX2 = true;
+        this.playBerserkSFX = true;
 
         // bounding box (hitbox) used for attacks
         this.HB = null;
@@ -112,6 +113,10 @@ class Knight extends AbstractPlayer {
             super.setDead();
         } else { //not dead listen for player controls and do them
             if (this.berserk) {
+                if(this.playBerserkSFX) {
+                    this.playBerserkSFX = false;
+                    ASSET_MANAGER.playAsset(SFX.BERSERK_ACTIVATE);
+                }
                 this.berserkTimer += TICK;
                 if (this.berserkTimer >= 10) {
                     this.berserk = false;
@@ -790,6 +795,7 @@ class Knight extends AbstractPlayer {
         this.berserk = false;
         this.berserkTimer = 0;
         this.berserkFilter = 0.6;
+        this.playBerserkSFX = true;
     }
 
     /**reverse current facing direction */

@@ -44,8 +44,10 @@ class Door extends AbstractInteractable {
                         let spawnY = that.exitLocation.y;
                         let nextLevel = that.exitLocation.levelNum;
                         if (!that.transition) {
+                            ASSET_MANAGER.playAsset(SFX.DOOR_ENTER);
                             scene.loadLevel(nextLevel, true, spawnX, spawnY);
                         } else {
+                            ASSET_MANAGER.playAsset(SFX.COMPLETE);
                             scene.loadTransition();
                         }
                         that.game.up = false;
