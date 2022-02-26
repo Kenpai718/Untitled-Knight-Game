@@ -2,11 +2,32 @@
 <html>
 
 <head>
+    <link rel="icon" type="image/png" href="./sprites/icons/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="./sprites/icons/favicon-16x16.png" sizes="16x16" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Press+Start+2P">
+    <link rel="stylesheet" href="https://bootswatch.com/5/pulse/bootstrap.min.css">
+
+    <style>
+        body {
+            font-family: 'Press Start 2P';
+            font-size: 15px;
+        }
+
+        canvas {
+            padding-left: 0;
+            padding-right: 0;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+            width: 1920px;
+        }
+    </style>
 
 <body text="#ffffff" , style="background: rgb(36, 35, 35, 0.993)">
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Untitled Knight Game</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Press+Start+2P">
+
 
     <!-- Util file goes first -->
     <script type="text/javascript" src="./util.js"></script>
@@ -61,62 +82,142 @@
     <!-- Other files like driver or utility classes go here -->
     <script type="text/javascript" src="./main.js"></script>
 
-    </head>
-
     <body>
 
         <div>
-            <div><b>Untitled Knight Game</b></div>
-            <p><i>Play as a powerful Knight and defend a castle from dangerous monsters in this action-packed platforming
-                    adventure!</i></p>
-            <canvas id="gameWorld" width="1920" height="1040" style="background: black; border: 1px solid white"
-                tabindex="0" autofocus></canvas>
-            <div>
-                <input type="checkbox" id="debug"> Debug (toggle with "Ctrl") <input type="checkbox" id="mute"> Mute
-                <input type="range" id="sfx-volume" min="0" max="1" value="0.3" step="0.05"> SFX Volume <input
-                    type="range" id="music-volume" min="0" max="1" value="0.3" step="0.05"> Music Volume
+            <!-- START -- Add HTML code for the top menu section (navigation bar) -->
+            <!-- <div class="jumbotron" style="background-image: url('./sprites/gui/brick_dark.png');"> -->
+            <div class="jumbotron" style="background-image: url(https://cdn.discordapp.com/attachments/765640374647521370/947002651789394010/brick_dark.png);">
+                <div class="card text-white bg-primary mb-3">
+                    <p class="card-header" style="font-family:Press Start 2P;font-size: 40px;text-align:center">Untitled
+                        Knight Webgame
+                    <p>
+                    <p class="card-body" style="text-align:center"><i>Play as the Hero Knight and defend the castle from
+                            dangerous monsters in
+                            this
+                            action-packed
+                            platforming
+                            adventure!</i></p>
+                </div>
 
-            </div>
+                <hr class="my-4">
+                <canvas id="gameWorld" width="1920" height="1040" style="background: black; border: 1px solid white"
+                    tabindex="0" autofocus></canvas>
+                <hr class="my-4">
+                <p style="text-align:center;color:silver">This game is only meant to be played on desktops! Use "CTRL -"
+                    or "CTRL +" to adjust zoom if the game does not fit in your browser.</p>
 
-            <ul id="controls">
-                <b><u>CONTROLS:</u> Use (Keyboard) or (Keyboard + Mouse) </b>
-                <li><b>(ASD)</b> (AD) to move or (S) crouch.</li>
-                <li><b>(W)</b> to room/go to next level. Also used to interact with objects like opening chests. </li>
-                <li><b>(Space)</b> to jump. Double tap to double jump! If next to a wall you can wall jump! </li>
-                <li><b>(LShift)</b> to roll/dodge</li>
-                <li><b>(Left Click/P)</b> to melee attack with your sword</li>
-                <li><b>(Right Click)</b> Position your mouse and right click to shoot an arrow in your inventory</li>
-                <li> Alternatively you can shoot an arrow with <b>(O)</b> and angle it diagonally with W (up) or S
-                    (down)</li>
-                <li><b>(E)</b> Press E to heal if you have any potions in your inventory</li>
-                <li><b>(ESC)</b> to pause the game</li>
-                <p></p>
+                <div class="alert alert-dismissible alert-primary">
+                    <p class="card-title" style="font-family:Press Start 2P;font-size: 30px;text-align:center">SETTINGS
+                    <div class="card text-white bg-secondary mb-3"></div>
+                    <fieldset>
+                        <p class="card-header" style="font-family:Press Start 2P;font-size: 15px">In-Game Settings
+                        <p class="card-body">
+                            <input class="form-check-input" type="checkbox" id="debug"> Debug/Dev-Mode (toggle with
+                            "Ctrl")
+                            <input class="form-check-input" type="checkbox" id="mouse-focus" checked> Auto Mouse-Focus
+                            (Turn off if using keyboard-only controls)
+                        </p>
+                    </fieldset>
 
-                <b><u>COMBAT TIPS:</u></b>
-                <li>Clicking more than once will do a 2 attack combo chain! The second hit is slower but does more
-                    damage. </li>
-                <li>You are invincible throughout a roll animation. Roll to cancel actions on the ground and stay safe.
-                </li>
-                <li>You can move while crouching (S) and also attack while crouching.</li>
-                <li>Each hit has a chance to crit and do more damage! </li>
-                <li>You can pick up arrows stuck in the environment by walking up to it.</li>
-            </ul>
 
-            <div>
-                <ul id="credits">
-                    <b><u>CREDITS:</u></b>
-                    <li><b>Knight Sprite by Aamatniekss </li>
-                    <li><b>Monsters (Skeleton, Goblin, Mushroom and Eye) by LuizMelo </li>
-                    <li><b>Wizard by Warren Clark </li>
-                    <li><b>Fire Demon by chierit</li>
-                    <li><b>Bow Shooting animation by Embert Pezzali</li>
-                    <li><b>Blade Beam animation by Andre Larson</li>
-                    <li><b>Arrow upgrade sprites by David Shcherbina/Kenneth Ahrens</b></li>
-                    <li><b>SFX borrowed from various games/anime like Minecraft and Pokemon</li>
-                    <li><b>Music from Fire Emblem, Runescape, and Persona 4</li>
-                    <p></p>
-                </ul>
-            </div>
+                    <ul class="list-group">
+                        <p class="card-header" style="font-family:Press Start 2P;font-size: 15px">Audio Settings</p>
+                        <p class="card-body">
+                            <input class="form-check-input" type="checkbox" id="mute"> Mute
+                            <input type="range" id="sfx-volume" min="0" max="1" value="0.3" step="0.05"> SFX-Volume
+                            <input type="range" id="music-volume" min="0" max="1" value="0.3" step="0.05"> Music-Volume
+                        </p>
+                    </ul>
+                </div>
+
+
+                <div class="card text-white bg-secondary mb-3">
+                    <p class="card-title" style="font-family:Press Start 2P;font-size: 30px;text-align:center">HOW TO
+                        PLAY:
+                    <ul class="card-header" id="controls"> <b><u>CONTROLS: Use (Keyboard) or (Keyboard + Mouse)</b></u>
+                        <div class="card-body">
+                            <li><b>(ASD)</b> (AD) to move or (S) crouch.</li>
+                            <li><b>(W)</b> to interact with objects like opening a chest or entering a door.
+                            </li>
+                            <li><b>(Space)</b> to jump. Double tap to double jump! If next to a wall you can wall jump!
+                            </li>
+                            <li><b>(LShift)</b> to roll/dodge</li>
+                            <li><b>(Left Click/P)</b> to melee attack with your sword</li>
+                            <li><b>(Right Click)</b> Position your mouse and right click to shoot an arrow in your
+                                inventory
+                            </li>
+                            <p> &emsp; Alternatively you can shoot an arrow with <b>(O)</b> and angle it diagonally with
+                                W (up) or S (down)</p>
+                            <li><b>(E)</b> Press E to heal if you have any potions in your inventory</li>
+                            <li><b>(ESC)</b> to pause the game</li>
+                        </div>
+                    </ul>
+                    <ul class="card-header" id="tips"> <b><u>COMBAT TIPS:</u></b>
+                        <div class="card-body">
+                            <li>Clicking more than once will do a 2 attack combo chain! The second hit is slower but
+                                does
+                                more
+                                damage. </li>
+                            <li>You are invincible throughout a roll animation. Roll to cancel actions on the ground and
+                                stay
+                                safe.
+                            </li>
+                            <li>You can move while crouching (S) and also attack while crouching.</li>
+                            <li>Each hit has a chance to crit and do more damage! </li>
+                            <li>You can pick up arrows stuck in the environment by walking up to it.</li>
+                            <li>Collect diamonds to upgrade your equipment from the shop.</li>
+                        </div>
+                    </ul>
+                </div>
+
+                <div class="alert alert-dismissible alert-info">
+                    <p class="card-title" style="font-family:Press Start 2P;font-size: 30px;text-align:center">CREDITS:
+                    <div>
+                        <b><u>
+                                <p class="card-header">This webgame was developed in Javascript by:</p>
+                            </u></b>
+                        <ul class="card-header" id="developers">
+                            <div class="card-body">
+                                <li>Kenneth Ahrens</li>
+                                <li>Andre Larson</li>
+                                <li>Embert Pezalli</li>
+                                <li>David Shcherbina</li>
+                            </div>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <b><u>
+                                <p class="card-header">Class Project for TCSS 491: Computational Worlds @UWT Winter
+                                    2022</p>
+                            </u></b>
+                        <ul class="card-header" id="classcredit">
+                            <div class="card-body">
+                                <li>Special thanks to Professor Chris Marriot!</li>
+                            </div>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <ul class="card-header" id="asset-credits">
+                            <b><u>ASSETS:</u></b>
+                            <div class="card-body">
+                                <li>Knight Sprite by Aamatniekss </li>
+                                <li>Monsters (Skeleton, Goblin, Mushroom and Eye) by LuizMelo </li>
+                                <li>Wizard by Warren Clark </li>
+                                <li>Fire Demon by chierit</li>
+                                <li>Night Sky Background by Mokawyler</li>
+                                <li>Knight's Bow shooting animation by Embert Pezzali</li>
+                                <li>Blade Beam animation by Andre Larson</li>
+                                <li>Arrow upgrade sprites by David Shcherbina/Kenneth Ahrens</li>
+                                <li>SFX borrowed from various games/anime like Minecraft, Pokemon, Legend of Zelda, etc
+                                </li>
+                                <li>Music from Fire Emblem, Runescape, Persona 4, etc</li>
+                            </div>
+                        </ul>
+                    </div>
+                </div>
 
     </body>
 </body>

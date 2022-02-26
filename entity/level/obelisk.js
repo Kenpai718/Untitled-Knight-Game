@@ -55,6 +55,7 @@ class Obelisk extends AbstractInteractable {
             this.playSound = false;
             ASSET_MANAGER.playAsset(SFX.OBELISK_ON);
         }
+        this.animations[this.state].update(this.game.clockTick);
     };
 
     setActivated() {

@@ -18,7 +18,6 @@ ASSET_MANAGER.queueDownload("./sprites/knight/armorRight.png");
 ASSET_MANAGER.queueDownload("./sprites/projectile/arrows.png");
 ASSET_MANAGER.queueDownload("./sprites/projectile/arrowupgrades.png");
 ASSET_MANAGER.queueDownload("./sprites/projectile/bladeBeam.png");
-ASSET_MANAGER.queueDownload("./sprites/Hearts.png");
 
 //enemies
 ASSET_MANAGER.queueDownload("./sprites/enemy/wizard.png");
@@ -36,7 +35,8 @@ ASSET_MANAGER.queueDownload("./sprites/environment/distraction.png");
 ASSET_MANAGER.queueDownload("./sprites/environment/sign.png");
 
 //other
-ASSET_MANAGER.queueDownload("./sprites/vignette.png");
+ASSET_MANAGER.queueDownload("./sprites/GUI/Hearts.png");
+ASSET_MANAGER.queueDownload("./sprites/GUI/vignette.png");
 ASSET_MANAGER.queueDownload("./sprites/GUI/armor.png");
 ASSET_MANAGER.queueDownload("./sprites/GUI/bows.png");
 ASSET_MANAGER.queueDownload("./sprites/GUI/attack.png");

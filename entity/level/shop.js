@@ -12,7 +12,7 @@ class Shop {
         this.armor_sprite = ASSET_MANAGER.getAsset("./sprites/GUI/armor.png");
         this.attack_sprite = ASSET_MANAGER.getAsset("./sprites/GUI/attack.png");
         this.interactables = ASSET_MANAGER.getAsset("./sprites/GUI/interactables.png");
-        this.health_sprite = ASSET_MANAGER.getAsset("./sprites/Hearts.png");
+        this.health_sprite = ASSET_MANAGER.getAsset("./sprites/GUI/Hearts.png");
         this.arrow_sprite = ASSET_MANAGER.getAsset("./sprites/projectile/arrowupgrades.png");
         
 
@@ -210,7 +210,21 @@ class Shop {
             that.game.click = false;
         });
 
+        this.updateAnimations();
+
     };
+
+    updateAnimations() {
+        const TICK = this.game.clockTick;
+        this.myAnimations.forEach(anims => {
+            anims.forEach(anim => {
+                console.log(anim);
+                if(anim instanceof Animator) anim.update(TICK);
+            })
+        });
+
+        if(this.maxed) this.distract.update(TICK);
+    }
 
     loadAnimations() {
         
@@ -261,6 +275,8 @@ class Shop {
         this.progressbutton2[3] = new Animator(this.interactables, 575,   730, 174, 71, 1, 0, 0, false, false, false);
 
         this.distract = new Animator(this.distract_sprite, 1, 0, 70, 70, 26, .08, 0, false, false, false);
+
+        this.myAnimations = [this.armor, this.diamond, this.health, this.arrow, this.attack, this.button, this.progressbutton, this.progressbutton2];
 
     };
 

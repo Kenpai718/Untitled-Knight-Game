@@ -49,7 +49,7 @@ class Diamond extends AbstractInteractable {
             this.y += 50 * this.game.clockTick;
             this.updateBB();
         }
-
+        this.animations.update(this.game.clockTick);
     };
 
 
@@ -66,7 +66,6 @@ class Diamond extends AbstractInteractable {
         if(this.collisions.top) this.velocity.y = 0; //bonk on ceiling halt momentum
         if (this.collisions.lao_left && this.velocity.x < 0) this.velocity.x = 0;
         if (this.collisions.lo_right && this.velocity.x > 0) this.velocity.x = 0;
-
 
     }
 
