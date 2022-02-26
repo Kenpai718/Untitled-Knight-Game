@@ -42,6 +42,9 @@ class Chest extends AbstractInteractable {
         this.myOpacity = 100;
         this.openElapsed = 0;
         this.fadeOutTime = 1;
+        //posible diamond reward
+        this.max = 30;
+        this.min = 10;
 
         // Other
         this.loadAnimations();
@@ -75,7 +78,7 @@ class Chest extends AbstractInteractable {
                 // varaibles needed for GUI to display amount
                 //that.potionStorage = 1 + Math.floor(Math.random() * 3);      // Gives random amount of hp potions 1-3
                 //that.arrowStorage = 1 + Math.floor(Math.random() * 15);     // Gives random amount of arrows 1-15
-                let randomAmount = 1 + Math.floor(Math.random() * 15) + 10;
+                let randomAmount = 15 + rand_5(that.max, that.min);
                 that.diamondStorage = randomAmount;
                 that.game.myReportCard.myDiamondsEarned += randomAmount;  
 
@@ -90,6 +93,7 @@ class Chest extends AbstractInteractable {
         if (this.opened) this.openElapsed += this.game.clockTick;
         
     };
+
 
     loadAnimations() {
 

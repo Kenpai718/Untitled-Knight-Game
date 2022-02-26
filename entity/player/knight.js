@@ -596,17 +596,17 @@ class Knight extends AbstractPlayer {
                         this.facing = this.dir.left;
                         this.velocity.x = 0;
                         //gave a slightly higher boost since momentum was just killed
-                        this.velocity.x -= (PLAYER_PHYSICS.DOUBLE_JUMP_X_BOOST * PHYSIC_SCALER * 2) * TICK;
+                        this.velocity.x -= (PLAYER_PHYSICS.DOUBLE_JUMP_X_BOOST * PHYSIC_SCALER) * TICK;
                     }
 
-                } else if (this.game.right && this.slideTime > 0) {
+                } else if (this.game.right) {
                     if (!isLeft) { //keep momentum and jump right
                         this.velocity.x += PLAYER_PHYSICS.DOUBLE_JUMP_X_BOOST * TICK;
                     } else { //was facing left cut momentum and double jump other way
                         this.facing = this.dir.right;
                         this.velocity.x = 0;
                         //gave a slightly higher boost since momentum was just killed
-                        this.velocity.x += (PLAYER_PHYSICS.DOUBLE_JUMP_X_BOOST * PHYSIC_SCALER * 2) * TICK;
+                        this.velocity.x += (PLAYER_PHYSICS.DOUBLE_JUMP_X_BOOST * PHYSIC_SCALER) * TICK;
                     };
                 }
             }

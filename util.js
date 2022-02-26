@@ -35,10 +35,12 @@ const PARAMS = {
     //colors
     DMG_COLOR: rgb(183, 3, 3),      //red
     HEAL_COLOR: rgb(124, 252, 0),   //green
+    DIAMOND_COLOR: rgb(185, 242, 255),   //diamond blue
 
     //IDS for Score class
     DMG_ID: 0,
     HEAL_ID: 1,
+    DIAMOND_ID: 2,
 
     //HP RATIOS to compare with a percentage
     LOW_HP: .2,
@@ -353,6 +355,14 @@ function getMaxStrLength(theText) {
     }
 
     return maxLen;
+}
+
+function rand_10(min, max){
+    return Math.round((Math.random()*(max-min)+min)/10)*10;
+}
+
+function rand_5(min, max){
+    return Math.round((Math.random()*(max-min)+min)/10)*5;
 }
 
 /**
