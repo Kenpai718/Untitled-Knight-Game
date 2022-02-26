@@ -1147,9 +1147,9 @@ class Knight extends AbstractPlayer {
         // crouch shoot = 5
         this.animations[0][this.states.crouch_pluck][1] = new Animator(this.spritesheetLeft1, 965, 1600, 120, 80, 4, 0.1, 0, true, false, false);
         this.animations[1][this.states.crouch_pluck][1] = new Animator(this.spritesheetRight1, -5, 1600, 120, 80, 4, 0.1, 0, false, false, false);
-        // roll = 7
-        this.animations[0][this.states.roll][1] = new Animator(this.spritesheetLeft1, 0, 800, 120, 80, 12, 0.083, 0, true, false, false);
-        this.animations[1][this.states.roll][1] = new Animator(this.spritesheetRight1, 0, 800, 120, 80, 12, 0.083, 0, false, false, false);
+        // roll = 
+        this.animations[0][this.states.roll][1] = new Animator(this.spritesheetLeft1, 5, 800, 120, 80, 12, 0.083, 0, true, false, false);
+        this.animations[1][this.states.roll][1] = new Animator(this.spritesheetRight1, -5, 800, 120, 80, 12, 0.083, 0, false, false, false);
         // wall climb = 8
         this.animations[0][this.states.wall_climb][1] = new Animator(this.spritesheetLeft1, 608, 1120, 120, 80, 7, 0.1, 0, true, false, false);
         this.animations[1][this.states.wall_climb][1] = new Animator(this.spritesheetRight1, -8, 1120, 120, 80, 7, 0.1, 0, false, false, false);
@@ -1221,8 +1221,8 @@ class Knight extends AbstractPlayer {
         this.animations[0][this.states.crouch_pluck][2] = new Animator(this.spritesheetLeft2, 965, 1600, 120, 80, 4, 0.1, 0, true, false, false);
         this.animations[1][this.states.crouch_pluck][2] = new Animator(this.spritesheetRight2, -5, 1600, 120, 80, 4, 0.1, 0, false, false, false);
         // roll = 7
-        this.animations[0][this.states.roll][2] = new Animator(this.spritesheetLeft2, 0, 800, 120, 80, 12, 0.083, 0, true, false, false);
-        this.animations[1][this.states.roll][2] = new Animator(this.spritesheetRight2, 0, 800, 120, 80, 12, 0.083, 0, false, false, false);
+        this.animations[0][this.states.roll][2] = new Animator(this.spritesheetLeft2, 5, 800, 120, 80, 12, 0.083, 0, true, false, false);
+        this.animations[1][this.states.roll][2] = new Animator(this.spritesheetRight2, -5, 800, 120, 80, 12, 0.083, 0, false, false, false);
         // wall climb = 8
         this.animations[0][this.states.wall_climb][2] = new Animator(this.spritesheetLeft2, 608, 1120, 120, 80, 7, 0.1, 0, true, false, false);
         this.animations[1][this.states.wall_climb][2] = new Animator(this.spritesheetRight2, -8, 1120, 120, 80, 7, 0.1, 0, false, false, false);
@@ -1294,8 +1294,8 @@ class Knight extends AbstractPlayer {
         this.animations[0][this.states.crouch_pluck][3] = new Animator(this.spritesheetLeft3, 965, 1600, 120, 80, 4, 0.1, 0, true, false, false);
         this.animations[1][this.states.crouch_pluck][3] = new Animator(this.spritesheetRight3, -5, 1600, 120, 80, 4, 0.1, 0, false, false, false);
         // roll = 7
-        this.animations[0][this.states.roll][3] = new Animator(this.spritesheetLeft3, 0, 800, 120, 80, 12, 0.083, 0, true, false, false);
-        this.animations[1][this.states.roll][3] = new Animator(this.spritesheetRight3, 0, 800, 120, 80, 12, 0.083, 0, false, false, false);
+        this.animations[0][this.states.roll][3] = new Animator(this.spritesheetLeft3, 5, 800, 120, 80, 12, 0.083, 0, true, false, false);
+        this.animations[1][this.states.roll][3] = new Animator(this.spritesheetRight3, -5, 800, 120, 80, 12, 0.083, 0, false, false, false);
         // wall climb = 8
         this.animations[0][this.states.wall_climb][3] = new Animator(this.spritesheetLeft3, 608, 1120, 120, 80, 7, 0.1, 0, true, false, false);
         this.animations[1][this.states.wall_climb][3] = new Animator(this.spritesheetRight3, -8, 1120, 120, 80, 7, 0.1, 0, false, false, false);
