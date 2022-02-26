@@ -366,6 +366,7 @@ class SceneManager {
             }
         }
     }
+
     updatePauseMenu() {
         if (PAUSED) {
             this.textColor = 0;
@@ -480,8 +481,8 @@ class SceneManager {
         let xToLeft = this.player.BB.left - this.player.x;
         let xtoRight = this.player.BB.right - this.player.x;
         if (this.player.BB.left < 0) this.player.x -= this.player.BB.left;
-        else if (this.player.BB.right > this.level.width * PARAMS.BLOCKDIM) this.player.x -= this.player.BB.right - this.level.width * PARAMS.BLOCKDIM;
-        if (this.x < this.player.BB.left - this.game.surfaceWidth * 9 / 16 && this.x + this.game.surfaceWidth < this.level.width * PARAMS.BLOCKDIM) this.x = this.player.BB.left - this.game.surfaceWidth * 9 / 16;
+        else if (this.player.BB.left > this.level.width * PARAMS.BLOCKDIM) this.player.x -= this.player.BB.left - this.level.width * PARAMS.BLOCKDIM;
+        if (this.x + this.game.surfaceWidth * 9 / 16 < this.player.BB.left  && this.x + this.game.surfaceWidth < this.level.width * PARAMS.BLOCKDIM) this.x = this.player.BB.left - this.game.surfaceWidth * 9 / 16;
         else if (this.x > this.player.BB.right - this.game.surfaceWidth * 7 / 16 && this.x > 0) this.x = this.player.BB.right - this.game.surfaceWidth * 7 / 16;
 
         if (this.x < 0) this.x = 0;

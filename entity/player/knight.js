@@ -994,10 +994,10 @@ class Knight extends AbstractPlayer {
                 break;
             // roll BB offsets
             case this.states.roll:
-                this.offsetxBB = this.facing == 1 ? 44 * this.scale : 35 * this.scale;
+                this.offsetxBB = this.facing == 1 ? 50 * this.scale : 35 * this.scale;
                 this.offsetyBB = 53 * this.scale;
                 this.heightBB = 27 * this.scale;
-                this.widthBB = 42 * this.scale;
+                this.widthBB = 35 * this.scale;
                 break;
             // crouch attack HB offsets
             case this.states.crouch_atk:
@@ -1073,8 +1073,8 @@ class Knight extends AbstractPlayer {
         this.animations[0][this.states.crouch_pluck][0] = new Animator(this.spritesheetLeft, 965, 1600, 120, 80, 4, 0.1, 0, true, false, false);
         this.animations[1][this.states.crouch_pluck][0] = new Animator(this.spritesheetRight, -5, 1600, 120, 80, 4, 0.1, 0, false, false, false);
         // roll = 7
-        this.animations[0][this.states.roll][0] = new Animator(this.spritesheetLeft, 0, 800, 120, 80, 12, 0.083, 0, true, false, false);
-        this.animations[1][this.states.roll][0] = new Animator(this.spritesheetRight, 0, 800, 120, 80, 12, 0.083, 0, false, false, false);
+        this.animations[0][this.states.roll][0] = new Animator(this.spritesheetLeft, 5, 800, 120, 80, 12, 0.083, 0, true, false, false);
+        this.animations[1][this.states.roll][0] = new Animator(this.spritesheetRight, -5, 800, 120, 80, 12, 0.083, 0, false, false, false);
         // wall climb = 8
         this.animations[0][this.states.wall_climb][0] = new Animator(this.spritesheetLeft, 605, 1120, 120, 80, 7, 0.1, 0, true, false, false);
         this.animations[1][this.states.wall_climb][0] = new Animator(this.spritesheetRight, -5, 1120, 120, 80, 7, 0.1, 0, false, false, false);
