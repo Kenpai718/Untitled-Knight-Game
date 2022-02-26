@@ -452,23 +452,23 @@ class Shop {
         let tempFill = ctx.fillStyle;
         ctx.fillStyle = "white";
 
-        if (this.highlightB1) {
-            ctx.fillRect(this.ButtonBB1.x, this.ButtonBB1.y, this.ButtonBB1.width, this.ButtonBB1.height - 1);
+        if(this.highlightB1){
+            ctx.fillRect(this.ButtonBB1.x, this.ButtonBB1.y, this.ButtonBB1.width, this.ButtonBB1.height -1); // Arrow Pack   
         }
-        else if (this.highlightB2) {
-            ctx.fillRect(this.ButtonBB2.x, this.ButtonBB2.y, this.ButtonBB1.width, this.ButtonBB1.height - 1);
+        else if(this.highlightB2){
+            ctx.fillRect(this.ButtonBB2.x, this.ButtonBB2.y, this.ButtonBB1.width, this.ButtonBB1.height -1); // Health Potion
         }
-        else if (this.highlightB3) {
-            ctx.fillRect(this.ButtonBB3.x, this.ButtonBB3.y, this.ButtonBB1.width, this.ButtonBB1.height - 1);
+        else if(this.highlightB3){
+            ctx.fillRect(this.ButtonBB3.x, this.ButtonBB3.y + 1, this.ButtonBB1.width, this.ButtonBB1.height -1); // Max-Health Upgrade
         }
-        else if (this.highlightB4) {
-            ctx.fillRect(this.ButtonBB4.x, this.ButtonBB4.y, this.ButtonBB1.width, this.ButtonBB1.height - 1);
+        else if(this.highlightB4){
+            ctx.fillRect(this.ButtonBB4.x, this.ButtonBB4.y + 1, this.ButtonBB1.width, this.ButtonBB1.height -1); // Attack Upgrade
         }
-        else if (this.highlightB5) {
-            ctx.fillRect(this.ButtonBB5.x, this.ButtonBB5.y, this.ButtonBB1.width, this.ButtonBB1.height - 1);
+        else if(this.highlightB5){
+            ctx.fillRect(this.ButtonBB5.x, this.ButtonBB5.y, this.ButtonBB1.width, this.ButtonBB1.height -1); // Arrow Upgrade
         }
-        else if (this.highlightB6) {
-            ctx.fillRect(this.ButtonBB6.x, this.ButtonBB6.y, this.ButtonBB1.width, this.ButtonBB1.height);
+        else if(this.highlightB6){
+            ctx.fillRect(this.ButtonBB6.x, this.ButtonBB6.y, this.ButtonBB1.width, this.ButtonBB1.height); // Armor Upgrade
         }
 
         ctx.fillStyle = tempFill;

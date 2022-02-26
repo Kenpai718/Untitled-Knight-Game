@@ -78,6 +78,9 @@ var testLevel = {
         { x: 3, y: 5, width: 3, height: 1, type: 2 },
         { x: 10, y: 6, width: 5, height: 1, type: 2 }
     ],
+    trap: [
+        {x: 6, y: 6, width: 4, height: 1, type: 1, percent: 0.2, rate: 200}
+    ],
     chests: [
         //{ x: 3, y: 1, direction : 1},
         { x: 13, y: 7, direction: 0 }

@@ -170,10 +170,10 @@ const STATS = {
 
     DEMON_SLIME: {
         NAME: "Demon Slime",
-        MAX_HP: 200,
+        MAX_HP: 400,
         WIDTH: 288,
         HEIGHT: 160,
-        DAMAGE: 20,
+        DAMAGE: 0,
         SCALE: 3,
         PHYSICS: {MAX_RUN: PLAYER_PHYSICS.MAX_RUN - 60, MAX_FALL: 500}
     }
@@ -392,13 +392,10 @@ function buildButton(ctx, text, box, isSelected) {
 
 function buildTextButton(ctx, text, box, isSelected, highlightColor) {
     //text
-    
+
     ctx.font = '40px "Press Start 2P"';
     isSelected ? ctx.fillStyle = "GhostWhite" : ctx.fillStyle = "BlueViolet";
     ctx.fillText(text, box.x + 5, box.y + 5);
     isSelected ? ctx.fillStyle = highlightColor : ctx.fillStyle = "GhostWhite";
     ctx.fillText(text, box.x, box.y);
 }
-
-
-
