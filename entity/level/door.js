@@ -83,7 +83,9 @@ class Door extends AbstractInteractable {
         let theY = this.BB.y - this.game.camera.y;
         ctx.fillStyle = "GhostWhite";
 
-        if (this.exitLocation.levelNum) {
+        if (this.transition) {
+            ctx.fillText("FINISH LEVEL", theX + 15, theY - 50);
+         } else if (this.exitLocation.levelNum) {
             ctx.fillText("To Level " + this.nextLevelLabel, theX + 15, theY - 50);
         } else {
             ctx.fillText("ENTER DEBUG/TESTING ROOM", theX - 35, theY - 50);

@@ -326,7 +326,7 @@ class SceneTextBox {
 
 
         // console.log("is a string", maxLen, totalLines);
-        console.log(myBoxX, myBoxY, boxWidth, boxHeight);
+        //console.log(myBoxX, myBoxY, boxWidth, boxHeight);
 
         //write the text
         ctx.fillStyle = this.textColor;
