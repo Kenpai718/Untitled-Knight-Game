@@ -1172,11 +1172,11 @@ class Minimap {
      * @param {*} ctx
      */
     draw(ctx) {
-        //ctx.globalAlpha = 0.7;
+        ctx.filter = "Opacity(80%)";
         this.buildMinimapBox(ctx);
         this.loadEnvironmentScene(ctx);
         this.traceEntities(ctx);
-        //ctx.globalAlpha = 1;
+        ctx.filter = "none";
 
     }
 

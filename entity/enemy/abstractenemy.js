@@ -47,7 +47,7 @@ class AbstractEnemy extends AbstractEntity {
 
         //loot
         this.dropDiamonds = false;
-        this.dropAmount = randomInt(3) + 1;
+        this.dropAmount = randomInt(4) + 1;
 
         //random behavior
         this.seconds = 0;
