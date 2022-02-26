@@ -33,9 +33,6 @@ class NPC extends AbstractEntity {
         this.loadAnimations();
         this.updateBoxes();
         this.myHoverText = "Press \'W\' to shop";
-
-        console.log("I AM CREATED!");
-
     };
 
     activateShop() {
