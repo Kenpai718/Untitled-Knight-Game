@@ -358,6 +358,7 @@ class GameEngine {
             this.updateLayer(this.entities);
             this.updateLayer(this.projectiles);
             this.updateLayer(this.foreground1);
+            this.updateLayer(this.foreground2);
             this.updateLayer(this.information);
             this.updateLayer(this.events);
 

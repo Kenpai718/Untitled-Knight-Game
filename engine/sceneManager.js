@@ -836,6 +836,12 @@ class SceneManager {
                 array.push(new Ground(this.game, ground.x, h - ground.y - 1, ground.width, 1, ground.type));
             }
         }
+        if (dict.trap) {
+            for (var i = 0; i < dict.trap.length; i++) {
+                let trap = dict.trap[i];
+                array.push(new TrappedFloor(this.game, trap.x, h - trap.y - 1, trap.width, 1, trap.type, trap.percent, trap.rate));
+            }
+        }
         if (dict.bricks) {
             for (var i = 0; i < dict.bricks.length; i++) {
                 let bricks = dict.bricks[i];
@@ -1109,6 +1115,7 @@ class Minimap {
 
         this.colors = {
             ground: "dimgray",
+            trap: "orange",
             brick: "silver",
             wall: "maroon",
             platform: "purple",
@@ -1210,6 +1217,20 @@ class Minimap {
                 let myY = ground.y * PARAMS.SCALE;
                 let myW = ground.width * PARAMS.SCALE;
                 let myH = ground.height * PARAMS.SCALE;
+
+                //ctx.fillRect(this.x + myX, this.y + (this.h - myY + 3/2 * PARAMS.SCALE), myW, myH);
+                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);
+            }
+        }
+
+        ctx.fillStyle = this.colors.trap;
+        if (this.level.trap) {
+            for (var i = 0; i < this.level.trap.length; i++) {
+                let trap = this.level.trap[i];
+                let myX = trap.x * PARAMS.SCALE;
+                let myY = trap.y * PARAMS.SCALE;
+                let myW = trap.width * PARAMS.SCALE;
+                let myH = trap.height * PARAMS.SCALE;
 
                 //ctx.fillRect(this.x + myX, this.y + (this.h - myY + 3/2 * PARAMS.SCALE), myW, myH);
                 ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);
