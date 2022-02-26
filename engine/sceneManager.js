@@ -454,6 +454,7 @@ class SceneManager {
 
     restartLevel() {
         this.currentLevel = 1;
+        this.levelTimer = 0;
         this.levelState = [];
         this.lastPlayer = null;
         this.game.attack = false;

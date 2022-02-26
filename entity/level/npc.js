@@ -36,15 +36,18 @@ class NPC extends AbstractEntity {
     };
 
     activateShop() {
-        this.shopGUI = new Shop(this.game);
+        this.shopGUI = new Shop(this.game, this);
         this.game.addEntityToFront(this.shopGUI);
         SHOP_ACTIVE = true;
+        this.showText = true;
+        //console.log("a shop is here");
     };
 
     deactivateShop() {
         this.shopGUI.removeFromWorld = true;
         SHOP_ACTIVE = false;
         this.shopGUI = null;
+        this.showText = false;
     };
 
     updateBoxes() {
@@ -56,14 +59,17 @@ class NPC extends AbstractEntity {
         this.VB = new BoundingBox(this.x + 38 * this.scale - this.visionwidth / 2, this.y + this.yOffset, this.visionwidth, 80 * this.scale);
     };
 
+
     update() {
         const TICK = this.game.clockTick;
 
         // Checks status of global SHOP_ACTIVE to determine whether to open instance of shop
-        if (SHOP_ACTIVE && this.shopGUI == null) {
-            this.activateShop();
-        }
-        else if (!SHOP_ACTIVE && this.shopGUI != null) {
+        // if (SHOP_ACTIVE && this.shopGUI == null) {
+        //     this.activateShop();
+        // }
+        //global variable to instantly close the shop if it is up.
+        //this is for like if an enemy hits you while the shop is open
+        if (!SHOP_ACTIVE && this.shopGUI != null) {
             this.deactivateShop();
         }
         

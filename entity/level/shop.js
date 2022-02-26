@@ -1,6 +1,6 @@
 class Shop {
-    constructor(game) {
-        Object.assign(this, { game });
+    constructor(game, shop_keeper) {
+        Object.assign(this, { game, shop_keeper });
         this.width = 900;
         this.height = 800;
 
@@ -53,7 +53,6 @@ class Shop {
         this.tempx4 = 0;
 
         this.purchases = {
-            //arrow_pack: ["Wizard: \"LOCK ON!\" O-oh, here's your 10 arrows...", "\"Lululu lulu lala. You'd better run! Sogege Soge Soge Sogeking〜♪\""],
             arrow_pack: ["You got 10 more arrows!"],
             potion: ["You got a... health potion...?", "Wizard: ... :)"],
             heart_upgrade: "Dunununaaah! You suddenly feel refreshed!",
@@ -72,7 +71,7 @@ class Shop {
         this.myTextBox = new SceneTextBox(this.game, (this.game.surfaceWidth / 2) - 50, 1100, "");
         this.myTextBox.show = true;
         this.messageTimer = 0;
-        this.maxTimer = 5;
+        this.maxTimer = 10;
         this.defaultMsg = "Wizard: So, what would you like?";
         this.currentMessage = this.defaultMsg;
 
@@ -85,7 +84,7 @@ class Shop {
 
     update() {
 
-        if (this.currentMessage == this.lastMessage && this.currentMessage != this.defaultMsg) {
+        if (this.shop_keeper.showText && this.currentMessage == this.lastMessage && this.currentMessage != this.defaultMsg) {
             this.messageTimer += this.game.clockTick;
 
             if (this.messageTimer > this.maxTimer) {
@@ -257,9 +256,10 @@ class Shop {
 
         this.updateAnimations();
 
-        this.setShopMessage();
-
-        this.lastMessage = this.currentMessage;
+        if (this.shop_keeper.showText) {
+            this.setShopMessage();
+            this.lastMessage = this.currentMessage;
+        }
 
     };
 
@@ -269,38 +269,53 @@ class Shop {
         let message;
 
         if (this.maxed) {
-            message = "Wizard: (Chuckles) I'm in danger.";
+            if (this.currentMessage == this.purchases.arrow_pack || this.currentMessage == this.purchases.potion) {
+                message = this.currentMessage;
+            } else {
+                message = "Wizard: (Chuckles) I'm in danger.";
+            }
         } else if (scene.player.myInventory.diamonds < 10) {
             message = "Wizard: well uh... this is awkward.";
         } else {
             switch (this.currentMessage) {
                 case this.purchases.heart_upgrade:
                     message = [];
-                    message.push(this.currentMessage);
+                    if (scene.player.myInventory.healthUpgrade == scene.player.myInventory.maxUpgrade) {
+                        message.push("You feel like its impossible to get any healthier than this.");
+                    } else { message.push(this.currentMessage); }
                     message.push("Your Max-HP increased to " + scene.player.max_hp + "!");
                     break;
                 case this.purchases.attack_upgrade:
                     message = [];
-                    message.push(this.currentMessage);
+                    if (scene.player.myInventory.attackUpgrade == scene.player.myInventory.maxUpgrade) {
+                        message.push("You feel like you can cut a mountain in half with one swing!");
+                    } else { message.push(this.currentMessage); }
                     message.push("Your melee damage increased by x" + scene.player.getAttackBonus() + "!");
                     break;
                 case this.purchases.armor_upgrade:
-                    let armor = "";
-                    if(scene.player.myInventory.armorUpgrade == 1) armor = "Gold armor acquired!"
-                    else if(scene.player.myInventory.armorUpgrade == 2) armor = "Diamond armor acquired!"
-                    else if((scene.player.myInventory.armorUpgrade == 3) )armor = "Netherite armor acquired!" 
 
                     message = [];
+                    let armor = "";
+                    if (scene.player.myInventory.armorUpgrade == 3) {
+                        message.push("You feel like nothing can't stop you.");
+                    } else {
+                        if (scene.player.myInventory.armorUpgrade == 1) armor = "Gold armor acquired!"
+                        else if (scene.player.myInventory.armorUpgrade == 2) armor = "Diamond armor acquired!"
+                        else if ((scene.player.myInventory.armorUpgrade == 3)) armor = "Netherite armor acquired!"
+                    }
                     message.push(this.currentMessage + " " + armor);
                     message.push("Your incoming damage will be reduced by x" + scene.player.getDefenseBonus() + "!");
                     break;
                 case this.purchases.arrow_upgrade:
-                    let arrow = "";
-                    if(scene.player.myInventory.arrowUpgrade == 1) arrow = "Arrow upgraded to iron!"
-                    else if(scene.player.myInventory.arrowUpgrade == 2) arrow = "Arrow upgraded to gold!"
-                    else if((scene.player.myInventory.arrowUpgrade == 3)) arrow = "Arrow upgraded to diamond!"
-                    else if((scene.player.myInventory.arrowUpgrade == 4)) arrow= "Arrow upgraded to netherite!"
                     message = [];
+                    if (scene.player.myInventory.arrowUpgrade == scene.player.myInventory.maxUpgrade) {
+                        message.push("\"Sogege Soge Soge Sogeking〜♪\"");
+                    }
+                    let arrow = "";
+                    if (scene.player.myInventory.arrowUpgrade == 1) arrow = "Arrow upgraded to iron!"
+                    else if (scene.player.myInventory.arrowUpgrade == 2) arrow = "Arrow upgraded to gold!"
+                    else if ((scene.player.myInventory.arrowUpgrade == 3)) arrow = "Arrow upgraded to diamond!"
+                    else if ((scene.player.myInventory.arrowUpgrade == 4)) arrow = "Arrow upgraded to netherite!"
                     message.push(arrow + " " + this.currentMessage);
                     let newDmg = (this.game.camera.player.myInventory.arrowUpgrade * 2) + 10;
                     message.push("Your arrows will now fly faster and now do " + newDmg + " damage!");
