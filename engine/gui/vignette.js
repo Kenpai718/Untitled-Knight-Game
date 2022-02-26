@@ -9,7 +9,7 @@
 class Vignette {
     constructor(game) {
         Object.assign(this, { game });
-        this.img = ASSET_MANAGER.getAsset("./sprites/vignette.png");
+        this.img = ASSET_MANAGER.getAsset("./sprites/GUI/vignette.png");
         this.width = this.game.surfaceWidth;
         this.height = this.game.surfaceHeight;
         this.x = 0;

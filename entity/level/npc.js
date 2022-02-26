@@ -102,7 +102,7 @@ class NPC extends AbstractEntity {
                     if (self.state == self.states.active && !SHOP_ACTIVE) { // Activates shop once player in range, NPC is active and player click w key
                         if (entity.BB && self.BB.collide(entity.BB)) {
                             if (self.game.up) {
-                                ASSET_MANAGER.playAsset(SFX.CLICK);
+                                ASSET_MANAGER.playAsset(SFX.SELECT);
                                 self.activateShop();
                             }
                         }

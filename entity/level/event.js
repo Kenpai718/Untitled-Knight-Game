@@ -40,6 +40,7 @@ class Event {
             }
         });
         if (this.activated && !this.active) {
+            this.game.myReportCard.mySecretsFound++;
             this.active = true;
             if (this.blocks) {
                 this.blocks.forEach(block => self.game.addEntity(block));

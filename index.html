@@ -2,22 +2,29 @@
 <html>
 
 <head>
+    <link rel="icon" type="image/png" href="./sprites/icons/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="./sprites/icons/favicon-16x16.png" sizes="16x16" />
 
 <body text="#ffffff" , style="background: rgb(36, 35, 35, 0.993)">
     <meta charset="utf-8">
-
-
     <title>Untitled Knight Game</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Press+Start+2P">
     <link rel="stylesheet" href="https://bootswatch.com/5/pulse/bootstrap.min.css">
-    <link rel="icon" type="image/png" href="./sprites/icons/favicon-32x32.png" sizes="32x32" />
-    <link rel="icon" type="image/png" href="./sprites/icons/favicon-16x16.png" sizes="16x16" />
 
     <style>
         body {
             font-family: 'Press Start 2P';
             font-size: 15px;
+        }
+
+        canvas {
+            padding-left: 0;
+            padding-right: 0;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+            width: 1920px;
         }
     </style>
 
@@ -78,25 +85,31 @@
 
         <div>
             <!-- START -- Add HTML code for the top menu section (navigation bar) -->
-            <div class="jumbotron" style="background: rgb(36, 35, 35, 0.993)">
-                <div class="card text-white bg-primary mb-3" style="max-width: 120rem;">
-                    <p class="card-header" style="font-family:Press Start 2P">Untitled Knight Webgame
+            <div class="jumbotron" style="background-image: url('./sprites/gui/brickDark.png');">
+                <div class="card text-white bg-primary mb-3" style="max-width: 160rem;">
+                    <p class="card-header" style="font-family:Press Start 2P;font-size: 40px;text-align:center">Untitled
+                        Knight Webgame
                     <p>
-                    <p class="card-body"><i>Play as a powerful Knight and defend a castle from dangerous monsters in
+                    <p class="card-body" style="text-align:center"><i>Play as the Hero Knight and defend the castle from
+                            dangerous monsters in
                             this
                             action-packed
                             platforming
                             adventure!</i></p>
                 </div>
-                <hr class="my-4" style="max-width: 120rem;">
+
+                <hr class="my-4" style="max-width: 160rem;">
                 <canvas id="gameWorld" width="1920" height="1040" style="background: black; border: 1px solid white"
                     tabindex="0" autofocus></canvas>
+                <hr class="my-4" style="max-width: 160rem;">
+                <p style="text-align:center;color:silver">This game is only meant to be played on desktops! Use "CTRL -"
+                    or "CTRL +" to adjust zoom if the game does not fit in your browser.</p>
 
-                <div class="alert alert-dismissible alert-primary" style="max-width: 120rem;">
-                    <p class="card-title">SETTINGS
-                    <div class="card text-white bg-secondary mb-3" style="max-width: 120rem;"></div>
+                <div class="alert alert-dismissible alert-primary" style="max-width: 160rem;">
+                    <p class="card-title" style="font-family:Press Start 2P;font-size: 30px;text-align:center">SETTINGS
+                    <div class="card text-white bg-secondary mb-3" style="max-width: 160rem;"></div>
                     <fieldset>
-                        <p class="card-header">In-Game Settings
+                        <p class="card-header" style="font-family:Press Start 2P;font-size: 15px">In-Game Settings
                         <p class="card-body">
                             <input class="form-check-input" type="checkbox" id="debug"> Debug/Dev-Mode (toggle with
                             "Ctrl")
@@ -107,7 +120,7 @@
 
 
                     <ul class="list-group">
-                        <p class="card-header">Audio Settings</p>
+                        <p class="card-header" style="font-family:Press Start 2P;font-size: 15px">Audio Settings</p>
                         <p class="card-body">
                             <input class="form-check-input" type="checkbox" id="mute"> Mute
                             <input type="range" id="sfx-volume" min="0" max="1" value="0.3" step="0.05"> SFX-Volume
@@ -117,8 +130,9 @@
                 </div>
 
 
-                <div class="card text-white bg-secondary mb-3" style="max-width: 120rem;">
-                    <ul class="card-header" id="controls"> <b><u>CONTROLS:</u> Use (Keyboard) or (Keyboard + Mouse) </b>
+                <div class="card text-white bg-secondary mb-3" style="max-width: 160rem;">
+                    <p class="card-title" style="font-family:Press Start 2P;font-size: 30px;text-align:center">HOW TO PLAY:
+                    <ul class="card-header" id="controls"> <b><u>CONTROLS: Use (Keyboard) or (Keyboard + Mouse)</b></u>
                         <div class="card-body">
                             <li><b>(ASD)</b> (AD) to move or (S) crouch.</li>
                             <li><b>(W)</b> to room/go to next level. Also used to interact with objects like opening
@@ -152,6 +166,7 @@
                             <li>You can move while crouching (S) and also attack while crouching.</li>
                             <li>Each hit has a chance to crit and do more damage! </li>
                             <li>You can pick up arrows stuck in the environment by walking up to it.</li>
+                            <li>Collect diamonds to upgrade your equipment from the shop.</li>
                         </div>
                     </ul>
 
@@ -175,7 +190,7 @@
                     </div>
                 </div>
 
-                <div class="alert alert-dismissible alert-info" style="max-width: 120rem;">
+                <div class="alert alert-dismissible alert-info" style="max-width: 160rem;">
                     <p class="card-header">This webgame was developed in Javascript by:</p>
                     <div class="card-body">
                         <p>*Kenneth Ahrens</p>
@@ -184,6 +199,9 @@
                         <p>*David Shcherbina</p>
                     </div>
                     <p class="card-header">Class Project for TCSS 491: Computational Worlds @UWT Winter 2022</p>
+                    <div class="card-body">
+                        <p>*Special thanks to Professor Chris Marriot!
+                    </div>
                 </div>
 
     </body>

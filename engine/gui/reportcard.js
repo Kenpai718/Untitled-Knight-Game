@@ -11,7 +11,7 @@
 
         //not sure how to do this in terms of the canvas so I hard coded in the spot
         let boxX = 865;
-        let boxY = 1150;
+        let boxY = 1210;
         this.myReportBox = new SceneTextBox(this.game, boxX, boxY, "");
     }
 
@@ -21,6 +21,7 @@
         this.myEnemiesDefeated = 0;
         this.myDeathes = 0;
         this.myDiamondsEarned = 0;
+        this.mySecretsFound = 0;
     }
 
     drawReportCard(ctx) {
@@ -36,6 +37,7 @@
             Math.round(this.myDamageTaken) + " damage taken",
             Math.round(this.myDamageDealt) + " damage dealt",
             this.myDiamondsEarned + " diamonds earned",
+            this.mySecretsFound + " secrets found",
             this.myDeathes + " times died",
         ];
 
