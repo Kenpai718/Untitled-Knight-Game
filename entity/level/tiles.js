@@ -1,27 +1,36 @@
 class AbstractBarrier {
-    constructor(game, x, y, w, h, srcWidth, srcHeight) {
-        Object.assign(this, {game, x, y, w, h, srcWidth, srcHeight});
+    constructor(game, x, y, w, h, srcWidth, srcHeight, myOpacity) {
+        Object.assign(this, {game, x, y, w, h, srcWidth, srcHeight, myOpacity});
         this.canvas = document.createElement("Canvas"); 
 	    this.ctx = this.canvas.getContext("2d");
         this.canvas.width = srcWidth * w;
         this.canvas.height = srcHeight * h;
+        this.myOpacity = myOpacity;
     }
 
     loadImage() {
         throw new TypeError("Cannot load image directly from AbstractBarrier instance directly!");
     }
 
-    update() {
+    update(){
     };
 
     draw(ctx) {
+        ctx.filter = "opacity(" + this.myOpacity + "%)";
+        
         ctx.drawImage(this.canvas, this.x * this.scale - this.game.camera.x, this.y * this.scale - this.game.camera.y, this.w * this.scale, this.h * this.scale);
+
+        ctx.filter = "none";
     }
 
     drawDebug(ctx) {
         ctx.strokeStyle = "Red";
         if (this.BB) {
             ctx.strokeRect(this.BB.x-this.game.camera.x, this.BB.y - this.game.camera.y, this.w * PARAMS.BLOCKDIM, this.h * PARAMS.BLOCKDIM);
+        }
+        if(this.TBB){
+            ctx.strokeStyle = "Yellow";
+            ctx.strokeRect(this.TBB.x-this.game.camera.x, this.TBB.y - this.game.camera.y, this.TBB.width, this.TBB.height);
         }
     }
 
@@ -45,6 +54,65 @@ class Barrier extends AbstractBarrier {
     };
 };
 
+class TrappedFloor extends AbstractBarrier {
+    constructor(game, x, y, w, h, type, percent, rate) {
+        super(game, x, y, w, h, 16, 16, 100);
+        
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
+        
+        this.type = type;
+        this.percent = percent;
+        this.rate = rate;
+        this.decay = false;
+        // left is for left corner piece, middle is for middle piece, right is for right corner piece
+        this.types = { left : 0, middle : 1, right : 2};
+        // switch expression to get the source coordinates depending on the type
+        switch (this.type) {
+            case this.types.left:
+                this.srcX = 16;
+                break;
+            case this.types.middle:
+                this.srcX = 32;
+                break;
+            case this.types.right:
+                this.srcX = 48;
+                break;
+        }
+        this.srcY = 16;
+        this.scale = PARAMS.BLOCKDIM;
+        this.updateBB();
+        this.updateTrapBB();
+        this.loadImage();
+    };
+
+    updateTrapBB(){
+        this.TBB = new BoundingBox(this.BB.x + (this.BB.width - this.BB.width * this.percent)/2, this.BB.y - this.game.camera.y - PARAMS.BLOCKDIM, this.BB.width * this.percent, this.BB.height);
+    };
+
+    update(){
+
+        if(this.decay && this.myOpacity > 0){
+            this.myOpacity -= this.game.clockTick * this.rate;
+        } else if(this.decay && this.myOpacity <= 0) this.removeFromWorld = true;
+
+        let self = this;
+        this.game.entities.forEach(function (entity) {
+            if (entity instanceof AbstractPlayer) {
+                if(entity.BB && self.TBB.collide(entity.BB)) {
+                    self.decay = true;
+                }
+            }
+        });
+    };
+
+    loadImage() {
+        let sW = this.srcWidth;
+        let sH = this.srcHeight;
+        for (var i = 0; i < this.w; i++) 
+            this.ctx.drawImage(this.spritesheet, this.srcX, this.srcY, sW, sH, i * sW, 0, sW, sH);
+    }
+
+};
 
 class Ground extends AbstractBarrier {
     constructor(game, x, y, w, h, type) {
