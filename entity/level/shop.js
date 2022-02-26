@@ -53,12 +53,12 @@ class Shop {
         this.tempx4 = 0;
 
         this.purchases = {
-            arrow_pack: "You just got 10 arrows!",
-            potion: "You just got a potion!",
-            heart_upgrade: "You suddenly feel refreshed?!",
-            attack_upgrade: "Your blade feels sharper...?",
-            arrow_upgrade: "You got a new arrow type and +10 arrows!",
-            armor_upgrade: "You got some new drip! Lookin good."
+            arrow_pack: ["Wizard: \"LOCK ON!\" O-oh, here's your 10 arrows...", "\"Lululu lulu lala. You'd better run! Sogege Soge Soge Sogeking〜♪\""],
+            potion: "Wizard: Make sure to drink some milk.",
+            heart_upgrade: "Wizard: Dunununaaah! You suddenly feel refreshed!",
+            attack_upgrade: "Wizard: Sheeeesh this is dangerous... Is this even legal to use?!",
+            arrow_upgrade: "Wizard: ...Since you're my only customer here's 10 arrows on the house <3",
+            armor_upgrade: "Wizard: You got some new drip... Lookin good man ;)"
         };
 
 
@@ -71,7 +71,8 @@ class Shop {
         this.myTextBox = new SceneTextBox(this.game, (this.game.surfaceWidth / 2) - 50, 1100, "");
         this.myTextBox.show = true;
         this.messageTimer = 0;
-        this.defaultMsg = "...";
+        this.maxTimer = 6;
+        this.defaultMsg = "Wizard: So, what would you like?";
         this.currentMessage = this.defaultMsg;
 
         // Load Items
@@ -83,10 +84,10 @@ class Shop {
 
     update() {
 
-        if(this.currentMessage == this.lastMessage && this.currentMessage != this.defaultMsg) {
+        if (this.currentMessage == this.lastMessage && this.currentMessage != this.defaultMsg) {
             this.messageTimer += this.game.clockTick;
 
-            if(this.messageTimer > 3) {
+            if (this.messageTimer > this.maxTimer) {
                 this.messageTimer = 0;
                 this.currentMessage = this.defaultMsg;
             }
@@ -266,34 +267,37 @@ class Shop {
         let scene = this.game.camera;
         let message;
 
-        if (!this.maxed) {
+        if (this.maxed) {
+            message = "Wizard: ...I feel like I am going regret this.";
+        }else if(scene.player.myInventory.diamonds < 10) {
+            message = "Wizard: well uh... this is awkward.";
+        } else {
             switch (this.currentMessage) {
                 case this.purchases.heart_upgrade:
                     message = [];
                     message.push(this.currentMessage);
-                    message.push("Health restored and Max-HP increased to " + scene.player.max_hp + "!");
+                    message.push("Your Max-HP increased to " + scene.player.max_hp + "!");
                     break;
                 case this.purchases.attack_upgrade:
                     message = [];
                     message.push(this.currentMessage);
-                    message.push("Melee damage increased by x" + scene.player.getAttackBonus() + "!");
+                    message.push("Your melee damage increased by x" + scene.player.getAttackBonus() + "!");
                     break;
                 case this.purchases.armor_upgrade:
                     message = [];
                     message.push(this.currentMessage);
-                    message.push("Incoming damage now reduced by x" + scene.player.getDefenseBonus() + "!");
+                    message.push("Your incoming damage will be reduced by x" + scene.player.getDefenseBonus() + "!");
                     break;
                 case this.purchases.arrow_upgrade:
                     message = [];
                     message.push(this.currentMessage);
                     let newDmg = (this.game.camera.player.myInventory.arrowUpgrade * 2) + 10;
-                    message.push("Arrows are faster and now do " + newDmg + " damage!");
+                    message.push("Your arrows will now fly faster and now do " + newDmg + " damage!");
                     break;
                 default:
                     message = this.currentMessage;
             }
-        } else {
-            message = "You feel like enemies will have a bad time.";
+
         }
         if (message instanceof Array) this.myTextBox.centerBottomMulti();
         else this.myTextBox.centerBottomSingle();
@@ -452,22 +456,22 @@ class Shop {
         let tempFill = ctx.fillStyle;
         ctx.fillStyle = "white";
 
-        if(this.highlightB1){
-            ctx.fillRect(this.ButtonBB1.x, this.ButtonBB1.y, this.ButtonBB1.width, this.ButtonBB1.height -1); // Arrow Pack   
+        if (this.highlightB1) {
+            ctx.fillRect(this.ButtonBB1.x, this.ButtonBB1.y, this.ButtonBB1.width, this.ButtonBB1.height - 1); // Arrow Pack   
         }
-        else if(this.highlightB2){
-            ctx.fillRect(this.ButtonBB2.x, this.ButtonBB2.y, this.ButtonBB1.width, this.ButtonBB1.height -1); // Health Potion
+        else if (this.highlightB2) {
+            ctx.fillRect(this.ButtonBB2.x, this.ButtonBB2.y, this.ButtonBB1.width, this.ButtonBB1.height - 1); // Health Potion
         }
-        else if(this.highlightB3){
-            ctx.fillRect(this.ButtonBB3.x, this.ButtonBB3.y + 1, this.ButtonBB1.width, this.ButtonBB1.height -1); // Max-Health Upgrade
+        else if (this.highlightB3) {
+            ctx.fillRect(this.ButtonBB3.x, this.ButtonBB3.y + 1, this.ButtonBB1.width, this.ButtonBB1.height - 1); // Max-Health Upgrade
         }
-        else if(this.highlightB4){
-            ctx.fillRect(this.ButtonBB4.x, this.ButtonBB4.y + 1, this.ButtonBB1.width, this.ButtonBB1.height -1); // Attack Upgrade
+        else if (this.highlightB4) {
+            ctx.fillRect(this.ButtonBB4.x, this.ButtonBB4.y + 1, this.ButtonBB1.width, this.ButtonBB1.height - 1); // Attack Upgrade
         }
-        else if(this.highlightB5){
-            ctx.fillRect(this.ButtonBB5.x, this.ButtonBB5.y, this.ButtonBB1.width, this.ButtonBB1.height -1); // Arrow Upgrade
+        else if (this.highlightB5) {
+            ctx.fillRect(this.ButtonBB5.x, this.ButtonBB5.y, this.ButtonBB1.width, this.ButtonBB1.height - 1); // Arrow Upgrade
         }
-        else if(this.highlightB6){
+        else if (this.highlightB6) {
             ctx.fillRect(this.ButtonBB6.x, this.ButtonBB6.y, this.ButtonBB1.width, this.ButtonBB1.height); // Armor Upgrade
         }
 
