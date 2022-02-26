@@ -555,6 +555,7 @@ class Knight extends AbstractPlayer {
                     }
                     this.action = this.states.jump;
                 }
+                this.game.jump = false;
             }
 
             if (this.jumpTime > 0) {
