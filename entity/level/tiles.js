@@ -409,8 +409,10 @@ class BackgroundWalls {
 };
 
 class AbstractBackFeature {
-    constructor(game, x, y) {
-        Object.assign(this, { game, x, y });
+    constructor(game, x, y, w, h) {
+        Object.assign(this, { game, x, y, w, h });
+
+        this.scale = PARAMS.BLOCKDIM;
     }
 
     update() {}
@@ -419,7 +421,7 @@ class AbstractBackFeature {
 
 class Torch extends AbstractBackFeature {
     constructor(game, x, y, w, h, srcWidth, srcHeight) {
-        super(game, x, y);
+        super(game, x, y, 1, 1);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
         this.scale = 5;
         this.animation = new Animator(this.spritesheet, 19, 112, 17, 17, 3, 0.7, 4, false, true, false); // torch animation
@@ -436,7 +438,7 @@ class Torch extends AbstractBackFeature {
 
 class Window extends AbstractBackFeature {
     constructor(game, x, y, w, h) {
-        super(game, x, y);
+        super(game, x, y, w, h);
         this.w = w;
         this.h = h;
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
