@@ -25,6 +25,10 @@ class SceneManager {
         this.killsRequired = 0;
         this.levelTimer = 0;
 
+        //cooldown to prevent resetting immediately after getting to results screen
+        this.bufferTimer = 0;
+        this.maxBufferTime = 1;
+
         //levels array to load levels by calling levels[0], levels[1], etc
         this.makeTextBox();
         this.currentLevel = 1; // CHANGE TO 1 BEFORE SUBMISSION
@@ -91,6 +95,7 @@ class SceneManager {
      * Transition Screen
      */
     loadTransition() {
+        this.bufferTimer = 0;
         this.transition = true;
         this.clearEntities();
         this.game.addEntity(new Background(this.game));
@@ -406,7 +411,9 @@ class SceneManager {
                     this.textColor = 3;
                 }
             }
-            if (this.game.click) {
+
+            this.bufferTimer += this.game.clockTick;
+            if (this.game.click && this.bufferTimer > this.maxBufferTime) {
                 if (this.nextLevelBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     ASSET_MANAGER.playAsset(SFX.CLICK);
                     // load next level code goes here when level 2 is added
@@ -657,6 +664,8 @@ class SceneManager {
                     this.myControlBox.show = true;
                     this.myControlBox.draw(ctx);
                 }
+                
+                this.game.myReportCard.drawReportCard(ctx);
             }
 
             if (PARAMS.DEBUG) {
@@ -712,8 +721,8 @@ class SceneManager {
             ctx.fillText("Level Complete!", (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 3);
             ctx.font = '40px "Press Start 2P"';
             buildTextButton(ctx, "Next Level", this.nextLevelBB, false, "gray"); //set this once there is another level
-            buildTextButton(ctx, "Restart Game", this.restartLevelBB, this.textColor == 2, "DeepSkyBlue");
-            buildTextButton(ctx, "Return To Menu", this.returnToMenuBB, this.textColor == 3, "DeepSkyBlue");
+            buildTextButton(ctx, "Restart Game", this.restartLevelBB, this.textColor == 2 && this.bufferTimer > this.maxBufferTime, "DeepSkyBlue");
+            buildTextButton(ctx, "Return To Menu", this.returnToMenuBB, this.textColor == 3 && this.bufferTimer > this.maxBufferTime, "DeepSkyBlue");
 
             this.game.myReportCard.drawReportCard(ctx);
         }

@@ -67,7 +67,7 @@ class HeartBar {
 class HeartContainer {
     constructor(game, x, y, scale, hp) {
         Object.assign(this, { game, x, y, scale, hp });
-        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Hearts.png");
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/GUI/Hearts.png");
 
         this.states = { full: 0, threefourth: 1, half: 2, quarter: 3, empty: 4 };
         this.status = this.states.full;
