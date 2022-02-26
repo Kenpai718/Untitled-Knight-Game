@@ -1,7 +1,6 @@
 /**
  * This entity is used as the shopkeeper to buy equipment for the player
  */
-
 class NPC extends AbstractEntity {
 
     constructor(game, x, y) {
@@ -25,8 +24,6 @@ class NPC extends AbstractEntity {
         this.height = 80 * this.scale;
         this.visionwidth = 700 * this.scale;
 
-
-
         // Shop
         this.showText = false;
         this.fontSize = DEFAULT_FONT_SIZE;
@@ -37,6 +34,8 @@ class NPC extends AbstractEntity {
         this.updateBoxes();
         this.myHoverText = "Press \'W\' to shop";
 
+        console.log("I AM CREATED!");
+
     };
 
     activateShop() {
@@ -46,7 +45,6 @@ class NPC extends AbstractEntity {
     };
 
     deactivateShop() {
-
         this.shopGUI.removeFromWorld = true;
         SHOP_ACTIVE = false;
         this.shopGUI = null;
@@ -71,6 +69,12 @@ class NPC extends AbstractEntity {
         else if (!SHOP_ACTIVE && this.shopGUI != null) {
             this.deactivateShop();
         }
+        
+        // Allows the npc to move onto active animation without needed player to collided with npc VB again
+        if (this.animations[this.state][this.direction].isDone()) {
+            this.state = this.states.active;
+            //console.log("NPC Fully Activated, ready for GUI...");;
+        }
 
         let self = this;
         //interactions with entities like player
@@ -85,18 +89,17 @@ class NPC extends AbstractEntity {
                  * */
                  let playerNear = entity.BB && self.VB.collide(entity.BB);
                 if (playerNear) {
-                    if (self.state != self.states.active) { // If inactive (idle) and player is in vision range, awake
-                        self.state = self.states.awaking;
-                        if (self.animations[self.state][self.direction].isDone()) {
-                            self.state = self.states.active;
-                            //console.log("NPC Fully Activated, ready for GUI...");;
-                        }
+                    
+                    if (self.state != self.states.awaking) {
+
+                        if(self.x + self.BB.width /2 > entity.BB.x  + entity.BB.width / 2)
+                            self.direction = self.directions.left;
+                        else self.direction = self.directions.right;
                     }
-
-                    if (self.state != 1)
-                        self.direction = entity.BB.right < self.BB.left ? self.directions.left : self.directions.right;
-
-                    if (self.states.active && !SHOP_ACTIVE) { // Activates shop once player in range, NPC is active and player click w key
+                    if (self.state == self.states.inactive) { // If inactive (idle) and player is in vision range, awake
+                        self.state = self.states.awaking;
+                    }
+                    if (self.state == self.states.active && !SHOP_ACTIVE) { // Activates shop once player in range, NPC is active and player click w key
                         if (entity.BB && self.BB.collide(entity.BB)) {
                             if (self.game.up) {
                                 ASSET_MANAGER.playAsset(SFX.CLICK);
@@ -123,7 +126,7 @@ class NPC extends AbstractEntity {
         dist = super.checkEnvironmentCollisions(dist);
         super.updatePositionAndVelocity(dist);
         this.updateBoxes();
-
+        this.animations[this.state][this.direction].update(TICK);
     };
 
     loadAnimations() {

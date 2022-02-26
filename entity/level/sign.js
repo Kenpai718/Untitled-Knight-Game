@@ -56,7 +56,10 @@ class Sign extends AbstractBackFeature {
                 //player pressed up to read sign
                 if (playerNearSign && self.game.up) {
                     //mark player has read this sign
-                    if (!self.read) self.read = true; 
+                    if (!self.read) {
+                        ASSET_MANAGER.playAsset(SFX.SELECT);
+                        self.read = true;
+                    }
                     self.isReading = true;
                     self.showText = true;
                 } else {

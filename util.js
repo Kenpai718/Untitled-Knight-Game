@@ -14,6 +14,7 @@ const rgb = (r, g, b) => `rgba(${r}, ${g}, ${b})`;
 /** Global Parameters Objects */
 const PARAMS = {
     DEBUG: false,      //for showing debug settings on canvas when ticked
+    AUTO_FOCUS: false,
     BLOCKDIM: 81,      //dimensions of blocks
     DMG_COOLDOWN: .5,  //how long the cooldown is for an entity to take damage,
     SCALE: 10,          //dimensions used for minimap

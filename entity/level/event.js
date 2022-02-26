@@ -105,15 +105,15 @@ class Secret extends Event {
         let self = this;
         if (this.indicate) {
             ctx.filter = "brightness(" + this.myBrightness + "%) ";
-            if (this.up) this.myBrightness += 50 * this.game.clockTick;
-            else this.myBrightness -= 50 * this.game.clockTick;
-            if (this.myBrightness >= 150) {
+            if (this.up) this.myBrightness += 25 * this.game.clockTick;
+            else this.myBrightness -= 25 * this.game.clockTick;
+            if (this.myBrightness >= 125) {
                 this.up = false;
-                this.myBrightness = 150;
+                this.myBrightness = 125;
             }
-            if (this.myBrightness <= 50) {
+            if (this.myBrightness <= 75) {
                 this.up = true;
-                this.myBrightness = 50;
+                this.myBrightness = 75;
             }
         }
         if (!this.activated) {        
