@@ -54,7 +54,7 @@ class Shop {
 
         this.purchases = {
             arrow_pack: ["Wizard: \"LOCK ON!\" O-oh, here's your 10 arrows...", "\"Lululu lulu lala. You'd better run! Sogege Soge Soge Sogeking〜♪\""],
-            potion: "Wizard: Make sure to drink some milk.",
+            potion: ["You got a... health potion...?", "Wizard: ..."],
             heart_upgrade: "Wizard: Dunununaaah! You suddenly feel refreshed!",
             attack_upgrade: "Wizard: Sheeeesh this is dangerous... Is this even legal to use?!",
             arrow_upgrade: "Wizard: ...Since you're my only customer here's 10 arrows on the house <3",
