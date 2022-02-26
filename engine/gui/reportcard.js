@@ -32,7 +32,7 @@
         let labels = [
             "[REPORT CARD]",
             "--------------------------",
-            this.game.camera.getLevelTimer() + " to complete!",
+            this.game.camera.getLevelTimer() + " time taken",
             this.myEnemiesDefeated + " enemies defeated",
             Math.round(this.myDamageTaken) + " damage taken",
             Math.round(this.myDamageDealt) + " damage dealt",
