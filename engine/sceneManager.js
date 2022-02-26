@@ -1008,19 +1008,19 @@ class SceneManager {
         if (dict.supports) {
             for (var i = 0; i < dict.supports.length; i++) {
                 let support = dict.supports[i];
-                array.push(new Support(this.game, support.x * PARAMS.BLOCKDIM, (h - support.y - 1) * PARAMS.BLOCKDIM, support.width * PARAMS.BLOCKDIM));
+                array.push(new Support(this.game, support.x, (h - support.y - 1), support.width));
             }
         }
         if (dict.chains) {
             for (var i = 0; i < dict.chains.length; i++) {
                 let chain = dict.chains[i];
-                array.push(new Chain(this.game, chain.x * PARAMS.BLOCKDIM, (h - chain.y - 1) * PARAMS.BLOCKDIM));
+                array.push(new Chain(this.game, chain.x, h - chain.y - 1));
             }
         }
         if (dict.ceilingChains) {
             for (var i = 0; i < dict.ceilingChains.length; i++) {
                 let ceilingChain = dict.ceilingChains[i];
-                array.push(new CeilingChain(this.game, ceilingChain.x * PARAMS.BLOCKDIM, (h - ceilingChain.y - 1) * PARAMS.BLOCKDIM, ceilingChain.height));
+                array.push(new CeilingChain(this.game, ceilingChain.x, h - ceilingChain.y - 1, ceilingChain.height));
             }
         }
         if (dict.backgroundWalls) {
