@@ -133,6 +133,7 @@ class Shop {
                         self.highlightB1 = true;
 
                         if (self.game.click) {
+                            self.game.myReportCard.myDiamondsSpent += 10;
                             entity.myInventory.diamonds -= self.arrowPackCost[entity.myInventory.arrowUpgrade];
                             entity.myInventory.arrows += 10;
                             ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
@@ -149,6 +150,7 @@ class Shop {
                         self.highlightB2 = true;
 
                         if (self.game.click) {
+                            self.game.myReportCard.myDiamondsSpent += 10;
                             entity.myInventory.diamonds -= 10;
                             entity.myInventory.potions += 1;
                             ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
@@ -164,6 +166,7 @@ class Shop {
                         self.highlightB3 = true;
 
                         if (self.game.click) {
+                            self.game.myReportCard.myDiamondsSpent += self.healthCost[entity.myInventory.healthUpgrade];
                             entity.myInventory.diamonds -= self.healthCost[entity.myInventory.healthUpgrade];
                             entity.myInventory.healthUpgrade += 1;
 
@@ -183,6 +186,7 @@ class Shop {
                         self.highlightB4 = true;
 
                         if (self.game.click) {
+                            self.game.myReportCard.myDiamondsSpent += self.armorCost[entity.myInventory.armorUpgrade];
                             entity.myInventory.diamonds -= self.attackCost[entity.myInventory.attackUpgrade];
                             entity.myInventory.attackUpgrade += 1;
                             ASSET_MANAGER.playAsset(SFX.ENCHANTMENT);
@@ -199,6 +203,7 @@ class Shop {
 
                         if (self.game.click) {
                             entity.myInventory.diamonds -= self.arrowCost[entity.myInventory.arrowUpgrade];
+                            self.game.myReportCard.myDiamondsSpent += self.arrowCost[entity.myInventory.arrowUpgrade];
                             entity.myInventory.arrowUpgrade += 1;
                             entity.myInventory.arrows += 10;
                             //entity.myInventory.arrows = Math.floor(entity.myInventory.arrows/2); 
@@ -215,6 +220,7 @@ class Shop {
                         self.highlightB6 = true;
 
                         if (self.game.click) {
+                            self.game.myReportCard.myDiamondsSpent += self.armorCost[entity.myInventory.armorUpgrade];
                             entity.myInventory.diamonds -= self.armorCost[entity.myInventory.armorUpgrade];
                             entity.myInventory.armorUpgrade += 1;
                             ASSET_MANAGER.playAsset(SFX.ANVIL);
