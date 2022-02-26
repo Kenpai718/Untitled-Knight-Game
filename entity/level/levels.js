@@ -434,7 +434,8 @@ var level1_1 = {
                 "-While wallsliding or next to a wall",
                 " tap [SPACE] to walljump in the other direction.",
                 " Chain together walljumps to scale vertical heights!",
-                "-If hanging on a ledge press [W] to get up"
+                "-If hanging on a ledge press [W] to get up",
+                " or [S] to slide down",
             ]
         },
 
