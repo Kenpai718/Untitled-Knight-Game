@@ -470,10 +470,12 @@ class SceneManager {
     }
 
     BBCamera() {
+        let xToLeft = this.player.BB.left - this.player.x;
+        let xtoRight = this.player.BB.right - this.player.x;
         if (this.player.BB.left < 0) this.player.x -= this.player.BB.left;
         else if (this.player.BB.right > this.level.width * PARAMS.BLOCKDIM) this.player.x -= this.player.BB.right - this.level.width * PARAMS.BLOCKDIM;
-        if (this.x < this.player.x - this.game.surfaceWidth * 9 / 16 && this.x + this.game.surfaceWidth < this.level.width * PARAMS.BLOCKDIM) this.x = this.player.x - this.game.surfaceWidth * 9 / 16;
-        else if (this.x > this.player.x - this.game.surfaceWidth * 7 / 16 && this.x > 0) this.x = this.player.x - this.game.surfaceWidth * 7 / 16;
+        if (this.x < this.player.BB.left - this.game.surfaceWidth * 9 / 16 && this.x + this.game.surfaceWidth < this.level.width * PARAMS.BLOCKDIM) this.x = this.player.BB.left - this.game.surfaceWidth * 9 / 16;
+        else if (this.x > this.player.BB.right - this.game.surfaceWidth * 7 / 16 && this.x > 0) this.x = this.player.BB.right - this.game.surfaceWidth * 7 / 16;
 
         if (this.x < 0) this.x = 0;
         else if (this.x + this.game.surfaceWidth > this.level.width * PARAMS.BLOCKDIM) this.x = this.level.width * PARAMS.BLOCKDIM - this.game.surfaceWidth;
@@ -853,6 +855,12 @@ class SceneManager {
             for (var i = 0; i < dict.walls.length; i++) {
                 let walls = dict.walls[i];
                 array.push(new Walls(this.game, walls.x, h - walls.y - 1, 1, walls.height, walls.type));
+            }
+        }
+        if (dict.blocks) {
+            for (var i = 0; i < dict.blocks.length; i++) {
+                let blocks = dict.blocks[i];
+                array.push(new Block(this.game, blocks.x, h - blocks.y - 1, blocks.width, blocks.height));
             }
         }
     }

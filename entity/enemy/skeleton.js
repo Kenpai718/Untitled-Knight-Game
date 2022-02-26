@@ -131,7 +131,7 @@ class Skeleton extends AbstractEnemy {
             super.checkInDeathZone();  //die if below blastzone
 
         }
-
+        this.animations[this.state][this.direction].update(TICK);
 
     };
 

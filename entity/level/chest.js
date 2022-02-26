@@ -14,8 +14,10 @@ class Chest extends AbstractInteractable {
         this.scale = 5; // 4
         // this.width = 21 * this.scale;
         // this.height = 12 * this.scale;
-        this.width = 1.5;
-        this.height = 1;
+        this.w = 1.5;
+        this.h = 1;
+
+        this.scale = PARAMS.BLOCKDIM;
 
         // Update settings
         this.timerGUI = 0;
@@ -48,13 +50,13 @@ class Chest extends AbstractInteractable {
 
     updateBB() {
         this.lastBoundingBox = this.BB;
-        this.BB = new BoundingBox(this.x * PARAMS.BLOCKDIM, this.y * PARAMS.BLOCKDIM, this.width * PARAMS.BLOCKDIM, this.height * PARAMS.BLOCKDIM)
+        this.BB = new BoundingBox(this.x * PARAMS.BLOCKDIM, this.y * PARAMS.BLOCKDIM, this.w * PARAMS.BLOCKDIM, this.h * PARAMS.BLOCKDIM)
     };
 
     viewBoundingBox(ctx) {
         // This is the Bounding Box, defines space where chest is and can be opened
         ctx.strokeStyle = "Red";
-        ctx.strokeRect(this.x - this.game.camera.x, this.y - this.game.camera.y, this.width, this.height);
+        ctx.strokeRect(this.x - this.game.camera.x, this.y - this.game.camera.y, this.w, this.h);
     };
 
     update() {
@@ -86,7 +88,7 @@ class Chest extends AbstractInteractable {
         }); // Allows timer to start when open, used for fade effect
 
         if (this.opened) this.openElapsed += this.game.clockTick;
-
+        
     };
 
     loadAnimations() {
@@ -121,16 +123,16 @@ class Chest extends AbstractInteractable {
         switch (this.state) {
             case 0: // Closed chest
                 if (this.direction == this.directions.left) {
-                    ctx.drawImage(this.spritesheet, 19, 147, 21, 12, this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.width * PARAMS.BLOCKDIM, this.height * PARAMS.BLOCKDIM);
+                    ctx.drawImage(this.spritesheet, 19, 147, 21, 12, this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.w * PARAMS.BLOCKDIM, this.h * PARAMS.BLOCKDIM);
                 } else {
-                    ctx.drawImage(this.spritesheet, 120, 147, 21, 12, this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.width * PARAMS.BLOCKDIM, this.height * PARAMS.BLOCKDIM);
+                    ctx.drawImage(this.spritesheet, 120, 147, 21, 12, this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.w * PARAMS.BLOCKDIM, this.h * PARAMS.BLOCKDIM);
                 }
                 break;
             case 1: // Opened chest
                 if (this.direction == this.directions.left) {
-                    ctx.drawImage(this.spritesheet, 51, 147, 21, 12, this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.width * PARAMS.BLOCKDIM, this.height * PARAMS.BLOCKDIM);
+                    ctx.drawImage(this.spritesheet, 51, 147, 21, 12, this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.w * PARAMS.BLOCKDIM, this.h * PARAMS.BLOCKDIM);
                 } else {
-                    ctx.drawImage(this.spritesheet, 83, 147, 21, 12, this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.width * PARAMS.BLOCKDIM, this.height * PARAMS.BLOCKDIM);
+                    ctx.drawImage(this.spritesheet, 83, 147, 21, 12, this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.w * PARAMS.BLOCKDIM, this.h * PARAMS.BLOCKDIM);
                 }
                 break;
         }
@@ -164,7 +166,7 @@ class Chest extends AbstractInteractable {
 
     drawDebug(ctx) {
         ctx.strokeStyle = "Red";
-        ctx.strokeRect(this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.width * PARAMS.BLOCKDIM, this.height * PARAMS.BLOCKDIM);
+        ctx.strokeRect(this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.w * PARAMS.BLOCKDIM, this.h * PARAMS.BLOCKDIM);
 
         //     ctx.fillStyle = "White"
         //     ctx.fillText("Chest", this.x - this.game.camera.x, this.y - this.game.camera.y + 20);
