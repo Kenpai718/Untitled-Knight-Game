@@ -31,8 +31,8 @@ class Knight extends AbstractPlayer {
         };
 
         //animation speed stats
-        this.animRunSpd = 0.06; //speed of the dashing animation
-        this.animRollSpd = 0.05; //speed of the dashing animation
+        this.animRunSpd = 0.075; //speed of the dashing animation
+        this.animRollSpd = 0.06; //speed of the dashing animation
         this.atkSpd = 0.08;        //slash1
         this.atkSpd2 = this.atkSpd + .01; //slash 2 must be slightly slower than atkspd1
         this.bowSpd = .1;
@@ -91,6 +91,7 @@ class Knight extends AbstractPlayer {
         this.animations = [];
         this.loadAnimations();
         this.updateBB();
+        this.lastBB = this.BB;
     };
 
     /** Update methods */
@@ -202,8 +203,6 @@ class Knight extends AbstractPlayer {
                 ctx.filter = "drop-shadow(0 0 0.2rem crimson) opacity(85%)";
             }
             this.animations[this.facing][this.action][this.myInventory.armorUpgrade].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
-            //ctx.filter = "saturate(500%) hue-rotate(135deg)"; // use this for knight's armor color
-            //this.armor[this.facing][this.action][this.myInventory.armorUpgrade].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
             this.flickerFlag = !this.flickerFlag;
         } else {
             if (this.berserk) {
@@ -212,8 +211,6 @@ class Knight extends AbstractPlayer {
             //white border to indicate roll invincibility
             //if(this.game.roll) ctx.filter = "drop-shadow(0 0 0.15rem ghostwhite)";
             this.animations[this.facing][this.action][this.myInventory.armorUpgrade].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
-            //ctx.filter = visableArmor[this.myInventory.armorUpgrade]; // use this for knight's armor color
-            //this.armor[this.facing][this.action][this.myInventory.armorUpgrade].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
             //ctx.filter = "none";
         }
 
@@ -833,8 +830,6 @@ class Knight extends AbstractPlayer {
     resetAnimationTimers(action) {
         this.animations[0][action][this.myInventory.armorUpgrade].elapsedTime = 0;
         this.animations[1][action][this.myInventory.armorUpgrade].elapsedTime = 0;
-        //this.armor[0][action][this.myInventory.armorUpgrade].elapsedTime = 0;
-        //this.armor[1][action][this.myInventory.armorUpgrade].elapsedTime = 0;
     }
 
     /**Attack/Damage Logic helper methods */
@@ -1069,8 +1064,8 @@ class Knight extends AbstractPlayer {
         this.animations[0][this.states.crouch][0] = new Animator(this.spritesheetLeft, 1205, 80, 120, 80, 1, 1, 0, true, true, false);
         this.animations[1][this.states.crouch][0] = new Animator(this.spritesheetRight, 115, 80, 120, 80, 1, 1, 0, false, true, false);
         // crouch walk = 3
-        this.animations[0][this.states.crouch_walk][0] = new Animator(this.spritesheetLeft, 485, 240, 120, 80, 8, 0.1, 0, true, true, false);
-        this.animations[1][this.states.crouch_walk][0] = new Animator(this.spritesheetRight, -5, 240, 120, 80, 8, 0.1, 0, false, true, false);
+        this.animations[0][this.states.crouch_walk][0] = new Animator(this.spritesheetLeft, 485, 240, 120, 80, 8, 0.085, 0, true, true, false);
+        this.animations[1][this.states.crouch_walk][0] = new Animator(this.spritesheetRight, -5, 240, 120, 80, 8, 0.085, 0, false, true, false);
         // crouch attack = 4
         this.animations[0][this.states.crouch_atk][0] = new Animator(this.spritesheetLeft, 965, 160, 120, 80, 4, 0.08, 0, true, false, false);
         this.animations[1][this.states.crouch_atk][0] = new Animator(this.spritesheetRight, -5, 160, 120, 80, 4, 0.08, 0, false, false, false);
@@ -1144,8 +1139,8 @@ class Knight extends AbstractPlayer {
         this.animations[0][this.states.crouch][1] = new Animator(this.spritesheetLeft1, 1205, 80, 120, 80, 1, 1, 0, true, true, false);
         this.animations[1][this.states.crouch][1] = new Animator(this.spritesheetRight1, 115, 80, 120, 80, 1, 1, 0, false, true, false);
         // crouch walk = 3
-        this.animations[0][this.states.crouch_walk][1] = new Animator(this.spritesheetLeft1, 485, 240, 120, 80, 8, 0.1, 0, true, true, false);
-        this.animations[1][this.states.crouch_walk][1] = new Animator(this.spritesheetRight1, -5, 240, 120, 80, 8, 0.1, 0, false, true, false);
+        this.animations[0][this.states.crouch_walk][1] = new Animator(this.spritesheetLeft1, 485, 240, 120, 80, 8, 0.085, 0, true, true, false);
+        this.animations[1][this.states.crouch_walk][1] = new Animator(this.spritesheetRight1, -5, 240, 120, 80, 8, 0.085, 0, false, true, false);
         // crouch attack = 4
         this.animations[0][this.states.crouch_atk][1] = new Animator(this.spritesheetLeft1, 965, 160, 120, 80, 4, 0.08, 0, true, false, false);
         this.animations[1][this.states.crouch_atk][1] = new Animator(this.spritesheetRight1, -5, 160, 120, 80, 4, 0.08, 0, false, false, false);
@@ -1217,8 +1212,8 @@ class Knight extends AbstractPlayer {
         this.animations[0][this.states.crouch][2] = new Animator(this.spritesheetLeft2, 1205, 80, 120, 80, 1, 1, 0, true, true, false);
         this.animations[1][this.states.crouch][2] = new Animator(this.spritesheetRight2, 115, 80, 120, 80, 1, 1, 0, false, true, false);
         // crouch walk = 3
-        this.animations[0][this.states.crouch_walk][2] = new Animator(this.spritesheetLeft2, 485, 240, 120, 80, 8, 0.1, 0, true, true, false);
-        this.animations[1][this.states.crouch_walk][2] = new Animator(this.spritesheetRight2, -5, 240, 120, 80, 8, 0.1, 0, false, true, false);
+        this.animations[0][this.states.crouch_walk][2] = new Animator(this.spritesheetLeft2, 485, 240, 120, 80, 8, 0.085, 0, true, true, false);
+        this.animations[1][this.states.crouch_walk][2] = new Animator(this.spritesheetRight2, -5, 240, 120, 80, 8, 0.085, 0, false, true, false);
         // crouch attack = 4
         this.animations[0][this.states.crouch_atk][2] = new Animator(this.spritesheetLeft2, 965, 160, 120, 80, 4, 0.08, 0, true, false, false);
         this.animations[1][this.states.crouch_atk][2] = new Animator(this.spritesheetRight2, -5, 160, 120, 80, 4, 0.08, 0, false, false, false);
@@ -1290,8 +1285,8 @@ class Knight extends AbstractPlayer {
         this.animations[0][this.states.crouch][3] = new Animator(this.spritesheetLeft3, 1205, 80, 120, 80, 1, 1, 0, true, true, false);
         this.animations[1][this.states.crouch][3] = new Animator(this.spritesheetRight3, 115, 80, 120, 80, 1, 1, 0, false, true, false);
         // crouch walk = 3
-        this.animations[0][this.states.crouch_walk][3] = new Animator(this.spritesheetLeft3, 485, 240, 120, 80, 8, 0.1, 0, true, true, false);
-        this.animations[1][this.states.crouch_walk][3] = new Animator(this.spritesheetRight3, -5, 240, 120, 80, 8, 0.1, 0, false, true, false);
+        this.animations[0][this.states.crouch_walk][3] = new Animator(this.spritesheetLeft3, 485, 240, 120, 80, 8, 0.085, 0, true, true, false);
+        this.animations[1][this.states.crouch_walk][3] = new Animator(this.spritesheetRight3, -5, 240, 120, 80, 8, 0.085, 0, false, true, false);
         // crouch attack = 4
         this.animations[0][this.states.crouch_atk][3] = new Animator(this.spritesheetLeft3, 965, 160, 120, 80, 4, 0.08, 0, true, false, false);
         this.animations[1][this.states.crouch_atk][3] = new Animator(this.spritesheetRight3, -5, 160, 120, 80, 4, 0.08, 0, false, false, false);
