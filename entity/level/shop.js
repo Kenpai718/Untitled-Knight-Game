@@ -53,12 +53,13 @@ class Shop {
         this.tempx4 = 0;
 
         this.purchases = {
-            arrow_pack: ["Wizard: \"LOCK ON!\" O-oh, here's your 10 arrows...", "\"Lululu lulu lala. You'd better run! Sogege Soge Soge Sogeking〜♪\""],
-            potion: ["You got a... health potion...?", "Wizard: ..."],
-            heart_upgrade: "Wizard: Dunununaaah! You suddenly feel refreshed!",
-            attack_upgrade: "Wizard: Sheeeesh this is dangerous... Is this even legal to use?!",
-            arrow_upgrade: "Wizard: ...Since you're my only customer here's 10 arrows on the house <3",
-            armor_upgrade: "Wizard: You got some new drip... Lookin good man ;)"
+            //arrow_pack: ["Wizard: \"LOCK ON!\" O-oh, here's your 10 arrows...", "\"Lululu lulu lala. You'd better run! Sogege Soge Soge Sogeking〜♪\""],
+            arrow_pack: ["You got 10 more arrows!"],
+            potion: ["You got a... health potion...?", "Wizard: ... :)"],
+            heart_upgrade: "Dunununaaah! You suddenly feel refreshed!",
+            attack_upgrade: "Your blade was enchanted! It feels sharper.",
+            arrow_upgrade: "...and +10 arrows on the house!",
+            armor_upgrade: "You got some new drip!"
         };
 
 
@@ -71,7 +72,7 @@ class Shop {
         this.myTextBox = new SceneTextBox(this.game, (this.game.surfaceWidth / 2) - 50, 1100, "");
         this.myTextBox.show = true;
         this.messageTimer = 0;
-        this.maxTimer = 6;
+        this.maxTimer = 5;
         this.defaultMsg = "Wizard: So, what would you like?";
         this.currentMessage = this.defaultMsg;
 
@@ -268,8 +269,8 @@ class Shop {
         let message;
 
         if (this.maxed) {
-            message = "Wizard: ...I feel like I am going regret this.";
-        }else if(scene.player.myInventory.diamonds < 10) {
+            message = "Wizard: (Chuckles) I'm in danger.";
+        } else if (scene.player.myInventory.diamonds < 10) {
             message = "Wizard: well uh... this is awkward.";
         } else {
             switch (this.currentMessage) {
@@ -284,13 +285,23 @@ class Shop {
                     message.push("Your melee damage increased by x" + scene.player.getAttackBonus() + "!");
                     break;
                 case this.purchases.armor_upgrade:
+                    let armor = "";
+                    if(scene.player.myInventory.armorUpgrade == 1) armor = "Gold armor acquired!"
+                    else if(scene.player.myInventory.armorUpgrade == 2) armor = "Diamond armor acquired!"
+                    else if((scene.player.myInventory.armorUpgrade == 3) )armor = "Netherite armor acquired!" 
+
                     message = [];
-                    message.push(this.currentMessage);
+                    message.push(this.currentMessage + " " + armor);
                     message.push("Your incoming damage will be reduced by x" + scene.player.getDefenseBonus() + "!");
                     break;
                 case this.purchases.arrow_upgrade:
+                    let arrow = "";
+                    if(scene.player.myInventory.arrowUpgrade == 1) arrow = "Arrow upgraded to iron!"
+                    else if(scene.player.myInventory.arrowUpgrade == 2) arrow = "Arrow upgraded to gold!"
+                    else if((scene.player.myInventory.arrowUpgrade == 3)) arrow = "Arrow upgraded to diamond!"
+                    else if((scene.player.myInventory.arrowUpgrade == 4)) arrow= "Arrow upgraded to netherite!"
                     message = [];
-                    message.push(this.currentMessage);
+                    message.push(arrow + " " + this.currentMessage);
                     let newDmg = (this.game.camera.player.myInventory.arrowUpgrade * 2) + 10;
                     message.push("Your arrows will now fly faster and now do " + newDmg + " damage!");
                     break;
