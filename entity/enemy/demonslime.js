@@ -2,13 +2,14 @@ class DemonSlime extends AbstractEnemy {
     constructor(game, x, y, guard) {
         super(game, x, y, guard, STATS.DEMON_SLIME.NAME, STATS.DEMON_SLIME.MAX_HP, STATS.DEMON_SLIME.WIDTH, STATS.DEMON_SLIME.HEIGHT, STATS.DEMON_SLIME.SCALE, STATS.DEMON_SLIME.PHYSICS);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/demon_slime.png");
-        this.scale = STATS.DEMON_SLIME.SCALE;
 
         this.states = { idle: 0, walk: 1, attack: 2, damaged: 3, death: 4, rebirth: 5 };
         this.directions = { left: 0, right: 1 };
-
+        this.phases = { normal: 0, superHardAnnoyingTeleportingMode: 1 };
         this.state = this.states.idle;
         this.direction = this.directions.right;
+        this.phase = this.phases.normal;
+
         this.runAwayDirection = this.directions.left;
         this.canAttack = true;
         this.vulnerable = true;
@@ -33,8 +34,9 @@ class DemonSlime extends AbstractEnemy {
 
     updateHB() {
         this.getOffsets();
-        if (this.direction == this.directions.left) this.HB = new BoundingBox(this.x + this.offsetX - (85 * this.scale), this.y + this.offsetY, this.BB.right - (this.x + this.offsetX - (85 * this.scale)), this.height);
-        else this.HB = new BoundingBox(this.BB.left, this.BB.top, this.BB.right - (this.x + this.offsetX - (85 * this.scale)), this.height);
+        if (this.direction == this.directions.left && this.state == this.states.attack) this.HB = new BoundingBox(this.x + this.offsetX - (85 * this.scale), this.y + this.offsetY, this.BB.right - (this.x + this.offsetX - (85 * this.scale)), this.height);
+        else if (this.direction == this.directions.right && this.state == this.states.attack) this.HB = new BoundingBox(this.BB.left, this.BB.top, this.BB.right - (this.x + this.offsetX - (85 * this.scale)), this.height);
+        else if (this.state == this.states.rebirth) this.HB = new BoundingBox(this.BB.left, this.BB.top, this.BB.width, this.BB.height);
     }
 
     updateBoxes() {
@@ -80,6 +82,7 @@ class DemonSlime extends AbstractEnemy {
         if (this.dead) {
             super.setDead();
         } else {
+            if (this.hp <= (this.max_hp / 2)) this.phase = this.phases.superHardAnnoyingTeleportingMode;
             this.velocity.y += this.fallAcc * TICK;
             if (this.velocity.y >= this.myMaxFall) this.velocity.y = this.myMaxFall;
             if (this.velocity.y <= -this.myMaxFall) this.velocity.y = -this.myMaxFall;
@@ -90,21 +93,14 @@ class DemonSlime extends AbstractEnemy {
             this.updateBoxes();
 
             let dist = { x: 0, y: 0 }; //the displacement needed between entities
-            this.playerInSight = false; //set to true in environment collisions
             dist = super.checkEnvironmentCollisions(dist); //check if colliding with environment and adjust entity accordingly
+            this.playerInSight = false; //set to true in environment collisions
             this.checkEntityInteractions(); //move entity according to other entities
             dist = this.collideWithOtherEnemies(dist, TICK); // change speed based on other enemies
             this.updatePositionAndVelocity(dist); //set where entity is based on interactions/collisions put on dist
             this.checkCooldowns(TICK); //check and reset the cooldowns of its actions
+            this.checkHB();
 
-            if (this.state == this.states.attack) {
-                this.attackFrame = this.animations[this.state][this.direction].currentFrame();
-                if (this.attackFrame >= 10 && this.attackFrame <= 12) this.updateHB();
-            } else {
-                this.HB = null;
-            }
-
-            // what the mushroom does on its free time
             if (!this.playerInSight && !this.aggro) {
                 this.state = this.states.idle;
                 this.velocity.x = 0;
@@ -112,8 +108,8 @@ class DemonSlime extends AbstractEnemy {
 
             super.setAggro(this.playerInSight);
             super.updateVelocity();
-            super.doJumpIfStuck(TICK); //jump if stuck horizontally
-            super.checkInDeathZone();  //die if below blastzone
+            super.doJumpIfStuck(TICK);
+            super.checkInDeathZone();
         }
         this.animations[this.state][this.direction].update(TICK);
     };
@@ -127,18 +123,30 @@ class DemonSlime extends AbstractEnemy {
         }
     };
 
+    checkHB() {
+        if (this.state == this.states.attack || this.state == this.states.rebirth) {
+            if (this.state == this.states.attack) {
+                this.attackFrame = this.animations[this.state][this.direction].currentFrame();
+                if (this.attackFrame >= 10 && this.attackFrame <= 12) this.updateHB();
+            } else {
+                this.updateHB();
+            }
+        } else {
+            this.HB = null;
+        }
+    };
+
     checkEntityInteractions() {
         let self = this;
         this.game.entities.forEach(function (entity) {
             if (entity instanceof AbstractPlayer) {
-                if (entity.HB && self.BB.collide(entity.HB) && !self.runAway && (self.state == self.states.idle || self.state == self.states.walk)) {
+                if (entity.HB && self.BB.collide(entity.HB) && (self.state == self.states.idle || self.state == self.states.walk)) {
                     self.canBeHit = false;
                     self.vulnerable = false;
                 }
                 if (entity.BB && self.AR.collide(entity.BB) && self.canBeHit) {
                     self.velocity.x = 0;
                     if (self.canAttack || !self.animations[self.states.attack][self.direction].isDone()) {
-                        self.resetAnimationTimers(self.states.rebirth);
                         self.canAttack = false;
                         self.runAway = true;
                         self.state = self.states.attack;
@@ -148,12 +156,16 @@ class DemonSlime extends AbstractEnemy {
                     self.playerInSight = true;
                     self.aggro = true;
                     if (!self.AR.collide(entity.BB) && self.canAttack && self.canBeHit) {
-                        self.state = self.states.rebirth;
                         self.direction = entity.BB.left < self.BB.left ? self.directions.left : self.directions.right;
-                        self.velocity.x = self.direction == self.directions.right ? self.myMaxSpeed : -self.myMaxSpeed;
+                        if (self.phase != self.phases.normal) {
+                            self.state = self.states.rebirth;
+                            self.velocity.x = self.direction == self.directions.right ? self.myMaxSpeed : -self.myMaxSpeed;
+                        } else {
+                            self.state = self.states.walk;
+                            self.velocity.x = self.direction == self.directions.right ? self.myMaxSpeed / 3 : -self.myMaxSpeed / 3;
+                        }
                     }
                 }
-
             }
         });
     };
@@ -161,32 +173,38 @@ class DemonSlime extends AbstractEnemy {
     checkCooldowns(TICK) {
         if (!this.canAttack) {
             if (this.checkAnimationDone(this.states.attack)) {
-                this.state = this.states.rebirth;
-                this.direction = this.runAwayDirection;
-                this.velocity.x = this.direction == this.directions.right ? this.myMaxSpeed : -this.myMaxSpeed;
+                if (this.phase == this.phases.normal) {
+                    this.state = this.states.walk;
+                    this.direction = this.runAwayDirection;
+                    this.velocity.x = this.direction == this.directions.right ? this.myMaxSpeed / 3 : -this.myMaxSpeed / 3;
+                    this.attackCooldown += TICK;
+                } else {
+                    this.state = this.states.rebirth;
+                    this.direction = this.runAwayDirection;
+                    this.velocity.x = this.direction == this.directions.right ? this.myMaxSpeed : -this.myMaxSpeed;
+                }
             }
             if (this.checkAnimationDone(this.states.rebirth)) {
-                this.velocity.x = 0;
                 this.state = this.states.idle;
                 this.direction = this.direction == this.directions.right ? this.directions.left : this.directions.right;
+                this.velocity.x = 0;
                 this.runAway = false;
                 this.attackCooldown += TICK;
             }
             if (this.attackCooldown >= 3) {
                 this.runAwayDirection = this.runAwayDirection == this.directions.left ? this.directions.right : this.directions.left;
-                this.resetAnimationTimers(this.states.rebirth);
-                this.resetAnimationTimers(this.states.attack);
                 this.attackFrame = 0;
                 this.attackCooldown = 0;
                 this.canAttack = true;
+                this.runAway = false;
+                this.resetAnimationTimers(this.states.rebirth);
+                this.resetAnimationTimers(this.states.attack);
             }
         }
         if (!this.canBeHit) {
-            if (this.state == this.states.idle || this.state == this.states.walk) {
-                this.state = this.states.damaged;
-            }
-            if (this.checkAnimationDone(this.states.damaged)) {
-                this.damagedCooldown += TICK;
+            this.damagedCooldown += TICK;
+            if (this.state == this.states.idle || this.state == this.states.walk) this.state = this.states.damaged;
+            if (this.checkAnimationDone(this.states.damaged) && !this.vulnerable) {
                 this.state = this.states.idle;
             }
             if (this.damagedCooldown >= 0.45) {
@@ -208,9 +226,8 @@ class DemonSlime extends AbstractEnemy {
         return (this.animations[action][this.directions.left].isDone() || this.animations[action][this.directions.right].isDone());
     };
 
-
     setDamagedState() {
-
+        this.hp += 5;
     };
 
     getDamageValue() {
