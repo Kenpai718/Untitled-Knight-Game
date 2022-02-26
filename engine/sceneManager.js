@@ -1169,11 +1169,11 @@ class Minimap {
      * @param {*} ctx
      */
     draw(ctx) {
-        ctx.globalAlpha = 0.7;
+        //ctx.globalAlpha = 0.7;
         this.buildMinimapBox(ctx);
         this.loadEnvironmentScene(ctx);
         this.traceEntities(ctx);
-        ctx.globalAlpha = 1;
+        //ctx.globalAlpha = 1;
 
     }
 

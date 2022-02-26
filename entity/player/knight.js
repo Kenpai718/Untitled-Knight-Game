@@ -30,6 +30,13 @@ class Knight extends AbstractPlayer {
             death: 20
         };
 
+        //animation speed stats
+        this.animRunSpd = 0.06; //speed of the dashing animation
+        this.animRollSpd = 0.05; //speed of the dashing animation
+        this.atkSpd = 0.08;        //slash1
+        this.atkSpd2 = this.atkSpd + .01; //slash 2 must be slightly slower than atkspd1
+        this.bowSpd = .1;
+
 
         //default starting values
         this.DEFAULT_DIRECTION = this.dir.right;
@@ -307,7 +314,7 @@ class Knight extends AbstractPlayer {
                         break;
                     default:
                         this.velocity.y = 0;
-                }                
+                }
             }
         } else if (this.inAir && this.action != this.states.shoot) { //player is falling and not shooting an arrow
             //adjust the direction depending on how the player is drifting
@@ -488,7 +495,7 @@ class Knight extends AbstractPlayer {
                             (this.collisions.lo_right || this.collisions.hi_right) && (this.facing == this.dir.right || this.game.right)) {
                             if (this.collisions.lo_left || this.collisions.hi_left) this.facing = this.dir.left;
                             else this.facing = this.dir.right;
-                            
+
                             this.action = this.states.wall_hang;
                             if (!this.game.down) {
                                 this.y = this.y + this.diffy.hi - 8 * this.scale;
@@ -592,7 +599,7 @@ class Knight extends AbstractPlayer {
                         this.facing = this.dir.left;
                         this.velocity.x = 0;
                         //gave a slightly higher boost since momentum was just killed
-                        this.velocity.x -= (PLAYER_PHYSICS.DOUBLE_JUMP_X_BOOST * PHYSIC_SCALER) * TICK;
+                        this.velocity.x -= (PLAYER_PHYSICS.DOUBLE_JUMP_X_BOOST * PHYSIC_SCALER * 2) * TICK;
                     }
 
                 } else if (this.game.right && this.slideTime > 0) {
@@ -602,7 +609,7 @@ class Knight extends AbstractPlayer {
                         this.facing = this.dir.right;
                         this.velocity.x = 0;
                         //gave a slightly higher boost since momentum was just killed
-                        this.velocity.x += (PLAYER_PHYSICS.DOUBLE_JUMP_X_BOOST * PHYSIC_SCALER) * TICK;
+                        this.velocity.x += (PLAYER_PHYSICS.DOUBLE_JUMP_X_BOOST * PHYSIC_SCALER * 2) * TICK;
                     };
                 }
             }
@@ -781,7 +788,7 @@ class Knight extends AbstractPlayer {
                 break;
             case this.states.wall_climb:
                 if (this.animations[this.facing][this.action][this.myInventory.armorUpgrade].currentFrame() >= 3);
-                    //this.velocity.y += this.fallAcc * TICK;
+                //this.velocity.y += this.fallAcc * TICK;
                 break;
             case this.states.wall_hang:
                 this.velocity.y = 0;
@@ -809,13 +816,13 @@ class Knight extends AbstractPlayer {
         }
 
         //update the position and set the bounding box
-        
+
         if (this.action == this.states.wall_climb) {
             if (this.BB.left >= this.climbWidth + PARAMS.BLOCKDIM)
                 this.x = (this.x - this.BB.left) + this.climbWidth + PARAMS.BLOCKDIM;
             else if (this.BB.left <= this.climbWidth - PARAMS.BLOCKDIM)
                 this.x = (this.x - this.BB.right) + this.climbWidth - PARAMS.BLOCKDIM + this.BB.width;
-        } 
+        }
         this.x += this.velocity.x * TICK;
         if (this.action != this.states.wall_hang || this.action != this.states.wall_climb)
             this.y += this.velocity.y * TICK;
@@ -1056,8 +1063,8 @@ class Knight extends AbstractPlayer {
         this.animations[0][this.states.idle][0] = new Animator(this.spritesheetLeft, 245, 560, 120, 80, 10, 0.1, 0, true, true, false);
         this.animations[1][this.states.idle][0] = new Animator(this.spritesheetRight, -5, 560, 120, 80, 10, 0.1, 0, false, true, false);
         // run = 1
-        this.animations[0][this.states.run][0] = new Animator(this.spritesheetLeft, 245, 880, 120, 80, 10, 0.1, 0, true, true, false);
-        this.animations[1][this.states.run][0] = new Animator(this.spritesheetRight, -5, 880, 120, 80, 10, 0.1, 0, false, true, false);
+        this.animations[0][this.states.run][0] = new Animator(this.spritesheetLeft, 245, 880, 120, 80, 10, this.animRunSpd, 0, true, true, false);
+        this.animations[1][this.states.run][0] = new Animator(this.spritesheetRight, -5, 880, 120, 80, 10, this.animRunSpd, 0, false, true, false);
         // crouch = 2
         this.animations[0][this.states.crouch][0] = new Animator(this.spritesheetLeft, 1205, 80, 120, 80, 1, 1, 0, true, true, false);
         this.animations[1][this.states.crouch][0] = new Animator(this.spritesheetRight, 115, 80, 120, 80, 1, 1, 0, false, true, false);
@@ -1074,8 +1081,8 @@ class Knight extends AbstractPlayer {
         this.animations[0][this.states.crouch_pluck][0] = new Animator(this.spritesheetLeft, 965, 1600, 120, 80, 4, 0.1, 0, true, false, false);
         this.animations[1][this.states.crouch_pluck][0] = new Animator(this.spritesheetRight, -5, 1600, 120, 80, 4, 0.1, 0, false, false, false);
         // roll = 7
-        this.animations[0][this.states.roll][0] = new Animator(this.spritesheetLeft, 5, 800, 120, 80, 12, 0.083, 0, true, false, false);
-        this.animations[1][this.states.roll][0] = new Animator(this.spritesheetRight, -5, 800, 120, 80, 12, 0.083, 0, false, false, false);
+        this.animations[0][this.states.roll][0] = new Animator(this.spritesheetLeft, 5, 800, 120, 80, 12, this.animRollSpd, 0, true, false, false);
+        this.animations[1][this.states.roll][0] = new Animator(this.spritesheetRight, -5, 800, 120, 80, 12, this.animRollSpd, 0, false, false, false);
         // wall climb = 8
         this.animations[0][this.states.wall_climb][0] = new Animator(this.spritesheetLeft, 605, 1120, 120, 80, 7, 0.1, 0, true, false, false);
         this.animations[1][this.states.wall_climb][0] = new Animator(this.spritesheetRight, -5, 1120, 120, 80, 7, 0.1, 0, false, false, false);
@@ -1105,14 +1112,14 @@ class Knight extends AbstractPlayer {
         //attack combo (on ground or in air)
         //Note: Slash 1 is a faster attack but less damage. Slash 2 is slower but more damage
         //slash 1 = 16
-        this.animations[0][this.states.attack1][0] = new Animator(this.spritesheetLeft, 725, 0, 120, 80, 6, 0.09, 0, true, false, false);
-        this.animations[1][this.states.attack1][0] = new Animator(this.spritesheetRight, -5, 0, 120, 80, 6, 0.09, 0, false, false, false);
+        this.animations[0][this.states.attack1][0] = new Animator(this.spritesheetLeft, 725, 0, 120, 80, 6, this.atkSpd, 0, true, false, false);
+        this.animations[1][this.states.attack1][0] = new Animator(this.spritesheetRight, -5, 0, 120, 80, 6, this.atkSpd, 0, false, false, false);
         //slash 2 = 17
-        this.animations[0][this.states.attack2][0] = new Animator(this.spritesheetLeft, 245, 0, 120, 80, 6, 0.1, 0, true, false, false);
-        this.animations[1][this.states.attack2][0] = new Animator(this.spritesheetRight, 475, 0, 120, 80, 6, 0.1, 0, false, false, false);
+        this.animations[0][this.states.attack2][0] = new Animator(this.spritesheetLeft, 245, 0, 120, 80, 6, this.atkSpd2, 0, true, false, false);
+        this.animations[1][this.states.attack2][0] = new Animator(this.spritesheetRight, 475, 0, 120, 80, 6, this.atkSpd2, 0, false, false, false);
         //shoot = 18
-        this.animations[0][this.states.shoot][0] = new Animator(this.spritesheetLeft, 965, 1360, 120, 80, 4, 0.1, 0, true, false, false);
-        this.animations[1][this.states.shoot][0] = new Animator(this.spritesheetRight, -5, 1360, 120, 80, 4, 0.1, 0, false, false, false);
+        this.animations[0][this.states.shoot][0] = new Animator(this.spritesheetLeft, 965, 1360, 120, 80, 4, this.bowSpd, 0, true, false, false);
+        this.animations[1][this.states.shoot][0] = new Animator(this.spritesheetRight, -5, 1360, 120, 80, 4, this.bowSpd, 0, false, false, false);
         // pluck = 19
         this.animations[0][this.states.pluck][0] = new Animator(this.spritesheetLeft, 965, 1520, 120, 80, 4, 0.1, 0, true, false, false);
         this.animations[1][this.states.pluck][0] = new Animator(this.spritesheetRight, -5, 1520, 120, 80, 4, 0.1, 0, false, false, false);
@@ -1131,8 +1138,8 @@ class Knight extends AbstractPlayer {
         this.animations[0][this.states.idle][1] = new Animator(this.spritesheetLeft1, 245, 560, 120, 80, 10, 0.1, 0, true, true, false);
         this.animations[1][this.states.idle][1] = new Animator(this.spritesheetRight1, -5, 560, 120, 80, 10, 0.1, 0, false, true, false);
         // run = 1
-        this.animations[0][this.states.run][1] = new Animator(this.spritesheetLeft1, 245, 880, 120, 80, 10, 0.1, 0, true, true, false);
-        this.animations[1][this.states.run][1] = new Animator(this.spritesheetRight1, -5, 880, 120, 80, 10, 0.1, 0, false, true, false);
+        this.animations[0][this.states.run][1] = new Animator(this.spritesheetLeft1, 245, 880, 120, 80, 10, this.animRunSpd, 0, true, true, false);
+        this.animations[1][this.states.run][1] = new Animator(this.spritesheetRight1, -5, 880, 120, 80, 10, this.animRunSpd, 0, false, true, false);
         // crouch = 2
         this.animations[0][this.states.crouch][1] = new Animator(this.spritesheetLeft1, 1205, 80, 120, 80, 1, 1, 0, true, true, false);
         this.animations[1][this.states.crouch][1] = new Animator(this.spritesheetRight1, 115, 80, 120, 80, 1, 1, 0, false, true, false);
@@ -1148,9 +1155,9 @@ class Knight extends AbstractPlayer {
         // crouch shoot = 5
         this.animations[0][this.states.crouch_pluck][1] = new Animator(this.spritesheetLeft1, 965, 1600, 120, 80, 4, 0.1, 0, true, false, false);
         this.animations[1][this.states.crouch_pluck][1] = new Animator(this.spritesheetRight1, -5, 1600, 120, 80, 4, 0.1, 0, false, false, false);
-        // roll = 
-        this.animations[0][this.states.roll][1] = new Animator(this.spritesheetLeft1, 5, 800, 120, 80, 12, 0.083, 0, true, false, false);
-        this.animations[1][this.states.roll][1] = new Animator(this.spritesheetRight1, -5, 800, 120, 80, 12, 0.083, 0, false, false, false);
+        // roll = 7
+        this.animations[0][this.states.roll][1] = new Animator(this.spritesheetLeft1, 0, 800, 120, 80, 12, this.animRollSpd, 0, true, false, false);
+        this.animations[1][this.states.roll][1] = new Animator(this.spritesheetRight1, 0, 800, 120, 80, 12, this.animRollSpd, 0, false, false, false);
         // wall climb = 8
         this.animations[0][this.states.wall_climb][1] = new Animator(this.spritesheetLeft1, 608, 1120, 120, 80, 7, 0.1, 0, true, false, false);
         this.animations[1][this.states.wall_climb][1] = new Animator(this.spritesheetRight1, -8, 1120, 120, 80, 7, 0.1, 0, false, false, false);
@@ -1180,14 +1187,14 @@ class Knight extends AbstractPlayer {
         //attack combo (on ground or in air)
         //Note: Slash 1 is a faster attack but less damage. Slash 2 is slower but more damage
         //slash 1 = 16
-        this.animations[0][this.states.attack1][1] = new Animator(this.spritesheetLeft1, 725, 0, 120, 80, 6, 0.09, 0, true, false, false);
-        this.animations[1][this.states.attack1][1] = new Animator(this.spritesheetRight1, -5, 0, 120, 80, 6, 0.09, 0, false, false, false);
+        this.animations[0][this.states.attack1][1] = new Animator(this.spritesheetLeft1, 725, 0, 120, 80, 6, this.atkSpd, 0, true, false, false);
+        this.animations[1][this.states.attack1][1] = new Animator(this.spritesheetRight1, -5, 0, 120, 80, 6, this.atkSpd, 0, false, false, false);
         //slash 2 = 17
-        this.animations[0][this.states.attack2][1] = new Animator(this.spritesheetLeft1, 245, 0, 120, 80, 6, 0.1, 0, true, false, false);
-        this.animations[1][this.states.attack2][1] = new Animator(this.spritesheetRight1, 475, 0, 120, 80, 6, 0.1, 0, false, false, false);
+        this.animations[0][this.states.attack2][1] = new Animator(this.spritesheetLeft1, 245, 0, 120, 80, 6, this.atkSpd2, 0, true, false, false);
+        this.animations[1][this.states.attack2][1] = new Animator(this.spritesheetRight1, 475, 0, 120, 80, 6, this.atkSpd2, 0, false, false, false);
         //shoot = 18
-        this.animations[0][this.states.shoot][1] = new Animator(this.spritesheetLeft1, 965, 1360, 120, 80, 4, 0.1, 0, true, false, false);
-        this.animations[1][this.states.shoot][1] = new Animator(this.spritesheetRight1, -5, 1360, 120, 80, 4, 0.1, 0, false, false, false);
+        this.animations[0][this.states.shoot][1] = new Animator(this.spritesheetLeft1, 965, 1360, 120, 80, 4, this.bowSpd, 0, true, false, false);
+        this.animations[1][this.states.shoot][1] = new Animator(this.spritesheetRight1, -5, 1360, 120, 80, 4, this.bowSpd, 0, false, false, false);
         // pluck = 19
         this.animations[0][this.states.pluck][1] = new Animator(this.spritesheetLeft1, 965, 1520, 120, 80, 4, 0.1, 0, true, false, false);
         this.animations[1][this.states.pluck][1] = new Animator(this.spritesheetRight1, -5, 1520, 120, 80, 4, 0.1, 0, false, false, false);
@@ -1204,8 +1211,8 @@ class Knight extends AbstractPlayer {
         this.animations[0][this.states.idle][2] = new Animator(this.spritesheetLeft2, 245, 560, 120, 80, 10, 0.1, 0, true, true, false);
         this.animations[1][this.states.idle][2] = new Animator(this.spritesheetRight2, -5, 560, 120, 80, 10, 0.1, 0, false, true, false);
         // run = 1
-        this.animations[0][this.states.run][2] = new Animator(this.spritesheetLeft2, 245, 880, 120, 80, 10, 0.1, 0, true, true, false);
-        this.animations[1][this.states.run][2] = new Animator(this.spritesheetRight2, -5, 880, 120, 80, 10, 0.1, 0, false, true, false);
+        this.animations[0][this.states.run][2] = new Animator(this.spritesheetLeft2, 245, 880, 120, 80, 10, this.animRunSpd, 0, true, true, false);
+        this.animations[1][this.states.run][2] = new Animator(this.spritesheetRight2, -5, 880, 120, 80, 10, this.animRunSpd, 0, false, true, false);
         // crouch = 2
         this.animations[0][this.states.crouch][2] = new Animator(this.spritesheetLeft2, 1205, 80, 120, 80, 1, 1, 0, true, true, false);
         this.animations[1][this.states.crouch][2] = new Animator(this.spritesheetRight2, 115, 80, 120, 80, 1, 1, 0, false, true, false);
@@ -1222,8 +1229,8 @@ class Knight extends AbstractPlayer {
         this.animations[0][this.states.crouch_pluck][2] = new Animator(this.spritesheetLeft2, 965, 1600, 120, 80, 4, 0.1, 0, true, false, false);
         this.animations[1][this.states.crouch_pluck][2] = new Animator(this.spritesheetRight2, -5, 1600, 120, 80, 4, 0.1, 0, false, false, false);
         // roll = 7
-        this.animations[0][this.states.roll][2] = new Animator(this.spritesheetLeft2, 5, 800, 120, 80, 12, 0.083, 0, true, false, false);
-        this.animations[1][this.states.roll][2] = new Animator(this.spritesheetRight2, -5, 800, 120, 80, 12, 0.083, 0, false, false, false);
+        this.animations[0][this.states.roll][2] = new Animator(this.spritesheetLeft2, 0, 800, 120, 80, 12, this.animRollSpd, 0, true, false, false);
+        this.animations[1][this.states.roll][2] = new Animator(this.spritesheetRight2, 0, 800, 120, 80, 12, this.animRollSpd, 0, false, false, false);
         // wall climb = 8
         this.animations[0][this.states.wall_climb][2] = new Animator(this.spritesheetLeft2, 608, 1120, 120, 80, 7, 0.1, 0, true, false, false);
         this.animations[1][this.states.wall_climb][2] = new Animator(this.spritesheetRight2, -8, 1120, 120, 80, 7, 0.1, 0, false, false, false);
@@ -1253,14 +1260,14 @@ class Knight extends AbstractPlayer {
         //attack combo (on ground or in air)
         //Note: Slash 1 is a faster attack but less damage. Slash 2 is slower but more damage
         //slash 1 = 16
-        this.animations[0][this.states.attack1][2] = new Animator(this.spritesheetLeft2, 725, 0, 120, 80, 6, 0.09, 0, true, false, false);
-        this.animations[1][this.states.attack1][2] = new Animator(this.spritesheetRight2, -5, 0, 120, 80, 6, 0.09, 0, false, false, false);
+        this.animations[0][this.states.attack1][2] = new Animator(this.spritesheetLeft2, 725, 0, 120, 80, 6, this.atkSpd, 0, true, false, false);
+        this.animations[1][this.states.attack1][2] = new Animator(this.spritesheetRight2, -5, 0, 120, 80, 6, this.atkSpd, 0, false, false, false);
         //slash 2 = 17
-        this.animations[0][this.states.attack2][2] = new Animator(this.spritesheetLeft2, 245, 0, 120, 80, 6, 0.1, 0, true, false, false);
-        this.animations[1][this.states.attack2][2] = new Animator(this.spritesheetRight2, 475, 0, 120, 80, 6, 0.1, 0, false, false, false);
+        this.animations[0][this.states.attack2][2] = new Animator(this.spritesheetLeft2, 245, 0, 120, 80, 6, this.atkSpd2, 0, true, false, false);
+        this.animations[1][this.states.attack2][2] = new Animator(this.spritesheetRight2, 475, 0, 120, 80, 6, this.atkSpd2, 0, false, false, false);
         //shoot = 18
-        this.animations[0][this.states.shoot][2] = new Animator(this.spritesheetLeft2, 965, 1360, 120, 80, 4, 0.1, 0, true, false, false);
-        this.animations[1][this.states.shoot][2] = new Animator(this.spritesheetRight2, -5, 1360, 120, 80, 4, 0.1, 0, false, false, false);
+        this.animations[0][this.states.shoot][2] = new Animator(this.spritesheetLeft2, 965, 1360, 120, 80, 4, this.bowSpd, 0, true, false, false);
+        this.animations[1][this.states.shoot][2] = new Animator(this.spritesheetRight2, -5, 1360, 120, 80, 4, this.bowSpd, 0, false, false, false);
         // pluck = 19
         this.animations[0][this.states.pluck][2] = new Animator(this.spritesheetLeft2, 965, 1520, 120, 80, 4, 0.1, 0, true, false, false);
         this.animations[1][this.states.pluck][2] = new Animator(this.spritesheetRight2, -5, 1520, 120, 80, 4, 0.1, 0, false, false, false);
@@ -1277,8 +1284,8 @@ class Knight extends AbstractPlayer {
         this.animations[0][this.states.idle][3] = new Animator(this.spritesheetLeft3, 245, 560, 120, 80, 10, 0.1, 0, true, true, false);
         this.animations[1][this.states.idle][3] = new Animator(this.spritesheetRight3, -5, 560, 120, 80, 10, 0.1, 0, false, true, false);
         // run = 1
-        this.animations[0][this.states.run][3] = new Animator(this.spritesheetLeft3, 245, 880, 120, 80, 10, 0.1, 0, true, true, false);
-        this.animations[1][this.states.run][3] = new Animator(this.spritesheetRight3, -5, 880, 120, 80, 10, 0.1, 0, false, true, false);
+        this.animations[0][this.states.run][3] = new Animator(this.spritesheetLeft3, 245, 880, 120, 80, 10, this.animRunSpd, 0, true, true, false);
+        this.animations[1][this.states.run][3] = new Animator(this.spritesheetRight3, -5, 880, 120, 80, 10, this.animRunSpd, 0, false, true, false);
         // crouch = 2
         this.animations[0][this.states.crouch][3] = new Animator(this.spritesheetLeft3, 1205, 80, 120, 80, 1, 1, 0, true, true, false);
         this.animations[1][this.states.crouch][3] = new Animator(this.spritesheetRight3, 115, 80, 120, 80, 1, 1, 0, false, true, false);
@@ -1295,8 +1302,8 @@ class Knight extends AbstractPlayer {
         this.animations[0][this.states.crouch_pluck][3] = new Animator(this.spritesheetLeft3, 965, 1600, 120, 80, 4, 0.1, 0, true, false, false);
         this.animations[1][this.states.crouch_pluck][3] = new Animator(this.spritesheetRight3, -5, 1600, 120, 80, 4, 0.1, 0, false, false, false);
         // roll = 7
-        this.animations[0][this.states.roll][3] = new Animator(this.spritesheetLeft3, 5, 800, 120, 80, 12, 0.083, 0, true, false, false);
-        this.animations[1][this.states.roll][3] = new Animator(this.spritesheetRight3, -5, 800, 120, 80, 12, 0.083, 0, false, false, false);
+        this.animations[0][this.states.roll][3] = new Animator(this.spritesheetLeft3, 0, 800, 120, 80, 12, this.animRollSpd, 0, true, false, false);
+        this.animations[1][this.states.roll][3] = new Animator(this.spritesheetRight3, 0, 800, 120, 80, 12, this.animRollSpd, 0, false, false, false);
         // wall climb = 8
         this.animations[0][this.states.wall_climb][3] = new Animator(this.spritesheetLeft3, 608, 1120, 120, 80, 7, 0.1, 0, true, false, false);
         this.animations[1][this.states.wall_climb][3] = new Animator(this.spritesheetRight3, -8, 1120, 120, 80, 7, 0.1, 0, false, false, false);
@@ -1326,14 +1333,14 @@ class Knight extends AbstractPlayer {
         //attack combo (on ground or in air)
         //Note: Slash 1 is a faster attack but less damage. Slash 2 is slower but more damage
         //slash 1 = 16
-        this.animations[0][this.states.attack1][3] = new Animator(this.spritesheetLeft3, 725, 0, 120, 80, 6, 0.09, 0, true, false, false);
-        this.animations[1][this.states.attack1][3] = new Animator(this.spritesheetRight3, -5, 0, 120, 80, 6, 0.09, 0, false, false, false);
+        this.animations[0][this.states.attack1][3] = new Animator(this.spritesheetLeft3, 725, 0, 120, 80, 6, this.atkSpd, 0, true, false, false);
+        this.animations[1][this.states.attack1][3] = new Animator(this.spritesheetRight3, -5, 0, 120, 80, 6, this.atkSpd, 0, false, false, false);
         //slash 2 = 17
-        this.animations[0][this.states.attack2][3] = new Animator(this.spritesheetLeft3, 245, 0, 120, 80, 6, 0.1, 0, true, false, false);
-        this.animations[1][this.states.attack2][3] = new Animator(this.spritesheetRight3, 475, 0, 120, 80, 6, 0.1, 0, false, false, false);
+        this.animations[0][this.states.attack2][3] = new Animator(this.spritesheetLeft3, 245, 0, 120, 80, 6, this.atkSpd2, 0, true, false, false);
+        this.animations[1][this.states.attack2][3] = new Animator(this.spritesheetRight3, 475, 0, 120, 80, 6, this.atkSpd2, 0, false, false, false);
         //shoot = 18
-        this.animations[0][this.states.shoot][3] = new Animator(this.spritesheetLeft3, 965, 1360, 120, 80, 4, 0.1, 0, true, false, false);
-        this.animations[1][this.states.shoot][3] = new Animator(this.spritesheetRight3, -5, 1360, 120, 80, 4, 0.1, 0, false, false, false);
+        this.animations[0][this.states.shoot][3] = new Animator(this.spritesheetLeft3, 965, 1360, 120, 80, 4, this.bowSpd, 0, true, false, false);
+        this.animations[1][this.states.shoot][3] = new Animator(this.spritesheetRight3, -5, 1360, 120, 80, 4, this.bowSpd, 0, false, false, false);
         // pluck = 19
         this.animations[0][this.states.pluck][3] = new Animator(this.spritesheetLeft3, 965, 1520, 120, 80, 4, 0.1, 0, true, false, false);
         this.animations[1][this.states.pluck][3] = new Animator(this.spritesheetRight3, -5, 1520, 120, 80, 4, 0.1, 0, false, false, false);
