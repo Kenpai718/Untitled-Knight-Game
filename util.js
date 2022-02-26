@@ -57,13 +57,13 @@ const PLAYER_JUMP_HEIGHT = 1500; //players base jump height
 const FALL_GRAVITY = 1.2; //gravity put on player's fall acc
 const PLAYER_PHYSICS = {
     MAX_WALK: 95 * PHYSIC_SCALER,
-    MAX_RUN: 155 * PHYSIC_SCALER,
-    ACC_WALK: 180 * PHYSIC_SCALER,
-    ACC_RUN: 200 * PHYSIC_SCALER,
+    MAX_RUN: 210 * PHYSIC_SCALER,
+    ACC_WALK: 205 * PHYSIC_SCALER,
+    ACC_RUN: 300 * PHYSIC_SCALER,
     ROLL_SPD: 400 * PHYSIC_SCALER,
-    SKID: 3000,
+    SKID: 4500,
     ATTACK_SKID: 3000 * 0.75,
-    CROUCH_SPD: 50 * PHYSIC_SCALER,
+    CROUCH_SPD: 60 * PHYSIC_SCALER,
     DOUBLE_JUMP_X_BOOST: 100,
     JUMP_HEIGHT: PLAYER_JUMP_HEIGHT,
     DOUBLE_JUMP_HEIGHT: PLAYER_JUMP_HEIGHT * .5,
@@ -115,7 +115,7 @@ const STATS = {
         WIDTH: 150,
         HEIGHT: 150,
         DAMAGE: 12.5,
-        PHYSICS: {MAX_RUN: 380, MAX_FALL: 810}
+        PHYSICS: {MAX_RUN: PLAYER_PHYSICS.MAX_RUN - 50, MAX_FALL: 810}
     },
 
     GOBLIN: {
@@ -125,7 +125,7 @@ const STATS = {
         WIDTH: 33,
         HEIGHT: 36,
         DAMAGE: 8,
-        PHYSICS: {MAX_RUN: 400, MAX_FALL: 500}
+        PHYSICS: {MAX_RUN: PLAYER_PHYSICS.MAX_RUN - 5, MAX_FALL: 500}
     },
 
     SKELETON: {
@@ -135,7 +135,7 @@ const STATS = {
         WIDTH: 45,
         HEIGHT: 51,
         DAMAGE: 10,
-        PHYSICS: {MAX_RUN: 380, MAX_FALL: 600}
+        PHYSICS: {MAX_RUN: PLAYER_PHYSICS.MAX_RUN - 40, MAX_FALL: 600}
     },
 
     WIZARD: {
@@ -145,7 +145,7 @@ const STATS = {
         WIDTH: 10,
         HEIGHT: 80,
         DAMAGE: 20,
-        PHYSICS: {MAX_RUN: 500, MAX_FALL: 400}
+        PHYSICS: {MAX_RUN: PLAYER_PHYSICS.MAX_RUN - 10, MAX_FALL: 400}
 
     },
 
@@ -156,7 +156,7 @@ const STATS = {
         WIDTH: 22,
         HEIGHT: 25,
         DAMAGE: 5,
-        PHYSICS: {MAX_RUN: 400, MAX_FALL: 200}
+        PHYSICS: {MAX_RUN: PLAYER_PHYSICS.MAX_RUN - 10, MAX_FALL: 200}
     },
 
     EYE_PROJECTILE: {
@@ -175,7 +175,7 @@ const STATS = {
         HEIGHT: 160,
         DAMAGE: 20,
         SCALE: 3,
-        PHYSICS: {MAX_RUN: 200, MAX_FALL: 500}
+        PHYSICS: {MAX_RUN: PLAYER_PHYSICS.MAX_RUN - 60, MAX_FALL: 500}
     }
 
 }
