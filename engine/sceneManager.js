@@ -182,10 +182,12 @@ class SceneManager {
             this.player.removeFromWorld = false;
             this.player.velocity.x = 0;
             this.player.velocity.y = 0;
+            this.player.x = 0;
+            this.player.x = 0;
             this.player.action = this.player.states.idle;
             this.player.updateBB();
         }
-        this.player.x = spawnX;
+        this.player.x = spawnX - this.player.BB.width - PARAMS.BLOCKDIM;
         this.player.y = spawnY - this.player.BB.height - PARAMS.BLOCKDIM;
         this.inventory = this.player.myInventory;
         this.heartsbar = new HeartBar(this.game, this.player);
@@ -480,8 +482,8 @@ class SceneManager {
     BBCamera() {
         let xToLeft = this.player.BB.left - this.player.x;
         let xtoRight = this.player.BB.right - this.player.x;
-        if (this.player.BB.left < 0) this.player.x -= this.player.BB.left;
-        else if (this.player.BB.left > this.level.width * PARAMS.BLOCKDIM) this.player.x -= this.player.BB.left - this.level.width * PARAMS.BLOCKDIM;
+        if (this.player.BB.left < 0) this.player.x = 0 - this.player.offsetxBB;
+        else if (this.player.BB.right > this.level.width * PARAMS.BLOCKDIM) this.player.x = (this.level.width * PARAMS.BLOCKDIM) - this.player.width;
         if (this.x + this.game.surfaceWidth * 9 / 16 < this.player.BB.left  && this.x + this.game.surfaceWidth < this.level.width * PARAMS.BLOCKDIM) this.x = this.player.BB.left - this.game.surfaceWidth * 9 / 16;
         else if (this.x > this.player.BB.right - this.game.surfaceWidth * 7 / 16 && this.x > 0) this.x = this.player.BB.right - this.game.surfaceWidth * 7 / 16;
 
@@ -667,7 +669,7 @@ class SceneManager {
                 } else { //so control and reportbox dont overlap
                     this.game.myReportCard.drawReportCard(ctx);
                 }
-            
+
             }
 
             if (PARAMS.DEBUG) {
