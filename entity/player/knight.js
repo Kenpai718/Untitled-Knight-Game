@@ -491,6 +491,7 @@ class Knight extends AbstractPlayer {
                     }
                     this.action = this.states.jump;
                 }
+                this.game.jump = false;
             }
 
             if (this.jumpTime > 0) {
@@ -522,7 +523,7 @@ class Knight extends AbstractPlayer {
                 if (this.game.left) {
                     if (isLeft) { //keep momentum and jump left
                         this.velocity.x -= PLAYER_PHYSICS.DOUBLE_JUMP_X_BOOST * TICK;
-                        
+
                     } else { //was facing right cut momentum and double jump other way
                         this.facing = this.dir.left;
                         this.velocity.x = 0;
@@ -1265,6 +1266,6 @@ class Knight extends AbstractPlayer {
         // death = 19 (special property so might be better to just have it called only when the player dies)
         this.animations[0][this.states.death][3] = new Animator(this.spritesheetLeft3, 365, 400, 120, 80, 9, 0.1, 0, true, false, false);
         this.animations[1][this.states.death][3] = new Animator(this.spritesheetRight3, -5, 400, 120, 80, 9, 0.1, 0, false, false, false);
-        
+
     };
 }
