@@ -80,9 +80,9 @@ class SceneManager {
             ]
 
         let creditX = 860;
-        let creditY = 1220;
+        let creditY = 1210;
         let controlX = 870;
-        let controlY = 1280;
+        let controlY = 1270;
         this.myControlBox = new SceneTextBox(this.game, controlX, controlY, controlInfo);
         this.myCreditBox = new SceneTextBox(this.game, creditX, creditY, creditInfo);
 
@@ -663,9 +663,10 @@ class SceneManager {
                 if (this.controls) {
                     this.myControlBox.show = true;
                     this.myControlBox.draw(ctx);
+                } else { //so control and reportbox dont overlap
+                    this.game.myReportCard.drawReportCard(ctx);
                 }
-                
-                this.game.myReportCard.drawReportCard(ctx);
+            
             }
 
             if (PARAMS.DEBUG) {
@@ -704,8 +705,14 @@ class SceneManager {
             }
 
             if(PAUSED) {
-                var fontSize = 20;
-                ctx.fillText("PAUSED", 15, 45);
+                var fontSize = 60;
+                ctx.font = fontSize + 'px "Press Start 2P"';
+
+                let title = "PAUSED";
+                ctx.fillStyle = "Orchid";
+                ctx.fillText(title, (this.game.surfaceWidth / 2) - ((fontSize * title.length) / 2) + 5, fontSize * 7 + 5);
+                ctx.fillStyle = "GhostWhite";
+                ctx.fillText(title, (this.game.surfaceWidth / 2) - ((fontSize * title.length) / 2), fontSize * 7);
             }
         }
     }
