@@ -113,7 +113,7 @@ class Knight extends AbstractPlayer {
             super.setDead();
         } else { //not dead listen for player controls and do them
             if (this.berserk) {
-                if(this.playBerserkSFX) {
+                if (this.playBerserkSFX) {
                     this.playBerserkSFX = false;
                     ASSET_MANAGER.playAsset(SFX.BERSERK_ACTIVATE);
                 }
@@ -160,16 +160,18 @@ class Knight extends AbstractPlayer {
                 this.wasFloor = true;
             }
 
-            
-            if(this.action == this.states.idle){
-                if(this.game.mouse.x > (this.BB.x  + this.BB.width / 2)- this.game.camera.x && this.facing == 0){
-                    this.facing = 1;
-                }
-                else if(this.game.mouse.x < (this.BB.x  + this.BB.width / 2)- this.game.camera.x && this.facing == 1){
-                    this.facing = 0;
+            //when idling set player direction according to mouse
+            if (PARAMS.AUTO_FOCUS) {
+                if (this.action == this.states.idle) {
+                    if (this.game.mouse.x > (this.BB.x + this.BB.width / 2) - this.game.camera.x && this.facing == 0) {
+                        this.facing = 1;
+                    }
+                    else if (this.game.mouse.x < (this.BB.x + this.BB.width / 2) - this.game.camera.x && this.facing == 1) {
+                        this.facing = 0;
+                    }
                 }
             }
-            
+
 
         }
     }
@@ -539,7 +541,7 @@ class Knight extends AbstractPlayer {
                 if (this.game.left) {
                     if (isLeft) { //keep momentum and jump left
                         this.velocity.x -= PLAYER_PHYSICS.DOUBLE_JUMP_X_BOOST * TICK;
-                        
+
                     } else { //was facing right cut momentum and double jump other way
                         this.facing = this.dir.left;
                         this.velocity.x = 0;
@@ -816,13 +818,13 @@ class Knight extends AbstractPlayer {
         }
 
         //beserker bonus
-        if(this.berserk) dmg = (dmg * this.berserkBonus);
+        if (this.berserk) dmg = (dmg * this.berserkBonus);
 
         //critical bonus
         if (this.isCriticalHit()) {
             dmg = dmg * PARAMS.CRITICAL_BONUS * super.getAttackBonus();
         }
-        dmg = Math.round(100*dmg)/100;
+        dmg = Math.round(100 * dmg) / 100;
         return dmg;
 
     }
@@ -1283,6 +1285,6 @@ class Knight extends AbstractPlayer {
         // death = 19 (special property so might be better to just have it called only when the player dies)
         this.animations[0][this.states.death][3] = new Animator(this.spritesheetLeft3, 365, 400, 120, 80, 9, 0.1, 0, true, false, false);
         this.animations[1][this.states.death][3] = new Animator(this.spritesheetRight3, -5, 400, 120, 80, 9, 0.1, 0, false, false, false);
-        
+
     };
 }
