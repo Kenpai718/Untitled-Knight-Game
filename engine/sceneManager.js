@@ -271,6 +271,7 @@ class SceneManager {
     update() {
         //updates from outside canvas (debug or volume)
         this.updateAudio();
+        PARAMS.AUTO_FOCUS = document.getElementById("mouse-focus").checked;
         PARAMS.DEBUG = document.getElementById("debug").checked;
         if (this.game.debug) {
             this.game.debug = false;
