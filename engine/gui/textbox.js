@@ -133,7 +133,7 @@ class TextBox {
         ctx.strokeRect(myBoxX + 1, myBoxY + 1, boxWidth, boxHeight);
 
         // console.log("is a string", maxLen, totalLines);
-        console.log(myBoxX, myBoxY, boxWidth, boxHeight);
+       //console.log(myBoxX, myBoxY, boxWidth, boxHeight);
 
         //write the text
         ctx.fillStyle = this.textColor;
@@ -285,9 +285,6 @@ class SceneTextBox {
             ctx.globalAlpha = 1;
             ctx.strokeRect(myBoxX + 1, myBoxY + 1, boxWidth, boxHeight);
 
-            // console.log("is a string", maxLen, totalLines);
-            //console.log(myBoxX, myBoxY, boxWidth, boxHeight);
-
             //write the text line by line
             ctx.fillStyle = this.textColor;
             ctx.align = "center";
@@ -327,6 +324,7 @@ class SceneTextBox {
         ctx.globalAlpha = 1;
         ctx.strokeRect(myBoxX + 1, myBoxY + 1, boxWidth, boxHeight);
 
+
         // console.log("is a string", maxLen, totalLines);
         console.log(myBoxX, myBoxY, boxWidth, boxHeight);
 
@@ -340,16 +338,23 @@ class SceneTextBox {
     }
 
 
+
+
     //methods to position it
-    
+
     centerTop() {
         this.x = (this.game.surfaceWidth / 2);
         this.y = 150;
     }
 
-    centerBottom() {
-        this.x = (this.game.surfaceWidth / 2);
-        this.y = (this.game.surfaceHeight) - 100;
+    centerBottomSingle() {
+        this.x = (this.game.surfaceWidth / 2) - 75;
+        this.y = (this.game.surfaceHeight) - 45;
+    }
+
+    centerBottomMulti() {
+        this.x = (this.game.surfaceWidth / 2) - 95;
+        this.y = (this.game.surfaceHeight) - 5;
     }
 
     drawDebug() {
