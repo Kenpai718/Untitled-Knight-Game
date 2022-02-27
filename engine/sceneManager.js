@@ -958,6 +958,12 @@ class SceneManager {
                 array.push(e);
             }
         }
+        if (dict.demon) {
+            let demon = dict.demon;
+            let e = new DemonSlime(this.game, demon.x, h - demon.y, false);
+            this.positionEntity(e, demon.x, h - demon.y);
+            array.push(e);
+        }
         if (dict.flyingeyes) {
             for (var i = 0; i < dict.flyingeyes.length; i++) {
                 let flyingeye = dict.flyingeyes[i];

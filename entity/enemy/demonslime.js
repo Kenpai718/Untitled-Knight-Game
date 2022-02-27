@@ -227,7 +227,10 @@ class DemonSlime extends AbstractEnemy {
     };
 
     setDamagedState() {
-        this.hp += 5;
+        if (this.canBeHit) {
+            this.vulnerable = false;
+            this.canBeHit = false;
+        }
     };
 
     getDamageValue() {

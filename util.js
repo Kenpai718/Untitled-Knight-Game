@@ -173,7 +173,7 @@ const STATS = {
         MAX_HP: 400,
         WIDTH: 288,
         HEIGHT: 160,
-        DAMAGE: 0,
+        DAMAGE: 20,
         SCALE: 3,
         PHYSICS: {MAX_RUN: PLAYER_PHYSICS.MAX_RUN - 60, MAX_FALL: 500}
     }
@@ -217,7 +217,7 @@ const SFX = {
     BERSERK_ACTIVATE: "./sound/sfx/sharingan.mp3",
     RESPAWN: "./sound/sfx/re_zero_respawn.mp3",
     COMPLETE: "./sound/sfx/finished.mp3",
-    
+
 
 
 };
