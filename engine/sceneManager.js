@@ -485,7 +485,7 @@ class SceneManager {
         let xtoRight = this.player.BB.right - this.player.x;
         if (this.player.BB.left < 0) this.player.x = 0 - this.player.offsetxBB;
         else if (this.player.BB.right > this.level.width * PARAMS.BLOCKDIM) this.player.x = (this.level.width * PARAMS.BLOCKDIM) - this.player.width;
-        if (this.x + this.game.surfaceWidth * 9 / 16 < this.player.BB.left  && this.x + this.game.surfaceWidth < this.level.width * PARAMS.BLOCKDIM) this.x = this.player.BB.left - this.game.surfaceWidth * 9 / 16;
+        if (this.x + this.game.surfaceWidth * 9 / 16 < this.player.BB.left && this.x + this.game.surfaceWidth < this.level.width * PARAMS.BLOCKDIM) this.x = this.player.BB.left - this.game.surfaceWidth * 9 / 16;
         else if (this.x > this.player.BB.right - this.game.surfaceWidth * 7 / 16 && this.x > 0) this.x = this.player.BB.right - this.game.surfaceWidth * 7 / 16;
 
         if (this.x < 0) this.x = 0;
@@ -708,7 +708,7 @@ class SceneManager {
                 this.myCreditBox.draw(ctx);
             }
 
-            if(PAUSED) {
+            if (PAUSED) {
                 var fontSize = 60;
                 ctx.font = fontSize + 'px "Press Start 2P"';
 
@@ -1141,6 +1141,7 @@ class Minimap {
         this.level = level;
         this.w = this.level.width;
         this.h = this.level.height;
+        this.getBoxDim();
 
         this.colors = {
             ground: "dimgray",
@@ -1172,10 +1173,17 @@ class Minimap {
      * @param {*} ctx
      */
     draw(ctx) {
-        ctx.filter = "Opacity(80%)";
-        this.buildMinimapBox(ctx);
+        //lower opacity if the player is under the minimap
+        let player = this.game.camera.player;
+        if(player.x > this.game.camera.x + this.x &&
+          player.y < this.game.camera.y+ this.y + this.miniH) {
+            ctx.filter = "Opacity(80%)";
+        }
+        ctx.strokeStyle = "White";
+        ctx.strokeRect(this.BB.x, this.BB.y, this.BB.width, this.BB.height);
         this.loadEnvironmentScene(ctx);
         this.traceEntities(ctx);
+
         ctx.filter = "none";
 
     }
@@ -1413,17 +1421,18 @@ class Minimap {
      * @param {} ctx
      */
     buildMinimapBox(ctx) {
-        //ctx.fillStyle = "SpringGreen";
-        let miniX = this.x;
-        let miniY = this.y;
-        let miniW = (this.w * PARAMS.SCALE) + this.xOffset;
-        let miniH = (this.h * PARAMS.SCALE) + this.yOffset;
-
         //ctx.fillText("Minimap", miniX, miniY - 10);
         ctx.fillStyle = rgba(41, 41, 41, 0.5);
-        ctx.fillRect(miniX, miniY, miniW, miniH);
+        ctx.fillRect(this.x, this.y, this.miniW, this.miniH);
         ctx.strokeStyle = "GhostWhite";
-        ctx.strokeRect(miniX, miniY, miniW, miniH);
+        ctx.strokeRect(this.x, this.y, this.miniW, this.miniH);
+    }
+
+    getBoxDim() {
+        this.miniW = (this.w * PARAMS.SCALE) + this.xOffset;
+        this.miniH = (this.h * PARAMS.SCALE) + this.yOffset;
+        
+        this.BB = new BoundingBox(this.x, this.y, this.miniW, this.miniH);
     }
 
     update() {
