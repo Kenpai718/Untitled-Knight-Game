@@ -26,7 +26,7 @@ var testLevel = {
     ID: 0,
     label: "Testing Room",
     width: 24, height: 14,
-    player: { x: 1, y: 2 },
+    player: { x: 1, y: 1 },
     music: MUSIC.FODLAN_WINDS,
 
     //quick access to all levels
@@ -119,13 +119,13 @@ var levelLoader = {
     ID: 0,
     label: "Level-Loader",
     width: 24, height: 14,
-    player: { x: 1, y: 3 },
+    player: { x: 1, y: 2 },
     music: MUSIC.TITLE,
 
     //quick access to all levels
     doors: [
-        { x: 0.5, y: 4, killQuota: 0, exitLocation: { x: 1, y: 3, levelNum: 0 }, transition: false }, //door to level 0 (DEVELOPER ROOM)
-        { x: 7, y: 4, killQuota: 0, exitLocation: { x: 1, y: 4, levelNum: 1 }, transition: false }, //door to level 1
+        { x: 0.5, y: 4, killQuota: 0, exitLocation: { x: 1, y: 1, levelNum: 0 }, transition: false }, //door to level 0 (DEVELOPER ROOM)
+        { x: 7, y: 4, killQuota: 0, exitLocation: { x: 2, y: 1, levelNum: 1 }, transition: false }, //door to level 1
         { x: 10, y: 4, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition: false }, //door to level 2
         { x: 13, y: 4, killQuota: 0, exitLocation: { x: 4, y: 1, levelNum: 3 }, transition: false }, //door to level 3
         { x: 16, y: 4, killQuota: 0, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: false }, //door to level 4
@@ -232,7 +232,7 @@ var titleScene = {
 
     //quick access to all levels
     doors: [
-        { x: 7, y: 4, killQuota: 0, exitLocation: { x: 1, y: 4, levelNum: 1 }, transition: false }, //door to level 1
+        { x: 7, y: 4, killQuota: 0, exitLocation: { x: 1, y: 1, levelNum: 1 }, transition: false }, //door to level 1
         { x: 10, y: 4, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition: false }, //door to level 2
         { x: 13, y: 4, killQuota: 0, exitLocation: { x: 4, y: 1, levelNum: 3 }, transition: false }, //door to level 3
         { x: 16, y: 4, killQuota: 0, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: false }, //door to level 4
@@ -328,7 +328,7 @@ var titleScene = {
     ],
 
     shrooms: [
-        { x: 4, y: 2, guard: true }
+        //{ x: 4, y: 2, guard: true }
     ],
 
     goblins: [
@@ -581,7 +581,7 @@ var level1_2 = {
     music: MUSIC.CHASING_DAYBREAK,
     doors: [
         { x: 116, y: 3, killQuota: 7, exitLocation: { x: 4, y: 3, levelNum: 3 }, transition: false }, //next level to 3
-        { x: 0, y: 3, killQuota: 0, exitLocation: { x: 114, y: 11, levelNum: 1 }, transition: false } //go back to level 1
+        { x: 0, y: 3, killQuota: 0, exitLocation: { x: 114, y: 10, levelNum: 1 }, transition: false } //go back to level 1
     ],
 
     signs: [{
@@ -943,7 +943,7 @@ var level1_3 = {
     ],
 
     doors: [
-        { x: 1, y: 3, killQuota: 0, exitLocation: { x: 114, y: 3, levelNum: 2 }, transition: false }, //go back to level 2
+        { x: 1, y: 3, killQuota: 0, exitLocation: { x: 114, y: 1, levelNum: 2 }, transition: false }, //go back to level 2
         { x: 117, y: 25, killQuota: 8, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: false }, // change to level 4 once theres a level 4
         { x: 34, y: 35, killQuota: 1, exitLocation: { x: 1, y: 3, levelNum: 0 }, transition: false } // change to treasure room
     ],
@@ -1134,7 +1134,7 @@ var level1_4 = {
         },
     ],
     doors: [
-        { x: 3, y: 6, killQuota: 0, exitLocation: { x: 115, y: 25, levelNum: 3 }, transition: false }, //starting door
+        { x: 3, y: 6, killQuota: 0, exitLocation: { x: 115, y: 23, levelNum: 3 }, transition: false }, //starting door
         { x: 6, y: 26, killQuota: 8, exitLocation: { x: 115, y: 25, levelNum: 3 }, transition: true }, //exit door
     ],
     npcs: [
