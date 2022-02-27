@@ -37,6 +37,12 @@ class Knight extends AbstractPlayer {
         this.atkSpd2 = this.atkSpd + .01; //slash 2 must be slightly slower than atkspd1
         this.bowSpd = .1;
 
+        //how long a bufferable action input is held
+        this.jumpBuffer = 0;
+        this.rollBuffer = 0;
+        this.atkBuffer = 0;
+        this.bufferTime = 0.5;
+
 
         //default starting values
         this.DEFAULT_DIRECTION = this.dir.right;
@@ -225,6 +231,38 @@ class Knight extends AbstractPlayer {
         this.viewCollisionsBox(ctx);
     }
 
+    
+    /**
+     * Holds the bufferable input for a certain amount of time
+     * If the input was not done in the buffer time
+     * turn off the input.
+     * 
+     * Bufferable inputs are jump and attack
+     * @param {*} TICK 
+     */
+     checkBuffers(TICK) {
+        //jump
+        if((this.game.jump && this.action != this.states.jump)) {
+            this.jumpBuffer += TICK;
+            if(this.jumpBuffer >= this.bufferTime) {
+                this.game.jump = false;
+            }
+        } else {
+            this.jumpBuffer = 0;
+        }
+
+        //roll
+        if((this.game.roll && this.action != this.states.roll)) {
+            this.rollBuffer += TICK;
+            if(this.rollBuffer >= this.bufferTime) {
+                this.game.roll = false;
+            }
+        } else {
+            this.rollBuffer = 0;
+        }
+
+    }
+
     /**
      * Checks all avaliable actions of a player
      * and if the player's chosen action can be done it will
@@ -233,6 +271,7 @@ class Knight extends AbstractPlayer {
      */
     checkAndDoPlayerActions(TICK) {
         //horizontal or vertical actions
+        this.checkBuffers(TICK);
         this.checkAndDoMovement(TICK); //keyboard movement
         this.checkAndDoAttack();       //attacking
         this.checkAndDoHeal();         //healing

@@ -32,6 +32,7 @@ class Shop {
         this.highlightB4 = false;
         this.highlightB5 = false;
         this.highlightB6 = false;
+        this.highlighted = false;
 
         // GUI icons and cost
         this.health = [];
@@ -71,7 +72,7 @@ class Shop {
         this.myTextBox = new SceneTextBox(this.game, (this.game.surfaceWidth / 2) - 50, 1100, "");
         this.myTextBox.show = true;
         this.messageTimer = 0;
-        this.maxTimer = 10;
+        this.maxTimer = 6.5;
         this.defaultMsg = "Wizard: So, what would you like?";
         this.currentMessage = this.defaultMsg;
 
@@ -90,6 +91,7 @@ class Shop {
             if (this.messageTimer > this.maxTimer) {
                 this.messageTimer = 0;
                 this.currentMessage = this.defaultMsg;
+                this.purchased = false;
             }
         }
 
@@ -140,6 +142,7 @@ class Shop {
                             ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
                             self.currentMessage = self.purchases.arrow_pack;
                             self.messageTimer = 0;
+
                         }
                     }
 
@@ -157,6 +160,8 @@ class Shop {
                             ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
                             self.currentMessage = self.purchases.potion;
                             self.messageTimer = 0;
+
+                            self.purchased = true;
                         }
                     }
                 }
@@ -177,6 +182,8 @@ class Shop {
                             ASSET_MANAGER.playAsset(SFX.NEW_HEART);
                             self.currentMessage = self.purchases.heart_upgrade;
                             self.messageTimer = 0;
+
+                            self.purchased = true;
                         }
                     }
                 }
@@ -193,6 +200,8 @@ class Shop {
                             ASSET_MANAGER.playAsset(SFX.ENCHANTMENT);
                             self.currentMessage = self.purchases.attack_upgrade;
                             self.messageTimer = 0;
+
+                            self.purchased = true;
                         }
                     }
                 }
@@ -211,6 +220,8 @@ class Shop {
                             ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
                             self.currentMessage = self.purchases.arrow_upgrade;
                             self.messageTimer = 0;
+
+                            self.purchased = true;
                         }
                     }
                 }
@@ -227,6 +238,8 @@ class Shop {
                             ASSET_MANAGER.playAsset(SFX.ANVIL);
                             self.currentMessage = self.purchases.armor_upgrade;
                             self.messageTimer = 0;
+
+                            self.purchased = true;
                         }
                     }
                 }
@@ -268,7 +281,7 @@ class Shop {
         let scene = this.game.camera;
         let message;
 
-        if (this.maxed) {
+        if (this.maxed) { //maxed the shop
             if (this.currentMessage == this.purchases.arrow_pack || this.currentMessage == this.purchases.potion) {
                 message = this.currentMessage;
             } else {
@@ -277,58 +290,88 @@ class Shop {
         } else if (scene.player.myInventory.diamonds < 10) {
             message = "Wizard: well uh... this is awkward.";
         } else {
-            switch (this.currentMessage) {
-                case this.purchases.heart_upgrade:
-                    message = [];
-                    if (scene.player.myInventory.healthUpgrade == scene.player.myInventory.maxUpgrade) {
-                        message.push("You feel like its impossible to get any healthier than this.");
-                    } else { message.push(this.currentMessage); }
-                    message.push("Your Max-HP increased to " + scene.player.max_hp + "!");
-                    break;
-                case this.purchases.attack_upgrade:
-                    message = [];
-                    if (scene.player.myInventory.attackUpgrade == scene.player.myInventory.maxUpgrade) {
-                        message.push("You feel like you can cut a mountain in half with one swing!");
-                    } else { message.push(this.currentMessage); }
-                    message.push("Your melee damage increased by x" + scene.player.getAttackBonus() + "!");
-                    break;
-                case this.purchases.armor_upgrade:
+            //highlighted buttons
+            if (this.isHighlighted() && !this.purchased) {
+                if (this.highlightB1) {
+                    message = ["Wizard: 10 of the finest arrows here", "to snipe your enemies from afar!"]; // Arrow Pack   
+                }
+                else if (this.highlightB2) {
+                    message = ["Wizard: You want a potion?", "It'll heal you for 50HP."] // Health Potion
+                }
+                else if (this.highlightB3) {
+                    message = "Wizard: You look tired. Want a massage?" // Max-Health Upgrade
+                }
+                else if (this.highlightB4) {
+                    message = ["Wizard: You call that a sword?", "Hand it over I can enhance it... for a price."];
+                }
+                else if (this.highlightB5) {
+                    message = ["Wizard: If you want to be the king of snipers", "then you'll need some stronger arrows!", "I'll even throw in 10 extra arrows if you upgrade now!"] // Arrow Upgrade
+                }
+                else if (this.highlightB6) {
+                    message = ["Wizard: If you want more protection", "then I can improve your armor."] // Armor Upgrade
+                } else {
+                    message = "...";
+                }
+        
+            } else { //bought something
+                switch (this.currentMessage) {
+                    case this.purchases.heart_upgrade:
+                        message = [];
+                        if (scene.player.myInventory.healthUpgrade == scene.player.myInventory.maxUpgrade) {
+                            message.push("You feel like its impossible to get any healthier than this.");
+                        } else { message.push(this.currentMessage); }
+                        message.push("Your Max-HP increased to " + scene.player.max_hp + "!");
+                        break;
+                    case this.purchases.attack_upgrade:
+                        message = [];
+                        if (scene.player.myInventory.attackUpgrade == scene.player.myInventory.maxUpgrade) {
+                            message.push("You feel like you can cut a mountain in half with one swing!");
+                        } else { message.push(this.currentMessage); }
+                        message.push("Your melee damage increased by x" + scene.player.getAttackBonus() + "!");
+                        break;
+                    case this.purchases.armor_upgrade:
 
-                    message = [];
-                    let armor = "";
-                    if (scene.player.myInventory.armorUpgrade == 3) {
-                        message.push("You feel like nothing can't stop you.");
-                    } else {
-                        if (scene.player.myInventory.armorUpgrade == 1) armor = "Gold armor acquired!"
-                        else if (scene.player.myInventory.armorUpgrade == 2) armor = "Diamond armor acquired!"
-                        else if ((scene.player.myInventory.armorUpgrade == 3)) armor = "Netherite armor acquired!"
-                    }
-                    message.push(this.currentMessage + " " + armor);
-                    message.push("Your incoming damage will be reduced by x" + scene.player.getDefenseBonus() + "!");
-                    break;
-                case this.purchases.arrow_upgrade:
-                    message = [];
-                    if (scene.player.myInventory.arrowUpgrade == scene.player.myInventory.maxUpgrade) {
-                        message.push("\"Sogege Soge Soge Sogeking〜♪\"");
-                    }
-                    let arrow = "";
-                    if (scene.player.myInventory.arrowUpgrade == 1) arrow = "Arrow upgraded to iron!"
-                    else if (scene.player.myInventory.arrowUpgrade == 2) arrow = "Arrow upgraded to gold!"
-                    else if ((scene.player.myInventory.arrowUpgrade == 3)) arrow = "Arrow upgraded to diamond!"
-                    else if ((scene.player.myInventory.arrowUpgrade == 4)) arrow = "Arrow upgraded to netherite!"
-                    message.push(arrow + " " + this.currentMessage);
-                    let newDmg = (this.game.camera.player.myInventory.arrowUpgrade * 2) + 10;
-                    message.push("Your arrows will now fly faster and now do " + newDmg + " damage!");
-                    break;
-                default:
-                    message = this.currentMessage;
+                        message = [];
+                        let armor = "";
+                        if (scene.player.myInventory.armorUpgrade == 3) {
+                            message.push("You feel like nothing can't stop you.");
+                        } else {
+                            if (scene.player.myInventory.armorUpgrade == 1) armor = "GOLD armor acquired!"
+                            else if (scene.player.myInventory.armorUpgrade == 2) armor = "DIAMOND armor acquired!"
+                            else if ((scene.player.myInventory.armorUpgrade == 3)) armor = "NETHERITE armor acquired!"
+                        }
+                        message.push(this.currentMessage + " " + armor);
+                        message.push("Your incoming damage will be reduced by x" + scene.player.getDefenseBonus() + "!");
+                        break;
+                    case this.purchases.arrow_upgrade:
+                        message = [];
+                        if (scene.player.myInventory.arrowUpgrade == scene.player.myInventory.maxUpgrade) {
+                            message.push("\"Sogege Soge Soge Sogeking〜♪\"");
+                        }
+                        let arrow = "";
+                        if (scene.player.myInventory.arrowUpgrade == 1) arrow = "Arrow upgraded from STONE to IRON!"
+                        else if (scene.player.myInventory.arrowUpgrade == 2) arrow = "Arrow upgraded from IRON to GOLD!"
+                        else if ((scene.player.myInventory.arrowUpgrade == 3)) arrow = "Arrow upgraded from GOLD to DIAMOND!"
+                        else if ((scene.player.myInventory.arrowUpgrade == 4)) arrow = "Arrow upgraded from DIAMOND to NETHERITE!"
+                        message.push(arrow);
+                        let newDmg = (this.game.camera.player.myInventory.arrowUpgrade * 2) + 10;
+                        message.push("Your arrows will now fly faster and now do " + newDmg + " damage!");
+                        break;
+                    default:
+                        message = this.currentMessage;
+                }
             }
 
         }
         if (message instanceof Array) this.myTextBox.centerBottomMulti();
         else this.myTextBox.centerBottomSingle();
         this.myTextBox.setMessage(message, true);
+        this.currentMessage = message;
 
+    }
+
+    isHighlighted() {
+        return (this.highlightB1 || this.highlightB2 || this.highlightB3 || this.highlightB4 || this.highlightB5 || this.highlightB6);
     }
 
     updateAnimations() {

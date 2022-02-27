@@ -26,10 +26,6 @@ class Mushroom extends AbstractEnemy {
         // gravity
         this.fallAcc = 1500;
 
-        // Enemy drop
-        this.dropDiamonds = false;
-        this.dropAmount = randomInt(5) + 1;
-
         this.loadAnimations();
         this.updateBoxes();
     };
