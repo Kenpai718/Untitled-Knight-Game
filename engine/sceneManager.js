@@ -193,8 +193,8 @@ class SceneManager {
         this.heartsbar = new HeartBar(this.game, this.player);
         this.vignette = new Vignette(this.game);
         if (!this.lastPlayer) this.game.addEntity(this.player);
-        this.doRespawnHeal();
         this.player.updateBB();
+        this.doRespawnHeal();
     };
 
     doRespawnHeal() {
