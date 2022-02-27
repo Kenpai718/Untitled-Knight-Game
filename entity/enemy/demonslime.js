@@ -2,18 +2,25 @@ class DemonSlime extends AbstractEnemy {
     constructor(game, x, y, guard) {
         super(game, x, y, guard, STATS.DEMON_SLIME.NAME, STATS.DEMON_SLIME.MAX_HP, STATS.DEMON_SLIME.WIDTH, STATS.DEMON_SLIME.HEIGHT, STATS.DEMON_SLIME.SCALE, STATS.DEMON_SLIME.PHYSICS);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/demon_slime.png");
-        this.animations = [];
-        this.states = { idle: 0, walk: 1, attack: 2, damaged: 3, death: 4 };
+
+        this.states = { idle: 0, walk: 1, attack: 2, damaged: 3, death: 4, rebirth: 5 };
         this.directions = { left: 0, right: 1 };
+        this.phases = { normal: 0, superHardAnnoyingTeleportingMode: 1 };
         this.state = this.states.idle;
         this.direction = this.directions.right;
-        this.scale = STATS.DEMON_SLIME.SCALE;
+        this.phase = this.phases.normal;
+
+        this.runAwayDirection = this.directions.left;
         this.canAttack = true;
         this.vulnerable = true;
+        this.canBeHit = true;
+        this.runAway = false;
         this.damagedCooldown = 0;
         this.attackCooldown = 0;
         this.attackFrame = 0;
+
         this.fallAcc = 1500;
+
         this.loadAnimations();
         this.updateBoxes();
     };
@@ -27,21 +34,24 @@ class DemonSlime extends AbstractEnemy {
 
     updateHB() {
         this.getOffsets();
-        if (this.direction == this.directions.left) this.HB = new BoundingBox(this.x + this.offsetX - (85 * this.scale), this.y + this.offsetY, this.BB.right - (this.x + this.offsetX - (85 * this.scale)), this.height);
-        else this.HB = new BoundingBox(this.BB.left, this.BB.top, this.BB.right - (this.x + this.offsetX - (85 * this.scale)), this.height);
+        if (this.direction == this.directions.left && this.state == this.states.attack) this.HB = new BoundingBox(this.x + this.offsetX - (85 * this.scale), this.y + this.offsetY, this.BB.right - (this.x + this.offsetX - (85 * this.scale)), this.height);
+        else if (this.direction == this.directions.right && this.state == this.states.attack) this.HB = new BoundingBox(this.BB.left, this.BB.top, this.BB.right - (this.x + this.offsetX - (85 * this.scale)), this.height);
+        else if (this.state == this.states.rebirth) this.HB = new BoundingBox(this.BB.left, this.BB.top, this.BB.width, this.BB.height);
     }
 
     updateBoxes() {
         this.lastBB = this.BB;
         this.getOffsets();
-        this.AR = new BoundingBox(this.x + this.offsetX - (70 * this.scale), this.y + this.offsetY, this.width + (140 * this.scale), this.height);
-        this.VB = new BoundingBox(this.x + this.offsetX - (180 * this.scale), this.y + this.offsetY, this.width + (360 * this.scale), this.height);
+        this.VB = new BoundingBox(this.x + this.offsetX - (500 * this.scale), this.y + this.offsetY, this.width + (1000 * this.scale), this.height);
         this.BB = new BoundingBox(this.x + this.offsetX, this.y + this.offsetY, this.width, this.height);
+        if (this.direction == this.directions.left) this.AR = new BoundingBox(this.x + this.offsetX - (40 * this.scale), this.y + this.offsetY, this.BB.right - (this.x + this.offsetX - (40 * this.scale)), this.height);
+        else this.AR = new BoundingBox(this.BB.left, this.BB.top, this.BB.right - (this.x + this.offsetX - (40 * this.scale)), this.height);
     };
 
     loadAnimations() {
+        this.animations = [];
         let numDir = 2;
-        let numStates = 5;
+        let numStates = 6;
         for (var i = 0; i < numStates; i++) {
             this.animations.push([]);
             for (var j = 0; j < numDir; j++) {
@@ -57,11 +67,14 @@ class DemonSlime extends AbstractEnemy {
         this.animations[this.states.attack][this.directions.left] = new Animator(this.spritesheet, 0, 320, 288, 160, 15, 0.1, 0, false, false, false);
         this.animations[this.states.attack][this.directions.right] = new Animator(this.spritesheet, 2016, 1120, 288, 160, 15, 0.1, 0, true, false, false);
 
-        this.animations[this.states.damaged][this.directions.left] = new Animator(this.spritesheet, 0, 480, 288, 160, 5, 0.1, 0, false, false, false);
-        this.animations[this.states.damaged][this.directions.right] = new Animator(this.spritesheet, 4896, 1280, 288, 160, 5, 0.1, 0, true, false, false);
+        this.animations[this.states.damaged][this.directions.left] = new Animator(this.spritesheet, 0, 480, 288, 160, 5, 0.09, 0, false, false, false);
+        this.animations[this.states.damaged][this.directions.right] = new Animator(this.spritesheet, 4896, 1280, 288, 160, 5, 0.09, 0, true, false, false);
 
-        this.animations[this.states.death][this.directions.left] = new Animator(this.spritesheet, 0, 640, 288, 160, 22, 0.1, 0, false, false, false);
-        this.animations[this.states.death][this.directions.right] = new Animator(this.spritesheet, 0, 1440, 288, 160, 22, 0.1, 0, true, false, false);
+        this.animations[this.states.death][this.directions.left] = new Animator(this.spritesheet, 0, 640, 288, 160, 22, 0.07, 0, false, false, false);
+        this.animations[this.states.death][this.directions.right] = new Animator(this.spritesheet, 0, 1440, 288, 160, 22, 0.07, 0, true, false, false);
+
+        this.animations[this.states.rebirth][this.directions.left] = new Animator(this.spritesheet, 0, 640, 288, 160, 22, 0.07, 0, true, false, false);
+        this.animations[this.states.rebirth][this.directions.right] = new Animator(this.spritesheet, 0, 1440, 288, 160, 22, 0.07, 0, false, false, false);
     };
 
     update() {
@@ -69,6 +82,7 @@ class DemonSlime extends AbstractEnemy {
         if (this.dead) {
             super.setDead();
         } else {
+            if (this.hp <= (this.max_hp / 2)) this.phase = this.phases.superHardAnnoyingTeleportingMode;
             this.velocity.y += this.fallAcc * TICK;
             if (this.velocity.y >= this.myMaxFall) this.velocity.y = this.myMaxFall;
             if (this.velocity.y <= -this.myMaxFall) this.velocity.y = -this.myMaxFall;
@@ -79,23 +93,14 @@ class DemonSlime extends AbstractEnemy {
             this.updateBoxes();
 
             let dist = { x: 0, y: 0 }; //the displacement needed between entities
-            this.playerInSight = false; //set to true in environment collisions
             dist = super.checkEnvironmentCollisions(dist); //check if colliding with environment and adjust entity accordingly
+            this.playerInSight = false; //set to true in environment collisions
             this.checkEntityInteractions(); //move entity according to other entities
             dist = this.collideWithOtherEnemies(dist, TICK); // change speed based on other enemies
             this.updatePositionAndVelocity(dist); //set where entity is based on interactions/collisions put on dist
             this.checkCooldowns(TICK); //check and reset the cooldowns of its actions
+            this.checkHB();
 
-            // attack hitbox timing
-            if (this.state == this.states.attack) {
-                this.attackFrame = this.animations[this.state][this.direction].currentFrame();
-                if (this.attackFrame >= 6) this.updateHB();
-            } else {
-                this.state = this.states.idle;
-                this.HB = null;
-            }
-
-            // what the mushroom does on its free time
             if (!this.playerInSight && !this.aggro) {
                 this.state = this.states.idle;
                 this.velocity.x = 0;
@@ -103,8 +108,8 @@ class DemonSlime extends AbstractEnemy {
 
             super.setAggro(this.playerInSight);
             super.updateVelocity();
-            super.doJumpIfStuck(TICK); //jump if stuck horizontally
-            super.checkInDeathZone();  //die if below blastzone
+            super.doJumpIfStuck(TICK);
+            super.checkInDeathZone();
         }
         this.animations[this.state][this.direction].update(TICK);
     };
@@ -118,61 +123,96 @@ class DemonSlime extends AbstractEnemy {
         }
     };
 
+    checkHB() {
+        if (this.state == this.states.attack || this.state == this.states.rebirth) {
+            if (this.state == this.states.attack) {
+                this.attackFrame = this.animations[this.state][this.direction].currentFrame();
+                if (this.attackFrame >= 10 && this.attackFrame <= 12) this.updateHB();
+            } else {
+                this.updateHB();
+            }
+        } else {
+            this.HB = null;
+        }
+    };
+
     checkEntityInteractions() {
         let self = this;
         this.game.entities.forEach(function (entity) {
-            // knight is in the vision box or was hit by an arrow
             if (entity instanceof AbstractPlayer) {
-                let playerInVB = entity.BB && self.VB.collide(entity.BB);
-                let playerAtkInVB = entity.HB != null && self.VB.collide(entity.HB);
-                if (playerInVB || playerAtkInVB || self.aggro) {
-                    self.playerInSight = playerInVB;
-                    self.aggro = true;
-                    // knight is in the vision box and not in the attack range
-                    if (!self.AR.collide(entity.BB) && self.state != self.states.damaged && (self.state != self.states.attack || self.state == self.states.attack && self.animations[self.state][self.direction].currentFrame() < 3)) {
-                        // move towards the knight
-                        self.state = self.states.walk;
-                        self.direction = entity.BB.right < self.BB.left ? self.directions.left : self.directions.right;
-                        self.velocity.x = self.direction == self.directions.right ? self.velocity.x + self.myMaxSpeed : self.velocity.x - self.myMaxSpeed;
-                    }
+                if (entity.HB && self.BB.collide(entity.HB) && (self.state == self.states.idle || self.state == self.states.walk)) {
+                    self.canBeHit = false;
+                    self.vulnerable = false;
                 }
-                // knight is in attack range
-                if (entity.BB && self.AR.collide(entity.BB) && self.vulnerable) {
+                if (entity.BB && self.AR.collide(entity.BB) && self.canBeHit) {
                     self.velocity.x = 0;
-                    self.state = self.states.idle;
                     if (self.canAttack || !self.animations[self.states.attack][self.direction].isDone()) {
                         self.canAttack = false;
+                        self.runAway = true;
                         self.state = self.states.attack;
                     }
                 }
-
-                if (entity.HB && self.BB.collide(entity.HB) && self.attackFrame <= 2) {
-                    self.setDamagedState();
+                if ((entity.BB && self.VB.collide(entity.BB)) || self.aggro) {
+                    self.playerInSight = true;
+                    self.aggro = true;
+                    if (!self.AR.collide(entity.BB) && self.canAttack && self.canBeHit) {
+                        self.direction = entity.BB.left < self.BB.left ? self.directions.left : self.directions.right;
+                        if (self.phase != self.phases.normal) {
+                            self.state = self.states.rebirth;
+                            self.velocity.x = self.direction == self.directions.right ? self.myMaxSpeed : -self.myMaxSpeed;
+                        } else {
+                            self.state = self.states.walk;
+                            self.velocity.x = self.direction == self.directions.right ? self.myMaxSpeed / 3 : -self.myMaxSpeed / 3;
+                        }
+                    }
                 }
             }
         });
     };
 
     checkCooldowns(TICK) {
-        // handles the mushrooms attack cooldown
         if (!this.canAttack) {
-            this.attackCooldown += TICK;
-            if (this.attackCooldown >= 4.5) {
-                this.resetAnimationTimers(this.states.attack);
+            if (this.checkAnimationDone(this.states.attack)) {
+                if (this.phase == this.phases.normal) {
+                    this.state = this.states.walk;
+                    this.direction = this.runAwayDirection;
+                    this.velocity.x = this.direction == this.directions.right ? this.myMaxSpeed / 3 : -this.myMaxSpeed / 3;
+                    this.attackCooldown += TICK;
+                } else {
+                    this.state = this.states.rebirth;
+                    this.direction = this.runAwayDirection;
+                    this.velocity.x = this.direction == this.directions.right ? this.myMaxSpeed : -this.myMaxSpeed;
+                }
+            }
+            if (this.checkAnimationDone(this.states.rebirth)) {
+                this.state = this.states.idle;
+                this.direction = this.direction == this.directions.right ? this.directions.left : this.directions.right;
+                this.velocity.x = 0;
+                this.runAway = false;
+                this.attackCooldown += TICK;
+            }
+            if (this.attackCooldown >= 3) {
+                this.runAwayDirection = this.runAwayDirection == this.directions.left ? this.directions.right : this.directions.left;
                 this.attackFrame = 0;
                 this.attackCooldown = 0;
                 this.canAttack = true;
+                this.runAway = false;
+                this.resetAnimationTimers(this.states.rebirth);
+                this.resetAnimationTimers(this.states.attack);
             }
         }
-        // handles the mushrooms being hit cooldown
-        if (!this.vulnerable) {
+        if (!this.canBeHit) {
             this.damagedCooldown += TICK;
-            if (this.damagedCooldown >= PARAMS.DMG_COOLDOWN) {
+            if (this.state == this.states.idle || this.state == this.states.walk) this.state = this.states.damaged;
+            if (this.checkAnimationDone(this.states.damaged) && !this.vulnerable) {
+                this.state = this.states.idle;
+            }
+            if (this.damagedCooldown >= 0.45) {
                 this.resetAnimationTimers(this.states.damaged);
-                this.state = this.states.move;
+                this.state = this.states.idle;
                 this.damagedCooldown = 0;
-                this.canAttack = true;
                 this.vulnerable = true;
+                this.canBeHit = true;
             }
         }
     };
@@ -182,10 +222,12 @@ class DemonSlime extends AbstractEnemy {
         this.animations[action][this.directions.right].elapsedTime = 0;
     };
 
+    checkAnimationDone(action) {
+        return (this.animations[action][this.directions.left].isDone() || this.animations[action][this.directions.right].isDone());
+    };
 
     setDamagedState() {
-        this.vulnerable = false;
-        this.state = this.states.damaged;
+        this.hp += 5;
     };
 
     getDamageValue() {

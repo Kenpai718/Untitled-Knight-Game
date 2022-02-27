@@ -24,21 +24,22 @@ class Diamond extends AbstractInteractable {
     update() {
 
         // If collides with ground
-        let that = this;
+        let self = this;
         this.game.entities.forEach(function (entity) {
-            if (entity.BB && that.BB.collide(entity.BB) && entity instanceof AbstractPlayer && that.amount > 0) {
-                entity.myInventory.diamonds += that.amount;
-                that.game.myReportCard.myDiamondsEarned += that.amount;
-                that.amount -= that.amount;
-                that.removeFromWorld = true;
+            if (entity.BB && self.BB.collide(entity.BB) && entity instanceof AbstractPlayer && self.amount > 0) {
+                self.game.addEntityToFront(new Score(self.game, entity, self.amount, PARAMS.DIAMOND_ID, false));
+                entity.myInventory.diamonds += self.amount;
+                self.game.myReportCard.myDiamondsEarned += self.amount;
+                self.amount -= self.amount;
+                self.removeFromWorld = true;
                 ASSET_MANAGER.playAsset(SFX.ITEM_PICKUP);
             }
         });
         // If collides with ground, stop
         if(!this.collision){ // If statement prevents constant searching
             this.game.foreground2.forEach(function (entity) {
-                if(entity.BB && that.BB.collide(entity.BB) && entity instanceof AbstractBarrier){ // A poor attempt in collision detection
-                    that.collision = true;
+                if(entity.BB && self.BB.collide(entity.BB) && entity instanceof AbstractBarrier){ // A poor attempt in collision detection
+                    self.collision = true;
                 }
             });
         }

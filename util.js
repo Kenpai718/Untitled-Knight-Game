@@ -35,10 +35,12 @@ const PARAMS = {
     //colors
     DMG_COLOR: rgb(183, 3, 3),      //red
     HEAL_COLOR: rgb(124, 252, 0),   //green
+    DIAMOND_COLOR: rgb(185, 242, 255),   //diamond blue
 
     //IDS for Score class
     DMG_ID: 0,
     HEAL_ID: 1,
+    DIAMOND_ID: 2,
 
     //HP RATIOS to compare with a percentage
     LOW_HP: .2,
@@ -57,14 +59,14 @@ const PLAYER_JUMP_HEIGHT = 1500; //players base jump height
 const FALL_GRAVITY = 1.2; //gravity put on player's fall acc
 const PLAYER_PHYSICS = {
     MAX_WALK: 95 * PHYSIC_SCALER,
-    MAX_RUN: 155 * PHYSIC_SCALER,
-    ACC_WALK: 180 * PHYSIC_SCALER,
-    ACC_RUN: 200 * PHYSIC_SCALER,
+    MAX_RUN: 180 * PHYSIC_SCALER,
+    ACC_WALK: 205 * PHYSIC_SCALER,
+    ACC_RUN: 300 * PHYSIC_SCALER,
     ROLL_SPD: 400 * PHYSIC_SCALER,
-    SKID: 3000,
+    SKID: 4500,
     ATTACK_SKID: 3000 * 0.75,
-    CROUCH_SPD: 50 * PHYSIC_SCALER,
-    DOUBLE_JUMP_X_BOOST: 100,
+    CROUCH_SPD: 70 * PHYSIC_SCALER,
+    DOUBLE_JUMP_X_BOOST: 10,
     JUMP_HEIGHT: PLAYER_JUMP_HEIGHT,
     DOUBLE_JUMP_HEIGHT: PLAYER_JUMP_HEIGHT * .5,
     MAX_FALL: 270 * PHYSIC_SCALER,
@@ -115,7 +117,7 @@ const STATS = {
         WIDTH: 150,
         HEIGHT: 150,
         DAMAGE: 12.5,
-        PHYSICS: {MAX_RUN: 380, MAX_FALL: 810}
+        PHYSICS: {MAX_RUN: PLAYER_PHYSICS.MAX_RUN - 50, MAX_FALL: 810}
     },
 
     GOBLIN: {
@@ -125,7 +127,7 @@ const STATS = {
         WIDTH: 33,
         HEIGHT: 36,
         DAMAGE: 8,
-        PHYSICS: {MAX_RUN: 400, MAX_FALL: 500}
+        PHYSICS: {MAX_RUN: PLAYER_PHYSICS.MAX_RUN - 5, MAX_FALL: 500}
     },
 
     SKELETON: {
@@ -135,7 +137,7 @@ const STATS = {
         WIDTH: 45,
         HEIGHT: 51,
         DAMAGE: 10,
-        PHYSICS: {MAX_RUN: 380, MAX_FALL: 600}
+        PHYSICS: {MAX_RUN: PLAYER_PHYSICS.MAX_RUN - 40, MAX_FALL: 600}
     },
 
     WIZARD: {
@@ -145,7 +147,7 @@ const STATS = {
         WIDTH: 10,
         HEIGHT: 80,
         DAMAGE: 20,
-        PHYSICS: {MAX_RUN: 500, MAX_FALL: 400}
+        PHYSICS: {MAX_RUN: PLAYER_PHYSICS.MAX_RUN - 10, MAX_FALL: 400}
 
     },
 
@@ -156,7 +158,7 @@ const STATS = {
         WIDTH: 22,
         HEIGHT: 25,
         DAMAGE: 5,
-        PHYSICS: {MAX_RUN: 400, MAX_FALL: 200}
+        PHYSICS: {MAX_RUN: PLAYER_PHYSICS.MAX_RUN - 10, MAX_FALL: 200}
     },
 
     EYE_PROJECTILE: {
@@ -170,12 +172,12 @@ const STATS = {
 
     DEMON_SLIME: {
         NAME: "Demon Slime",
-        MAX_HP: 200,
+        MAX_HP: 400,
         WIDTH: 288,
         HEIGHT: 160,
-        DAMAGE: 20,
+        DAMAGE: 0,
         SCALE: 3,
-        PHYSICS: {MAX_RUN: 200, MAX_FALL: 500}
+        PHYSICS: {MAX_RUN: PLAYER_PHYSICS.MAX_RUN - 60, MAX_FALL: 500}
     }
 
 }
@@ -355,6 +357,14 @@ function getMaxStrLength(theText) {
     return maxLen;
 }
 
+function rand_10(min, max){
+    return Math.round((Math.random()*(max-min)+min)/10)*10;
+}
+
+function rand_5(min, max){
+    return Math.round((Math.random()*(max-min)+min)/10)*5;
+}
+
 /**
  * if drawing text on the right this will give the proper offset
  * so all the text is shown and not cut off by the canvas
@@ -392,13 +402,10 @@ function buildButton(ctx, text, box, isSelected) {
 
 function buildTextButton(ctx, text, box, isSelected, highlightColor) {
     //text
-    
+
     ctx.font = '40px "Press Start 2P"';
     isSelected ? ctx.fillStyle = "GhostWhite" : ctx.fillStyle = "BlueViolet";
     ctx.fillText(text, box.x + 5, box.y + 5);
     isSelected ? ctx.fillStyle = highlightColor : ctx.fillStyle = "GhostWhite";
     ctx.fillText(text, box.x, box.y);
 }
-
-
-

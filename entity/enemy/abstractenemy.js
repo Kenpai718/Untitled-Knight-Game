@@ -47,7 +47,6 @@ class AbstractEnemy extends AbstractEntity {
 
         //loot
         this.dropDiamonds = false;
-        this.dropAmount = randomInt(3) + 1;
 
         //random behavior
         this.seconds = 0;
@@ -229,15 +228,36 @@ class AbstractEnemy extends AbstractEntity {
     }
 
     /**
-     * Spawnds a diamond upon death of an enemy
+     * Spawns a diamond upon death of an enemy
+     * Different depending on enemy type
      */
     dropLoot() {
         // Drops random # of diamond upon death
         if (!this.dropDiamonds) {
-            this.game.addEntityToFront(new Diamond(this.game, this.BB.x, this.BB.y, this.dropAmount));
+            let amount;
+            let baseBonus = 1 + randomInt(5);
+            if(this instanceof Mushroom) { 
+                amount = 5 + baseBonus;
+            } else if(this instanceof Skeleton) { 
+                amount = 3 + baseBonus; 
+            } else if(this instanceof Goblin) { 
+                amount = 4 + baseBonus; 
+            } else if(this instanceof FlyingEye) {
+                amount = 5 + baseBonus; 
+            } else if (this instanceof DemonSlime) {
+                amount = 50 + randomInt(50); 
+            } else if (this instanceof Wizard) {
+                amount = 100 + randomInt(50); 
+            } else {
+                amount = 4 + baseBonus; 
+            }
+
+            this.game.addEntityToFront(new Diamond(this.game, this.BB.x, this.BB.y, amount));
             this.dropDiamonds = true;
+            
         }
     }
+    
 
     drawHealth(ctx) {
         if (!this.dead)

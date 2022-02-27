@@ -182,16 +182,29 @@ class SceneManager {
             this.player.removeFromWorld = false;
             this.player.velocity.x = 0;
             this.player.velocity.y = 0;
+            this.player.x = 0;
+            this.player.x = 0;
             this.player.action = this.player.states.idle;
             this.player.updateBB();
         }
-        this.player.x = spawnX;
+        this.player.x = spawnX - this.player.BB.width - PARAMS.BLOCKDIM;
         this.player.y = spawnY - this.player.BB.height - PARAMS.BLOCKDIM;
         this.inventory = this.player.myInventory;
         this.heartsbar = new HeartBar(this.game, this.player);
         this.vignette = new Vignette(this.game);
         if (!this.lastPlayer) this.game.addEntity(this.player);
+        this.doRespawnHeal();
     };
+
+    doRespawnHeal() {
+        //mercy rule: after dying the player is healed a bit
+        if (this.player.respawn) {
+            this.respawn = false;
+            if (this.player.hp <= (this.player.max_hp / 2)) {
+                this.player.heal((this.player.max_hp / 2) - this.player.hp);
+            }
+        }
+    }
 
     /**
      * Loads a valid level
@@ -366,6 +379,7 @@ class SceneManager {
             }
         }
     }
+
     updatePauseMenu() {
         if (PAUSED) {
             this.textColor = 0;
@@ -451,6 +465,7 @@ class SceneManager {
 
     restartLevel() {
         this.currentLevel = 1;
+        this.levelTimer = 0;
         this.levelState = [];
         this.lastPlayer = null;
         this.game.attack = false;
@@ -479,9 +494,9 @@ class SceneManager {
     BBCamera() {
         let xToLeft = this.player.BB.left - this.player.x;
         let xtoRight = this.player.BB.right - this.player.x;
-        if (this.player.BB.left < 0) this.player.x -= this.player.BB.left;
-        else if (this.player.BB.right > this.level.width * PARAMS.BLOCKDIM) this.player.x -= this.player.BB.right - this.level.width * PARAMS.BLOCKDIM;
-        if (this.x < this.player.BB.left - this.game.surfaceWidth * 9 / 16 && this.x + this.game.surfaceWidth < this.level.width * PARAMS.BLOCKDIM) this.x = this.player.BB.left - this.game.surfaceWidth * 9 / 16;
+        if (this.player.BB.left < 0) this.player.x = 0 - this.player.offsetxBB;
+        else if (this.player.BB.right > this.level.width * PARAMS.BLOCKDIM) this.player.x = (this.level.width * PARAMS.BLOCKDIM) - this.player.width;
+        if (this.x + this.game.surfaceWidth * 9 / 16 < this.player.BB.left && this.x + this.game.surfaceWidth < this.level.width * PARAMS.BLOCKDIM) this.x = this.player.BB.left - this.game.surfaceWidth * 9 / 16;
         else if (this.x > this.player.BB.right - this.game.surfaceWidth * 7 / 16 && this.x > 0) this.x = this.player.BB.right - this.game.surfaceWidth * 7 / 16;
 
         if (this.x < 0) this.x = 0;
@@ -666,7 +681,7 @@ class SceneManager {
                 } else { //so control and reportbox dont overlap
                     this.game.myReportCard.drawReportCard(ctx);
                 }
-            
+
             }
 
             if (PARAMS.DEBUG) {
@@ -704,7 +719,7 @@ class SceneManager {
                 this.myCreditBox.draw(ctx);
             }
 
-            if(PAUSED) {
+            if (PAUSED) {
                 var fontSize = 60;
                 ctx.font = fontSize + 'px "Press Start 2P"';
 
@@ -1007,19 +1022,19 @@ class SceneManager {
         if (dict.supports) {
             for (var i = 0; i < dict.supports.length; i++) {
                 let support = dict.supports[i];
-                array.push(new Support(this.game, support.x * PARAMS.BLOCKDIM, (h - support.y - 1) * PARAMS.BLOCKDIM, support.width * PARAMS.BLOCKDIM));
+                array.push(new Support(this.game, support.x, (h - support.y - 1), support.width));
             }
         }
         if (dict.chains) {
             for (var i = 0; i < dict.chains.length; i++) {
                 let chain = dict.chains[i];
-                array.push(new Chain(this.game, chain.x * PARAMS.BLOCKDIM, (h - chain.y - 1) * PARAMS.BLOCKDIM));
+                array.push(new Chain(this.game, chain.x, h - chain.y - 1));
             }
         }
         if (dict.ceilingChains) {
             for (var i = 0; i < dict.ceilingChains.length; i++) {
                 let ceilingChain = dict.ceilingChains[i];
-                array.push(new CeilingChain(this.game, ceilingChain.x * PARAMS.BLOCKDIM, (h - ceilingChain.y - 1) * PARAMS.BLOCKDIM, ceilingChain.height));
+                array.push(new CeilingChain(this.game, ceilingChain.x, h - ceilingChain.y - 1, ceilingChain.height));
             }
         }
         if (dict.backgroundWalls) {
@@ -1137,6 +1152,7 @@ class Minimap {
         this.level = level;
         this.w = this.level.width;
         this.h = this.level.height;
+        this.getBoxDim();
 
         this.colors = {
             ground: "dimgray",
@@ -1168,11 +1184,18 @@ class Minimap {
      * @param {*} ctx
      */
     draw(ctx) {
-        ctx.globalAlpha = 0.7;
-        this.buildMinimapBox(ctx);
+        //lower opacity if the player is under the minimap
+        let player = this.game.camera.player;
+        if (player.x > this.game.camera.x + this.x &&
+            player.y < this.game.camera.y + this.y + this.miniH) {
+            ctx.filter = "Opacity(80%)";
+        }
+        ctx.strokeStyle = "White";
+        ctx.strokeRect(this.BB.x, this.BB.y, this.BB.width, this.BB.height);
         this.loadEnvironmentScene(ctx);
         this.traceEntities(ctx);
-        ctx.globalAlpha = 1;
+
+        ctx.filter = "none";
 
     }
 
@@ -1409,17 +1432,18 @@ class Minimap {
      * @param {} ctx
      */
     buildMinimapBox(ctx) {
-        //ctx.fillStyle = "SpringGreen";
-        let miniX = this.x;
-        let miniY = this.y;
-        let miniW = (this.w * PARAMS.SCALE) + this.xOffset;
-        let miniH = (this.h * PARAMS.SCALE) + this.yOffset;
-
         //ctx.fillText("Minimap", miniX, miniY - 10);
         ctx.fillStyle = rgba(41, 41, 41, 0.5);
-        ctx.fillRect(miniX, miniY, miniW, miniH);
+        ctx.fillRect(this.x, this.y, this.miniW, this.miniH);
         ctx.strokeStyle = "GhostWhite";
-        ctx.strokeRect(miniX, miniY, miniW, miniH);
+        ctx.strokeRect(this.x, this.y, this.miniW, this.miniH);
+    }
+
+    getBoxDim() {
+        this.miniW = (this.w * PARAMS.SCALE) + this.xOffset;
+        this.miniH = (this.h * PARAMS.SCALE) + this.yOffset;
+
+        this.BB = new BoundingBox(this.x, this.y, this.miniW, this.miniH);
     }
 
     update() {

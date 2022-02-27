@@ -56,6 +56,12 @@ class Score {
             ctx.fillText(this.score, (this.x + offset + 1) - this.game.camera.x, this.y - this.game.camera.y + 1);
             ctx.fillStyle = PARAMS.HEAL_COLOR;
             ctx.fillText(this.score, (this.x + offset) - this.game.camera.x, this.y - this.game.camera.y);
+        } else if (this.type == PARAMS.DIAMOND_ID) {
+            ctx.font = PARAMS.CRITICAL_FONT;
+            ctx.fillStyle = "Black";
+            ctx.fillText("💎 +" + this.score, (this.x + offset + 1) - this.game.camera.x, this.y - this.game.camera.y + 1);
+            ctx.fillStyle = PARAMS.DIAMOND_COLOR;
+            ctx.fillText("💎 +" + this.score, (this.x + offset) - this.game.camera.x, this.y - this.game.camera.y);
         }
 
         ctx.filter = "none";

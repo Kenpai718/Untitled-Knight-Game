@@ -378,8 +378,9 @@ var level1_1 = {
                 " *Recommend to disable sticky keys!",
                 "-[ESC] to pause the game",
                 "",
-                "KEYBOARD + MOUSE CONTROLS:",
+                "KEYBOARD + MOUSE CONTROLS: (RECOMMENDED)",
                 "*NOTE: Keep mouse cursor within game screen!",
+                "-Use keyboard to move and mouse to attack",
                 "-[LEFT-CLICK]: Melee attack",
                 "-[MOUSE-MOVE]: Aim an arrow with cursor in game screen",
                 "-[RIGHT-CLICK]: Shoot arrow in cursor direction",
@@ -443,7 +444,7 @@ var level1_1 = {
         },
 
         {
-            x: 100, y: 2,
+            x: 102, y: 2,
             title: "    Secrets!!!",
             text: [
                 "-You may find secrets in unexpected places!",
@@ -469,7 +470,10 @@ var level1_1 = {
     chests: [
         { x: 76, y: 7, direction: 0 },
         { x: 112, y: 10, direction: 0 },
-        { x: 104, y: 1, direction: 0 }
+        //secret room
+        { x: 102, y: 5, direction: 0 },
+        { x: 100, y: 1, direction: 0 },
+        { x: 104, y: 1, direction: 1 },
     ],
     ground: [
         { x: 0, y: 0, width: 15, height: 1, type: 1 },
@@ -493,6 +497,7 @@ var level1_1 = {
     platforms: [
         { x: 68, y: 4, width: 3, height: 1 },
         { x: 75, y: 6, width: 3, height: 1 },
+        { x: 101, y: 4, width: 3, height: 1, direction: 0 },
     ],
 
     bricks: [
@@ -575,8 +580,8 @@ var level1_2 = {
     player: { x: 1, y: 2 },
     music: MUSIC.CHASING_DAYBREAK,
     doors: [
-        { x: 116, y: 3, killQuota: 7, exitLocation: { x: 4, y: 1, levelNum: 3 }, transition: false }, //next level to 3
-        { x: 0, y: 3, killQuota: 0, exitLocation: { x: 114, y: 10, levelNum: 1 }, transition: false } //go back to level 1
+        { x: 116, y: 3, killQuota: 7, exitLocation: { x: 4, y: 3, levelNum: 3 }, transition: false }, //next level to 3
+        { x: 0, y: 3, killQuota: 0, exitLocation: { x: 114, y: 11, levelNum: 1 }, transition: false } //go back to level 1
     ],
 
     signs: [{
@@ -622,9 +627,9 @@ var level1_2 = {
 
     chests: [
         { x: 2, y: 25, direction: 1 },
-        //{ x: 50, y: 7, direction: 0 },
+        { x: 52, y: 7, direction: 0 },
         { x: 82, y: 19, direction: 0 },
-        { x: 58, y: 1, direction: 1 }, //secret 
+        { x: 58, y: 1, direction: 1 }, //secret
         { x: 58, y: 4, direction: 1 },
         { x: 58, y: 4, direction: 1 },
         { x: 117, y: 8, direction: 0 },
@@ -671,6 +676,7 @@ var level1_2 = {
     ],
 
     bricks: [
+        { x: 120, y: 36, width: 1, height: 37 },
         { x: 45, y: 0, width: 16, height: 1 },
         { x: 46, y: 5, width: 12, height: 5 },
         { x: 0, y: 5, width: 41, height: 2 },
@@ -721,7 +727,7 @@ var level1_2 = {
         { x: 30, y: 24, height: 2, type: 2 },
         { x: 34, y: 24, height: 3, type: 0 },
         { x: 84, y: 22, height: 5, type: 0 },
-        { x: 120, y: 36, height: 37, type: 0 }
+
     ],
     backgroundWalls: [
         { x: 0, y: 36, width: 120, height: 36 }
@@ -937,7 +943,7 @@ var level1_3 = {
     ],
 
     doors: [
-        { x: 1, y: 3, killQuota: 0, exitLocation: { x: 114, y: 1, levelNum: 2 }, transition: false }, //go back to level 2
+        { x: 1, y: 3, killQuota: 0, exitLocation: { x: 114, y: 3, levelNum: 2 }, transition: false }, //go back to level 2
         { x: 117, y: 25, killQuota: 8, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: false }, // change to level 4 once theres a level 4
         { x: 34, y: 35, killQuota: 1, exitLocation: { x: 1, y: 3, levelNum: 0 }, transition: false } // change to treasure room
     ],
@@ -1137,7 +1143,7 @@ var level1_4 = {
     ],
     chests: [
         { x: 29, y: 1, direction: 0 },    //bottom floor
-        { x: 37, y: 12, direction: 1 },   //secret room 
+        { x: 37, y: 12, direction: 1 },   //secret room
         { x: 38.5, y: 12, direction: 1 }, //secret room
         { x: 40, y: 12, direction: 1 }, //secret room
         { x: 52, y: 12, direction: 1 },   //middle floor
@@ -1146,6 +1152,8 @@ var level1_4 = {
         { x: 65, y: 34, direction: 1 },   //top floor right near right obelisk
         { x: 1, y: 27, direction: 1 }, //exit door plat (chest on top)
         { x: 24, y: 34, direction: 0 }, //chest udner miniboss fight
+        { x: 73, y: 43, direction: 0 }, //above right obelisk
+        { x: 31, y: 34, direction: 1 }, //top middle
     ],
     ground: [
         //{ x: 0, y: 0, width: 15, height: 1, type: 1 },
@@ -1212,7 +1220,7 @@ var level1_4 = {
         { x: 48, y: 36, width: 1, height: 6, type: 0 }, //top floor spikes right wall (bottom)
         { x: 48, y: 45, width: 1, height: 3, type: 0 }, //top floor spikes right wall (TOP)
         { x: 45, y: 43, width: 1, height: 13, type: 0 }, //top floor spikes left wall
-        { x: 42, y: 45, width: 1, height: 7, type: 0 }, //top floor spikes right wall (TOP) 2 
+        { x: 42, y: 45, width: 1, height: 7, type: 0 }, //top floor spikes right wall (TOP) 2
         { x: 38, y: 42, width: 1, height: 5, type: 0 }, //top floor spikes left wall (TOP) 2
         { x: 38, y: 45, width: 1, height: 1, type: 0 }, //top floor spikes left wall (TOP) 2
         { x: 35, y: 37, width: 1, height: 7, type: 0 }, //top floor spikes left (TOP) 3
@@ -1232,6 +1240,7 @@ var level1_4 = {
         { x: 39, y: 34, width: 4, height: 1, type: 0 }, //middle floor plat
         { x: 30, y: 33, width: 3, height: 1, type: 0 }, //middle floor plat top left over spikes
         { x: 53, y: 34, width: 1, height: 1, type: 0 }, //middle floor plat top left over spikes
+        { x: 73, y: 42, width: 1, height: 1, type: 0 }, //above right obelisk
     ],
 
     obelisks: [
@@ -1260,7 +1269,7 @@ var level1_4 = {
     ],
 
     columns: [
-        { x: 8, y: 10, height: 8 }, //bottom left floor near door
+        { x: 8, y: 10, height: 7 }, //bottom left floor near door
         { x: 34, y: 10, height: 9 }, //bottom right
         { x: 65, y: 24, height: 13 }, //middle room
         { x: 66, y: 24, height: 13 }, //middle room
@@ -1270,8 +1279,8 @@ var level1_4 = {
     ],
 
     supports: [
-        { x: 0, y: 9, width: 36 }, //bottom floor left
-        { x: 48, y: 23, width: 22 }, //middle
+        { x: 1, y: 9, width: 35 }, //bottom floor left
+        { x: 48, y: 23, width: 12 }, //middle
         { x: 13, y: 45, width: 75 }, //top
     ],
 
@@ -1297,8 +1306,11 @@ var level1_4 = {
 
     ceilingChains: [
         { x: 73, y: 53, height: 20 },
-        { x: 14, y: 45, height: 20 },
-        { x: 53, y: 10, height: 20 }
+        { x: 14, y: 35, height: 5 },
+        { x: 14, y: 10, height: 3 },
+        { x: 19, y: 10, height: 4 },
+        { x: 31, y: 10, height: 3 },
+        { x: 53, y: 6, height: 5 }
     ],
 
 

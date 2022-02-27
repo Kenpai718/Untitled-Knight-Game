@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -104,7 +104,7 @@
                 <canvas id="gameWorld" width="1920" height="1040" style="background: black; border: 1px solid white"
                     tabindex="0" autofocus></canvas>
                 <hr class="my-4">
-                <p style="text-align:center;color:silver">This game is only meant to be played on desktops! Use "CTRL -"
+                <p style="text-align:center;color:silver">This game is only meant to be played on PC! Use "CTRL -"
                     or "CTRL +" to adjust zoom if the game does not fit in your browser.</p>
 
                 <div class="alert alert-dismissible alert-primary">
@@ -113,10 +113,12 @@
                     <fieldset>
                         <p class="card-header" style="font-family:Press Start 2P;font-size: 15px">In-Game Settings
                         <p class="card-body">
-                            <input class="form-check-input" type="checkbox" id="debug"> Debug/Dev-Mode (toggle with
-                            "Ctrl")
-                            <input class="form-check-input" type="checkbox" id="mouse-focus" checked> Auto Mouse-Focus
-                            (Turn off if using keyboard-only controls)
+                            <input class="form-check-input" type="checkbox" id="debug"> Debug/Dev-Mode (Shows minimap
+                            and game-world)
+                            <input class="form-check-input" type="checkbox" id="mouse-focus"> Auto Mouse-Focus
+                            (Automatically face direction of mouse cursor)
+                        <p class="alert alert-dismissible alert-secondary">Note: Debug mode can be toggled with "Ctrl"
+                        </p>
                         </p>
                     </fieldset>
 
@@ -136,6 +138,7 @@
                     <p class="card-title" style="font-family:Press Start 2P;font-size: 30px;text-align:center">HOW TO
                         PLAY:
                     <ul class="card-header" id="controls"> <b><u>CONTROLS: Use (Keyboard) or (Keyboard + Mouse)</b></u>
+                        <p class="alert alert-dismissible alert-primary">>Note: Recommended to use Keyboard + Mouse
                         <div class="card-body">
                             <li><b>(ASD)</b> (AD) to move or (S) crouch.</li>
                             <li><b>(W)</b> to interact with objects like opening a chest or entering a door.
