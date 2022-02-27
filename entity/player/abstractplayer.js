@@ -14,6 +14,7 @@ class AbstractPlayer extends AbstractEntity {
         }
 
         this.myInventory = new Inventory(this.game);
+        this.respawn = false;
 
     }
 
@@ -208,6 +209,7 @@ class AbstractPlayer extends AbstractEntity {
         super.handleGravity();
         if (this.animations[this.facing][this.action][this.myInventory.armorUpgrade].isDone()) {
             this.game.myReportCard.myDeathes += 1;
+            this.respawn = true;
             this.restartGame();
         }
     }

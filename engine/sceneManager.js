@@ -193,7 +193,18 @@ class SceneManager {
         this.heartsbar = new HeartBar(this.game, this.player);
         this.vignette = new Vignette(this.game);
         if (!this.lastPlayer) this.game.addEntity(this.player);
+        this.doRespawnHeal();
     };
+
+    doRespawnHeal() {
+        //mercy rule: after dying the player is healed a bit
+        if (this.player.respawn) {
+            this.respawn = false;
+            if (this.player.hp <= (this.player.max_hp / 2)) {
+                this.player.heal((this.player.max_hp / 2) - this.player.hp);
+            }
+        }
+    }
 
     /**
      * Loads a valid level
@@ -1175,8 +1186,8 @@ class Minimap {
     draw(ctx) {
         //lower opacity if the player is under the minimap
         let player = this.game.camera.player;
-        if(player.x > this.game.camera.x + this.x &&
-          player.y < this.game.camera.y+ this.y + this.miniH) {
+        if (player.x > this.game.camera.x + this.x &&
+            player.y < this.game.camera.y + this.y + this.miniH) {
             ctx.filter = "Opacity(80%)";
         }
         ctx.strokeStyle = "White";
@@ -1431,7 +1442,7 @@ class Minimap {
     getBoxDim() {
         this.miniW = (this.w * PARAMS.SCALE) + this.xOffset;
         this.miniH = (this.h * PARAMS.SCALE) + this.yOffset;
-        
+
         this.BB = new BoundingBox(this.x, this.y, this.miniW, this.miniH);
     }
 
