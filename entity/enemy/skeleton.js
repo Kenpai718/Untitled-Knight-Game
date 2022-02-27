@@ -53,10 +53,6 @@ class Skeleton extends AbstractEnemy {
         this.direction = this.directions.left;
         this.state = this.states.idle;
 
-        // Enemy drop
-        this.dropDiamonds = false;
-        this.dropAmount = randomInt(4) + 1;
-
         // Other
         this.loadAnimations();
         this.updateBoxes();

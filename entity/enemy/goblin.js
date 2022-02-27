@@ -41,10 +41,6 @@ class Goblin extends AbstractEnemy {
         this.direction = this.directions.left;
         this.state = this.states.idle;
 
-        // Enemy drop
-        this.dropDiamonds = false;
-        this.dropAmount = randomInt(3) + 1;
-
         // Other
         this.loadAnimations();
         this.updateBoxes();
