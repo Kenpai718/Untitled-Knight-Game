@@ -84,7 +84,7 @@ class DemonSlime extends AbstractEnemy {
             super.setDead();
         } else {
             if (this.hp <= ((this.max_hp / 4) * 3)) this.phase = this.phases.superHardAnnoyingTeleportingMode;
-            if (this.hp <= (this.max_hp / 2)) this.attackMaxCooldown = 1;
+            if (this.hp <= (this.max_hp / 2)) this.attackMaxCooldown = 1.5;
             this.velocity.y += this.fallAcc * TICK;
             if (this.velocity.y >= this.myMaxFall) this.velocity.y = this.myMaxFall;
             if (this.velocity.y <= -this.myMaxFall) this.velocity.y = -this.myMaxFall;
@@ -228,7 +228,7 @@ class DemonSlime extends AbstractEnemy {
     };
 
     setDamagedState() {
-        if (this.canBeHit) {
+        if (this.canBeHit && (this.state == this.states.idle || this.state == this.states.walk)) {
             this.vulnerable = false;
             this.canBeHit = false;
         }
