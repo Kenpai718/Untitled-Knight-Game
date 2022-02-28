@@ -1218,7 +1218,7 @@ var level1_4 = {
         { x: 38, y: 42, width: 1, height: 5, type: 0 }, //top floor spikes left wall (TOP) 2
         { x: 38, y: 45, width: 1, height: 1, type: 0 }, //top floor spikes left wall (TOP) 2
         { x: 35, y: 37, width: 1, height: 7, type: 0 }, //top floor spikes left (TOP) 3
-        { x: 26, y: 41, width: 1, height: 8, type: 0 }, //closing top wall right in top left
+        { x: 26, y: 38, width: 1, height: 5, type: 0 }, //closing top wall right in top left
 
         { x: 70, y: 45, width: 1, height: 7, type: 2 }, //right most obelisk wall
 
@@ -1414,13 +1414,13 @@ var level1_4 = {
     events: [
         {
             space: [
-                { x: 1, y: 45, width : 24, height: 9 }
+                { x: 24, y: 45, width : 1, height: 7 }
             ],
             ground: [
                 { x: 1, y: 36, width: 25, height: 1, type: 0 }
             ],
             walls: [
-                { x: 26, y: 45, height: 4, type: 2 }
+                { x: 26, y: 45, height: 7, type: 2 }
             ],
             demon: { x: 10, y: 38, guard: false }
         }

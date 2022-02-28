@@ -17,6 +17,7 @@ class DemonSlime extends AbstractEnemy {
         this.runAway = false;
         this.damagedCooldown = 0;
         this.attackCooldown = 0;
+        this.attackMaxCooldown = 3;
         this.attackFrame = 0;
 
         this.fallAcc = 1500;
@@ -82,7 +83,8 @@ class DemonSlime extends AbstractEnemy {
         if (this.dead) {
             super.setDead();
         } else {
-            if (this.hp <= (this.max_hp / 2)) this.phase = this.phases.superHardAnnoyingTeleportingMode;
+            if (this.hp <= ((this.max_hp / 4) * 3)) this.phase = this.phases.superHardAnnoyingTeleportingMode;
+            if (this.hp <= (this.max_hp / 2)) this.attackMaxCooldown = 1;
             this.velocity.y += this.fallAcc * TICK;
             if (this.velocity.y >= this.myMaxFall) this.velocity.y = this.myMaxFall;
             if (this.velocity.y <= -this.myMaxFall) this.velocity.y = -this.myMaxFall;
@@ -141,8 +143,7 @@ class DemonSlime extends AbstractEnemy {
         this.game.entities.forEach(function (entity) {
             if (entity instanceof AbstractPlayer) {
                 if (entity.HB && self.BB.collide(entity.HB) && (self.state == self.states.idle || self.state == self.states.walk)) {
-                    self.canBeHit = false;
-                    self.vulnerable = false;
+                    self.setDamagedState();
                 }
                 if (entity.BB && self.AR.collide(entity.BB) && self.canBeHit) {
                     self.velocity.x = 0;
@@ -191,7 +192,7 @@ class DemonSlime extends AbstractEnemy {
                 this.runAway = false;
                 this.attackCooldown += TICK;
             }
-            if (this.attackCooldown >= 3) {
+            if (this.attackCooldown >= this.attackMaxCooldown) {
                 this.runAwayDirection = this.runAwayDirection == this.directions.left ? this.directions.right : this.directions.left;
                 this.attackFrame = 0;
                 this.attackCooldown = 0;
