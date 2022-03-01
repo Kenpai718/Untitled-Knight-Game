@@ -41,6 +41,7 @@ ASSET_MANAGER.queueDownload("./sprites/GUI/armor.png");
 ASSET_MANAGER.queueDownload("./sprites/GUI/bows.png");
 ASSET_MANAGER.queueDownload("./sprites/GUI/attack.png");
 ASSET_MANAGER.queueDownload("./sprites/GUI/interactables.png");
+ASSET_MANAGER.queueDownload("./sprites/GUI/crosshair.png");
 
 //music
 MUSIC_MANAGER.queueDownload(MUSIC.CHASING_DAYBREAK);

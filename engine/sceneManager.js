@@ -12,6 +12,8 @@ class SceneManager {
         this.anchor = { right: false, bottom: false };
         this.defaultMusic = MUSIC.CHASING_DAYBREAK;
 
+        this.myCursor = new Cursor(this.game);
+
         //game status
         this.title = false;
         this.transition = false;
@@ -183,16 +185,17 @@ class SceneManager {
             this.player.velocity.x = 0;
             this.player.velocity.y = 0;
             this.player.x = 0;
-            this.player.x = 0;
+            this.player.y = 0;
             this.player.action = this.player.states.idle;
             this.player.updateBB();
         }
-        this.player.x = spawnX - this.player.BB.width - PARAMS.BLOCKDIM;
-        this.player.y = spawnY - this.player.BB.height - PARAMS.BLOCKDIM;
+        this.player.x = theX * PARAMS.BLOCKDIM - this.player.BB.left;
+        this.player.y = Math.ceil(theY * PARAMS.BLOCKDIM - this.player.BB.bottom);
         this.inventory = this.player.myInventory;
         this.heartsbar = new HeartBar(this.game, this.player);
         this.vignette = new Vignette(this.game);
         if (!this.lastPlayer) this.game.addEntity(this.player);
+        this.player.updateBB();
         this.doRespawnHeal();
     };
 
@@ -278,24 +281,20 @@ class SceneManager {
      * @param {} layer
      */
     clearLayer(layer) {
+        let that = this;
         layer.forEach(function (entity) {
-            entity.removeFromWorld = true;
+            if (!(entity instanceof Knight) || entity instanceof Knight && !that.lastPlayer)
+                entity.removeFromWorld = true;
         });
+        this.game.removeFromLayer(layer);
     }
 
     /**
      * Update the camera and gui elements
      */
     update() {
-        //updates from outside canvas (debug or volume)
-        this.updateAudio();
-        PARAMS.AUTO_FOCUS = document.getElementById("mouse-focus").checked;
-        PARAMS.DEBUG = document.getElementById("debug").checked;
-        if (this.game.debug) {
-            this.game.debug = false;
-            document.getElementById("debug").checked = !document.getElementById("debug").checked;
-        }
 
+        this.updateSettings();
         //update game camera in terms of ints
         if (!this.title && !this.transition && !PAUSED) {
             this.updateGUI();
@@ -312,7 +311,6 @@ class SceneManager {
 
         //update game timer
         if (!this.transition && !this.title && !PAUSED) this.levelTimer += this.game.clockTick;
-
         //debugging camera updates
         if (PARAMS.DEBUG) {
             /**
@@ -327,8 +325,21 @@ class SceneManager {
 
     };
 
+    //updates from outside canvas (debug or volume)
+    updateSettings() {
+        this.updateAudio();
+        PARAMS.AUTO_FOCUS = document.getElementById("mouse-focus").checked;
+        PARAMS.DEBUG = document.getElementById("debug").checked;
+        PARAMS.CURSOR = document.getElementById("show-cursor").checked;
+        if (this.game.debug) {
+            this.game.debug = false;
+            document.getElementById("debug").checked = !document.getElementById("debug").checked;
+        }
+    }
+
     updateTitleScreen() {
         if (this.title) {
+            this.levelTimer = 0;
             //keep attemping to play title music until the user clicks
             if (!MUSIC_MANAGER.isPlaying(MUSIC.TITLE)) {
                 //console.log("attempting to play title music");
@@ -432,7 +443,8 @@ class SceneManager {
                     ASSET_MANAGER.playAsset(SFX.CLICK);
                     // load next level code goes here when level 2 is added
                     this.game.myReportCard.reset();
-                    this.levelTimer = 0;
+                    this.restartLevel();
+                    this.bufferTimer = 0;
                 } else if (this.restartLevelBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     ASSET_MANAGER.playAsset(SFX.CLICK);
                     this.restartLevel();
@@ -493,9 +505,9 @@ class SceneManager {
 
     BBCamera() {
         let xToLeft = this.player.BB.left - this.player.x;
-        let xtoRight = this.player.BB.right - this.player.x;
-        if (this.player.BB.left < 0) this.player.x = 0 - this.player.offsetxBB;
-        else if (this.player.BB.right > this.level.width * PARAMS.BLOCKDIM) this.player.x = (this.level.width * PARAMS.BLOCKDIM) - this.player.width;
+        let xToRight = this.player.BB.right - this.player.x;
+        if (this.player.BB.left < 0) this.player.x = 0 - xToLeft;
+        else if (this.player.BB.right > this.level.width * PARAMS.BLOCKDIM) this.player.x = (this.level.width * PARAMS.BLOCKDIM) - xToRight;
         if (this.x + this.game.surfaceWidth * 9 / 16 < this.player.BB.left && this.x + this.game.surfaceWidth < this.level.width * PARAMS.BLOCKDIM) this.x = this.player.BB.left - this.game.surfaceWidth * 9 / 16;
         else if (this.x > this.player.BB.right - this.game.surfaceWidth * 7 / 16 && this.x > 0) this.x = this.player.BB.right - this.game.surfaceWidth * 7 / 16;
 
@@ -632,7 +644,8 @@ class SceneManager {
         this.drawGameplayGUI(ctx);
         this.drawTitleGUI(ctx);
         this.drawResultsGUI(ctx);
-
+        if(PARAMS.CURSOR) this.myCursor.draw(ctx);
+        //console.log(this.player.BB.left + " " + this.player.BB.bottom);
     };
 
     drawGameplayGUI(ctx) {
@@ -859,7 +872,6 @@ class SceneManager {
         this.loadBackground(h, entities, this.level);
         let self = this;
         entities.forEach(entity => self.game.addEntity(entity));
-
     }
 
     loadEnvironment(h, array, dict) {
@@ -867,7 +879,8 @@ class SceneManager {
         if (dict.ground) {
             for (var i = 0; i < dict.ground.length; i++) {
                 let ground = dict.ground[i];
-                array.push(new Ground(this.game, ground.x, h - ground.y - 1, ground.width, 1, ground.type));
+                let g = new Ground(this.game, ground.x, h - ground.y - 1, ground.width, 1, ground.type);
+                array.push(g);
             }
         }
         if (dict.trap) {
@@ -969,6 +982,12 @@ class SceneManager {
                 this.positionEntity(e, skeleton.x, h - skeleton.y);
                 array.push(e);
             }
+        }
+        if (dict.demon) {
+            let demon = dict.demon;
+            let e = new DemonSlime(this.game, demon.x, h - demon.y, false);
+            this.positionEntity(e, demon.x, h - demon.y);
+            array.push(e);
         }
         if (dict.flyingeyes) {
             for (var i = 0; i < dict.flyingeyes.length; i++) {

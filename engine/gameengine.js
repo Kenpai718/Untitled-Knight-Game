@@ -69,6 +69,7 @@ class GameEngine {
         this.ctx = ctx;
         this.surfaceWidth = this.ctx.canvas.width;
         this.surfaceHeight = this.ctx.canvas.height;
+        document.getElementById("gameWorld").style.cursor = "none"; //disable cursor by default
 
         this.startInput();
         this.timer = new Timer();
