@@ -196,10 +196,10 @@ class SceneManager {
         this.vignette = new Vignette(this.game);
         if (!this.lastPlayer) this.game.addEntity(this.player);
         this.player.updateBB();
-        this.doRespawnHeal();
+        this.handleRespawn();
     };
 
-    doRespawnHeal() {
+    handleRespawn() {
         //mercy rule: after dying the player is healed a bit
         if (this.player.respawn) {
             this.respawn = false;
@@ -322,6 +322,8 @@ class SceneManager {
                 this.player.myInventory.diamonds = 999;
             }
         }
+
+        if(PARAMS.CURSOR) this.myCursor.update();
 
     };
 
