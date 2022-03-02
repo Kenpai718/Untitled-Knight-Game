@@ -789,7 +789,7 @@ class SceneManager {
             var fontSize = 60;
             ctx.font = fontSize + 'px "Press Start 2P"';
             ctx.fillStyle = "Orchid";
-            let resultMsg = "You beat the game!";
+            let resultMsg = "You Saved The Castle!";
             ctx.fillText(resultMsg, (this.game.surfaceWidth / 2) - ((fontSize * resultMsg.length) / 2) + 5, fontSize * 3 + 5);
             ctx.fillStyle = "White";
             ctx.fillText(resultMsg, (this.game.surfaceWidth / 2) - ((fontSize * resultMsg.length) / 2), fontSize * 3);
@@ -1254,10 +1254,8 @@ class Minimap {
     draw(ctx) {
         //lower opacity if the player is under the minimap
         let player = this.game.camera.player;
-        if (player.x > this.game.camera.x + this.x &&
-            player.y < this.game.camera.y + this.y + this.miniH) {
-            ctx.filter = "Opacity(80%)";
-        }
+
+        ctx.filter = "Opacity(60%)";
         ctx.strokeStyle = "White";
         ctx.strokeRect(this.BB.x, this.BB.y, this.BB.width, this.BB.height);
         this.loadEnvironmentScene(ctx);
