@@ -12,6 +12,10 @@ class SceneManager {
         this.anchor = { right: false, bottom: false };
         this.defaultMusic = MUSIC.CHASING_DAYBREAK;
 
+        this.game_over = ASSET_MANAGER.getAsset("./sprites/GUI/game_over.png");
+
+        this.myCursor = new Cursor(this.game);
+
         //game status
         this.title = false;
         this.transition = false;
@@ -177,7 +181,11 @@ class SceneManager {
         this.game.down = false;
         this.game.shoot = false;
 
+        //reset the checkpoint upon entering a new level
+        if (this.lastLevel != this.currentLevel && this.player != null) this.player.myCheckpoint = null;
+        //make player if the last player hasnt been made yet
         this.player = this.lastPlayer ? this.lastPlayer : new Knight(this.game, 0, 0);
+        //reset last player to default settings
         if (this.lastPlayer) {
             this.player.removeFromWorld = false;
             this.player.velocity.x = 0;
@@ -187,24 +195,54 @@ class SceneManager {
             this.player.action = this.player.states.idle;
             this.player.updateBB();
         }
+        //reposition the player
         this.player.x = theX * PARAMS.BLOCKDIM - this.player.BB.left;
         this.player.y = Math.ceil(theY * PARAMS.BLOCKDIM - this.player.BB.bottom);
+        //set gui elements based on player
         this.inventory = this.player.myInventory;
         this.heartsbar = new HeartBar(this.game, this.player);
         this.vignette = new Vignette(this.game);
-        if (!this.lastPlayer) this.game.addEntity(this.player);
+        //add the player if there was not a last player yet
+        if (!this.lastPlayer) {
+            this.game.addEntity(this.player);
+            this.savePlayerInfo();
+        }
+
         this.player.updateBB();
-        this.doRespawnHeal();
+        this.handleRespawn();
+
     };
 
-    doRespawnHeal() {
-        //mercy rule: after dying the player is healed a bit
+    handleRespawn() {
         if (this.player.respawn) {
-            this.respawn = false;
+            //this.respawn = false;
+            //console.log("respawning");
+            //checkpoint respawn position
+            if (this.player.myCheckpoint != null) {
+                //console.log("respawning with a checkpoint");
+                this.player.x = this.player.myCheckpoint.x;
+                this.player.y = this.player.myCheckpoint.y;
+                this.player.updateBB();
+            }
+
+            //mercy rule: after dying the player is healed a bit
             if (this.player.hp <= (this.player.max_hp / 2)) {
                 this.player.heal((this.player.max_hp / 2) - this.player.hp);
             }
         }
+    }
+
+    /**
+     * Saves the last player's info which will be reused
+     * if the player needs to be reloaded (new level or respawn)
+     */
+    savePlayerInfo() {
+        // save player state
+        this.lastPlayer = this.player;
+        // save initial player hp and inventory upon entering a level
+        this.lastHP = this.player.hp;
+        this.lastInventory = new Inventory(this.game);
+        this.lastInventory.copyInventory(this.player.myInventory);
     }
 
     /**
@@ -223,12 +261,8 @@ class SceneManager {
                 enemies: [...this.game.enemies], interactables: [...this.game.interactables],
                 events: [...this.game.events], killCount: this.killCount
             };
-            // save player state
-            this.lastPlayer = this.player;
-            // save initial player hp and inventory upon entering a level
-            this.lastHP = this.player.hp;
-            this.lastInventory = new Inventory(this.game);
-            this.lastInventory.copyInventory(this.player.myInventory);
+
+            this.savePlayerInfo();
         } else {
             // if player dies reset their hp and inventory to what it was upon entering the level
             if (this.restart && this.lastPlayer) {
@@ -247,6 +281,7 @@ class SceneManager {
         } else {
             console.log("Loading level " + number);
             this.killCount = !this.levelState[number] ? 0 : this.levelState[number].killCount;
+            this.lastLevel = this.currentLevel;
             this.currentLevel = number;
             let lvlData = this.levels[number];
             if (usedDoor) {
@@ -291,15 +326,8 @@ class SceneManager {
      * Update the camera and gui elements
      */
     update() {
-        //updates from outside canvas (debug or volume)
-        this.updateAudio();
-        PARAMS.AUTO_FOCUS = document.getElementById("mouse-focus").checked;
-        PARAMS.DEBUG = document.getElementById("debug").checked;
-        if (this.game.debug) {
-            this.game.debug = false;
-            document.getElementById("debug").checked = !document.getElementById("debug").checked;
-        }
 
+        this.updateSettings();
         //update game camera in terms of ints
         if (!this.title && !this.transition && !PAUSED) {
             this.updateGUI();
@@ -328,7 +356,21 @@ class SceneManager {
             }
         }
 
+        if (PARAMS.CURSOR) this.myCursor.update();
+
     };
+
+    //updates from outside canvas (debug or volume)
+    updateSettings() {
+        this.updateAudio();
+        PARAMS.AUTO_FOCUS = document.getElementById("mouse-focus").checked;
+        PARAMS.DEBUG = document.getElementById("debug").checked;
+        PARAMS.CURSOR = document.getElementById("show-cursor").checked;
+        if (this.game.debug) {
+            this.game.debug = false;
+            document.getElementById("debug").checked = !document.getElementById("debug").checked;
+        }
+    }
 
     updateTitleScreen() {
         if (this.title) {
@@ -637,6 +679,8 @@ class SceneManager {
         this.drawGameplayGUI(ctx);
         this.drawTitleGUI(ctx);
         this.drawResultsGUI(ctx);
+        //if(this.player.dead) ctx.drawImage(this.game_over, 0, 0);
+        if (PARAMS.CURSOR) this.myCursor.draw(ctx);
         //console.log(this.player.BB.left + " " + this.player.BB.bottom);
     };
 
@@ -777,6 +821,7 @@ class SceneManager {
         if (scene.width === undefined) throw ("Level must have a level width in terms of blockdim. EX: 1 = 82 pixels");
         if (scene.height === undefined) throw ("Level must have a level height in terms of blockdim. EX: 1 = 82 pixels");
         if (scene.player === undefined) throw ("Level must have a player with x and y cordinates.");
+
 
 
         //initialize scene and player

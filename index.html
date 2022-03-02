@@ -40,6 +40,7 @@
     <script type="text/javascript" src="./engine/gui/vignette.js"></script>
     <script type="text/javascript" src="./engine/gui/textbox.js"></script>
     <script type="text/javascript" src="./engine/gui/reportcard.js"></script>
+    <script type="text/javascript" src="./engine/gui/crosshair.js"></script>
 
     <!-- Engine files go here-->
     <script type="text/javascript" src="./engine/assetmanager.js"></script>
@@ -53,6 +54,7 @@
     <script type="text/javascript" src="./entity/abstractentity.js"></script>
     <script type="text/javascript" src="./entity/player/abstractplayer.js"></script>
     <script type="text/javascript" src="./entity/player/knight.js"></script>
+    <script type="text/javascript" src="./entity/player/checkpoint.js"></script>
 
     <script type="text/javascript" src="./entity/enemy/abstractenemy.js"></script>
     <script type="text/javascript" src="./entity/enemy/wizard.js"></script>
@@ -117,6 +119,7 @@
                             and game-world)
                             <input class="form-check-input" type="checkbox" id="mouse-focus"> Auto Mouse-Focus
                             (Automatically face direction of mouse cursor)
+                            <input class="form-check-input" type="checkbox" id="show-cursor" checked> Show Cursor
                         <p class="alert alert-dismissible alert-secondary">Note: Debug mode can be toggled with "Ctrl"
                         </p>
                         </p>
@@ -138,7 +141,7 @@
                     <p class="card-title" style="font-family:Press Start 2P;font-size: 30px;text-align:center">HOW TO
                         PLAY:
                     <ul class="card-header" id="controls"> <b><u>CONTROLS: Use (Keyboard) or (Keyboard + Mouse)</b></u>
-                        <p class="alert alert-dismissible alert-primary">>Note: Recommended to use Keyboard + Mouse
+                        <p class="alert alert-dismissible alert-primary">Note: Recommended to use Keyboard + Mouse
                         <div class="card-body">
                             <li><b>(ASD)</b> (AD) to move or (S) crouch.</li>
                             <li><b>(W)</b> to interact with objects like opening a chest or entering a door.

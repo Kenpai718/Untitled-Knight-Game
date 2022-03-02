@@ -15,8 +15,6 @@ class Knight extends AbstractPlayer {
         this.spritesheetLeft2 = ASSET_MANAGER.getAsset("./sprites/knight/knightLeft2.png");
         this.spritesheetRight3 = ASSET_MANAGER.getAsset("./sprites/knight/knightRight3.png");
         this.spritesheetLeft3 = ASSET_MANAGER.getAsset("./sprites/knight/knightLeft3.png");
-        this.armorRight = ASSET_MANAGER.getAsset("./sprites/knight/armorRight.png");
-        this.armorLeft = ASSET_MANAGER.getAsset("./sprites/knight/armorLeft.png");
 
         //setup variable mapping for the states. Labeled for ease of use
         this.dir = { left: 0, right: 1 }; //directions
@@ -27,7 +25,7 @@ class Knight extends AbstractPlayer {
             jump: 11, jump_to_fall: 12, falling: 13,
             turn_around: 14, slide: 15,
             attack1: 16, attack2: 17, shoot: 18, pluck: 19,
-            death: 20
+            death: 20, revive: 21
         };
 
         //animation speed stats
@@ -125,8 +123,17 @@ class Knight extends AbstractPlayer {
         super.checkInDeathZone(); //check if outside of canvas
 
         //NOTE: this.dead is set when the knight hp drops to 0.
-        if (this.dead) {
+        if (this.dead) { //player died
             super.setDead();
+        } else if (this.respawn) { //player is in respawn animation
+            //console.log("respawn animation");
+            this.action = this.states.revive;
+            super.handleGravity();
+            if (this.animations[this.facing][this.action][this.myInventory.armorUpgrade].isDone()) {
+                this.respawn = false;
+                this.action = this.DEFAULT_ACTION;
+                this.resetAnimationTimers(this.states.revive);
+            }
         } else { //not dead listen for player controls and do them
             if (this.berserk) {
                 if (this.playBerserkSFX) {
@@ -231,7 +238,7 @@ class Knight extends AbstractPlayer {
         this.viewCollisionsBox(ctx);
     }
 
-    
+
     /**
      * Holds the bufferable input for a certain amount of time
      * If the input was not done in the buffer time
@@ -240,11 +247,11 @@ class Knight extends AbstractPlayer {
      * Bufferable inputs are jump and attack
      * @param {*} TICK 
      */
-     checkBuffers(TICK) {
+    checkBuffers(TICK) {
         //jump
-        if((this.game.jump && this.action != this.states.jump)) {
+        if ((this.game.jump && this.action != this.states.jump)) {
             this.jumpBuffer += TICK;
-            if(this.jumpBuffer >= this.bufferTime) {
+            if (this.jumpBuffer >= this.bufferTime) {
                 this.game.jump = false;
             }
         } else {
@@ -252,9 +259,9 @@ class Knight extends AbstractPlayer {
         }
 
         //roll
-        if((this.game.roll && this.action != this.states.roll)) {
+        if ((this.game.roll && this.action != this.states.roll)) {
             this.rollBuffer += TICK;
-            if(this.rollBuffer >= this.bufferTime) {
+            if (this.rollBuffer >= this.bufferTime) {
                 this.game.roll = false;
             }
         } else {
@@ -1080,7 +1087,7 @@ class Knight extends AbstractPlayer {
 
     loadAnimations() {
         let numDir = 2;
-        let numStates = 21;
+        let numStates = 22;
         let armorUpgrades = 4;
         for (var i = 0; i < numDir; i++) {
             this.animations.push([]);
@@ -1162,6 +1169,10 @@ class Knight extends AbstractPlayer {
         this.animations[0][this.states.death][0] = new Animator(this.spritesheetLeft, 365, 400, 120, 80, 9, 0.1, 0, true, false, false);
         this.animations[1][this.states.death][0] = new Animator(this.spritesheetRight, -5, 400, 120, 80, 9, 0.1, 0, false, false, false);
 
+        // revive animation (death in reverse)
+        this.animations[0][this.states.revive][0] = new Animator(this.spritesheetLeft, 365, 400, 120, 80, 9, 0.1, 0, false, false, false);
+        this.animations[1][this.states.revive][0] = new Animator(this.spritesheetRight, -5, 400, 120, 80, 9, 0.1, 0, true, false, false);
+
 
         //________________________________________________________GOLD________________________________________________________________________
 
@@ -1237,6 +1248,10 @@ class Knight extends AbstractPlayer {
         this.animations[0][this.states.death][1] = new Animator(this.spritesheetLeft1, 365, 400, 120, 80, 9, 0.1, 0, true, false, false);
         this.animations[1][this.states.death][1] = new Animator(this.spritesheetRight1, -5, 400, 120, 80, 9, 0.1, 0, false, false, false);
 
+        // revive animation (death in reverse)
+        this.animations[0][this.states.revive][1] = new Animator(this.spritesheetLeft, 365, 400, 120, 80, 9, 0.1, 0, false, false, false);
+        this.animations[1][this.states.revive][1] = new Animator(this.spritesheetRight, -5, 400, 120, 80, 9, 0.1, 0, true, false, false);
+
 
         //___________________________________________________________DIAMOND________________________________________________________________________
 
@@ -1310,6 +1325,10 @@ class Knight extends AbstractPlayer {
         this.animations[0][this.states.death][2] = new Animator(this.spritesheetLeft2, 365, 400, 120, 80, 9, 0.1, 0, true, false, false);
         this.animations[1][this.states.death][2] = new Animator(this.spritesheetRight2, -5, 400, 120, 80, 9, 0.1, 0, false, false, false);
 
+        // revive animation (death in reverse)
+        this.animations[0][this.states.revive][2] = new Animator(this.spritesheetLeft, 365, 400, 120, 80, 9, 0.1, 0, false, false, false);
+        this.animations[1][this.states.revive][2] = new Animator(this.spritesheetRight, -5, 400, 120, 80, 9, 0.1, 0, true, false, false);
+
 
         //________________________________________________________NETHERITE___________________________________________________________________________
 
@@ -1382,6 +1401,10 @@ class Knight extends AbstractPlayer {
         // death = 19 (special property so might be better to just have it called only when the player dies)
         this.animations[0][this.states.death][3] = new Animator(this.spritesheetLeft3, 365, 400, 120, 80, 9, 0.1, 0, true, false, false);
         this.animations[1][this.states.death][3] = new Animator(this.spritesheetRight3, -5, 400, 120, 80, 9, 0.1, 0, false, false, false);
+
+        // revive animation (death in reverse)
+        this.animations[0][this.states.revive][3] = new Animator(this.spritesheetLeft, 365, 400, 120, 80, 9, 0.1, 0, false, false, false);
+        this.animations[1][this.states.revive][3] = new Animator(this.spritesheetRight, -5, 400, 120, 80, 9, 0.1, 0, true, false, false);
 
     };
 }

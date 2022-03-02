@@ -13,7 +13,8 @@ const rgb = (r, g, b) => `rgba(${r}, ${g}, ${b})`;
 
 /** Global Parameters Objects */
 const PARAMS = {
-    DEBUG: false,      //for showing debug settings on canvas when ticked
+    DEBUG: false,      //for showing debug settings on canvas when ticked,
+    CURSOR: true,
     AUTO_FOCUS: false,
     BLOCKDIM: 81,      //dimensions of blocks
     DMG_COOLDOWN: .5,  //how long the cooldown is for an entity to take damage,
@@ -41,6 +42,7 @@ const PARAMS = {
     DMG_ID: 0,
     HEAL_ID: 1,
     DIAMOND_ID: 2,
+    CHECKPOINT_ID: 3,
 
     //HP RATIOS to compare with a percentage
     LOW_HP: .2,
@@ -219,7 +221,8 @@ const SFX = {
     BERSERK_ACTIVATE: "./sound/sfx/sharingan.mp3",
     RESPAWN: "./sound/sfx/re_zero_respawn.mp3",
     COMPLETE: "./sound/sfx/finished.mp3",
-
+    CHECKPOINT: "./sound/sfx/checkpoint.wav",
+    
 
 
 };

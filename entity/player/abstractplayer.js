@@ -15,6 +15,7 @@ class AbstractPlayer extends AbstractEntity {
 
         this.myInventory = new Inventory(this.game);
         this.respawn = false;
+        this.myCheckpoint = null;
 
     }
 
@@ -30,8 +31,8 @@ class AbstractPlayer extends AbstractEntity {
             } else {
                 healed = amount;
             }
-            
-            healed = Math.round(100*healed)/100;
+
+            healed = Math.round(100 * healed) / 100;
 
             this.hp += healed;
             ASSET_MANAGER.playAsset(SFX.HEAL);
@@ -143,12 +144,12 @@ class AbstractPlayer extends AbstractEntity {
      * Basic jump execution
      */
     doJump() {
-            ASSET_MANAGER.playAsset(SFX.JUMP);
-            this.action = this.states.jump; //jump (9-11)
-            //set jump distance
-            this.velocity.y -= PLAYER_PHYSICS.JUMP_HEIGHT;
-            this.game.jump = false;
-            this.inAir = true;
+        ASSET_MANAGER.playAsset(SFX.JUMP);
+        this.action = this.states.jump; //jump (9-11)
+        //set jump distance
+        this.velocity.y -= PLAYER_PHYSICS.JUMP_HEIGHT;
+        this.game.jump = false;
+        this.inAir = true;
     }
 
     /**
@@ -209,8 +210,10 @@ class AbstractPlayer extends AbstractEntity {
         super.handleGravity();
         if (this.animations[this.facing][this.action][this.myInventory.armorUpgrade].isDone()) {
             this.game.myReportCard.myDeathes += 1;
+            this.resetAnimationTimers(this.states.death);
             this.respawn = true;
-            this.restartGame();
+            this.action = this.states.revive;
+            this.respawnPlayer();
         }
     }
 
@@ -218,7 +221,7 @@ class AbstractPlayer extends AbstractEntity {
     /**
      * Restarts the current level when called
      */
-    restartGame() {
+    respawnPlayer() {
         // remove the current level from the level states
         if (this.game.camera.levelState[this.game.camera.currentLevel]) this.game.camera.levelState.splice(this.game.camera.levelState.indexOf(this.game.camera.currentLevel, 1));
         // set restart flag to true so self the state isn't saved
@@ -432,8 +435,8 @@ class AbstractPlayer extends AbstractEntity {
                 if (entity.HB && self.BB.collide(entity.HB)) {
                     //console.log("knight hit by enemy");
                     let dmg = entity.getDamageValue() * self.getDefenseBonus();
-                    dmg = Math.round(100*dmg)/100; // Insures values to nearest hundredth 
-                    if(self.canTakeDamage()) self.game.myReportCard.myDamageTaken += dmg;
+                    dmg = Math.round(100 * dmg) / 100; // Insures values to nearest hundredth 
+                    if (self.canTakeDamage()) self.game.myReportCard.myDamageTaken += dmg;
                     self.takeDamage(dmg, false);
 
                 }
@@ -442,10 +445,27 @@ class AbstractPlayer extends AbstractEntity {
                 if (self.HB != null && entity.BB && self.HB.collide(entity.BB)) {
                     //console.log("knight hit an enemy");
                     let dmg = self.getDamageValue();
-                    if(entity.canTakeDamage()) self.game.myReportCard.myDamageDealt += dmg;
+                    if (entity.canTakeDamage()) self.game.myReportCard.myDamageDealt += dmg;
                     entity.takeDamage(dmg, self.critical);
                 }
 
+            }
+        });
+
+        //check entities other than the player or enemies
+        this.game.entities.forEach(function (entity) {
+            if (entity instanceof NPC) {
+                if (entity.BB && self.BB.collide(entity.BB)) {
+                    //save a checkpoint and current player state
+                    if (!entity.setCheckpoint) {
+                        ASSET_MANAGER.playAsset(SFX.CHECKPOINT);
+                        entity.setCheckpoint = true;
+                        self.myCheckpoint = { x: Math.round(self.x), y: Math.round(self.y)};
+                        self.game.camera.savePlayerInfo();
+                        self.game.addEntityToFront(new Score(self.game, self, 0, PARAMS.CHECKPOINT_ID, false));
+                        //console.log("saved checkpoint", self.myCheckpoint.x, self.myCheckpoint.y);
+                    }
+                }
             }
         });
     }
