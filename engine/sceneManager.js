@@ -907,6 +907,7 @@ class SceneManager {
                 interactable.removeFromWorld = false
             });
         }
+        //this.game.addEntity(new DemonSlime(this.game, 100, 300, false));
         this.loadBackground(h, entities, this.level);
         let self = this;
         entities.forEach(entity => self.game.addEntity(entity));
