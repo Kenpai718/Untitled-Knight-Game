@@ -23,6 +23,9 @@ class DemonSlime extends AbstractEnemy {
 
         this.loadAnimations();
         this.updateBoxes();
+
+        this.myLevelMusic = this.game.camera.myMusic; //save current level music once the boss music stars
+        this.myBossMusic = MUSIC.SIGNORA;
     };
 
     loadEvent() {
@@ -161,10 +164,31 @@ class DemonSlime extends AbstractEnemy {
         this.animations[this.states.demonRebirth][this.directions.right] = new Animator(this.spritesheet, 0, 1440, 288, 160, 22, 0.07, 0, false, false, false);
     };
 
+    /**
+     * Stop the current level music and play boss music
+     */
+    cueBossMusic() {
+        MUSIC_MANAGER.pauseBackgroundMusic(); //stop the background music for you know what :)
+        MUSIC_MANAGER.autoRepeat(this.myBossMusic); //OH LAWD HE COMIN
+        MUSIC_MANAGER.playAsset(this.myBossMusic);  //...why do I hear boss music?
+    }
+
+    /**
+     * Stop whatever background music is playing and replay the level music
+     */
+    resetLevelMusic() {
+        MUSIC_MANAGER.pauseBackgroundMusic();
+        MUSIC_MANAGER.autoRepeat(this.myLevelMusic);
+        MUSIC_MANAGER.playAsset(this.myLevelMusic);
+    }
+
     update() {
         const TICK = this.game.clockTick;
         if (this.dead && this.phase != this.phases.slime) {
             super.setDead();
+            if (this.animations[this.state][this.direction].isDone()) {
+                this.resetLevelMusic();
+            }
         } else if (this.hp <= (this.max_hp / 10) * 2 && this.phase == this.phases.slime) { // transition from slime to demon
             if (this.animations[this.states.demonSpawn][this.direction].isDone()) {
                 this.state = this.states.demonIdle;
@@ -177,6 +201,7 @@ class DemonSlime extends AbstractEnemy {
                 this.state = this.states.demonSpawn;
             } else if (this.animations[this.states.slimeDie1][this.direction].isDone()) {
                 this.state = this.states.slimeDie2;
+                this.cueBossMusic();
             } else {
                 this.velocity.x = 0;
                 this.state = this.states.slimeDie1;

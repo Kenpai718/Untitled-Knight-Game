@@ -11,6 +11,7 @@ class SceneManager {
         this.velocity = { x: 0, y: 0 };
         this.anchor = { right: false, bottom: false };
         this.defaultMusic = MUSIC.CHASING_DAYBREAK;
+        this.myMusic = this.defaultMusic;
 
         this.game_over = ASSET_MANAGER.getAsset("./sprites/GUI/game_over.png");
 
@@ -379,6 +380,7 @@ class SceneManager {
                     MUSIC_MANAGER.pauseBackgroundMusic();
                     MUSIC_MANAGER.autoRepeat(MUSIC.TITLE);
                     MUSIC_MANAGER.playAsset(MUSIC.TITLE);
+                    this.myMusic = MUSIC.TITLE;
                 }
             }
 
@@ -783,12 +785,18 @@ class SceneManager {
             var fontSize = 60;
             ctx.font = fontSize + 'px "Press Start 2P"';
             ctx.fillStyle = "Orchid";
-            let gameTitle = "Level Complete!";
-            ctx.fillText("Level Complete!", (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2) + 5, fontSize * 3 + 5);
+            let resultMsg = "You beat the game!";
+            ctx.fillText(resultMsg, (this.game.surfaceWidth / 2) - ((fontSize * resultMsg.length) / 2) + 5, fontSize * 3 + 5);
             ctx.fillStyle = "White";
-            ctx.fillText("Level Complete!", (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 3);
+            ctx.fillText(resultMsg, (this.game.surfaceWidth / 2) - ((fontSize * resultMsg.length) / 2), fontSize * 3);
             ctx.font = '40px "Press Start 2P"';
-            buildTextButton(ctx, "Next Level", this.nextLevelBB, false, "gray"); //set this once there is another level
+            ctx.fillStyle = "Orchid";
+            resultMsg = "Thanks for playing!";
+            ctx.fillText(resultMsg, (this.game.surfaceWidth / 2) - ((fontSize * resultMsg.length) / 3) + 5, fontSize * 4 + 5);
+            ctx.fillStyle = "White";
+            ctx.fillText(resultMsg, (this.game.surfaceWidth / 2) - ((fontSize * resultMsg.length) / 3), fontSize * 4);
+            
+            //buildTextButton(ctx, "Next Level", this.nextLevelBB, false, "gray"); //set this once there is another level
             buildTextButton(ctx, "Restart Game", this.restartLevelBB, this.textColor == 2 && this.bufferTimer > this.maxBufferTime, "DeepSkyBlue");
             buildTextButton(ctx, "Return To Menu", this.returnToMenuBB, this.textColor == 3 && this.bufferTimer > this.maxBufferTime, "DeepSkyBlue");
 
@@ -845,10 +853,12 @@ class SceneManager {
                 MUSIC_MANAGER.pauseBackgroundMusic();
                 MUSIC_MANAGER.autoRepeat(scene.music);
                 MUSIC_MANAGER.playAsset(scene.music);
+                this.myMusic = scene.music;
             } else if (!scene.music && !MUSIC_MANAGER.isPlaying(this.defaultMusic)) { //no music set play default music
                 MUSIC_MANAGER.pauseBackgroundMusic();
                 MUSIC_MANAGER.autoRepeat(this.defaultMusic);
                 MUSIC_MANAGER.playAsset(this.defaultMusic);
+                this.myMusic = this.defaultMusic;
             }
         }
 

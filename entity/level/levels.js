@@ -1121,8 +1121,9 @@ var level1_4 = {
     ID: 4,
     label: "1-4",
     width: 75, height: 50,
-    //player: { x: 65, y: 45 },
-    player: { x: 3, y: 5 },
+    player: { x: 3, y: 5 }, //regular spawn
+    //player: { x: 65, y: 45 }, //top right spawn
+    //player: { x: 10, y: 43 },//boss room spawn
     music: MUSIC.LONG_WAY,
     signs: [
         {
