@@ -221,6 +221,7 @@ const SFX = {
     BERSERK_ACTIVATE: "./sound/sfx/sharingan.mp3",
     RESPAWN: "./sound/sfx/re_zero_respawn.mp3",
     COMPLETE: "./sound/sfx/finished.mp3",
+    CHECKPOINT: "./sound/sfx/checkpoint.wav",
     
 
 

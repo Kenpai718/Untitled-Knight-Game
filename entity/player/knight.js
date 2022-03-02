@@ -15,8 +15,6 @@ class Knight extends AbstractPlayer {
         this.spritesheetLeft2 = ASSET_MANAGER.getAsset("./sprites/knight/knightLeft2.png");
         this.spritesheetRight3 = ASSET_MANAGER.getAsset("./sprites/knight/knightRight3.png");
         this.spritesheetLeft3 = ASSET_MANAGER.getAsset("./sprites/knight/knightLeft3.png");
-        this.armorRight = ASSET_MANAGER.getAsset("./sprites/knight/armorRight.png");
-        this.armorLeft = ASSET_MANAGER.getAsset("./sprites/knight/armorLeft.png");
 
         //setup variable mapping for the states. Labeled for ease of use
         this.dir = { left: 0, right: 1 }; //directions
@@ -127,7 +125,7 @@ class Knight extends AbstractPlayer {
         //NOTE: this.dead is set when the knight hp drops to 0.
         if (this.dead) { //player died
             super.setDead();
-        } else if(this.respawn) { //player is in respawn animation
+        } else if (this.respawn) { //player is in respawn animation
             //console.log("respawn animation");
             this.action = this.states.revive;
             super.handleGravity();
@@ -1172,8 +1170,8 @@ class Knight extends AbstractPlayer {
         this.animations[1][this.states.death][0] = new Animator(this.spritesheetRight, -5, 400, 120, 80, 9, 0.1, 0, false, false, false);
 
         // revive animation (death in reverse)
-        this.animations[0][this.states.revive][0] = new Animator(this.spritesheetLeft, 365, 400, 120, 80, 9, 0.1, 0, false, false, true);
-        this.animations[1][this.states.revive][0] = new Animator(this.spritesheetRight, -5, 400, 120, 80, 9, 0.1, 0, true, false, true);
+        this.animations[0][this.states.revive][0] = new Animator(this.spritesheetLeft, 365, 400, 120, 80, 9, 0.1, 0, false, false, false);
+        this.animations[1][this.states.revive][0] = new Animator(this.spritesheetRight, -5, 400, 120, 80, 9, 0.1, 0, true, false, false);
 
 
         //________________________________________________________GOLD________________________________________________________________________
@@ -1251,8 +1249,8 @@ class Knight extends AbstractPlayer {
         this.animations[1][this.states.death][1] = new Animator(this.spritesheetRight1, -5, 400, 120, 80, 9, 0.1, 0, false, false, false);
 
         // revive animation (death in reverse)
-        this.animations[0][this.states.revive][1] = new Animator(this.spritesheetLeft, 365, 400, 120, 80, 9, 0.1, 0, false, false, true);
-        this.animations[1][this.states.revive][1] = new Animator(this.spritesheetRight, -5, 400, 120, 80, 9, 0.1, 0, true, false, true);
+        this.animations[0][this.states.revive][1] = new Animator(this.spritesheetLeft, 365, 400, 120, 80, 9, 0.1, 0, false, false, false);
+        this.animations[1][this.states.revive][1] = new Animator(this.spritesheetRight, -5, 400, 120, 80, 9, 0.1, 0, true, false, false);
 
 
         //___________________________________________________________DIAMOND________________________________________________________________________
@@ -1328,8 +1326,8 @@ class Knight extends AbstractPlayer {
         this.animations[1][this.states.death][2] = new Animator(this.spritesheetRight2, -5, 400, 120, 80, 9, 0.1, 0, false, false, false);
 
         // revive animation (death in reverse)
-        this.animations[0][this.states.revive][2] = new Animator(this.spritesheetLeft, 365, 400, 120, 80, 9, 0.1, 0, false, false, true);
-        this.animations[1][this.states.revive][2] = new Animator(this.spritesheetRight, -5, 400, 120, 80, 9, 0.1, 0, true, false, true);
+        this.animations[0][this.states.revive][2] = new Animator(this.spritesheetLeft, 365, 400, 120, 80, 9, 0.1, 0, false, false, false);
+        this.animations[1][this.states.revive][2] = new Animator(this.spritesheetRight, -5, 400, 120, 80, 9, 0.1, 0, true, false, false);
 
 
         //________________________________________________________NETHERITE___________________________________________________________________________
@@ -1404,9 +1402,9 @@ class Knight extends AbstractPlayer {
         this.animations[0][this.states.death][3] = new Animator(this.spritesheetLeft3, 365, 400, 120, 80, 9, 0.1, 0, true, false, false);
         this.animations[1][this.states.death][3] = new Animator(this.spritesheetRight3, -5, 400, 120, 80, 9, 0.1, 0, false, false, false);
 
-// revive animation (death in reverse)
-this.animations[0][this.states.revive][3] = new Animator(this.spritesheetLeft, 365, 400, 120, 80, 9, 0.1, 0, false, false, true);
-this.animations[1][this.states.revive][3] = new Animator(this.spritesheetRight, -5, 400, 120, 80, 9, 0.1, 0, true, false, true);
+        // revive animation (death in reverse)
+        this.animations[0][this.states.revive][3] = new Animator(this.spritesheetLeft, 365, 400, 120, 80, 9, 0.1, 0, false, false, false);
+        this.animations[1][this.states.revive][3] = new Animator(this.spritesheetRight, -5, 400, 120, 80, 9, 0.1, 0, true, false, false);
 
     };
 }

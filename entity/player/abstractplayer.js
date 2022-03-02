@@ -210,6 +210,7 @@ class AbstractPlayer extends AbstractEntity {
         super.handleGravity();
         if (this.animations[this.facing][this.action][this.myInventory.armorUpgrade].isDone()) {
             this.game.myReportCard.myDeathes += 1;
+            this.resetAnimationTimers(this.states.death);
             this.respawn = true;
             this.action = this.states.revive;
             this.respawnPlayer();
@@ -451,15 +452,18 @@ class AbstractPlayer extends AbstractEntity {
             }
         });
 
+        //check entities other than the player or enemies
         this.game.entities.forEach(function (entity) {
             if (entity instanceof NPC) {
                 if (entity.BB && self.BB.collide(entity.BB)) {
-                    //save a checkpoint
+                    //save a checkpoint and current player state
                     if (!entity.setCheckpoint) {
+                        ASSET_MANAGER.playAsset(SFX.CHECKPOINT);
                         entity.setCheckpoint = true;
                         self.myCheckpoint = { x: Math.round(self.x), y: Math.round(self.y)};
+                        self.game.camera.savePlayerInfo();
                         self.game.addEntityToFront(new Score(self.game, self, 0, PARAMS.CHECKPOINT_ID, false));
-                        console.log("saved checkpoint", self.myCheckpoint.x, self.myCheckpoint.y);
+                        //console.log("saved checkpoint", self.myCheckpoint.x, self.myCheckpoint.y);
                     }
                 }
             }

@@ -42,6 +42,7 @@ ASSET_MANAGER.queueDownload("./sprites/GUI/bows.png");
 ASSET_MANAGER.queueDownload("./sprites/GUI/attack.png");
 ASSET_MANAGER.queueDownload("./sprites/GUI/interactables.png");
 ASSET_MANAGER.queueDownload("./sprites/GUI/crosshair.png");
+ASSET_MANAGER.queueDownload("./sprites/GUI/game_over.png");
 
 //music
 MUSIC_MANAGER.queueDownload(MUSIC.CHASING_DAYBREAK);
@@ -85,6 +86,7 @@ ASSET_MANAGER.queueDownload(SFX.ANVIL);
 ASSET_MANAGER.queueDownload(SFX.BERSERK_ACTIVATE);
 ASSET_MANAGER.queueDownload(SFX.RESPAWN);
 ASSET_MANAGER.queueDownload(SFX.COMPLETE);
+ASSET_MANAGER.queueDownload(SFX.CHECKPOINT);
 
 // Leave this SFX to suffer at the bottom >:D
 ASSET_MANAGER.queueDownload(SFX.PURCHASE);

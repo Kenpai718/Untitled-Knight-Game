@@ -12,6 +12,8 @@ class SceneManager {
         this.anchor = { right: false, bottom: false };
         this.defaultMusic = MUSIC.CHASING_DAYBREAK;
 
+        this.game_over = ASSET_MANAGER.getAsset("./sprites/GUI/game_over.png");
+
         this.myCursor = new Cursor(this.game);
 
         //game status
@@ -677,6 +679,7 @@ class SceneManager {
         this.drawGameplayGUI(ctx);
         this.drawTitleGUI(ctx);
         this.drawResultsGUI(ctx);
+        //if(this.player.dead) ctx.drawImage(this.game_over, 0, 0);
         if (PARAMS.CURSOR) this.myCursor.draw(ctx);
         //console.log(this.player.BB.left + " " + this.player.BB.bottom);
     };
