@@ -113,6 +113,10 @@ class SceneManager {
         x = (this.game.surfaceWidth / 2) - ((40 * 14) / 2);
         y = (this.game.surfaceHeight / 2) + 40 * 3;
         this.returnToMenuBB = new BoundingBox(x, y, 40 * 14, -40);
+
+        //TEMP FIX: turn off player so they don't spawn and fall off the title screen
+        //adjust this once there is a goal flag
+        this.player.removeFromWorld = true;
     };
 
     loadPaused() {
@@ -795,7 +799,7 @@ class SceneManager {
             ctx.fillText(resultMsg, (this.game.surfaceWidth / 2) - ((fontSize * resultMsg.length) / 3) + 5, fontSize * 4 + 5);
             ctx.fillStyle = "White";
             ctx.fillText(resultMsg, (this.game.surfaceWidth / 2) - ((fontSize * resultMsg.length) / 3), fontSize * 4);
-            
+
             //buildTextButton(ctx, "Next Level", this.nextLevelBB, false, "gray"); //set this once there is another level
             buildTextButton(ctx, "Restart Game", this.restartLevelBB, this.textColor == 2 && this.bufferTimer > this.maxBufferTime, "DeepSkyBlue");
             buildTextButton(ctx, "Return To Menu", this.returnToMenuBB, this.textColor == 3 && this.bufferTimer > this.maxBufferTime, "DeepSkyBlue");
