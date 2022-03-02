@@ -409,11 +409,11 @@ class Shop {
         this.arrow[1] = new Animator(this.arrow_sprite, 43, 46, 43, 34, 1, 0, 0, false, false, false);
         this.arrow[2] = new Animator(this.arrow_sprite, 86, 46, 43, 34, 1, 0, 0, false, false, false);
         this.arrow[3] = new Animator(this.arrow_sprite, 130, 46, 43, 34, 1, 0, 0, false, false, false);
-
-        this.attack[0] = new Animator(this.attack_sprite, 36, 0, 36, 44, 1, 0, 0, false, false, false);
-        this.attack[1] = new Animator(this.attack_sprite, 72, 0, 36, 44, 1, 0, 0, false, false, false);
-        this.attack[2] = new Animator(this.attack_sprite, 108, 0, 36, 44, 1, 0, 0, false, false, false);
-        this.attack[3] = new Animator(this.attack_sprite, 144, 0, 36, 44, 1, 0, 0, false, false, false);
+      
+        this.attack[0] = new Animator(this.attack_sprite, 45,     0, 45, 45, 1, 0, 0, false, false, false);
+        this.attack[1] = new Animator(this.attack_sprite, 90,     0, 45, 45, 1, 0, 0, false, false, false);
+        this.attack[2] = new Animator(this.attack_sprite, 135,    0, 45, 45, 1, 0, 0, false, false, false);
+        this.attack[3] = new Animator(this.attack_sprite, 180,    0, 45, 45, 1, 0, 0, false, false, false);
 
         this.button[0] = new Animator(this.interactables, 0, 0, 330, 130, 1, 0, 0, false, false, false);
         this.button[1] = new Animator(this.interactables, 0, 130, 330, 130, 1, 0, 0, false, false, false);
@@ -524,6 +524,7 @@ class Shop {
 
         let tempFill = ctx.fillStyle;
         ctx.fillStyle = "white";
+
 
         if (this.highlightB1) {
             ctx.fillRect(this.ButtonBB1.x, this.ButtonBB1.y, this.ButtonBB1.width, this.ButtonBB1.height - 1); // Arrow Pack   

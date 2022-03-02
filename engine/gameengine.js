@@ -340,17 +340,17 @@ class GameEngine {
         let h = this.surfaceHeight;
         for (let i = layer.length - 1; i >= 0; i--) {
             if (layer[i].w) {
-                if (camera.x < (layer[i].x + layer[i].w) * PARAMS.BLOCKDIM && camera.x + w > layer[i].x * PARAMS.BLOCKDIM &&
+                if (camera.x - w < (layer[i].x + layer[i].w) * PARAMS.BLOCKDIM && camera.x + w * 2 > layer[i].x * PARAMS.BLOCKDIM &&
                     camera.y - h < (layer[i].y + layer[i].h) * PARAMS.BLOCKDIM && camera.y + h * 2 > layer[i].y * PARAMS.BLOCKDIM)
                     layer[i].draw(this.ctx, this);
             }
-            /*else if (layer[i].width) {
+            else if (layer[i].width) {
                 if (layer[i] instanceof Shop)
                     layer[i].draw(this.ctx, this);
-                else if (camera.x < layer[i].x + layer[i].width && camera.x + w > layer[i].x &&
-                    camera.y < layer[i].y + layer[i].height && camera.y + h > layer[i].y)
+                else if (camera.x - w < layer[i].x + layer[i].width && camera.x + w * 2 > layer[i].x &&
+                    camera.y - h < layer[i].y + layer[i].height && camera.y + h * 2 > layer[i].y)
                     layer[i].draw(this.ctx, this);
-            }*/
+            }
             else if (layer[i].lower) {
                 if (camera.x - w < (layer[i].lower.x + layer[i].upper.x) * layer[i].scale && camera.x + w * 2 > layer[i].lower.x * layer[i].scale &&
                     camera.y - h < (layer[i].lower.y + layer[i].upper.y) * layer[i].scale && camera.y + h * 2 > layer[i].lower.y * layer[i].scale)
@@ -418,7 +418,7 @@ class GameEngine {
         for (let i = 0; i < entitiesCount; i++) {
             let entity = layer[i];
 
-            if (!entity.removeFromWorld) {
+            if (entity != undefined && !entity.removeFromWorld) {
                 entity.update();
             }
         }

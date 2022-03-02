@@ -26,7 +26,7 @@ var testLevel = {
     ID: 0,
     label: "Testing Room",
     width: 24, height: 14,
-    player: { x: 1, y: 2 },
+    player: { x: 1, y: 1 },
     music: MUSIC.FODLAN_WINDS,
 
     //quick access to all levels
@@ -119,13 +119,13 @@ var levelLoader = {
     ID: 0,
     label: "Level-Loader",
     width: 24, height: 14,
-    player: { x: 1, y: 3 },
+    player: { x: 1, y: 2 },
     music: MUSIC.TITLE,
 
     //quick access to all levels
     doors: [
-        { x: 0.5, y: 4, killQuota: 0, exitLocation: { x: 1, y: 3, levelNum: 0 }, transition: false }, //door to level 0 (DEVELOPER ROOM)
-        { x: 7, y: 4, killQuota: 0, exitLocation: { x: 1, y: 4, levelNum: 1 }, transition: false }, //door to level 1
+        { x: 0.5, y: 4, killQuota: 0, exitLocation: { x: 1, y: 1, levelNum: 0 }, transition: false }, //door to level 0 (DEVELOPER ROOM)
+        { x: 7, y: 4, killQuota: 0, exitLocation: { x: 2, y: 1, levelNum: 1 }, transition: false }, //door to level 1
         { x: 10, y: 4, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition: false }, //door to level 2
         { x: 13, y: 4, killQuota: 0, exitLocation: { x: 4, y: 1, levelNum: 3 }, transition: false }, //door to level 3
         { x: 16, y: 4, killQuota: 0, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: false }, //door to level 4
@@ -232,7 +232,7 @@ var titleScene = {
 
     //quick access to all levels
     doors: [
-        { x: 7, y: 4, killQuota: 0, exitLocation: { x: 1, y: 4, levelNum: 1 }, transition: false }, //door to level 1
+        { x: 7, y: 4, killQuota: 0, exitLocation: { x: 1, y: 1, levelNum: 1 }, transition: false }, //door to level 1
         { x: 10, y: 4, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition: false }, //door to level 2
         { x: 13, y: 4, killQuota: 0, exitLocation: { x: 4, y: 1, levelNum: 3 }, transition: false }, //door to level 3
         { x: 16, y: 4, killQuota: 0, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: false }, //door to level 4
@@ -328,7 +328,7 @@ var titleScene = {
     ],
 
     shrooms: [
-        { x: 4, y: 2, guard: true }
+        //{ x: 4, y: 2, guard: true }
     ],
 
     goblins: [
@@ -581,7 +581,7 @@ var level1_2 = {
     music: MUSIC.CHASING_DAYBREAK,
     doors: [
         { x: 116, y: 3, killQuota: 7, exitLocation: { x: 4, y: 3, levelNum: 3 }, transition: false }, //next level to 3
-        { x: 0, y: 3, killQuota: 0, exitLocation: { x: 114, y: 11, levelNum: 1 }, transition: false } //go back to level 1
+        { x: 0, y: 3, killQuota: 0, exitLocation: { x: 114, y: 10, levelNum: 1 }, transition: false } //go back to level 1
     ],
 
     signs: [{
@@ -943,7 +943,7 @@ var level1_3 = {
     ],
 
     doors: [
-        { x: 1, y: 3, killQuota: 0, exitLocation: { x: 114, y: 3, levelNum: 2 }, transition: false }, //go back to level 2
+        { x: 1, y: 3, killQuota: 0, exitLocation: { x: 114, y: 1, levelNum: 2 }, transition: false }, //go back to level 2
         { x: 117, y: 25, killQuota: 8, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: false }, // change to level 4 once theres a level 4
         { x: 34, y: 35, killQuota: 1, exitLocation: { x: 1, y: 3, levelNum: 0 }, transition: false } // change to treasure room
     ],
@@ -1134,7 +1134,7 @@ var level1_4 = {
         },
     ],
     doors: [
-        { x: 3, y: 6, killQuota: 0, exitLocation: { x: 115, y: 25, levelNum: 3 }, transition: false }, //starting door
+        { x: 3, y: 6, killQuota: 0, exitLocation: { x: 115, y: 23, levelNum: 3 }, transition: false }, //starting door
         { x: 6, y: 26, killQuota: 8, exitLocation: { x: 115, y: 25, levelNum: 3 }, transition: true }, //exit door
     ],
     npcs: [
@@ -1164,7 +1164,7 @@ var level1_4 = {
         { x: 61, y: 16, width: 3, height: 1, type: 0 }, //right of middle floor spikes
         { x: 68, y: 21, width: 6, height: 1, type: 0 }, //top of middle floor right
         { x: 27, y: 30, width: 37, height: 1, type: 0 }, //under top floor spikes
-        { x: 16, y: 36, width: 10, height: 1, type: 0 }, //top left floor (boss fight)
+        //{ x: 0, y: 36, width: 26, height: 1, type: 0 }, //top left floor (boss fight) // EVENT
 
         { x: 70, y: 37, width: 5, height: 1, type: 0 }, //right msot obelisk floor
 
@@ -1194,7 +1194,7 @@ var level1_4 = {
         { x: 16, y: 29, width: 54, height: 6, type: 0 }, //top floor ground
         { x: 64, y: 33, width: 3, height: 4, type: 1 }, //top floor above spikes
         { x: 16, y: 33, width: 11, height: 4, type: 1 }, //left top floor (fight miniboss)
-        { x: 0, y: 53, width: 13, height: 25, type: 0 }, //top left filler above exit room
+        { x: 0, y: 35, width: 13, height: 7, type: 0 }, //top left filler above exit room
         { x: 0, y: 53, width: 75, height: 8, type: 0 }, //top most ceiling
         { x: 68, y: 20, width: 7, height: 21, type: 0 }, //right
         { x: 75, y: 55, width: 10, height: 56, type: 0 }, //filler far right
@@ -1202,6 +1202,7 @@ var level1_4 = {
     ],
     walls: [
         //{ x: -1, y: 15, height: 16, type: 0 },
+        { x: 0, y: 45, height: 10, type: 2 },
         { x: 0, y: 10, height: 8, type: 0 }, //wall left first door
         { x: 17, y: 2, height: 4, type: 0 }, //bottom floor first jump
         { x: 24, y: 5, height: 7, type: 0 }, //bottom floor 2nd jump
@@ -1224,7 +1225,7 @@ var level1_4 = {
         { x: 38, y: 42, width: 1, height: 5, type: 0 }, //top floor spikes left wall (TOP) 2
         { x: 38, y: 45, width: 1, height: 1, type: 0 }, //top floor spikes left wall (TOP) 2
         { x: 35, y: 37, width: 1, height: 7, type: 0 }, //top floor spikes left (TOP) 3
-        { x: 26, y: 41, width: 1, height: 8, type: 0 }, //closing top wall right in top left
+        { x: 26, y: 38, width: 1, height: 5, type: 0 }, //closing top wall right in top left
 
         { x: 70, y: 45, width: 1, height: 7, type: 2 }, //right most obelisk wall
 
@@ -1378,7 +1379,6 @@ var level1_4 = {
     ],
     shrooms: [
         { x: 72, y: 24, guard: false },
-        { x: 21, y: 39, guard: false },
 
     ],
     goblins: [
@@ -1395,15 +1395,13 @@ var level1_4 = {
 
         //top
         { x: 3, y: 28, guard: true },
-        { x: 21, y: 39, guard: true },
 
     ],
     skeletons: [
         //bottom
         { x: 41, y: 4, guard: true },
         //top
-        { x: 20, y: 35, guard: true },
-        { x: 19, y: 39, guard: true }
+        { x: 20, y: 35, guard: true }
     ],
 
     flyingeyes: [
@@ -1424,6 +1422,20 @@ var level1_4 = {
         { x: 50, y: 41, guard: true },
         { x: 53, y: 37, guard: true },
     ],
+    events: [
+        {
+            space: [
+                { x: 24, y: 45, width : 1, height: 7 }
+            ],
+            ground: [
+                { x: 1, y: 36, width: 25, height: 1, type: 0 }
+            ],
+            walls: [
+                { x: 26, y: 45, height: 7, type: 2 }
+            ],
+            demon: { x: 10, y: 38, guard: false }
+        }
+    ]
 
     //NOTEa: place miniboss at x: 18, y: 38
 }
