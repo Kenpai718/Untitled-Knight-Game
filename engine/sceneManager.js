@@ -180,7 +180,7 @@ class SceneManager {
         this.game.shoot = false;
 
         //reset the checkpoint upon entering a new level
-        if(this.lastLevel != this.currentLevel && this.player != null) this.player.myCheckpoint = null;
+        if (this.lastLevel != this.currentLevel && this.player != null) this.player.myCheckpoint = null;
         //make player if the last player hasnt been made yet
         this.player = this.lastPlayer ? this.lastPlayer : new Knight(this.game, 0, 0);
         //reset last player to default settings
@@ -201,10 +201,14 @@ class SceneManager {
         this.heartsbar = new HeartBar(this.game, this.player);
         this.vignette = new Vignette(this.game);
         //add the player if there was not a last player yet
-        if (!this.lastPlayer) this.game.addEntity(this.player);
+        if (!this.lastPlayer) {
+            this.game.addEntity(this.player);
+            this.savePlayerInfo();
+        }
+
         this.player.updateBB();
         this.handleRespawn();
-        
+
     };
 
     handleRespawn() {
@@ -212,7 +216,7 @@ class SceneManager {
             this.respawn = false;
             console.log("respawning");
             //checkpoint respawn position
-            if(this.player.myCheckpoint != null) {
+            if (this.player.myCheckpoint != null) {
                 console.log("respawning with a checkpoint");
                 this.player.x = this.player.myCheckpoint.x;
                 this.player.y = this.player.myCheckpoint.y;
@@ -223,6 +227,19 @@ class SceneManager {
                 this.player.heal((this.player.max_hp / 2) - this.player.hp);
             }
         }
+    }
+
+    /**
+     * Saves the last player's info which will be reused
+     * if the player needs to be reloaded (new level or respawn)
+     */
+    savePlayerInfo() {
+        // save player state
+        this.lastPlayer = this.player;
+        // save initial player hp and inventory upon entering a level
+        this.lastHP = this.player.hp;
+        this.lastInventory = new Inventory(this.game);
+        this.lastInventory.copyInventory(this.player.myInventory);
     }
 
     /**
@@ -241,12 +258,8 @@ class SceneManager {
                 enemies: [...this.game.enemies], interactables: [...this.game.interactables],
                 events: [...this.game.events], killCount: this.killCount
             };
-            // save player state
-            this.lastPlayer = this.player;
-            // save initial player hp and inventory upon entering a level
-            this.lastHP = this.player.hp;
-            this.lastInventory = new Inventory(this.game);
-            this.lastInventory.copyInventory(this.player.myInventory);
+
+            this.savePlayerInfo();
         } else {
             // if player dies reset their hp and inventory to what it was upon entering the level
             if (this.restart && this.lastPlayer) {
@@ -805,7 +818,7 @@ class SceneManager {
         if (scene.height === undefined) throw ("Level must have a level height in terms of blockdim. EX: 1 = 82 pixels");
         if (scene.player === undefined) throw ("Level must have a player with x and y cordinates.");
 
-        
+
 
         //initialize scene and player
         this.level = scene;
