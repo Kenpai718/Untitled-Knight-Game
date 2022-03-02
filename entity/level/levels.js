@@ -1444,7 +1444,7 @@ var level1_4 = {
     events: [
         {
             space: [
-                { x: 24, y: 45, width: 1, height: 7 }
+                { x: 24, y: 45, width: 1, height: 10 }
             ],
             platforms: [
                 { x: 13, y: 36, width: 3, height: 1, type: 0 }, //middle platform to get to exit
