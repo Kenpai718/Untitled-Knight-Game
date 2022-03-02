@@ -454,11 +454,11 @@ class AbstractPlayer extends AbstractEntity {
 
         //check entities other than the player or enemies
         this.game.entities.forEach(function (entity) {
-            if (entity instanceof NPC) {
+            if (entity instanceof NPC) { //shop keeper
                 if (entity.BB && self.BB.collide(entity.BB)) {
                     //save a checkpoint and current player state
                     if (!entity.setCheckpoint) {
-                        ASSET_MANAGER.playAsset(SFX.CHECKPOINT);
+                        //ASSET_MANAGER.playAsset(SFX.CHECKPOINT);
                         entity.setCheckpoint = true;
                         self.myCheckpoint = { x: Math.round(self.x), y: Math.round(self.y)};
                         self.game.camera.savePlayerInfo();
