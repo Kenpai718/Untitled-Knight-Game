@@ -187,13 +187,7 @@ class SceneManager {
         this.player = this.lastPlayer ? this.lastPlayer : new Knight(this.game, 0, 0);
         //reset last player to default settings
         if (this.lastPlayer) {
-            this.player.removeFromWorld = false;
-            this.player.velocity.x = 0;
-            this.player.velocity.y = 0;
-            this.player.x = 0;
-            this.player.y = 0;
-            this.player.action = this.player.states.idle;
-            this.player.updateBB();
+            this.player.resetToDefault();
         }
         //reposition the player
         this.player.x = theX * PARAMS.BLOCKDIM - this.player.BB.left;
@@ -227,7 +221,7 @@ class SceneManager {
             }
 
             //mercy rule: after dying the player is healed a bit
-            if (this.player.hp <= (this.player.max_hp / 2)) {
+            if (this.player.hp < (this.player.max_hp / 2)) {
                 this.player.heal((this.player.max_hp / 2) - this.player.hp);
             }
         }
@@ -257,12 +251,7 @@ class SceneManager {
     loadLevel(number, usedDoor, doorExitX, doorExitY) {
         // save the state of the enemies and interactables for the current level
         if (!this.title && !this.restart && !this.transition) {
-            // save level state
-            this.levelState[this.currentLevel] = {
-                enemies: [...this.game.enemies], interactables: [...this.game.interactables],
-                events: [...this.game.events], killCount: this.killCount
-            };
-
+            this.saveLevelState();
             this.savePlayerInfo();
         } else {
             // if player dies reset their hp and inventory to what it was upon entering the level
@@ -291,6 +280,13 @@ class SceneManager {
                 this.loadScene(lvlData, lvlData.player.x, lvlData.player.y);
             }
         }
+    }
+
+    saveLevelState() {
+        this.levelState[this.currentLevel] = {
+            enemies: [...this.game.enemies], interactables: [...this.game.interactables],
+            events: [...this.game.events], killCount: this.killCount
+        };
     }
 
 
