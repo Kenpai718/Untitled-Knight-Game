@@ -73,7 +73,6 @@ const PLAYER_PHYSICS = {
     ACC_FALL: PLAYER_JUMP_HEIGHT * FALL_GRAVITY,
     MAX_SLIDE: 150 * PHYSIC_SCALER,
     ACC_SLIDE: 750
-
 };
 
 /**Global stats that define an entity */
@@ -172,12 +171,12 @@ const STATS = {
 
     DEMON_SLIME: {
         NAME: "Demon Slime",
-        MAX_HP: 400,
+        MAX_HP: 100,
         WIDTH: 288,
         HEIGHT: 160,
-        DAMAGE: 20,
+        DAMAGE: 0,
         SCALE: 3,
-        PHYSICS: {MAX_RUN: PLAYER_PHYSICS.MAX_RUN - 60, MAX_FALL: 500}
+        PHYSICS: {MAX_RUN: (PLAYER_PHYSICS.MAX_RUN - 60) * 3, MAX_FALL: 500}
     }
 
 }
