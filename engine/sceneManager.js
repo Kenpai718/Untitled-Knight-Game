@@ -213,13 +213,14 @@ class SceneManager {
 
     handleRespawn() {
         if (this.player.respawn) {
-            this.respawn = false;
-            console.log("respawning");
+            //this.respawn = false;
+            //console.log("respawning");
             //checkpoint respawn position
             if (this.player.myCheckpoint != null) {
-                console.log("respawning with a checkpoint");
+                //console.log("respawning with a checkpoint");
                 this.player.x = this.player.myCheckpoint.x;
                 this.player.y = this.player.myCheckpoint.y;
+                this.player.updateBB();
             }
 
             //mercy rule: after dying the player is healed a bit

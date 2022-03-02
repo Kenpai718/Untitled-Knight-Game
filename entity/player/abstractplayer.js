@@ -211,6 +211,7 @@ class AbstractPlayer extends AbstractEntity {
         if (this.animations[this.facing][this.action][this.myInventory.armorUpgrade].isDone()) {
             this.game.myReportCard.myDeathes += 1;
             this.respawn = true;
+            this.action = this.states.revive;
             this.respawnPlayer();
         }
     }

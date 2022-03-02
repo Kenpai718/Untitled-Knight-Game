@@ -187,7 +187,7 @@ class Mushroom extends AbstractEnemy {
         // handles the mushrooms attack cooldown
         if (!this.canAttack) {
             this.attackCooldown += TICK;
-            if (this.attackCooldown >= 1.7) {
+            if (this.attackCooldown >= 1.2) {
                 this.resetAnimationTimers(this.states.attack);
                 this.attackFrame = 0;
                 this.attackCooldown = 0;
