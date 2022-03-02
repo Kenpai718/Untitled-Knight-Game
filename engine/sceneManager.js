@@ -11,6 +11,7 @@ class SceneManager {
         this.velocity = { x: 0, y: 0 };
         this.anchor = { right: false, bottom: false };
         this.defaultMusic = MUSIC.CHASING_DAYBREAK;
+        this.myMusic = this.defaultMusic;
 
         this.game_over = ASSET_MANAGER.getAsset("./sprites/GUI/game_over.png");
 
@@ -112,6 +113,10 @@ class SceneManager {
         x = (this.game.surfaceWidth / 2) - ((40 * 14) / 2);
         y = (this.game.surfaceHeight / 2) + 40 * 3;
         this.returnToMenuBB = new BoundingBox(x, y, 40 * 14, -40);
+
+        //TEMP FIX: turn off player so they don't spawn and fall off the title screen
+        //adjust this once there is a goal flag
+        this.player.removeFromWorld = true;
     };
 
     loadPaused() {
@@ -187,13 +192,7 @@ class SceneManager {
         this.player = this.lastPlayer ? this.lastPlayer : new Knight(this.game, 0, 0);
         //reset last player to default settings
         if (this.lastPlayer) {
-            this.player.removeFromWorld = false;
-            this.player.velocity.x = 0;
-            this.player.velocity.y = 0;
-            this.player.x = 0;
-            this.player.y = 0;
-            this.player.action = this.player.states.idle;
-            this.player.updateBB();
+            this.player.resetToDefault();
         }
         //reposition the player
         this.player.x = theX * PARAMS.BLOCKDIM - this.player.BB.left;
@@ -227,7 +226,7 @@ class SceneManager {
             }
 
             //mercy rule: after dying the player is healed a bit
-            if (this.player.hp <= (this.player.max_hp / 2)) {
+            if (this.player.hp < (this.player.max_hp / 2)) {
                 this.player.heal((this.player.max_hp / 2) - this.player.hp);
             }
         }
@@ -257,12 +256,7 @@ class SceneManager {
     loadLevel(number, usedDoor, doorExitX, doorExitY) {
         // save the state of the enemies and interactables for the current level
         if (!this.title && !this.restart && !this.transition) {
-            // save level state
-            this.levelState[this.currentLevel] = {
-                enemies: [...this.game.enemies], interactables: [...this.game.interactables],
-                events: [...this.game.events], killCount: this.killCount
-            };
-
+            this.saveLevelState();
             this.savePlayerInfo();
         } else {
             // if player dies reset their hp and inventory to what it was upon entering the level
@@ -291,6 +285,13 @@ class SceneManager {
                 this.loadScene(lvlData, lvlData.player.x, lvlData.player.y);
             }
         }
+    }
+
+    saveLevelState() {
+        this.levelState[this.currentLevel] = {
+            enemies: [...this.game.enemies], interactables: [...this.game.interactables],
+            events: [...this.game.events], killCount: this.killCount
+        };
     }
 
 
@@ -383,6 +384,7 @@ class SceneManager {
                     MUSIC_MANAGER.pauseBackgroundMusic();
                     MUSIC_MANAGER.autoRepeat(MUSIC.TITLE);
                     MUSIC_MANAGER.playAsset(MUSIC.TITLE);
+                    this.myMusic = MUSIC.TITLE;
                 }
             }
 
@@ -787,12 +789,18 @@ class SceneManager {
             var fontSize = 60;
             ctx.font = fontSize + 'px "Press Start 2P"';
             ctx.fillStyle = "Orchid";
-            let gameTitle = "Level Complete!";
-            ctx.fillText("Level Complete!", (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2) + 5, fontSize * 3 + 5);
+            let resultMsg = "You beat the game!";
+            ctx.fillText(resultMsg, (this.game.surfaceWidth / 2) - ((fontSize * resultMsg.length) / 2) + 5, fontSize * 3 + 5);
             ctx.fillStyle = "White";
-            ctx.fillText("Level Complete!", (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 3);
+            ctx.fillText(resultMsg, (this.game.surfaceWidth / 2) - ((fontSize * resultMsg.length) / 2), fontSize * 3);
             ctx.font = '40px "Press Start 2P"';
-            buildTextButton(ctx, "Next Level", this.nextLevelBB, false, "gray"); //set this once there is another level
+            ctx.fillStyle = "Orchid";
+            resultMsg = "Thanks for playing!";
+            ctx.fillText(resultMsg, (this.game.surfaceWidth / 2) - ((fontSize * resultMsg.length) / 3) + 5, fontSize * 4 + 5);
+            ctx.fillStyle = "White";
+            ctx.fillText(resultMsg, (this.game.surfaceWidth / 2) - ((fontSize * resultMsg.length) / 3), fontSize * 4);
+
+            //buildTextButton(ctx, "Next Level", this.nextLevelBB, false, "gray"); //set this once there is another level
             buildTextButton(ctx, "Restart Game", this.restartLevelBB, this.textColor == 2 && this.bufferTimer > this.maxBufferTime, "DeepSkyBlue");
             buildTextButton(ctx, "Return To Menu", this.returnToMenuBB, this.textColor == 3 && this.bufferTimer > this.maxBufferTime, "DeepSkyBlue");
 
@@ -849,10 +857,12 @@ class SceneManager {
                 MUSIC_MANAGER.pauseBackgroundMusic();
                 MUSIC_MANAGER.autoRepeat(scene.music);
                 MUSIC_MANAGER.playAsset(scene.music);
+                this.myMusic = scene.music;
             } else if (!scene.music && !MUSIC_MANAGER.isPlaying(this.defaultMusic)) { //no music set play default music
                 MUSIC_MANAGER.pauseBackgroundMusic();
                 MUSIC_MANAGER.autoRepeat(this.defaultMusic);
                 MUSIC_MANAGER.playAsset(this.defaultMusic);
+                this.myMusic = this.defaultMusic;
             }
         }
 

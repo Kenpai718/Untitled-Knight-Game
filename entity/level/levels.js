@@ -1121,8 +1121,9 @@ var level1_4 = {
     ID: 4,
     label: "1-4",
     width: 75, height: 50,
-    //player: { x: 65, y: 45 },
-    player: { x: 3, y: 5 },
+    player: { x: 3, y: 5 }, //regular spawn
+    //player: { x: 65, y: 45 }, //top right spawn
+    //player: { x: 10, y: 43 },//boss room spawn
     music: MUSIC.LONG_WAY,
     signs: [
         {
@@ -1168,7 +1169,7 @@ var level1_4 = {
         { x: 68, y: 21, width: 6, height: 1, type: 0 }, //top of middle floor right
         { x: 27, y: 30, width: 37, height: 1, type: 0 }, //under top floor spikes
         //{ x: 0, y: 36, width: 26, height: 1, type: 0 }, //top left floor (boss fight) // EVENT
-        { x: 1, y: 36, width: 13, height: 1, type: 0 }, //left miniboss ground
+        { x: 1, y: 36, width: 12, height: 1, type: 0 }, //left miniboss ground
         { x: 16, y: 36, width: 10, height: 1, type: 0 }, //right miniboss ground
 
         { x: 70, y: 37, width: 5, height: 1, type: 0 }, //right msot obelisk floor
@@ -1419,7 +1420,7 @@ var level1_4 = {
         //bottom
         { x: 41, y: 4, guard: true },
         //top
-        { x: 20, y: 35, guard: true }
+        //{ x: 20, y: 35, guard: true }
     ],
 
     flyingeyes: [

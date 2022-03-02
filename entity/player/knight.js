@@ -98,6 +98,21 @@ class Knight extends AbstractPlayer {
         this.lastBB = this.BB;
     };
 
+    /**
+     * All states of player to default
+     * Used for instance when the knight needs to be respawned in
+     */
+    resetToDefault() {
+        this.removeFromWorld = false;
+        this.velocity.x = 0;
+        this.velocity.y = 0;
+        this.x = 0;
+        this.y = 0;
+        this.action = this.DEFAULT_ACTION;
+        this.facing = this.DEFAULT_DIRECTION;
+        this.updateBB();
+    }
+
     /** Update methods */
 
     updateBoxes() {
@@ -128,14 +143,16 @@ class Knight extends AbstractPlayer {
         } else if (this.respawn) { //player is in respawn animation
             //console.log("respawn animation");
             this.action = this.states.revive;
+            this.vulnerable = false;
             super.handleGravity();
             if (this.animations[this.facing][this.action][this.myInventory.armorUpgrade].isDone()) {
                 this.respawn = false;
+                this.vulnerable = true;
                 this.action = this.DEFAULT_ACTION;
                 this.resetAnimationTimers(this.states.revive);
             }
         } else { //not dead listen for player controls and do them
-            if (this.berserk) {
+            if (this.berserk) { //NOTE: this is set by Vignette class!
                 if (this.playBerserkSFX) {
                     this.playBerserkSFX = false;
                     ASSET_MANAGER.playAsset(SFX.BERSERK_ACTIVATE);
