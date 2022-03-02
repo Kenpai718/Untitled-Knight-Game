@@ -201,7 +201,8 @@ class SceneManager {
         //set gui elements based on player
         this.inventory = this.player.myInventory;
         this.heartsbar = new HeartBar(this.game, this.player);
-        this.vignette = new Vignette(this.game);
+        if(!this.vignette) this.vignette = new Vignette(this.game);
+        else this.vignette.myPlayer = this.player;
         //add the player if there was not a last player yet
         if (!this.lastPlayer) {
             this.game.addEntity(this.player);

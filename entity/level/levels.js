@@ -79,7 +79,7 @@ var testLevel = {
         { x: 10, y: 6, width: 5, height: 1, type: 2 }
     ],
     trap: [
-        {x: 6, y: 6, width: 4, height: 1, type: 1, percent: 0.2, rate: 200}
+        { x: 6, y: 6, width: 4, height: 1, type: 1, percent: 0.2, rate: 200 }
     ],
     chests: [
         //{ x: 3, y: 1, direction : 1},
@@ -937,7 +937,8 @@ var level1_3 = {
         {
             indicate: true,
             bricks: [
-                { x: 6, y: 40, width: 11, height: 5 }, //hide treasure room
+                { x: 6, y: 40, width: 10, height: 5 }, //hide treasure room
+                { x: 16, y: 37, width: 1, height: 2 }, //hide treasure room
             ]
         }
     ],
@@ -1003,6 +1004,7 @@ var level1_3 = {
     torches: [
         { x: 6, y: 37 },
         { x: 12, y: 37 },
+        { x: 18, y: 14 },
         { x: 50, y: 28 },
         { x: 116, y: 24 },
         { x: 119, y: 24 },
@@ -1063,7 +1065,7 @@ var level1_3 = {
         { x: 22, y: 2, width: 2, height: 1 },
         { x: 23, y: 7, width: 1, height: 1 },
         //middle parkour left
-        { x: 17, y: 16, width: 2, height: 1 },
+        { x: 17, y: 16, width: 4, height: 1 },
         { x: 23, y: 20, width: 2, height: 1 },
         { x: 17, y: 31, width: 1, height: 1 },
         { x: 23, y: 31, width: 1, height: 1 },
@@ -1091,6 +1093,7 @@ var level1_3 = {
         { x: 60, y: 8, width: 3, height: 1 }
     ],
     walls: [
+        { x: 16, y: 40, height: 3, type: 0 }, //secret room cover
         { x: 57, y: 22, height: 8, type: 0 },
         { x: 53, y: 25, height: 8, type: 2 },
         { x: 70, y: 25, height: 12, type: 0 },
@@ -1165,6 +1168,8 @@ var level1_4 = {
         { x: 68, y: 21, width: 6, height: 1, type: 0 }, //top of middle floor right
         { x: 27, y: 30, width: 37, height: 1, type: 0 }, //under top floor spikes
         //{ x: 0, y: 36, width: 26, height: 1, type: 0 }, //top left floor (boss fight) // EVENT
+        { x: 1, y: 36, width: 13, height: 1, type: 0 }, //left miniboss ground
+        { x: 16, y: 36, width: 10, height: 1, type: 0 }, //right miniboss ground
 
         { x: 70, y: 37, width: 5, height: 1, type: 0 }, //right msot obelisk floor
 
@@ -1276,6 +1281,7 @@ var level1_4 = {
         { x: 66, y: 24, height: 13 }, //middle room
         { x: 66, y: 45, height: 12 }, //top floor right
         { x: 25, y: 45, height: 9 }, //top floor left
+        { x: 1, y: 45, height: 9 }, //top floor left
 
     ],
 
@@ -1338,6 +1344,12 @@ var level1_4 = {
         { x: 48, y: 38 },
         { x: 52, y: 44 },
         { x: 65, y: 37 },
+        //miniboss room
+        { x: 1, y: 41 },
+        { x: 7, y: 41 },
+        { x: 13, y: 41 },
+        { x: 19, y: 41 },
+        { x: 25, y: 41 },
         //exit
         { x: 24, y: 35 },
         { x: 6.5, y: 28 },
@@ -1356,6 +1368,10 @@ var level1_4 = {
         { x: 8, y: 26 },
         { x: 11, y: 26 },
         { x: 14, y: 26 },
+
+        //miniboss room
+        { x: 1, y: 40 },
+        { x: 7, y: 40 },
         { x: 13, y: 40 },
         { x: 19, y: 40 },
         { x: 25, y: 40 },
@@ -1373,6 +1389,8 @@ var level1_4 = {
         { x: 40, y: 38, width: 2, height: 3 },
 
         //exit
+        { x: 2, y: 42, width: 5, height: 5 },
+        { x: 8, y: 42, width: 5, height: 5 },
         { x: 14, y: 42, width: 5, height: 5 },
         { x: 20, y: 42, width: 5, height: 5 },
         { x: 12, y: 26, width: 2, height: 2 },
@@ -1425,10 +1443,10 @@ var level1_4 = {
     events: [
         {
             space: [
-                { x: 24, y: 45, width : 1, height: 7 }
+                { x: 24, y: 45, width: 1, height: 7 }
             ],
-            ground: [
-                { x: 1, y: 36, width: 25, height: 1, type: 0 }
+            platforms: [
+                { x: 13, y: 36, width: 3, height: 1, type: 0 }, //middle platform to get to exit
             ],
             walls: [
                 { x: 26, y: 45, height: 7, type: 2 }
