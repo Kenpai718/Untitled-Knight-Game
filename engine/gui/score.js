@@ -62,6 +62,12 @@ class Score {
             ctx.fillText("💎 +" + this.score, (this.x + offset + 1) - this.game.camera.x, this.y - this.game.camera.y + 1);
             ctx.fillStyle = PARAMS.DIAMOND_COLOR;
             ctx.fillText("💎 +" + this.score, (this.x + offset) - this.game.camera.x, this.y - this.game.camera.y);
+        } else if (this.type == PARAMS.CHECKPOINT_ID) {
+            ctx.font = PARAMS.BIG_FONT;
+            ctx.fillStyle = "Black";
+            ctx.fillText("💎 +" + this.score, (this.x + offset + 1) - this.game.camera.x, this.y - this.game.camera.y + 1);
+            ctx.fillStyle = "GhostWhite";
+            ctx.fillText("Checkpoint Saved!", (this.x + offset) - this.game.camera.x, this.y - this.game.camera.y);
         }
 
         ctx.filter = "none";

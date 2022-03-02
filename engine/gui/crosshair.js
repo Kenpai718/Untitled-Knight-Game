@@ -21,7 +21,6 @@ class Cursor {
                 if (entity.BB && self.BB.collide(entity.BB)) {
                     collided = true;
                     if (entity.canTakeDamage()) {
-                        console.log("can hit");
                         self.myType = self.types.can_hit;
                     } else {
                         self.myType = self.types.cannot_hit;

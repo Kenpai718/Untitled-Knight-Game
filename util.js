@@ -42,6 +42,7 @@ const PARAMS = {
     DMG_ID: 0,
     HEAL_ID: 1,
     DIAMOND_ID: 2,
+    CHECKPOINT_ID: 3,
 
     //HP RATIOS to compare with a percentage
     LOW_HP: .2,
@@ -60,7 +61,7 @@ const PLAYER_JUMP_HEIGHT = 1500; //players base jump height
 const FALL_GRAVITY = 1.2; //gravity put on player's fall acc
 const PLAYER_PHYSICS = {
     MAX_WALK: 95 * PHYSIC_SCALER,
-    MAX_RUN: 180 * PHYSIC_SCALER,
+    MAX_RUN: 500 * PHYSIC_SCALER,
     ACC_WALK: 205 * PHYSIC_SCALER,
     ACC_RUN: 300 * PHYSIC_SCALER,
     ROLL_SPD: 400 * PHYSIC_SCALER,

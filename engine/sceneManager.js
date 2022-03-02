@@ -179,7 +179,11 @@ class SceneManager {
         this.game.down = false;
         this.game.shoot = false;
 
+        //reset the checkpoint upon entering a new level
+        if(this.lastLevel != this.currentLevel && this.player != null) this.player.myCheckpoint = null;
+        //make player if the last player hasnt been made yet
         this.player = this.lastPlayer ? this.lastPlayer : new Knight(this.game, 0, 0);
+        //reset last player to default settings
         if (this.lastPlayer) {
             this.player.removeFromWorld = false;
             this.player.velocity.x = 0;
@@ -189,20 +193,32 @@ class SceneManager {
             this.player.action = this.player.states.idle;
             this.player.updateBB();
         }
+        //reposition the player
         this.player.x = theX * PARAMS.BLOCKDIM - this.player.BB.left;
         this.player.y = Math.ceil(theY * PARAMS.BLOCKDIM - this.player.BB.bottom);
+        //set gui elements based on player
         this.inventory = this.player.myInventory;
         this.heartsbar = new HeartBar(this.game, this.player);
         this.vignette = new Vignette(this.game);
+        //add the player if there was not a last player yet
         if (!this.lastPlayer) this.game.addEntity(this.player);
         this.player.updateBB();
         this.handleRespawn();
+        
     };
 
     handleRespawn() {
-        //mercy rule: after dying the player is healed a bit
         if (this.player.respawn) {
             this.respawn = false;
+            console.log("respawning");
+            //checkpoint respawn position
+            if(this.player.myCheckpoint != null) {
+                console.log("respawning with a checkpoint");
+                this.player.x = this.player.myCheckpoint.x;
+                this.player.y = this.player.myCheckpoint.y;
+            }
+
+            //mercy rule: after dying the player is healed a bit
             if (this.player.hp <= (this.player.max_hp / 2)) {
                 this.player.heal((this.player.max_hp / 2) - this.player.hp);
             }
@@ -249,6 +265,7 @@ class SceneManager {
         } else {
             console.log("Loading level " + number);
             this.killCount = !this.levelState[number] ? 0 : this.levelState[number].killCount;
+            this.lastLevel = this.currentLevel;
             this.currentLevel = number;
             let lvlData = this.levels[number];
             if (usedDoor) {
@@ -323,7 +340,7 @@ class SceneManager {
             }
         }
 
-        if(PARAMS.CURSOR) this.myCursor.update();
+        if (PARAMS.CURSOR) this.myCursor.update();
 
     };
 
@@ -646,7 +663,7 @@ class SceneManager {
         this.drawGameplayGUI(ctx);
         this.drawTitleGUI(ctx);
         this.drawResultsGUI(ctx);
-        if(PARAMS.CURSOR) this.myCursor.draw(ctx);
+        if (PARAMS.CURSOR) this.myCursor.draw(ctx);
         //console.log(this.player.BB.left + " " + this.player.BB.bottom);
     };
 
@@ -788,6 +805,7 @@ class SceneManager {
         if (scene.height === undefined) throw ("Level must have a level height in terms of blockdim. EX: 1 = 82 pixels");
         if (scene.player === undefined) throw ("Level must have a player with x and y cordinates.");
 
+        
 
         //initialize scene and player
         this.level = scene;
