@@ -61,16 +61,19 @@ var treasureroom = {
         { x: 41, y: 19, brickX: 29, brickY: 21, brickWidth: 4, brickHeight: 1 }, // escape
         { x: 16, y: 22, brickX: 30, brickY: 40, brickWidth: 1, brickHeight: 1 },
     ],
+
+    platforms: [
+        { x: 28, y: 30, width: 4, height: 1, type: 0 },
+        { x: 52, y: 30, width: 4, height: 1, type: 0 },
+
+        { x: 39, y: 35, width: 6, height: 1, type: 0 },
+
+        { x: 53, y: 40, width: 11, height: 1, type: 0 },
+    ],
+
     ground: [
         // Base floor
         { x: 29, y: 25, width: 26, height: 1, type: 1 },
-
-        { x: 28, y: 30, width: 4, height: 1, type: 1 }, // Base Platforms
-        { x: 52, y: 30, width: 4, height: 1, type: 1 },
-
-        { x: 39, y: 35, width: 6, height: 1, type: 1 },
-
-        { x: 53, y: 40, width: 11, height: 1, type: 1 },
 
         { x: 20, y: 25, width: 4, height: 1, type: 1 }, // Support Floor
         { x: 60, y: 25, width: 4, height: 1, type: 1 },
@@ -106,7 +109,7 @@ var treasureroom = {
         { x: 15, y: 44, width: 4, height: 20, type: 0 },
         { x: 65, y: 44, width: 4, height: 5, type: 0 },
         { x: 65, y: 37, width: 4, height: 13, type: 0 },
-        { x: 79, y: 51, width: 1, height: 45, type: 0 },
+        { x: 79, y: 51, width: 1, height: 43, type: 0 },
         { x: 0, y: 50, width: 1, height: 38, type: 0 }, // Height!
 
         //Tops
@@ -236,26 +239,47 @@ var treasureroom = {
         { x: 59, y: 7, guard: true },
     ],
     flyingeyes: [
-        //{ x: 30, y: 35, guard: false },
-        //{ x: 50, y: 43, guard: false },
+        { x: 30, y: 35, guard: false },
+        { x: 50, y: 43, guard: false },
         { x: 64, y: 12, guard: true },
         { x: 69, y: 10, guard: true },
         { x: 67, y: 8, guard: true },
 
+        { x: 4, y: 7, guard: true },
+
     ],
 
     diamonds: [
-        { x: 43, y: 30, amount: 5 },
+        //{ x: 43, y: 30, amount: 5 },
     ],
 
 
     torches: [
+        { x: 31, y: 28 },
         { x: 36, y: 28 },
         { x: 47, y: 28 },
+        { x: 52, y: 28 },
+
+        { x: 37, y: 22 },
+        { x: 46, y: 22 },
 
 
         { x: 18, y: 23 },
         { x: 65, y: 23 },
+
+        { x: 6, y: 11 },
+        { x: 10, y: 11 },
+
+        { x: 25, y: 11 },
+        { x: 29, y: 11 },
+
+        { x: 63, y: 3 },
+        { x: 70, y: 3 },
+
+        { x: 55, y: 42 },
+        { x: 61, y: 43 },
+
+        { x: 30, y: 42 },
     ],
 
     banners: [
@@ -264,9 +288,54 @@ var treasureroom = {
     ],
 
     chains: [
-        { x: 24, y: 22 },
-        { x: 59, y: 22 },
+        { x: 23.8, y: 22 },
+        { x: 58.8, y: 22 },
+
+        { x: 61.8, y: 12 },
+        { x: 70.8, y: 12 },
+
+        { x: 53.8, y: 39 },
+
+        { x: 1.8, y: 36 },
+        { x: 2.8, y: 24 },
+        { x: 0.8, y: 12 },
     ],
+
+    ceilingChains: [
+        { x: 29, y: 28, height: 2 },
+        { x: 30, y: 28, height: 1.5 },
+
+        { x: 54, y: 28, height: 2 },
+        { x: 53, y: 28, height: 1.5 },
+
+        { x: 54, y: 28, height: 2 },
+        { x: 53, y: 28, height: 1.5 },
+
+        { x: 60, y: 24, height: 1 },
+        { x: 63, y: 23, height: 1.5 },
+
+        { x: 23, y: 24, height: 1 },
+        { x: 20, y: 23, height: 1.5 },
+
+        { x: 22, y: 50, height: 1 },
+        { x: 20, y: 50, height: 1.5 },
+
+        { x: 1, y: 50, height: 2 },
+        { x: 4, y: 50, height: 1.5 },
+
+        { x: 78, y: 36, height: 4 },
+        { x: 70, y: 39, height: 1 },
+
+        { x: 61, y: 39, height: 1 },
+        { x: 62, y: 38, height: 2 },
+        { x: 63, y: 39, height: 1 },
+
+        { x: 4, y: 29, height: 2 },
+        { x: 1, y: 21, height: 3 },
+
+    ],
+
+
 
     columns: [
         { x: 33, y: 48, height:23 },
@@ -277,12 +346,25 @@ var treasureroom = {
 
         { x: 35, y: 22, height:5 },
         { x: 48, y: 22, height:5 },
+
+        { x: 8, y: 12, height:4 },
+        { x: 27, y: 12, height:4 },
+
+        { x: 34, y: 3, height:3 },
+        { x: 35, y: 3, height:3 },
+
+        { x: 48, y: 3, height:3 },
+        { x: 49, y: 3, height:3 },
     ],
 
 
     windows: [
-        { x: 16, y: 47, width: 2, height: 3 },
-        { x: 66, y: 47, width: 2, height: 3 },
+        { x: 16, y: 48, width: 3, height: 4 },
+        { x: 65, y: 48, width: 3, height: 4 },
+        { x: 11, y: 18, width: 2, height: 3 },
+        { x: 58, y: 7, width: 3, height: 4 },
+        { x: 73, y: 7, width: 3, height: 4 },
+        { x: 66, y: 39, width: 2, height: 2 },
     ],
 
     secrets: [
@@ -331,6 +413,7 @@ var testLevel = {
 
         { x: 12, y: 3, killQuota: 0, exitLocation: { x: 10, y: 45, levelNum: 4 }, transition: false }, //door to level 4
         { x: 20, y: 3, killQuota: 0, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: true }, //door to level 4
+        { x: 3, y: 3, killQuota: 0, exitLocation: { x: 41, y: 28, levelNum: 5 }, transition: false }, //door to level 4
 
     ],
 
