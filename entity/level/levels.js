@@ -35,7 +35,7 @@ var testLevel = {
         { x: 0, y: 3, killQuota: 0, exitLocation: { x: 5, y: 2, levelNum: 1 }, transition: false }, //door to level 1
         { x: 6, y: 3, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition: false }, //door to level 2
         { x: 9, y: 3, killQuota: 0, exitLocation: { x: 4, y: 1, levelNum: 3 }, transition: false }, //door to level 3
-        { x: 12, y: 3, killQuota: 0, exitLocation: { x: 10, y: 45, levelNum: 4 }, transition: false }, //door to level 4
+        { x: 12, y: 3, killQuota: 0, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: false }, //door to level 4
         { x: 20, y: 3, killQuota: 0, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: true }, //door to level 4
     ],
 
@@ -324,7 +324,7 @@ var titleScene = {
     ],
 
     skeletons: [
-        { x: 2, y: 8, guard: true }
+        { x: 2, y: 7, guard: true }
     ],
 
     shrooms: [
@@ -476,22 +476,14 @@ var level1_1 = {
         { x: 104, y: 1, direction: 1 },
     ],
     ground: [
-        { x: 0, y: 0, width: 15, height: 1, type: 1 },
-        { x: 60, y: 0, width: 47, height: 1, type: 1 },
-        { x: 15, y: 1, width: 1, height: 1, type: 0 },
-        { x: 16, y: 1, width: 1, height: 1, type: 1 },
-        { x: 17, y: 1, width: 1, height: 1, type: 2 },
-        { x: 20, y: 2, width: 1, height: 1, type: 0 },
-        { x: 21, y: 2, width: 3, height: 1, type: 1 },
-        { x: 24, y: 2, width: 1, height: 1, type: 2 },
-        { x: 25, y: 1, width: 3, height: 1, type: 1 },
-        { x: 28, y: 2, width: 1, height: 1, type: 0 },
-        { x: 29, y: 2, width: 1, height: 1, type: 1 },
-        { x: 30, y: 4, width: 1, height: 1, type: 0 },
-        { x: 31, y: 4, width: 28, height: 1, type: 1 },
-        { x: 59, y: 4, width: 1, height: 1, type: 2 },
-        { x: 94, y: 9, width: 1, height: 1, type: 0 },
-        { x: 95, y: 9, width: 25, height: 1, type: 1 }
+        { x: 0, y: 0, width: 15, height: 1},
+        { x: 60, y: 0, width: 47, height: 1},
+        { x: 15, y: 1, width: 3, height: 1, left: true, right: true},
+        { x: 20, y: 2, width: 5, height: 1, left: true, right: true},
+        { x: 25, y: 1, width: 3, height: 1},
+        { x: 28, y: 2, width: 2, height: 1, left: true},
+        { x: 30, y: 4, width: 30, height: 1, left: true, right: true},
+        { x: 94, y: 9, width: 26, height: 1, left: true}
     ],
 
     platforms: [
@@ -528,8 +520,8 @@ var level1_1 = {
     ],
     walls: [
         { x: -1, y: 15, height: 16, type: 0 },
-        { x: 90, y: 12, height: 8, type: 2 },
-        { x: 90, y: 4, height: 1, type: 3 },
+        { x: 84, y: 8, height: 5, type: 0, corner: true},
+        { x: 90, y: 12, height: 9, type: 2, corner: true},
         { x: 94, y: 8, height: 7, type: 0 },
         { x: 30, y: 3, height: 1, type: 0 },
         { x: 59, y: 3, height: 3, type: 2 },
@@ -637,21 +629,19 @@ var level1_2 = {
     ],
 
     npcs: [
-        { x: 7, y: 2 },
-        { x: 38, y: 22 }
+        { x: 7, y: 1 },
+        { x: 38, y: 21 }
     ],
 
-    ground: [
-        { x: 0, y: 0, width: 45, height: 1, type: 1 },
-        { x: 58, y: 3, width: 1, height: 1, type: 1 }, //secret chest
-        { x: 61, y: 0, width: 60, height: 1, type: 1 },
-        { x: 45, y: 6, width: 1, height: 1, type: 0 },
-        { x: 46, y: 6, width: 13, height: 1, type: 1 },
-        { x: 1, y: 6, width: 41, height: 1, type: 1 },
-        { x: 5, y: 19, width: 35, height: 1, type: 1 },
-        { x: 4, y: 19, width: 1, height: 1, type: 0 },
-        { x: 65, y: 18, width: 5, height: 1, type: 1 },
-        { x: 80, y: 18, width: 4, height: 1, type: 1 },
+    ground: [   
+        { x: 0, y: 0, width: 45, height: 1},
+        { x: 58, y: 3, width: 1, height: 1}, //secret chest
+        { x: 61, y: 0, width: 60, height: 1},
+        { x: 45, y: 6, width: 14, height: 1, left: true},
+        { x: 1, y: 6, width: 41, height: 1, right: true},
+        { x: 4, y: 19, width: 36, height: 1, left: true},
+        { x: 65, y: 18, width: 5, height: 1},
+        { x: 80, y: 18, width: 4, height: 1},
 
     ],
 
@@ -1458,6 +1448,7 @@ var level1_4 = {
 
     //NOTEa: place miniboss at x: 18, y: 38
 }
+
 var levelBoss1 = {
     ID: 100,
     label: "Final Room",
@@ -1465,22 +1456,18 @@ var levelBoss1 = {
     player: { x: 40, y: 1 },
     music: MUSIC.BETWEEN_HEAVEN_AND_EARTH,
 
-    wizard: { x: 75, y: 2, left: 61, right: 102, top: 6, bottom: 1 },
     events: [
         {
             space: [
                 { x: 62, y: 20, width: 39, height: 20 }
             ],
             walls: [
-                { x: 60, y: 5, height: 5, type: 2 }, // temporary
-                { x: 102, y: 5, height: 5, type: 0 }, // temporary
-                { x: 103, y: 5, height: 5, type: 2 }, // temporary
-                { x: 59, y: 5, height: 5, type: 0 }, // temporary
+                { x: 60, y: 5, height: 5, type: 2 },
+                { x: 102, y: 5, height: 5, type: 0 }, 
+                { x: 103, y: 5, height: 5, type: 2 }, 
+                { x: 59, y: 5, height: 5, type: 0 },
             ],
-            shrooms: [
-                { x: 70, y: 1, guard: false },
-                { x: 60, y: 1, guard: false }
-            ]
+            wizard: { x: 75, y: 2, left: 61, right: 102, top: 6, bottom: 1 },
         }
     ],
     doors: [
