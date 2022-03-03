@@ -26,7 +26,6 @@ class Chest extends AbstractInteractable {
         // Mapping animations and states
         this.states = { closed: 0, opened: 1 };
         this.directions = { left: 0, right: 1 };
-        this.animations = []; // [state][direction]
 
         this.state = 0;
         this.direction = direction;
@@ -96,28 +95,7 @@ class Chest extends AbstractInteractable {
 
 
     loadAnimations() {
-
-        let numStates = 2;
-        let numDir = 2;
-        for (var i = 0; i < numStates; i++) { //defines state
-            this.animations.push([]);
-            for (var j = 0; j < numDir; j++) {
-                this.animations[i].push([]);
-            }
-        }
-
         this.diamondAnimation = new Animator(this.spritesheet, 19, 84, 10, 8, 6, 0.2, 6, 0, 1, 0);
-
-        // Animations  [state]
-
-        // Closed state
-        this.animations[0][0] = new Animator(this.spritesheet, 19, 147, 21, 12, 1, 0, 0, 0, 0, 0);
-        // Opened state
-        this.animations[1][0] = new Animator(this.spritesheet, 51, 147, 21, 12, 1, 0, 0, 0, 0, 0);
-        this.animations[0][1] = new Animator(this.spritesheet, 120, 147, 21, 12, 1, 0, 0, 0, 0, 0);
-        // Opened state
-        this.animations[1][1] = new Animator(this.spritesheet, 83, 147, 21, 12, 1, 0, 0, 0, 0, 0);
-
     };
 
 
@@ -127,16 +105,16 @@ class Chest extends AbstractInteractable {
         switch (this.state) {
             case 0: // Closed chest
                 if (this.direction == this.directions.left) {
-                    ctx.drawImage(this.spritesheet, 19, 147, 21, 12, this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.w * PARAMS.BLOCKDIM, this.h * PARAMS.BLOCKDIM);
+                    ctx.drawImage(this.spritesheet, 19, 147, 22, 12, this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.w * PARAMS.BLOCKDIM, this.h * PARAMS.BLOCKDIM);
                 } else {
-                    ctx.drawImage(this.spritesheet, 120, 147, 21, 12, this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.w * PARAMS.BLOCKDIM, this.h * PARAMS.BLOCKDIM);
+                    ctx.drawImage(this.spritesheet, 115, 147, 22, 12, this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.w * PARAMS.BLOCKDIM, this.h * PARAMS.BLOCKDIM);
                 }
                 break;
             case 1: // Opened chest
                 if (this.direction == this.directions.left) {
-                    ctx.drawImage(this.spritesheet, 51, 147, 21, 12, this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.w * PARAMS.BLOCKDIM, this.h * PARAMS.BLOCKDIM);
+                    ctx.drawImage(this.spritesheet, 51, 147, 22, 12, this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.w * PARAMS.BLOCKDIM, this.h * PARAMS.BLOCKDIM);
                 } else {
-                    ctx.drawImage(this.spritesheet, 83, 147, 21, 12, this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.w * PARAMS.BLOCKDIM, this.h * PARAMS.BLOCKDIM);
+                    ctx.drawImage(this.spritesheet, 83, 147, 22, 12, this.x * PARAMS.BLOCKDIM - this.game.camera.x, this.y * PARAMS.BLOCKDIM - this.game.camera.y, this.w * PARAMS.BLOCKDIM, this.h * PARAMS.BLOCKDIM);
                 }
                 break;
         }
