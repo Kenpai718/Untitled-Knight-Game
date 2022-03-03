@@ -132,8 +132,9 @@ class SceneManager {
         let levelTwo = level1_2;
         let levelThree = level1_3;
         let levelFour = level1_4;
+        let treasureRoom = treasureroom;
         let boss1 = levelBoss1;
-        this.levels = [levelZero, levelOne, levelTwo, levelThree, levelFour, boss1];
+        this.levels = [levelZero, levelOne, levelTwo, levelThree, levelFour, treasureRoom, boss1];
     }
 
     /**
@@ -873,7 +874,7 @@ class SceneManager {
         if (dict.trap) {
             for (var i = 0; i < dict.trap.length; i++) {
                 let trap = dict.trap[i];
-                array.push(new TrappedFloor(this.game, trap.x, h - trap.y - 1, trap.width, 1, trap.type, trap.percent, trap.rate));
+                array.push(new TrappedFloor(this.game, trap.x, h - trap.y - 1, trap.width, trap.height, trap.type, trap.percent, trap.rate));
             }
         }
         if (dict.bricks) {
@@ -941,6 +942,15 @@ class SceneManager {
 
                 //update the kill requirement for the level based on the max door
                 this.killsRequired = Math.max(door.killQuota, this.killsRequired);
+            }
+        }
+        if (dict.diamonds) {
+            for (var i = 0; i < dict.diamonds.length; i++) {
+                let diamond = dict.diamonds[i];
+                let e = new Diamond(this.game, 0, 0, diamond.ammount);
+                e.x = diamond.x * PARAMS.BLOCKDIM - e.BB.left;
+                e.y = Math.ceil((h - diamond.y -1) * PARAMS.BLOCKDIM - e.BB.bottom);
+                array.push(e);
             }
         }
     }
@@ -1167,6 +1177,7 @@ class Minimap {
             npc: "green",
             chest: "yellow",
             door: "SpringGreen",
+            diamonds: "cyan",
             sign: "bisque",
             obelisk: "DarkSlateBlue",
             obeliskBrick: "CornflowerBlue"
@@ -1354,6 +1365,20 @@ class Minimap {
                 let myH = door.h * PARAMS.SCALE;
 
                 ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, 2 * PARAMS.SCALE, 3 * PARAMS.SCALE);
+            }
+        }
+
+        //door
+        ctx.fillStyle = this.colors.diamonds;
+        if (this.level.diamonds) {
+            for (var i = 0; i < this.level.diamonds.length; i++) {
+                let door = this.level.diamonds[i];
+                let myX = door.x * PARAMS.SCALE;
+                let myY = door.y * PARAMS.SCALE;
+                let myW = door.w * PARAMS.SCALE;
+                let myH = door.h * PARAMS.SCALE;
+
+                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, 1 * PARAMS.SCALE, 1 * PARAMS.SCALE);
             }
         }
 
