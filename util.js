@@ -234,8 +234,8 @@ const MUSIC = {
     BETWEEN_HEAVEN_AND_EARTH: "./sound/music/FE3H_Between_Heaven_And_Earth.mp3",
     LONG_WAY: "./sound/music/P4_Long_Way.mp3",
     TITLE: "./sound/music/Runescape_Main.mp3",
+    SPLENDOUR: "./sound/music/OSRS_splendour.mp3",
     SIGNORA: "./sound/music/Genshin_Signora_Phase_2.mp3"
-
 }
 
 /** HELPER FUNCTIONS */

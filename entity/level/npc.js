@@ -54,12 +54,6 @@ class NPC extends AbstractEntity {
         this.updateBB();
     }
 
-    updateBB() {
-        this.BB = new BoundingBox(this.x + this.xOffset, this.y + this.yOffset, this.width, this.height);
-        this.VB = new BoundingBox(this.x + 38 * this.scale - this.visionwidth / 2, this.y + this.yOffset, this.visionwidth, 80 * this.scale);
-    };
-
-
     update() {
         const TICK = this.game.clockTick;
 
@@ -174,11 +168,16 @@ class NPC extends AbstractEntity {
         this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
     };
 
+    updateBB() {
+        this.BB = new BoundingBox(this.x + this.xOffset, this.y + this.yOffset , this.width, this.height);
+        this.VB = new BoundingBox(this.x + 38 * this.scale - this.visionwidth / 2, this.y + this.yOffset, this.visionwidth, 80 * this.scale);
+    };
+
     drawDebug(ctx) {
         ctx.strokeStyle = "Red";
-        ctx.strokeRect(this.x + this.xOffset - this.game.camera.x, this.y + this.yOffset - this.game.camera.y, this.width, this.height);
+        ctx.strokeRect(this.BB.x - this.game.camera.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
         ctx.strokeStyle = "Blue";
-        ctx.strokeRect(this.x + 38 * this.scale - this.visionwidth / 2 - this.game.camera.x, this.y + this.yOffset - this.game.camera.y, this.visionwidth, 80 * this.scale);
+        ctx.strokeRect(this.VB.x - this.game.camera.x, this.VB.y - this.game.camera.y, this.VB.width, this.VB.height);
     }
 
     /*required abstractentity methods but not used*/
