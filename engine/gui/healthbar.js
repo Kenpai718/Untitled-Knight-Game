@@ -1,6 +1,6 @@
 class HealthBar {
-    constructor(game, agent) {
-        Object.assign(this, { game, agent });
+    constructor(game, agent, boss) {
+        Object.assign(this, { game, agent, boss});
 
         //show healthbar for a certain amount of time after taking damage
         this.show = true;
@@ -18,6 +18,13 @@ class HealthBar {
     };
 
     draw(ctx) {
+        if (this.boss && this.agent.active)
+            this.drawBossHealthBar(ctx);
+        else
+            this.drawSimpleHealthBar(ctx);
+    };
+
+    drawSimpleHealthBar(ctx) {
         this.setShowAndFade();
         ctx.filter = "opacity(" + this.myOpacity + "%)";
         
@@ -58,7 +65,27 @@ class HealthBar {
 
         ctx.filter = "none";
 
-    };
+    }
+
+    drawBossHealthBar(ctx) {
+        var width = this.game.surfaceWidth * .55;
+        var height = PARAMS.BLOCKDIM / 2;
+        var offsetX = (this.game.surfaceWidth - width) / 2;
+        var offsetY = PARAMS.BLOCKDIM
+        var ratio = this.agent.hp / this.agent.max_hp;
+        ctx.strokeStyle = "Black"; //border
+        //transparent gray as hp fill
+        ctx.fillStyle = rgba(41, 41, 41, 0.5);
+        ctx.fillRect(offsetX, offsetY, width, height);
+        //hp ratio color
+        ctx.fillStyle = ratio < PARAMS.LOW_HP ? "Red" : ratio < PARAMS.MID_HP ? "Yellow" : "Green";
+        ctx.fillRect(offsetX, offsetY, width * ratio, height);
+        ctx.strokeRect(offsetX, offsetY, width, height);
+        ctx.fillStyle = "white";
+        ctx.font = DEFAULT_FONT_SIZE * 3 + 'px "Press Start 2P"';
+        let textW = ctx.measureText(this.agent.name).width;
+        ctx.fillText(this.agent.name, offsetX + width / 2 - textW / 2, offsetY);
+    }
 
     /**
      * Set visibility of healthbar

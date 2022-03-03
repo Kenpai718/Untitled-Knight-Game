@@ -146,7 +146,7 @@ const STATS = {
         MAX_HP: 500,
         SCALE: 3,
         WIDTH: 10,
-        HEIGHT: 80,
+        HEIGHT: 60,
         DAMAGE: 20,
         PHYSICS: {MAX_RUN: PLAYER_PHYSICS.MAX_RUN - 10, MAX_FALL: 400}
 

@@ -36,7 +36,7 @@ class SceneManager {
 
         //levels array to load levels by calling levels[0], levels[1], etc
         this.makeTextBox();
-        this.currentLevel = 1; // CHANGE TO 1 BEFORE SUBMISSION
+        this.currentLevel = 5; // CHANGE TO 1 BEFORE SUBMISSION
         this.setupAllLevels();
         this.loadTitle();
         this.loadPaused();
@@ -928,7 +928,7 @@ class SceneManager {
         if (dict.ground) {
             for (var i = 0; i < dict.ground.length; i++) {
                 let ground = dict.ground[i];
-                let g = new Ground(this.game, ground.x, h - ground.y - 1, ground.width, 1, ground.type);
+                let g = new Ground(this.game, ground.x, h - ground.y - 1, ground.width, 1, ground.left, ground.right);
                 array.push(g);
             }
         }
@@ -953,7 +953,7 @@ class SceneManager {
         if (dict.walls) {
             for (var i = 0; i < dict.walls.length; i++) {
                 let walls = dict.walls[i];
-                array.push(new Walls(this.game, walls.x, h - walls.y - 1, 1, walls.height, walls.type));
+                array.push(new Walls(this.game, walls.x, h - walls.y - 1, 1, walls.height, walls.type, walls.corner));
             }
         }
         if (dict.blocks) {
@@ -1121,8 +1121,9 @@ class SceneManager {
      */
     positionEntity(entity, x, y) {
         entity.x = x * PARAMS.BLOCKDIM - entity.BB.left;
-        entity.y = y * PARAMS.BLOCKDIM - entity.BB.bottom;
+        entity.y = Math.ceil(y * PARAMS.BLOCKDIM - entity.BB.bottom);
         entity.updateBoxes();
+        entity.lastBB = entity.BB;
     }
 
     getLevelTimer() {

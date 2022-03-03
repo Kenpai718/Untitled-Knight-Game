@@ -1,4 +1,4 @@
-class Wizard extends AbstractEnemy {
+class Wizard extends AbstractBoss {
     constructor(game, x, y, left, right, top, bottom, h) {
         super(game, x, y, false, STATS.WIZARD.NAME, STATS.WIZARD.MAX_HP, STATS.WIZARD.WIDTH, STATS.WIZARD.HEIGHT, STATS.WIZARD.SCALE, STATS.WIZARD.PHYSICS);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/wizard.png");
@@ -7,7 +7,6 @@ class Wizard extends AbstractEnemy {
         this.right = right;
         this.top = top;
         this.bottom = bottom;
-        this.bossActive = true;
         this.animations = [];
         this.loadAnimations();
         this.tick = 0;
@@ -21,6 +20,7 @@ class Wizard extends AbstractEnemy {
         this.direction = this.directions.right;
         this.phase = Math.floor(Math.random() * 4);
         this.updateBoxes();
+        this.lastBB = this.BB;
         this.damagedCooldown = 0;
         this.hit = false;
         this.phases = {avoid: 0};
@@ -28,29 +28,12 @@ class Wizard extends AbstractEnemy {
         this.teleporting = false;
         this.teleportLocation = {x: 0, y: 0};
         var self = this;
-        this.healthbar.draw = function(ctx) {
-            var width = self.game.surfaceWidth * .55;
-            var height = PARAMS.BLOCKDIM / 2;
-            var offsetX = (self.game.surfaceWidth - width) / 2;
-            var offsetY = PARAMS.BLOCKDIM
-            var ratio = this.agent.hp / this.agent.max_hp;
-            ctx.strokeStyle = "Black"; //border
-            //transparent gray as hp fill
-            ctx.fillStyle = rgba(41, 41, 41, 0.5);
-            ctx.fillRect(offsetX, offsetY, width, height);
-            //hp ratio color
-            ctx.fillStyle = ratio < PARAMS.LOW_HP ? "Red" : ratio < PARAMS.MID_HP ? "Yellow" : "Green";
-            ctx.fillRect(offsetX, offsetY, width * ratio, height);
-            ctx.strokeRect(offsetX, offsetY, width, height);
-        }
-        this.drawHealth = function(ctx) {
-            this.healthbar.draw(ctx);
-        }
+        this.tWidth = 80 * this.scale;
+        this.tHeight = 80 * this.scale;
     }
 
     // use after any change to this.x or this.y
     updateBoxes() {
-        this.lastBB = this.BB;
         this.getOffsets();
         this.AR = new BoundingBox(this.x + (40 * this.scale), this.y + this.offsetyBB, this.width - (80 * this.scale), this.heightBB);
         this.VB = new BoundingBox(this.x - (80 * this.scale), this.y, this.width + (160 * this.scale), this.height);
@@ -185,10 +168,11 @@ class Wizard extends AbstractEnemy {
         this.animations[9][0] = new Animator(this.spritesheet, 6, 640, 80, 80, 10, 0.15, 0, true, false, false);
         this.animations[9][1] = new Animator(this.spritesheet, 6, 720, 80, 80, 10, 0.15, 0, false, false, false);
 
-        this.animations[10][0] = new Animator(this.spritesheet, 6, 1000, 80, 80, 5, 0.15, 0, true, false, false);
-        this.animations[10][1] = new Animator(this.spritesheet, 0, 1000, 80, 80, 5, 0.15, 0, false, false, false);
-        this.animations[11][0] = new Animator(this.spritesheet, 6, 1000, 80, 80, 5, 0.15, 0, false, false, false);
-        this.animations[11][1] = new Animator(this.spritesheet, 0, 1000, 80, 80, 5, 0.15, 0, true, false, false);
+        // teleport
+        this.animations[10][0] = new Animator(this.spritesheet, 6, 0, 80, 80, 1, 0.75, 0, true, false, false);
+        this.animations[10][1] = new Animator(this.spritesheet, 0, 80, 80, 80, 1, 0.75, 0, false, false, false);
+        this.animations[11][0] = new Animator(this.spritesheet, 6, 0, 80, 80, 1, 0.30, 0, false, false, false);
+        this.animations[11][1] = new Animator(this.spritesheet, 0, 80, 80, 80, 1, 0.30, 0, true, false, false);
     }
 
     update() {
@@ -205,7 +189,7 @@ class Wizard extends AbstractEnemy {
                     let distx = ex - self.center.x;
                     let disty = ey - self.center.y;
                     let dist = Math.sqrt(distx * distx + disty * disty);
-                    if (dist < 50 * self.scale) {
+                    if (dist < 60 * self.scale) {
                         self.teleporting = true;
                         self.hit = false;
                         self.vulnerable = false;
@@ -222,20 +206,24 @@ class Wizard extends AbstractEnemy {
 
 
         this.animations[this.state][this.direction].update(TICK);
+        this.lastBB = this.BB;
     }
 
     teleport() {
+        let BB = new BoundingBox(this.x + this.offsetxBB * this.scale, 0, 0, 0);
+        this.BB = BB;
         let isDone = this.animations[this.state][this.direction].isDone();
         if (this.state == this.states.disappear && isDone) {
             let xOffset = this.center.x - this.x;
             let yOffset = this.center.y - this.y;
             let angle = Math.random() * 2 * Math.PI;
             let xFinal = Math.cos(angle) * 200 * this.scale;
+            this.updateBoxes();
             if (this.left * PARAMS.BLOCKDIM > this.BB.left - 20 * this.scale)
                 xFinal = Math.abs(xFinal) + this.center.x;
             else if (this.right * PARAMS.BLOCKDIM < this.BB.right + 20 * this.scale)
                 xFinal = -Math.abs(xFinal) + this.center.x;
-            else xFinal += this.center.x;;
+            else xFinal += this.center.x;
             let yFinal = Math.sin(angle) * 200 * this.scale;
             if ((this.h - this.bottom) * PARAMS.BLOCKDIM < this.BB.bottom + 20 * this.scale)
                 yFinal = -Math.abs(yFinal) + this.center.y;
@@ -251,12 +239,13 @@ class Wizard extends AbstractEnemy {
                 //yFinal = this.h * PARAMS.BLOCKDIM - this.BB.height / 2;
             this.x = xFinal - xOffset;
             this.y = yFinal - yOffset;
-            this.updateBoxes();
             this.resetAnimationTimers(this.state);
             this.state = this.states.reappear;
             this.resetAnimationTimers(this.state);
+            this.BB = BB;
         }
         else if (this.state == this.states.reappear && isDone) {
+            this.updateBoxes();
             if (this.game.camera.player.x < this.center.x)
                 this.direction = this.directions.left;
             if (this.game.camera.player.x > this.center.x)
@@ -269,18 +258,37 @@ class Wizard extends AbstractEnemy {
      }
 
     draw(ctx) {
+        let TICK = this.game.clockTick;
         if (this.hit) {
             ctx.filter = "brightness(150000%)";
         }
-        if (this.state == this.states.disappear) {
-            ctx.fillStyle = "blue";
-            ctx.fillRect(this.BB.left - this.game.camera.x, this.BB.top - this.game.camera.y, this.BB.width, this.BB.height);
+        if (this.teleporting) {
+            ctx.filter = "brightness(150000%)";
+            if (this.state == this.states.disappear) {
+                this.tWidth -= 4000 * TICK;
+                if (this.tWidth < 0) this.tWidth = 0;
+                this.tHeight += 4000 * TICK;
+                if (this.tHeight > 300 * this.scale) this.tHeight = 300 * this.scale;
+            }
+            if (this.state == this.states.reappear) {
+                this.tWidth += 4000 * TICK;
+                if (this.tWidth > 80 * this.scale) this.tWidth = 80 * this.scale;
+                this.tHeight -= 4000 * TICK;
+                if (this.tHeight < 80 * this.scale) this.tHeight = 80 * this.scale;
+            }
+            let w = 80 * this.scale - this.tWidth;
+            let h = 80 * this.scale - this.tHeight;
+
+            if (this.direction == this.directions.right)
+                ctx.drawImage(this.spritesheet, 6, 0, 80, 80, this.x - this.game.camera.x + w / 2, this.y - this.game.camera.y + h / 2 , this.tWidth, this.tHeight);
+            if (this.direction == this.directions.left)
+                ctx.drawImage(this.spritesheet, 0, 80, 80, 80, this.x - this.game.camera.x + w / 2, this.y - this.game.camera.y + h / 2 , this.tWidth, this.tHeight);
         }
-        if (this.state == this.states.reappear) {
-            ctx.fillStyle = "green";
-            ctx.fillRect(this.BB.left - this.game.camera.x, this.BB.top - this.game.camera.y, this.BB.width, this.BB.height);
+        else {
+            this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
+            this.tWidth = 80 * this.scale;
+            this.tHeight = 80 * this.scale;
         }
-        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
         ctx.filter = "none";
     }
 
