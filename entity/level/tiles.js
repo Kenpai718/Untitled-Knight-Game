@@ -56,6 +56,11 @@ class Barrier extends AbstractBarrier {
 
 class TrappedFloor extends AbstractBarrier {
     constructor(game, x, y, w, h, type, percent, rate) {
+
+        if(type < 3){
+            h = 1;
+        }
+
         super(game, x, y, w, h, 16, 16, 100);
         
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
@@ -64,29 +69,107 @@ class TrappedFloor extends AbstractBarrier {
         this.percent = percent;
         this.rate = rate;
         this.decay = false;
-        // left is for left corner piece, middle is for middle piece, right is for right corner piece
-        this.types = { left : 0, middle : 1, right : 2};
-        // switch expression to get the source coordinates depending on the type
-        switch (this.type) {
-            case this.types.left:
-                this.srcX = 16;
-                break;
-            case this.types.middle:
-                this.srcX = 32;
-                break;
-            case this.types.right:
-                this.srcX = 48;
-                break;
-        }
-        this.srcY = 16;
+
         this.scale = PARAMS.BLOCKDIM;
+        this.srcY;
+        
+        // GROUND: left is for left corner piece, middle is for middle piece, right is for right corner piece
+        if(this.type < 3) {
+            this.srcY = 16;
+            this.types = { left : 0, middle : 1, right : 2};
+
+            // switch expression to get the source coordinates depending on the type
+            switch (this.type) {
+                case this.types.left:
+                    this.srcX = 16;
+                    break;
+                case this.types.middle:
+                    this.srcX = 32;
+                    break;
+                case this.types.right:
+                    this.srcX = 48;
+                    break;
+            }
+            this.loadImageGround();
+        }
+        else{ // BRICKS
+            this.srcY = 32;
+            this.type -= 3;
+            this.types = { middle : 0, innerLeft : 1, innerRight : 2, broken1 : 3, broken2 : 4, broken3 : 5, broken4 : 6, broken5 : 7, broken6 : 8};
+            this.loadImageBrick();
+        }
+        
         this.updateBB();
         this.updateTrapBB();
-        this.loadImage();
     };
 
     updateTrapBB(){
-        this.TBB = new BoundingBox(this.BB.x + (this.BB.width - this.BB.width * this.percent)/2, this.BB.y - this.game.camera.y - PARAMS.BLOCKDIM, this.BB.width * this.percent, this.BB.height);
+        this.TBB = new BoundingBox(this.BB.x + (this.BB.width - this.BB.width * this.percent)/2, this.BB.y - PARAMS.BLOCKDIM, this.BB.width * this.percent, PARAMS.BLOCKDIM);
+    };
+
+
+    // switch expression to get the source coordinates depending on the type
+    getBrickType() {
+        switch (this.type) {
+            case this.types.middle:
+                this.srcX = 32;
+                this.srcY = 32;
+                break;
+            case this.types.innerLeft:
+                this.srcX = 80;
+                this.srcY = 32;
+                break;
+            case this.types.innerRight:
+                this.srcX = 112;
+                this.srcY = 32;
+                break;
+            case this.types.broken1:
+                this.srcX = 32;
+                this.srcY = 48;
+                break;
+            case this.types.broken2:
+                this.srcX = 80;
+                this.srcY = 16;
+                break;
+            case this.types.broken3:
+                this.srcX = 96;
+                this.srcY = 16;
+                break;
+            case this.types.broken4:
+                this.srcX = 112;
+                this.srcY = 16;
+                break;
+            case this.types.broken5:
+                this.srcX = 80;
+                this.srcY = 48;
+                break;
+            case this.types.broken6:
+                this.srcX = 112;
+                this.srcY = 48;
+                break;
+        }
+    };
+
+    loadImageBrick() {
+        let blocksY = this.h;
+        let blocksX = this.w;
+        for (let i = 0; i < blocksY; i++) {
+            for (let j = 0; j < blocksX; j++) {
+                this.type = randomInt(9);
+                this.getBrickType();
+                let w = this.srcWidth;
+                let h = this.srcHeight;
+                this.ctx.drawImage(this.spritesheet, this.srcX, this.srcY, w, h, j * w, i * h, w, h);
+            }
+        }
+        
+    };
+
+    loadImageGround() {
+        let sW = this.srcWidth;
+        let sH = this.srcHeight;
+        for (var i = 0; i < this.w; i++) 
+            this.ctx.drawImage(this.spritesheet, this.srcX, this.srcY, sW, sH, i * sW, 0, sW, sH);
     };
 
     update(){
@@ -104,13 +187,6 @@ class TrappedFloor extends AbstractBarrier {
             }
         });
     };
-
-    loadImage() {
-        let sW = this.srcWidth;
-        let sH = this.srcHeight;
-        for (var i = 0; i < this.w; i++) 
-            this.ctx.drawImage(this.spritesheet, this.srcX, this.srcY, sW, sH, i * sW, 0, sW, sH);
-    }
 
 };
 
