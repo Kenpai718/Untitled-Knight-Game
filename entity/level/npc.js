@@ -44,7 +44,7 @@ class NPC extends AbstractEntity {
     };
 
     deactivateShop() {
-        this.shopGUI.removeFromWorld = true;
+        if(this.shopGUI) this.shopGUI.removeFromWorld = true;
         SHOP_ACTIVE = false;
         this.shopGUI = null;
         this.showText = false;

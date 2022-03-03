@@ -221,6 +221,7 @@ const SFX = {
     RESPAWN: "./sound/sfx/re_zero_respawn.mp3",
     COMPLETE: "./sound/sfx/finished.mp3",
     CHECKPOINT: "./sound/sfx/checkpoint.wav",
+    TRIGGER: "./sound/sfx/event_trigger.mp3",
     
 
 
@@ -412,3 +413,8 @@ function buildTextButton(ctx, text, box, isSelected, highlightColor) {
     isSelected ? ctx.fillStyle = highlightColor : ctx.fillStyle = "GhostWhite";
     ctx.fillText(text, box.x, box.y);
 }
+
+function isInt(value) {
+    var x;
+    return isNaN(value) ? !1 : (x = parseFloat(value), (0 | x) === x);
+  }

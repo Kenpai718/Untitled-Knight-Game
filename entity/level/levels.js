@@ -124,7 +124,7 @@ var levelLoader = {
 
     //quick access to all levels
     doors: [
-        { x: 0.5, y: 4, killQuota: 0, exitLocation: { x: 1, y: 1, levelNum: 0 }, transition: false }, //door to level 0 (DEVELOPER ROOM)
+        { x: 0.5, y: 4, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 0 }, transition: false }, //door to level 0 (DEVELOPER ROOM)
         { x: 7, y: 4, killQuota: 0, exitLocation: { x: 2, y: 1, levelNum: 1 }, transition: false }, //door to level 1
         { x: 10, y: 4, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition: false }, //door to level 2
         { x: 13, y: 4, killQuota: 0, exitLocation: { x: 4, y: 1, levelNum: 3 }, transition: false }, //door to level 3
@@ -227,7 +227,7 @@ var titleScene = {
     label: "Title-Screen",
     width: 24, height: 14,
     //player: { x: 1, y: 3 },
-    player: { x: 9.5, y: 10 },
+    player: { x: 11.5, y: 10 },
     music: MUSIC.TITLE,
 
     //quick access to all levels
@@ -324,11 +324,11 @@ var titleScene = {
     ],
 
     skeletons: [
-        { x: 2, y: 8, guard: true }
+        { x: 2, y: 7, guard: true }
     ],
 
     shrooms: [
-        //{ x: 4, y: 2, guard: true }
+        { x: 4, y: 2, guard: true }
     ],
 
     goblins: [
