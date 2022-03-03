@@ -136,8 +136,8 @@ class Shop {
                         self.highlightB1 = true;
 
                         if (self.game.click) {
-                            self.game.myReportCard.myDiamondsSpent += 10;
-                            entity.myInventory.diamonds -= self.arrowPackCost[entity.myInventory.arrowUpgrade];
+                            let cost = self.arrowPackCost[entity.myInventory.arrowUpgrade];
+                            self.doTransaction(cost);
                             entity.myInventory.arrows += 10;
                             ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
                             self.currentMessage = self.purchases.arrow_pack;
@@ -154,8 +154,9 @@ class Shop {
                         self.highlightB2 = true;
 
                         if (self.game.click) {
-                            self.game.myReportCard.myDiamondsSpent += 10;
-                            entity.myInventory.diamonds -= 10;
+                            let cost = 10;
+                            self.doTransaction(cost);
+
                             entity.myInventory.potions += 1;
                             ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
                             self.currentMessage = self.purchases.potion;
@@ -172,8 +173,8 @@ class Shop {
                         self.highlightB3 = true;
 
                         if (self.game.click) {
-                            self.game.myReportCard.myDiamondsSpent += self.healthCost[entity.myInventory.healthUpgrade];
-                            entity.myInventory.diamonds -= self.healthCost[entity.myInventory.healthUpgrade];
+                            let cost = self.healthCost[entity.myInventory.healthUpgrade];
+                            self.doTransaction(cost);
                             entity.myInventory.healthUpgrade += 1;
 
                             //add hearts to heartbar and player
@@ -194,8 +195,8 @@ class Shop {
                         self.highlightB4 = true;
 
                         if (self.game.click) {
-                            self.game.myReportCard.myDiamondsSpent += self.armorCost[entity.myInventory.armorUpgrade];
-                            entity.myInventory.diamonds -= self.attackCost[entity.myInventory.attackUpgrade];
+                            let cost = self.armorCost[entity.myInventory.armorUpgrade];
+                            self.doTransaction(cost);
                             entity.myInventory.attackUpgrade += 1;
                             ASSET_MANAGER.playAsset(SFX.ENCHANTMENT);
                             self.currentMessage = self.purchases.attack_upgrade;
@@ -212,8 +213,8 @@ class Shop {
                         self.highlightB5 = true;
 
                         if (self.game.click) {
-                            entity.myInventory.diamonds -= self.arrowCost[entity.myInventory.arrowUpgrade];
-                            self.game.myReportCard.myDiamondsSpent += self.arrowCost[entity.myInventory.arrowUpgrade];
+                            let cost = self.arrowCost[entity.myInventory.arrowUpgrade];
+                            self.doTransaction(cost);
                             entity.myInventory.arrowUpgrade += 1;
                             entity.myInventory.arrows += 10;
                             //entity.myInventory.arrows = Math.floor(entity.myInventory.arrows/2); 
@@ -232,8 +233,8 @@ class Shop {
                         self.highlightB6 = true;
 
                         if (self.game.click) {
-                            self.game.myReportCard.myDiamondsSpent += self.armorCost[entity.myInventory.armorUpgrade];
-                            entity.myInventory.diamonds -= self.armorCost[entity.myInventory.armorUpgrade];
+                            let cost = self.armorCost[entity.myInventory.armorUpgrade];
+                            self.doTransaction(cost);
                             entity.myInventory.armorUpgrade += 1;
                             ASSET_MANAGER.playAsset(SFX.ANVIL);
                             self.currentMessage = self.purchases.armor_upgrade;
@@ -276,6 +277,14 @@ class Shop {
 
     };
 
+    doTransaction(cost) {
+        if (isInt(cost)) {
+            this.game.camera.player.myInventory.diamonds -= cost;
+            this.game.myReportCard.myDiamondsSpent += cost;
+        }
+        //console.log(cost);
+    }
+
     setShopMessage() {
 
         let scene = this.game.camera;
@@ -302,7 +311,7 @@ class Shop {
                     message = "Wizard: You look tired. Want a massage?" // Max-Health Upgrade
                 }
                 else if (this.highlightB4) {
-                    message = ["Wizard: You call that a sword?", "Hand it over I can enhance it... for a price."];
+                    message = ["Wizard: You have a fine blade...", "but I can make it even stronger!"];
                 }
                 else if (this.highlightB5) {
                     message = ["Wizard: If you want to be the king of snipers", "then you'll need some stronger arrows!", "I'll even throw in 10 extra arrows if you upgrade now!"] // Arrow Upgrade
@@ -312,7 +321,7 @@ class Shop {
                 } else {
                     message = "...";
                 }
-        
+
             } else { //bought something
                 switch (this.currentMessage) {
                     case this.purchases.heart_upgrade:
@@ -409,11 +418,11 @@ class Shop {
         this.arrow[1] = new Animator(this.arrow_sprite, 43, 46, 43, 34, 1, 0, 0, false, false, false);
         this.arrow[2] = new Animator(this.arrow_sprite, 86, 46, 43, 34, 1, 0, 0, false, false, false);
         this.arrow[3] = new Animator(this.arrow_sprite, 130, 46, 43, 34, 1, 0, 0, false, false, false);
-      
-        this.attack[0] = new Animator(this.attack_sprite, 45,     0, 45, 45, 1, 0, 0, false, false, false);
-        this.attack[1] = new Animator(this.attack_sprite, 90,     0, 45, 45, 1, 0, 0, false, false, false);
-        this.attack[2] = new Animator(this.attack_sprite, 135,    0, 45, 45, 1, 0, 0, false, false, false);
-        this.attack[3] = new Animator(this.attack_sprite, 180,    0, 45, 45, 1, 0, 0, false, false, false);
+
+        this.attack[0] = new Animator(this.attack_sprite, 45, 0, 45, 45, 1, 0, 0, false, false, false);
+        this.attack[1] = new Animator(this.attack_sprite, 90, 0, 45, 45, 1, 0, 0, false, false, false);
+        this.attack[2] = new Animator(this.attack_sprite, 135, 0, 45, 45, 1, 0, 0, false, false, false);
+        this.attack[3] = new Animator(this.attack_sprite, 180, 0, 45, 45, 1, 0, 0, false, false, false);
 
         this.button[0] = new Animator(this.interactables, 0, 0, 330, 130, 1, 0, 0, false, false, false);
         this.button[1] = new Animator(this.interactables, 0, 130, 330, 130, 1, 0, 0, false, false, false);
