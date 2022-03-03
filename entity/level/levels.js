@@ -614,7 +614,6 @@ var titleScene = {
         { x: 10, y: 4, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition: false }, //door to level 2
         { x: 13, y: 4, killQuota: 0, exitLocation: { x: 4, y: 1, levelNum: 3 }, transition: false }, //door to level 3
         { x: 16, y: 4, killQuota: 0, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: false }, //door to level 4
-        { x: 20, y: 12, killQuota: 0, exitLocation: { x: 4, y: 4, levelNum: 5 }, transition: false }, //door to level 5 - bonus room
     ],
 
     torches: [
