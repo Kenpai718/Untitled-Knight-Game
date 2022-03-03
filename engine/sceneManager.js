@@ -200,7 +200,7 @@ class SceneManager {
         //set gui elements based on player
         this.inventory = this.player.myInventory;
         this.heartsbar = new HeartBar(this.game, this.player);
-        if(!this.vignette) this.vignette = new Vignette(this.game);
+        if (!this.vignette) this.vignette = new Vignette(this.game);
         else this.vignette.myPlayer = this.player;
         //add the player if there was not a last player yet
         if (!this.lastPlayer) {
@@ -403,11 +403,13 @@ class SceneManager {
             }
             if (this.game.click) {
                 if (this.startGameBB.collideMouse(this.game.click.x, this.game.click.y)) {
-                    ASSET_MANAGER.playAsset(SFX.CLICK);
-                    ASSET_MANAGER.playAsset(SFX.SELECT);
-                    this.game.myReportCard.reset();
-                    this.game.attack = false;
-                    this.loadLevel(this.currentLevel, false);
+                    if (!this.usingLevelSelect) {
+                        ASSET_MANAGER.playAsset(SFX.CLICK);
+                        ASSET_MANAGER.playAsset(SFX.SELECT);
+                        this.game.myReportCard.reset();
+                        this.game.attack = false;
+                        this.loadLevel(this.currentLevel, false);
+                    }
                 } else if (this.controlsBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     ASSET_MANAGER.playAsset(SFX.CLICK);
                     this.credits = false;
@@ -684,6 +686,10 @@ class SceneManager {
         this.drawResultsGUI(ctx);
         //if(this.player.dead) ctx.drawImage(this.game_over, 0, 0);
         if (PARAMS.CURSOR) this.myCursor.draw(ctx);
+        else {
+            //draw cursor in menus when cursor is disabled
+            if (PAUSED || SHOP_ACTIVE || this.transition || this.title) this.myCursor.draw(ctx);
+        }
         //console.log(this.player.BB.left + " " + this.player.BB.bottom);
     };
 
@@ -756,7 +762,7 @@ class SceneManager {
             ctx.fillText(gameTitle, (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2) + 5, fontSize * 3 + 5);
             ctx.fillStyle = "GhostWhite";
             ctx.fillText(gameTitle, (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 3);
-            buildTextButton(ctx, "Start Game", this.startGameBB, this.textColor == 1, "DeepPink");
+            if (!this.usingLevelSelect) buildTextButton(ctx, "Start Game", this.startGameBB, this.textColor == 1, "DeepPink");
             buildTextButton(ctx, "Controls", this.controlsBB, this.textColor == 2 || this.controls, "DeepSkyBlue");
             buildTextButton(ctx, "Credits", this.creditsBB, this.textColor == 3 || this.credits, "DeepSkyBlue");
             if (!this.usingLevelSelect) buildButton(ctx, "Level Select", this.levelSelectBB, this.textColor == 4);
