@@ -173,7 +173,7 @@ const STATS = {
 
     DEMON_SLIME: {
         NAME: "Demon Slime",
-        MAX_HP: 100,
+        MAX_HP: 200,
         WIDTH: 288,
         HEIGHT: 160,
         DAMAGE: 0,
@@ -221,7 +221,7 @@ const SFX = {
     RESPAWN: "./sound/sfx/re_zero_respawn.mp3",
     COMPLETE: "./sound/sfx/finished.mp3",
     CHECKPOINT: "./sound/sfx/checkpoint.wav",
-    
+
 
 
 };
