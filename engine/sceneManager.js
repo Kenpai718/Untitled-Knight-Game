@@ -11,6 +11,11 @@ class SceneManager {
         this.velocity = { x: 0, y: 0 };
         this.anchor = { right: false, bottom: false };
         this.defaultMusic = MUSIC.CHASING_DAYBREAK;
+        this.myMusic = this.defaultMusic;
+
+        this.game_over = ASSET_MANAGER.getAsset("./sprites/GUI/game_over.png");
+
+        this.myCursor = new Cursor(this.game);
 
         //game status
         this.title = false;
@@ -108,6 +113,10 @@ class SceneManager {
         x = (this.game.surfaceWidth / 2) - ((40 * 14) / 2);
         y = (this.game.surfaceHeight / 2) + 40 * 3;
         this.returnToMenuBB = new BoundingBox(x, y, 40 * 14, -40);
+
+        //TEMP FIX: turn off player so they don't spawn and fall off the title screen
+        //adjust this once there is a goal flag
+        this.player.removeFromWorld = true;
     };
 
     loadPaused() {
@@ -178,33 +187,63 @@ class SceneManager {
         this.game.down = false;
         this.game.shoot = false;
 
+        //reset the checkpoint upon entering a new level
+        if (this.lastLevel != this.currentLevel && this.player != null) this.player.myCheckpoint = null;
+        //make player if the last player hasnt been made yet
         this.player = this.lastPlayer ? this.lastPlayer : new Knight(this.game, 0, 0);
+        //reset last player to default settings
         if (this.lastPlayer) {
-            this.player.removeFromWorld = false;
-            this.player.velocity.x = 0;
-            this.player.velocity.y = 0;
-            this.player.x = 0;
-            this.player.x = 0;
-            this.player.action = this.player.states.idle;
-            this.player.updateBB();
+            this.player.resetToDefault();
         }
-        this.player.x = spawnX - this.player.BB.width - PARAMS.BLOCKDIM;
-        this.player.y = spawnY - this.player.BB.height - PARAMS.BLOCKDIM;
+        //reposition the player
+        this.player.x = theX * PARAMS.BLOCKDIM - this.player.BB.left;
+        this.player.y = Math.ceil(theY * PARAMS.BLOCKDIM - this.player.BB.bottom);
+        //set gui elements based on player
         this.inventory = this.player.myInventory;
         this.heartsbar = new HeartBar(this.game, this.player);
-        this.vignette = new Vignette(this.game);
-        if (!this.lastPlayer) this.game.addEntity(this.player);
-        this.doRespawnHeal();
+        if (!this.vignette) this.vignette = new Vignette(this.game);
+        else this.vignette.myPlayer = this.player;
+        //add the player if there was not a last player yet
+        if (!this.lastPlayer) {
+            this.game.addEntity(this.player);
+            this.savePlayerInfo();
+        }
+
+        this.player.updateBB();
+        this.handleRespawn();
+
     };
 
-    doRespawnHeal() {
-        //mercy rule: after dying the player is healed a bit
+    handleRespawn() {
         if (this.player.respawn) {
-            this.respawn = false;
-            if (this.player.hp <= (this.player.max_hp / 2)) {
+            //this.respawn = false;
+            //console.log("respawning");
+            //checkpoint respawn position
+            if (this.player.myCheckpoint != null) {
+                //console.log("respawning with a checkpoint");
+                this.player.x = this.player.myCheckpoint.x;
+                this.player.y = this.player.myCheckpoint.y;
+                this.player.updateBB();
+            }
+
+            //mercy rule: after dying the player is healed a bit
+            if (this.player.hp < (this.player.max_hp / 2)) {
                 this.player.heal((this.player.max_hp / 2) - this.player.hp);
             }
         }
+    }
+
+    /**
+     * Saves the last player's info which will be reused
+     * if the player needs to be reloaded (new level or respawn)
+     */
+    savePlayerInfo() {
+        // save player state
+        this.lastPlayer = this.player;
+        // save initial player hp and inventory upon entering a level
+        this.lastHP = this.player.hp;
+        this.lastInventory = new Inventory(this.game);
+        this.lastInventory.copyInventory(this.player.myInventory);
     }
 
     /**
@@ -218,17 +257,8 @@ class SceneManager {
     loadLevel(number, usedDoor, doorExitX, doorExitY) {
         // save the state of the enemies and interactables for the current level
         if (!this.title && !this.restart && !this.transition) {
-            // save level state
-            this.levelState[this.currentLevel] = {
-                enemies: [...this.game.enemies], interactables: [...this.game.interactables],
-                events: [...this.game.events], killCount: this.killCount
-            };
-            // save player state
-            this.lastPlayer = this.player;
-            // save initial player hp and inventory upon entering a level
-            this.lastHP = this.player.hp;
-            this.lastInventory = new Inventory(this.game);
-            this.lastInventory.copyInventory(this.player.myInventory);
+            this.saveLevelState();
+            this.savePlayerInfo();
         } else {
             // if player dies reset their hp and inventory to what it was upon entering the level
             if (this.restart && this.lastPlayer) {
@@ -247,6 +277,7 @@ class SceneManager {
         } else {
             console.log("Loading level " + number);
             this.killCount = !this.levelState[number] ? 0 : this.levelState[number].killCount;
+            this.lastLevel = this.currentLevel;
             this.currentLevel = number;
             let lvlData = this.levels[number];
             if (usedDoor) {
@@ -255,6 +286,13 @@ class SceneManager {
                 this.loadScene(lvlData, lvlData.player.x, lvlData.player.y);
             }
         }
+    }
+
+    saveLevelState() {
+        this.levelState[this.currentLevel] = {
+            enemies: [...this.game.enemies], interactables: [...this.game.interactables],
+            events: [...this.game.events], killCount: this.killCount
+        };
     }
 
 
@@ -279,24 +317,20 @@ class SceneManager {
      * @param {} layer
      */
     clearLayer(layer) {
+        let that = this;
         layer.forEach(function (entity) {
-            entity.removeFromWorld = true;
+            if (!(entity instanceof Knight) || entity instanceof Knight && !that.lastPlayer)
+                entity.removeFromWorld = true;
         });
+        this.game.removeFromLayer(layer);
     }
 
     /**
      * Update the camera and gui elements
      */
     update() {
-        //updates from outside canvas (debug or volume)
-        this.updateAudio();
-        PARAMS.AUTO_FOCUS = document.getElementById("mouse-focus").checked;
-        PARAMS.DEBUG = document.getElementById("debug").checked;
-        if (this.game.debug) {
-            this.game.debug = false;
-            document.getElementById("debug").checked = !document.getElementById("debug").checked;
-        }
 
+        this.updateSettings();
         //update game camera in terms of ints
         if (!this.title && !this.transition && !PAUSED) {
             this.updateGUI();
@@ -313,7 +347,6 @@ class SceneManager {
 
         //update game timer
         if (!this.transition && !this.title && !PAUSED) this.levelTimer += this.game.clockTick;
-
         //debugging camera updates
         if (PARAMS.DEBUG) {
             /**
@@ -326,10 +359,25 @@ class SceneManager {
             }
         }
 
+        if (PARAMS.CURSOR) this.myCursor.update();
+
     };
+
+    //updates from outside canvas (debug or volume)
+    updateSettings() {
+        this.updateAudio();
+        PARAMS.AUTO_FOCUS = document.getElementById("mouse-focus").checked;
+        PARAMS.DEBUG = document.getElementById("debug").checked;
+        PARAMS.CURSOR = document.getElementById("show-cursor").checked;
+        if (this.game.debug) {
+            this.game.debug = false;
+            document.getElementById("debug").checked = !document.getElementById("debug").checked;
+        }
+    }
 
     updateTitleScreen() {
         if (this.title) {
+            this.levelTimer = 0;
             //keep attemping to play title music until the user clicks
             if (!MUSIC_MANAGER.isPlaying(MUSIC.TITLE)) {
                 //console.log("attempting to play title music");
@@ -337,6 +385,7 @@ class SceneManager {
                     MUSIC_MANAGER.pauseBackgroundMusic();
                     MUSIC_MANAGER.autoRepeat(MUSIC.TITLE);
                     MUSIC_MANAGER.playAsset(MUSIC.TITLE);
+                    this.myMusic = MUSIC.TITLE;
                 }
             }
 
@@ -355,11 +404,13 @@ class SceneManager {
             }
             if (this.game.click) {
                 if (this.startGameBB.collideMouse(this.game.click.x, this.game.click.y)) {
-                    ASSET_MANAGER.playAsset(SFX.CLICK);
-                    ASSET_MANAGER.playAsset(SFX.SELECT);
-                    this.game.myReportCard.reset();
-                    this.game.attack = false;
-                    this.loadLevel(this.currentLevel, false);
+                    if (!this.usingLevelSelect) {
+                        ASSET_MANAGER.playAsset(SFX.CLICK);
+                        ASSET_MANAGER.playAsset(SFX.SELECT);
+                        this.game.myReportCard.reset();
+                        this.game.attack = false;
+                        this.loadLevel(this.currentLevel, false);
+                    }
                 } else if (this.controlsBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     ASSET_MANAGER.playAsset(SFX.CLICK);
                     this.credits = false;
@@ -433,7 +484,8 @@ class SceneManager {
                     ASSET_MANAGER.playAsset(SFX.CLICK);
                     // load next level code goes here when level 2 is added
                     this.game.myReportCard.reset();
-                    this.levelTimer = 0;
+                    this.restartLevel();
+                    this.bufferTimer = 0;
                 } else if (this.restartLevelBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     ASSET_MANAGER.playAsset(SFX.CLICK);
                     this.restartLevel();
@@ -494,9 +546,9 @@ class SceneManager {
 
     BBCamera() {
         let xToLeft = this.player.BB.left - this.player.x;
-        let xtoRight = this.player.BB.right - this.player.x;
-        if (this.player.BB.left < 0) this.player.x = 0 - this.player.offsetxBB;
-        else if (this.player.BB.right > this.level.width * PARAMS.BLOCKDIM) this.player.x = (this.level.width * PARAMS.BLOCKDIM) - this.player.width;
+        let xToRight = this.player.BB.right - this.player.x;
+        if (this.player.BB.left < 0) this.player.x = 0 - xToLeft;
+        else if (this.player.BB.right > this.level.width * PARAMS.BLOCKDIM) this.player.x = (this.level.width * PARAMS.BLOCKDIM) - xToRight;
         if (this.x + this.game.surfaceWidth * 9 / 16 < this.player.BB.left && this.x + this.game.surfaceWidth < this.level.width * PARAMS.BLOCKDIM) this.x = this.player.BB.left - this.game.surfaceWidth * 9 / 16;
         else if (this.x > this.player.BB.right - this.game.surfaceWidth * 7 / 16 && this.x > 0) this.x = this.player.BB.right - this.game.surfaceWidth * 7 / 16;
 
@@ -633,7 +685,13 @@ class SceneManager {
         this.drawGameplayGUI(ctx);
         this.drawTitleGUI(ctx);
         this.drawResultsGUI(ctx);
-
+        //if(this.player.dead) ctx.drawImage(this.game_over, 0, 0);
+        if (PARAMS.CURSOR) this.myCursor.draw(ctx);
+        else {
+            //draw cursor in menus when cursor is disabled
+            if (PAUSED || SHOP_ACTIVE || this.transition || this.title) this.myCursor.draw(ctx);
+        }
+        //console.log(this.player.BB.left + " " + this.player.BB.bottom);
     };
 
     drawGameplayGUI(ctx) {
@@ -705,7 +763,7 @@ class SceneManager {
             ctx.fillText(gameTitle, (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2) + 5, fontSize * 3 + 5);
             ctx.fillStyle = "GhostWhite";
             ctx.fillText(gameTitle, (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 3);
-            buildTextButton(ctx, "Start Game", this.startGameBB, this.textColor == 1, "DeepPink");
+            if (!this.usingLevelSelect) buildTextButton(ctx, "Start Game", this.startGameBB, this.textColor == 1, "DeepPink");
             buildTextButton(ctx, "Controls", this.controlsBB, this.textColor == 2 || this.controls, "DeepSkyBlue");
             buildTextButton(ctx, "Credits", this.creditsBB, this.textColor == 3 || this.credits, "DeepSkyBlue");
             if (!this.usingLevelSelect) buildButton(ctx, "Level Select", this.levelSelectBB, this.textColor == 4);
@@ -738,12 +796,18 @@ class SceneManager {
             var fontSize = 60;
             ctx.font = fontSize + 'px "Press Start 2P"';
             ctx.fillStyle = "Orchid";
-            let gameTitle = "Level Complete!";
-            ctx.fillText("Level Complete!", (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2) + 5, fontSize * 3 + 5);
+            let resultMsg = "You Saved The Castle!";
+            ctx.fillText(resultMsg, (this.game.surfaceWidth / 2) - ((fontSize * resultMsg.length) / 2) + 5, fontSize * 3 + 5);
             ctx.fillStyle = "White";
-            ctx.fillText("Level Complete!", (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 3);
+            ctx.fillText(resultMsg, (this.game.surfaceWidth / 2) - ((fontSize * resultMsg.length) / 2), fontSize * 3);
             ctx.font = '40px "Press Start 2P"';
-            buildTextButton(ctx, "Next Level", this.nextLevelBB, false, "gray"); //set this once there is another level
+            ctx.fillStyle = "Orchid";
+            resultMsg = "Thanks for playing!";
+            ctx.fillText(resultMsg, (this.game.surfaceWidth / 2) - ((fontSize * resultMsg.length) / 3) + 5, fontSize * 4 + 5);
+            ctx.fillStyle = "White";
+            ctx.fillText(resultMsg, (this.game.surfaceWidth / 2) - ((fontSize * resultMsg.length) / 3), fontSize * 4);
+
+            //buildTextButton(ctx, "Next Level", this.nextLevelBB, false, "gray"); //set this once there is another level
             buildTextButton(ctx, "Restart Game", this.restartLevelBB, this.textColor == 2 && this.bufferTimer > this.maxBufferTime, "DeepSkyBlue");
             buildTextButton(ctx, "Return To Menu", this.returnToMenuBB, this.textColor == 3 && this.bufferTimer > this.maxBufferTime, "DeepSkyBlue");
 
@@ -775,6 +839,7 @@ class SceneManager {
         if (scene.player === undefined) throw ("Level must have a player with x and y cordinates.");
 
 
+
         //initialize scene and player
         this.level = scene;
         this.levelH = scene.height;
@@ -799,10 +864,12 @@ class SceneManager {
                 MUSIC_MANAGER.pauseBackgroundMusic();
                 MUSIC_MANAGER.autoRepeat(scene.music);
                 MUSIC_MANAGER.playAsset(scene.music);
+                this.myMusic = scene.music;
             } else if (!scene.music && !MUSIC_MANAGER.isPlaying(this.defaultMusic)) { //no music set play default music
                 MUSIC_MANAGER.pauseBackgroundMusic();
                 MUSIC_MANAGER.autoRepeat(this.defaultMusic);
                 MUSIC_MANAGER.playAsset(this.defaultMusic);
+                this.myMusic = this.defaultMusic;
             }
         }
 
@@ -857,10 +924,10 @@ class SceneManager {
                 interactable.removeFromWorld = false
             });
         }
+        //this.game.addEntity(new DemonSlime(this.game, 100, 300, false));
         this.loadBackground(h, entities, this.level);
         let self = this;
         entities.forEach(entity => self.game.addEntity(entity));
-
     }
 
     loadEnvironment(h, array, dict) {
@@ -868,7 +935,8 @@ class SceneManager {
         if (dict.ground) {
             for (var i = 0; i < dict.ground.length; i++) {
                 let ground = dict.ground[i];
-                array.push(new Ground(this.game, ground.x, h - ground.y - 1, ground.width, 1, ground.type));
+                let g = new Ground(this.game, ground.x, h - ground.y - 1, ground.width, 1, ground.type);
+                array.push(g);
             }
         }
         if (dict.trap) {
@@ -979,6 +1047,12 @@ class SceneManager {
                 this.positionEntity(e, skeleton.x, h - skeleton.y);
                 array.push(e);
             }
+        }
+        if (dict.demon) {
+            let demon = dict.demon;
+            let e = new DemonSlime(this.game, demon.x, h - demon.y, false);
+            this.positionEntity(e, demon.x, h - demon.y);
+            array.push(e);
         }
         if (dict.flyingeyes) {
             for (var i = 0; i < dict.flyingeyes.length; i++) {
@@ -1197,10 +1271,8 @@ class Minimap {
     draw(ctx) {
         //lower opacity if the player is under the minimap
         let player = this.game.camera.player;
-        if (player.x > this.game.camera.x + this.x &&
-            player.y < this.game.camera.y + this.y + this.miniH) {
-            ctx.filter = "Opacity(80%)";
-        }
+
+        ctx.filter = "Opacity(60%)";
         ctx.strokeStyle = "White";
         ctx.strokeRect(this.BB.x, this.BB.y, this.BB.width, this.BB.height);
         this.loadEnvironmentScene(ctx);
