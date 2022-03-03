@@ -13,7 +13,8 @@ const rgb = (r, g, b) => `rgba(${r}, ${g}, ${b})`;
 
 /** Global Parameters Objects */
 const PARAMS = {
-    DEBUG: false,      //for showing debug settings on canvas when ticked
+    DEBUG: false,      //for showing debug settings on canvas when ticked,
+    CURSOR: true,
     AUTO_FOCUS: false,
     BLOCKDIM: 81,      //dimensions of blocks
     DMG_COOLDOWN: .5,  //how long the cooldown is for an entity to take damage,
@@ -41,6 +42,7 @@ const PARAMS = {
     DMG_ID: 0,
     HEAL_ID: 1,
     DIAMOND_ID: 2,
+    CHECKPOINT_ID: 3,
 
     //HP RATIOS to compare with a percentage
     LOW_HP: .2,
@@ -73,7 +75,6 @@ const PLAYER_PHYSICS = {
     ACC_FALL: PLAYER_JUMP_HEIGHT * FALL_GRAVITY,
     MAX_SLIDE: 150 * PHYSIC_SCALER,
     ACC_SLIDE: 750
-
 };
 
 /**Global stats that define an entity */
@@ -172,12 +173,12 @@ const STATS = {
 
     DEMON_SLIME: {
         NAME: "Demon Slime",
-        MAX_HP: 400,
+        MAX_HP: 100,
         WIDTH: 288,
         HEIGHT: 160,
         DAMAGE: 0,
         SCALE: 3,
-        PHYSICS: {MAX_RUN: PLAYER_PHYSICS.MAX_RUN - 60, MAX_FALL: 500}
+        PHYSICS: {MAX_RUN: (PLAYER_PHYSICS.MAX_RUN - 60) * 3, MAX_FALL: 500}
     }
 
 }
@@ -219,6 +220,8 @@ const SFX = {
     BERSERK_ACTIVATE: "./sound/sfx/sharingan.mp3",
     RESPAWN: "./sound/sfx/re_zero_respawn.mp3",
     COMPLETE: "./sound/sfx/finished.mp3",
+    CHECKPOINT: "./sound/sfx/checkpoint.wav",
+    TRIGGER: "./sound/sfx/event_trigger.mp3",
     
 
 
@@ -232,7 +235,7 @@ const MUSIC = {
     LONG_WAY: "./sound/music/P4_Long_Way.mp3",
     TITLE: "./sound/music/Runescape_Main.mp3",
     SPLENDOUR: "./sound/music/OSRS_splendour.mp3",
-
+    SIGNORA: "./sound/music/Genshin_Signora_Phase_2.mp3"
 }
 
 /** HELPER FUNCTIONS */
@@ -410,3 +413,8 @@ function buildTextButton(ctx, text, box, isSelected, highlightColor) {
     isSelected ? ctx.fillStyle = highlightColor : ctx.fillStyle = "GhostWhite";
     ctx.fillText(text, box.x, box.y);
 }
+
+function isInt(value) {
+    var x;
+    return isNaN(value) ? !1 : (x = parseFloat(value), (0 | x) === x);
+  }

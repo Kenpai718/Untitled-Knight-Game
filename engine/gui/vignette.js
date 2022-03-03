@@ -15,14 +15,12 @@ class Vignette {
         this.x = 0;
         this.y = 0;
         this.elapsedTime = 0;
-
-        this.myPlayer = this.game.camera.player;
         this.show = false;
         this.myOpacity = 0;
+        this.myPlayer = this.game.camera.player;
     };
 
     update() {
-
         if ((this.myPlayer.hp / this.myPlayer.max_hp) <= PARAMS.LOW_HP) {
             this.show = true;
             if (this.myPlayer.berserkTimer < 10) this.myPlayer.berserk = true;
@@ -34,7 +32,7 @@ class Vignette {
         if(this.show && this.myOpacity < 100) {
             this.myOpacity += 5;
         } else { //fade out effect
-            if(!this.show && this.myOpacity > 0) this.myOpacity -= 5;
+            if(!this.show && this.myOpacity > 0) this.myOpacity -= 1;
         }
 
     };
