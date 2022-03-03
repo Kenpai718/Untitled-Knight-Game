@@ -111,6 +111,7 @@ class Knight extends AbstractPlayer {
         this.action = this.DEFAULT_ACTION;
         this.facing = this.DEFAULT_DIRECTION;
         this.updateBB();
+        this.lastBB = this.BB;
     }
 
     /** Update methods */

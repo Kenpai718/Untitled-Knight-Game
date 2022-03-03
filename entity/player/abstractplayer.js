@@ -249,6 +249,7 @@ class AbstractPlayer extends AbstractEntity {
      */
     handleEnvironmentCollisions(TICK) {
         //do collisions detection here
+        const lastColl = this.collisions;
         this.collisions = {
             lo_left: false, hi_left: false, lo_right: false, hi_right: false,
             ceil: false, ceil_left: false, ceil_right: false,
@@ -256,6 +257,7 @@ class AbstractPlayer extends AbstractEntity {
         };
         const w = this.BB.right - this.BB.left;
         const h = this.BB.bottom - this.BB.top;
+        const lastBB = this.lastBB;
         const BB = {
             top: new BoundingBox(this.BB.left, this.BB.top, w, h / 2),
             bottom: new BoundingBox(this.BB.left, this.BB.top + h / 2, w, h / 2),
@@ -273,10 +275,11 @@ class AbstractPlayer extends AbstractEntity {
             };
             if (entity.BB && self.BB.collide(entity.BB)) {
                 // check which side collides
-                if (BB.bottom.collide(entity.BB)) coll.floor = true;
-                if (BB.top.collide(entity.BB)) coll.ceil = true;
-                if (BB.right.collide(entity.BB)) coll.right = true;
-                if (BB.left.collide(entity.BB)) coll.left = true;
+
+                if (BB.bottom.collide(entity.BB) ) coll.floor = true;
+                if (BB.top.collide(entity.BB) ) coll.ceil = true;
+                if (BB.right.collide(entity.BB) && lastBB.left <= self.BB.left && lastBB.right <= self.BB.right) coll.right = true;
+                if (BB.left.collide(entity.BB) && lastBB.left >= self.BB.left && lastBB.right >= self.BB.right) coll.left = true;
 
                 // record height of knight and wall for wall hang
                 if (high > entity.BB.top) high = entity.BB.top;
@@ -366,14 +369,9 @@ class AbstractPlayer extends AbstractEntity {
 
         this.diffy.hi = high - this.BB.top;
 
-        // instances where there are collisions along vertical, but need ignoring
-        // all cases are when there's no definitive ceiling or floor (top/bottom collision as part of a wall)
-        /*if (!(this.touchFloor() || this.touchCeiling())) {
-            dist.y = 0
-        }*/
         // instances where there are collisons along horizontal, but need ignoring
         // currently only when there's a crawl space to allow auto-crawl
-        if (this.touchFloor() && this.touchHole() || this.action == this.states.wall_climb) {
+        if (this.touchFloor && this.touchHole() || this.action == this.states.wall_climb) {
             if (!this.collisions.lo_right && !this.collisions.lo_left)
                 dist.x = 0;
         }
@@ -420,6 +418,7 @@ class AbstractPlayer extends AbstractEntity {
                 this.velocity.x = 0;
         }
         this.updateBB();
+        this.lastBB = this.BB;
     }
 
     /**
@@ -505,8 +504,7 @@ class AbstractPlayer extends AbstractEntity {
 
     touchHole() {
         return this.collisions.ceil || this.collisions.ceil_right && !this.collisions.lo_right || this.collisions.ceil_left && !this.collisions.lo_left ||
-            (this.collisions.hi_right && !this.collisions.lo_right) ||
-            (this.collisions.hi_left && !this.collisions.lo_left);
+            (this.collisions.hi_right && !this.collisions.lo_right) || (this.collisions.hi_left && !this.collisions.lo_left);
     }
 
 }

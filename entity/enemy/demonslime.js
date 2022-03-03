@@ -23,6 +23,7 @@ class DemonSlime extends AbstractEnemy {
 
         this.loadAnimations();
         this.updateBoxes();
+        this.lastBB = this.BB;
 
         this.myLevelMusic = this.game.camera.myMusic; //save current level music once the boss music stars
         this.myBossMusic = MUSIC.SIGNORA;

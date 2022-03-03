@@ -44,6 +44,7 @@ class Goblin extends AbstractEnemy {
         // Other
         this.loadAnimations();
         this.updateBoxes();
+        this.lastBB = this.BB;
     };
 
 

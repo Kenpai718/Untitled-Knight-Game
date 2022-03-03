@@ -22,6 +22,7 @@ class FlyingEye extends AbstractEnemy {
         this.projectile = false;
 
         this.updateBoxes();
+        this.lastBB = this.BB;
     }
 
     updateBoxes() {

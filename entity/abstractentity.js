@@ -327,6 +327,7 @@ class AbstractEntity {
      */
     checkEnvironmentCollisions(dist) {
         //do collisions detection here
+        let lastBB = this.lastBB;
         this.collisions = {
             lo_left: false, hi_left: false, lo_right: false, hi_right: false,
             ceil: false, ceil_left: false, ceil_right: false,
@@ -348,10 +349,10 @@ class AbstractEntity {
             };
             if (entity.BB && that.BB.collide(entity.BB)) {
                 // check which side collides
-                if (BB.bottom.collide(entity.BB)) coll.floor = true;
+                if (BB.bottom.collide(entity.BB) ) coll.floor = true;
                 if (BB.top.collide(entity.BB)) coll.ceil = true;
-                if (BB.right.collide(entity.BB)) coll.right = true;
-                if (BB.left.collide(entity.BB)) coll.left = true;
+                if (BB.right.collide(entity.BB) && lastBB.left <= that.BB.left && lastBB.right <= that.BB.right) coll.right = true;
+                if (BB.left.collide(entity.BB) && lastBB.left >= that.BB.left && lastBB.right >= that.BB.right) coll.left = true;
 
                 // determine via elimination which side is actually colliding
                 if (coll.floor && !coll.ceil) { // somewhere below
@@ -433,6 +434,7 @@ class AbstractEntity {
             that.updateBoxes();
 
         });
+        this.lastBB = this.BB;
         return dist;
     }
 

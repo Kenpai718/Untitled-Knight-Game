@@ -32,6 +32,7 @@ class NPC extends AbstractEntity {
         // Other
         this.loadAnimations();
         this.updateBoxes();
+        this.lastBB = this.BB;
         this.myHoverText = "Press \'W\' to shop";
     };
 
