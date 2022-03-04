@@ -1000,7 +1000,7 @@ class SceneManager {
         if (dict.obelisks) {
             for (var i = 0; i < dict.obelisks.length; i++) {
                 let obelisk = dict.obelisks[i];
-                array.push(new Obelisk(this.game, obelisk.x, h - obelisk.y - 1 - 3, obelisk.brickX, obelisk.brickY, obelisk.brickWidth, obelisk.brickHeight));
+                array.push(new Obelisk(this.game, obelisk.x, h - obelisk.y - 1 - 3, obelisk.brickX, obelisk.brickY, obelisk.brickWidth, obelisk.brickHeight, obelisk.initial, obelisk.repeat));
             }
         }
         if (dict.doors) {

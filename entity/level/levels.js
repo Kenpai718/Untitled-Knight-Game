@@ -97,7 +97,8 @@ var testLevel = {
         { x: 25, y: 14, height: 14, type: 2 }
     ],
     obelisks: [
-        { x: 4.5, y: 1, brickX: 15, brickY: 1, brickWidth: 1, brickHeight: 1 }
+        { x: 4.5, y: 1, brickX: 15, brickY: 1, brickWidth: 1, brickHeight: 1, initial: true, repeat: true},
+        { x: 4.5, y: 1, brickX: 10, brickY: 12, brickWidth: 1, brickHeight: 5, initial: false, repeat: true}
     ],
     shrooms: [
         { x: 16, y: 1, guard: true }
@@ -1447,7 +1448,7 @@ var level1_4 = {
         }
     ]
 
-    //NOTEa: place miniboss at x: 18, y: 38
+    //NOTE: place miniboss at x: 18, y: 38
 }
 
 var treasureroom = {
@@ -1524,7 +1525,7 @@ var treasureroom = {
         //{ x: 48, y: 20, width: 4, height: 6, type: 0 },
         { x: 51, y: 24, width: 4, height: 10, type: 0 }, // Height Centers!
         
-        { x: 33, y: 24, width: 19, height: 1, type: 0 },
+        { x: 33, y: 24, width: 18, height: 1, type: 0 },
         { x: 33, y: 23, width: 3, height: 1, type: 0 },
         { x: 33, y: 22, width: 1, height: 1, type: 0 },
         { x: 48, y: 23, width: 3, height: 1, type: 0 },
@@ -1801,9 +1802,9 @@ var treasureroom = {
                 { x: 5, y: 50, width: 20, height: 1 }, //hide top path
                 { x: 24, y: 49, width: 1, height: 1 }, //hide path entrance 
                 { x: 1, y: 50, width: 4, height: 38 }, //hide drop down
-                { x: 74, y: 48, width: 5, height: 37 },
+                { x: 75, y: 39, width: 4, height: 27 },
                 { x: 1, y: 12, width: 28, height: 4 }, // undergrounds
-                { x: 65, y: 39, width: 9, height: 2 },
+                { x: 65, y: 39, width: 10, height: 2 },
                 { x: 29, y: 12, width: 50, height: 12 }, 
                 //{ x: 33, y: 4, width: 16, height: 4 }, 
 

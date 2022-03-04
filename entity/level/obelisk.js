@@ -1,10 +1,12 @@
 // Note : the obelisk is halfway in the ground on purpose
 // Obelisk will act as a button. When activated the bricks associated to the obelisk will be removed from the world.
 class Obelisk extends AbstractInteractable {
-    constructor(game, x, y, brickX, brickY, brickWidth, brickHeight) {
+    constructor(game, x, y, brickX, brickY, brickWidth, brickHeight, initial = true, repeat = false) {
         super(game, x, y);
+        
+        this.initial = initial; // defaults bricks to appear or be hidden
+        this.repeat = repeat; // Allows for the Obelisk to spawn / despawn blocks more than once 
         this.bricks = new Brick(this.game, brickX, this.game.camera.level.height - brickY - 1, brickWidth, brickHeight);
-        this.game.addEntity(this.bricks);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/Obelisk_full.png");
         this.states = { idle: 0, notIdle: 1 };
         this.state = this.states.idle;
@@ -12,14 +14,26 @@ class Obelisk extends AbstractInteractable {
         this.height = 380;
         this.x *= PARAMS.BLOCKDIM;
         this.y *= PARAMS.BLOCKDIM;
-        this.activated = false;
         this.playSound = false;
+
+        if(this.initial) this.game.addEntity(this.bricks);
+        
+        this.timer = 0;
+        this.settimer = false;
+
+        this.playOnce = false;
+
         this.loadAnimations();
         this.updateBB();
     };
 
     update() {
-        if (!this.activated) {
+
+        if(this.settimer){
+            this.timer += this.game.clockTick;
+        }
+
+        if(this.state == this.states.idle && this.settimer == false && !this.playOnce){
             var self = this;
             //activate from player approaching
             this.game.entities.forEach(function (entity) {
@@ -46,12 +60,26 @@ class Obelisk extends AbstractInteractable {
                     }
                 }
             });
-        } else if (this.animations[this.states.notIdle].isDone()) {
-            this.removeBlocks();
+        } else if ( this.timer > 0.13*14 && this.initial){ // this.animations[this.states.notIdle].isDone()
+            this.switchstate();
 
+            this.bricks.removeFromWorld = true;
+
+        } else if( this.timer > 0.13*14 && !this.initial){
+            this.switchstate();
+
+            this.bricks.removeFromWorld = false;
+            this.game.addEntity(this.bricks);
+            
         }
+        
 
-        if (this.playSound) {
+        if (this.playSound && !this.playOnce) {
+
+            if(!this.repeat) {
+                this.playOnce = true;
+            }
+
             this.playSound = false;
             ASSET_MANAGER.playAsset(SFX.OBELISK_ON);
         }
@@ -59,14 +87,17 @@ class Obelisk extends AbstractInteractable {
     };
 
     setActivated() {
+        this.settimer = true;
         this.state = this.states.notIdle;
-        this.activated = true;
         this.playSound = true;
     }
 
-    removeBlocks() {
+    switchstate(){
+        if(this.repeat) this.initial = !this.initial;
+        
         this.state = this.states.idle;
-        this.bricks.removeFromWorld = true;
+        this.settimer = false;
+        this.timer = 0;
     }
 
 
@@ -81,8 +112,8 @@ class Obelisk extends AbstractInteractable {
 
     loadAnimations() {
         this.animations = [];
-        this.animations[this.states.idle] = new Animator(this.spritesheet, 0, 380, 190, 380, 14, 0.1, 0, false, true, false);
-        this.animations[this.states.notIdle] = new Animator(this.spritesheet, 0, 0, 190, 380, 14, 0.13, 0, false, false, false);
+        this.animations[this.states.idle] = new Animator(this.spritesheet, 11, 380, 190, 380, 14, 0.1, 0, false, true, false);
+        this.animations[this.states.notIdle] = new Animator(this.spritesheet, 11, 0, 190, 380, 14, 0.13, 0, false, true, false);
     };
 
     updateBB() {
