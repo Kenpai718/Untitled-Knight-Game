@@ -1,4 +1,4 @@
-class DemonSlime extends AbstractEnemy {
+class DemonSlime extends AbstractBoss {
     constructor(game, x, y, guard) {
         super(game, x, y, guard, STATS.DEMON_SLIME.NAME, STATS.DEMON_SLIME.MAX_HP, STATS.DEMON_SLIME.WIDTH, STATS.DEMON_SLIME.HEIGHT, STATS.DEMON_SLIME.SCALE, STATS.DEMON_SLIME.PHYSICS);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/demon_slime.png");
@@ -21,9 +21,13 @@ class DemonSlime extends AbstractEnemy {
         this.attackMaxCooldown = 2.5;
         this.attackFrame = 0;
         this.stopBugFromHappening = false;
+        
+        this.hue = 0; //changed during legendary phase
 
         this.loadAnimations();
         this.updateBoxes();
+        this.lastBB = this.BB;
+        this.fallAcc = 500;
 
         this.myLevelMusic = this.game.camera.myMusic; //save current level music once the boss music stars
         this.myBossMusic = MUSIC.SIGNORA;
@@ -190,30 +194,37 @@ class DemonSlime extends AbstractEnemy {
             if (this.animations[this.state][this.direction].isDone()) {
                 this.resetLevelMusic();
             }
-        } else if (this.hp <= (this.max_hp / 10) * 2 && this.phase == this.phases.slime) { // transition from slime to demon
+        } else if (this.hp <= (this.max_hp / 10) * 2 && this.phase == this.phases.slime || this.state == this.states.demonSpawn) { // transition from slime to demon
+            this.dead = false;
             if (this.animations[this.states.demonSpawn][this.direction].isDone()) {
                 this.state = this.states.demonIdle;
                 this.phase = this.phases.easy;
                 this.max_hp *= 4;
-                this.hp = this.max_hp;
+                super.healSelf(this.max_hp - this.hp);
                 this.vulnerable = true;
                 this.canBeHit = true;
-                this.dead = false;
             } else if (this.animations[this.states.slimeDie2][this.direction].isDone()) {
                 this.state = this.states.demonSpawn;
+                if (this.hp < this.max_hp) { //rising hp healthbar as it heals
+                    this.hp += 2.125;
+                    if (this.hp > this.max_hp) this.hp = this.max_hp;
+                }
             } else if (this.animations[this.states.slimeDie1][this.direction].isDone()) {
                 this.state = this.states.slimeDie2;
                 this.cueBossMusic();
+                this.activeBoss = true;
+                this.hp = 0;
             } else {
                 this.velocity.x = 0;
                 this.state = this.states.slimeDie1;
+                this.hp = 0;
             }
         } else {
             if (this.phase != this.phases.slime && this.phase != this.phases.legendary) { // determine phase by health
                 if (this.hp < (this.max_hp / 10) * 1) {
                     this.phase = this.phases.legendary;
                     this.state = this.states.demonRebirth;
-                    this.hp = this.max_hp / 2;
+                    super.healToHalf();
                     this.attackMaxCooldown = 1.3;
                 } else if (this.hp < (this.max_hp / 10) * 5) {
                     this.phase = this.phases.hard;
@@ -250,10 +261,24 @@ class DemonSlime extends AbstractEnemy {
 
     draw(ctx) {
         if (this.dead) {
-            super.drawWithFadeOut(ctx, this.animations[this.state][this.direction]);
+            if (this.phase == this.phases.legendary) {
+                if(this.hue < 0) this.hue++; //change the hue over time note; -180 = blue and -22 = hot red 
+                ctx.filter = "hue-rotate(" + this.hue + "deg)";
+                super.drawWithFadeOut(ctx, this.animations[this.state][this.direction]);
+                ctx.filter = "none"
+            } else {
+               super.drawWithFadeOut(ctx, this.animations[this.state][this.direction]); 
+            }
+            
         } else {
-            this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
-            this.healthbar.draw(ctx);
+            //if legendary draw it as a different color
+            if (this.phase == this.phases.legendary) {
+                if(this.hue > -160) this.hue--; //change the hue over time note; -180 = blue and -22 = hot red 
+                ctx.filter = "hue-rotate(" + this.hue + "deg)";
+                this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
+                ctx.filter = "none"
+            }
+            else this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
         }
     };
 
@@ -351,7 +376,7 @@ class DemonSlime extends AbstractEnemy {
                             self.velocity.x = self.direction == self.directions.right ? self.myMaxSpeed / 6 : -self.myMaxSpeed / 6;
                         } else if (self.phase >= self.phases.hard) {
                             self.state = self.states.demonRebirth;
-                            self.velocity.x = self.direction == self.directions.right ? self.myMaxSpeed / 3: -self.myMaxSpeed / 3;
+                            self.velocity.x = self.direction == self.directions.right ? self.myMaxSpeed / 3 : -self.myMaxSpeed / 3;
                         }
                     }
                 }
@@ -367,7 +392,7 @@ class DemonSlime extends AbstractEnemy {
                 this.attackFrame = this.animations[this.state][this.direction].currentFrame();
                 if (this.attackFrame >= 6 && this.attackFrame <= 11) {
                     if (this.phase != this.phases.legendary) {
-                        this.velocity.x = this.direction == this.directions.right ? this.myMaxSpeed / 3: -this.myMaxSpeed / 3;
+                        this.velocity.x = this.direction == this.directions.right ? this.myMaxSpeed / 3 : -this.myMaxSpeed / 3;
                     } else {
                         this.velocity.x = this.direction == this.directions.right ? this.myMaxSpeed : -this.myMaxSpeed;
                     }

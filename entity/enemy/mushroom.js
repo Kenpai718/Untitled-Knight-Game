@@ -28,6 +28,7 @@ class Mushroom extends AbstractEnemy {
 
         this.loadAnimations();
         this.updateBoxes();
+        this.lastBB = this.BB;
     };
 
     loadAnimations() {
