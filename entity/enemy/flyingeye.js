@@ -50,7 +50,7 @@ class FlyingEye extends AbstractEnemy {
     }
 
     updateAR3() {
-        const arDim = { w: 235 * this.scale, h: 25 * this.scale }
+        const arDim = { w: 230 * this.scale, h: 25 * this.scale }
         if (this.direction == 0)
             this.AR3 = new BoundingBox(this.BB.right + 100 * this.scale, (this.BB.top + this.BB.bottom) / 2 - arDim.h / 2 - 6 * this.scale, arDim.w, arDim.h);
         else this.AR3 = new BoundingBox(this.BB.left - 100 * this.scale - arDim.w, (this.BB.top + this.BB.bottom) / 2 - arDim.h / 2 + 5 * this.scale - 6 * this.scale, arDim.w, arDim.h);
