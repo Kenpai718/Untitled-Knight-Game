@@ -4,7 +4,7 @@ class DemonSlime extends AbstractBoss {
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/demon_slime.png");
         // states, direcetions and phases
         this.states = { slimeIdle: 0, slimeMove: 1, slimeDamaged: 2, slimeDie1: 3, slimeDie2: 4, demonSpawn: 5, demonIdle: 6, demonMove: 7, demonDamaged: 8, demonSlash: 9, demonJump: 10, demonBreath: 11, demonShoot: 12, death: 13, demonRebirth: 14 };
-        this.directions = { left: 0, right: 1 };
+        this.directions = { left: 1, right: 0 };
         this.phases = { slime: 0, easy: 1, normal: 2, hard: 3, legendary: 4 };
         this.state = this.states.slimeIdle;
         this.direction = this.directions.right;
@@ -29,10 +29,13 @@ class DemonSlime extends AbstractBoss {
         this.updateBoxes();
         this.lastBB = this.BB;
         this.fallAcc = 500;
+        this.projectileTick = 0;
+        this.projectileSpawnTime = 0.5;
 
         this.myLevelMusic = this.game.camera.myMusic; //save current level music once the boss music stars
         this.myBossMusic = MUSIC.SIGNORA;
     };
+
 
     loadEvent() {
         let enemies = [];
@@ -219,7 +222,7 @@ class DemonSlime extends AbstractBoss {
             }
         } else {
             if (this.phase != this.phases.slime && this.phase != this.phases.legendary) { // determine phase by health
-                if (this.hp < (this.max_hp / 10) * 1) {
+                if (this.hp < (this.max_hp / 8) * 1) {
                     this.phase = this.phases.legendary;
                     this.state = this.states.demonRebirth;
                     this.attackMaxCooldown = 1.3;
@@ -324,12 +327,14 @@ class DemonSlime extends AbstractBoss {
             if (this.state == this.states.slimeMove) {
                 if (this.attackFrame >= 3 && this.attackFrame <= 5) this.updateHB();
             } else if (this.state == this.states.demonJump) {
-                if (this.attackFrame >= 12 && this.attackFrame <= 16) this.updateHB();
+                if (this.attackFrame >= 12 && this.attackFrame <= 15) this.updateHB();
             } else if (this.state == this.states.demonSlash) {
                 if (this.attackFrame >= 10 && this.attackFrame <= 12) this.updateHB();
             } else if (this.state == this.states.demonBreath) {
-                if (this.attackFrame >= 7 && this.attackFrame <= 16) this.updateHB();
-            } else if (this.state == this.states.demonRebirth || this.state == this.states.demonSpawn || this.state == this.states.demonShoot) {
+                if (this.attackFrame >= 6 && this.attackFrame <= 16) this.updateHB();
+            } else if (this.state == this.states.demonRebirth) {
+                if (this.attackFrame >= 13 && this.attackFrame <= 20) this.updateHB();
+            } else if (this.state == this.states.demonSpawn || this.state == this.states.demonShoot) {
                 this.updateHB();
             }
         } else {
@@ -392,7 +397,14 @@ class DemonSlime extends AbstractBoss {
                             self.canAttack = false;
                             self.runAway = true;
                             self.state = self.currentAttack ? self.currentAttack : randomInt(5) <= 3 ? self.states.demonJump : self.states.demonShoot;
+                            
+                            if(self.state = self.states.demonShoot) {
+                                self.checkDirection(entity);
+                                self.shootProjectile();
+                            }
+                            
                             self.currentAttack = self.state;
+
                         }
                     }
                 }
@@ -414,12 +426,44 @@ class DemonSlime extends AbstractBoss {
                         } else if (self.phase >= self.phases.hard) {
                             self.state = self.states.demonRebirth;
                             self.velocity.x = self.direction == self.directions.right ? self.myMaxSpeed / 3 : -self.myMaxSpeed / 3;
+
+                            //prevent it from becoming a smooth criminal
+                            //switch to walking state after the rebirth dash has finished
+                            if (self.checkAnimationDone(self.state)) {
+                                self.state = self.states.demonMove;
+                            }
                         }
                     }
                 }
             }
         });
     };
+
+    /**
+     * Checks position of player and checks direction to match
+     * @param {*} player 
+     */
+    checkDirection(player) {
+        if(player.BB.x > this.BB.x) this.direction = this.directions.right;
+        else this.direction = this.directions.left;
+    }
+
+    /**
+     * Fireball projectile
+     */
+    shootProjectile() {
+        const TICK = this.game.clockTick;
+        this.projectileTick += TICK;
+
+        if (this.projectileTick > this.projectileSpawnTime) { //shoot a projectile every few seconds
+            this.projectileTick = 0;
+            this.projectileSpawnTime = 0.5 + randomInt(2); //randomize the shooting interval from 0.5 to 1.5
+            if (this.direction == this.directions.right)
+                this.game.addEntity(new DemonSlimeProjectile(this.game, this.BB.left + (this.width), this.y + (this.height / 2) + 10, this.direction));
+            else
+                this.game.addEntity(new DemonSlimeProjectile(this.game, this.BB.left - (this.width), this.y + (this.height / 2) + 10, this.direction));
+        }
+    }
 
     checkCooldowns(TICK) {
         // handles cooldowns based on attacks
@@ -460,9 +504,11 @@ class DemonSlime extends AbstractBoss {
                 } else if (this.phase < this.phases.hard) { // keep the timer going if hit while running away
                     this.attackCooldown += TICK;
                 } else if (this.phase >= this.phases.hard) { // run away with rebirth attack if phase is hard
-                    this.state = this.states.demonRebirth;
-                    this.direction = this.runAwayDirection;
-                    this.velocity.x = this.direction == this.directions.right ? this.myMaxSpeed / 3 : -this.myMaxSpeed / 3;
+                    if (this.currentAttack != this.states.demonRebirth) {
+                        this.state = this.states.demonRebirth;
+                        this.direction = this.runAwayDirection;
+                        this.velocity.x = this.direction == this.directions.right ? this.myMaxSpeed / 3 : -this.myMaxSpeed / 3;
+                    }
                 }
             }
             // handles behavior after rebirth run away
