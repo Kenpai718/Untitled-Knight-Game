@@ -102,7 +102,9 @@ class Obelisk extends AbstractInteractable {
 
 
     draw(ctx) {
+        if(!this.initial) ctx.filter = "hue-rotate(180deg)";
         this.animations[this.state].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, 1);
+        ctx.filter = "none";
     };
 
     drawDebug(ctx) {
