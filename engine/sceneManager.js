@@ -916,7 +916,7 @@ class SceneManager {
             this.game.interactables.forEach(interactable => {
                 // if obelisk, add associated blocks as well
                 if (interactable instanceof Obelisk) {
-                    interactable.bricks.removeFromWorld = false;
+                    interactable.bricks.removeFromWorld = interactable.lastBrickState;
                     that.game.addEntity(interactable.bricks);
                 } else if (interactable instanceof Door) {
                     that.killsRequired = Math.max(interactable.killQuota, that.killsRequired);
