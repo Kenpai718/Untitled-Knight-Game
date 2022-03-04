@@ -33,7 +33,7 @@ class Obelisk extends AbstractInteractable {
             this.timer += this.game.clockTick;
         }
 
-        if(this.state == this.states.idle && this.settimer == false ){
+        if(this.state == this.states.idle && this.settimer == false && !this.playOnce){
             var self = this;
             //activate from player approaching
             this.game.entities.forEach(function (entity) {
@@ -43,7 +43,7 @@ class Obelisk extends AbstractInteractable {
                     let playerHit = entity.HB && self.BB.collide(entity.HB);
                     if (playerHit || playerInteract) {
                         ASSET_MANAGER.playAsset(SFX.CLICK)
-                        if(!self.playOnce) self.setActivated();
+                        self.setActivated();
                     }
                 }
             });
@@ -56,7 +56,7 @@ class Obelisk extends AbstractInteractable {
                         entity.removeFromWorld = true;
                         ASSET_MANAGER.playAsset(SFX.CLICK)
                         ASSET_MANAGER.playAsset(SFX.ARROW_HIT);
-                        if(!self.playOnce) self.setActivated();
+                        self.setActivated();
                     }
                 }
             });
