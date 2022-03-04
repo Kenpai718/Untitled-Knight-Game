@@ -40,7 +40,8 @@ class Event {
             }
         });
         if (this.activated && !this.active) {
-            if(this instanceof Secret) this.game.myReportCard.mySecretsFound++;
+            if(this instanceof Secret) this.game.myReportCard.mySecretsFound++; //increment secret report card
+            else ASSET_MANAGER.playAsset(SFX.TRIGGER);                          //blocked in sound effect
             this.active = true;
             if (this.blocks) {
                 this.blocks.forEach(block => self.game.addEntity(block));

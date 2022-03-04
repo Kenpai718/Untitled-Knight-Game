@@ -141,8 +141,9 @@ class SceneManager {
         let levelTwo = level1_2;
         let levelThree = level1_3;
         let levelFour = level1_4;
+        let treasureRoom = treasureroom;
         let boss1 = levelBoss1;
-        this.levels = [levelZero, levelOne, levelTwo, levelThree, levelFour, boss1];
+        this.levels = [levelZero, levelOne, levelTwo, levelThree, levelFour, treasureRoom, boss1];
     }
 
     /**
@@ -200,7 +201,7 @@ class SceneManager {
         //set gui elements based on player
         this.inventory = this.player.myInventory;
         this.heartsbar = new HeartBar(this.game, this.player);
-        if(!this.vignette) this.vignette = new Vignette(this.game);
+        if (!this.vignette) this.vignette = new Vignette(this.game);
         else this.vignette.myPlayer = this.player;
         //add the player if there was not a last player yet
         if (!this.lastPlayer) {
@@ -403,11 +404,13 @@ class SceneManager {
             }
             if (this.game.click) {
                 if (this.startGameBB.collideMouse(this.game.click.x, this.game.click.y)) {
-                    ASSET_MANAGER.playAsset(SFX.CLICK);
-                    ASSET_MANAGER.playAsset(SFX.SELECT);
-                    this.game.myReportCard.reset();
-                    this.game.attack = false;
-                    this.loadLevel(this.currentLevel, false);
+                    if (!this.usingLevelSelect) {
+                        ASSET_MANAGER.playAsset(SFX.CLICK);
+                        ASSET_MANAGER.playAsset(SFX.SELECT);
+                        this.game.myReportCard.reset();
+                        this.game.attack = false;
+                        this.loadLevel(this.currentLevel, false);
+                    }
                 } else if (this.controlsBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     ASSET_MANAGER.playAsset(SFX.CLICK);
                     this.credits = false;
@@ -684,6 +687,10 @@ class SceneManager {
         this.drawResultsGUI(ctx);
         //if(this.player.dead) ctx.drawImage(this.game_over, 0, 0);
         if (PARAMS.CURSOR) this.myCursor.draw(ctx);
+        else {
+            //draw cursor in menus when cursor is disabled
+            if (PAUSED || SHOP_ACTIVE || this.transition || this.title) this.myCursor.draw(ctx);
+        }
         //console.log(this.player.BB.left + " " + this.player.BB.bottom);
     };
 
@@ -756,7 +763,7 @@ class SceneManager {
             ctx.fillText(gameTitle, (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2) + 5, fontSize * 3 + 5);
             ctx.fillStyle = "GhostWhite";
             ctx.fillText(gameTitle, (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 3);
-            buildTextButton(ctx, "Start Game", this.startGameBB, this.textColor == 1, "DeepPink");
+            if (!this.usingLevelSelect) buildTextButton(ctx, "Start Game", this.startGameBB, this.textColor == 1, "DeepPink");
             buildTextButton(ctx, "Controls", this.controlsBB, this.textColor == 2 || this.controls, "DeepSkyBlue");
             buildTextButton(ctx, "Credits", this.creditsBB, this.textColor == 3 || this.credits, "DeepSkyBlue");
             if (!this.usingLevelSelect) buildButton(ctx, "Level Select", this.levelSelectBB, this.textColor == 4);
@@ -935,7 +942,7 @@ class SceneManager {
         if (dict.trap) {
             for (var i = 0; i < dict.trap.length; i++) {
                 let trap = dict.trap[i];
-                array.push(new TrappedFloor(this.game, trap.x, h - trap.y - 1, trap.width, 1, trap.type, trap.percent, trap.rate));
+                array.push(new TrappedFloor(this.game, trap.x, h - trap.y - 1, trap.width, trap.height, trap.type, trap.percent, trap.rate));
             }
         }
         if (dict.bricks) {
@@ -1003,6 +1010,15 @@ class SceneManager {
 
                 //update the kill requirement for the level based on the max door
                 this.killsRequired = Math.max(door.killQuota, this.killsRequired);
+            }
+        }
+        if (dict.diamonds) {
+            for (var i = 0; i < dict.diamonds.length; i++) {
+                let diamond = dict.diamonds[i];
+                let e = new Diamond(this.game, 0, 0, diamond.ammount);
+                e.x = diamond.x * PARAMS.BLOCKDIM - e.BB.left;
+                e.y = Math.ceil((h - diamond.y -1) * PARAMS.BLOCKDIM - e.BB.bottom);
+                array.push(e);
             }
         }
     }
@@ -1235,6 +1251,7 @@ class Minimap {
             npc: "green",
             chest: "yellow",
             door: "SpringGreen",
+            diamonds: "cyan",
             sign: "bisque",
             obelisk: "DarkSlateBlue",
             obeliskBrick: "CornflowerBlue"
@@ -1420,6 +1437,20 @@ class Minimap {
                 let myH = door.h * PARAMS.SCALE;
 
                 ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, 2 * PARAMS.SCALE, 3 * PARAMS.SCALE);
+            }
+        }
+
+        //door
+        ctx.fillStyle = this.colors.diamonds;
+        if (this.level.diamonds) {
+            for (var i = 0; i < this.level.diamonds.length; i++) {
+                let door = this.level.diamonds[i];
+                let myX = door.x * PARAMS.SCALE;
+                let myY = door.y * PARAMS.SCALE;
+                let myW = door.w * PARAMS.SCALE;
+                let myH = door.h * PARAMS.SCALE;
+
+                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, 1 * PARAMS.SCALE, 1 * PARAMS.SCALE);
             }
         }
 

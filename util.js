@@ -221,7 +221,7 @@ const SFX = {
     RESPAWN: "./sound/sfx/re_zero_respawn.mp3",
     COMPLETE: "./sound/sfx/finished.mp3",
     CHECKPOINT: "./sound/sfx/checkpoint.wav",
-
+    TRIGGER: "./sound/sfx/event_trigger.mp3",
 
 
 };
@@ -233,8 +233,8 @@ const MUSIC = {
     BETWEEN_HEAVEN_AND_EARTH: "./sound/music/FE3H_Between_Heaven_And_Earth.mp3",
     LONG_WAY: "./sound/music/P4_Long_Way.mp3",
     TITLE: "./sound/music/Runescape_Main.mp3",
+    SPLENDOUR: "./sound/music/OSRS_splendour.mp3",
     SIGNORA: "./sound/music/Genshin_Signora_Phase_2.mp3"
-
 }
 
 /** HELPER FUNCTIONS */
@@ -412,3 +412,8 @@ function buildTextButton(ctx, text, box, isSelected, highlightColor) {
     isSelected ? ctx.fillStyle = highlightColor : ctx.fillStyle = "GhostWhite";
     ctx.fillText(text, box.x, box.y);
 }
+
+function isInt(value) {
+    var x;
+    return isNaN(value) ? !1 : (x = parseFloat(value), (0 | x) === x);
+  }
