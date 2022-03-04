@@ -18,7 +18,7 @@ class HealthBar {
     };
 
     draw(ctx) {
-        if (this.boss && this.agent.active)
+        if (this.boss && this.agent.activeBoss)
             this.drawBossHealthBar(ctx);
         else
             this.drawSimpleHealthBar(ctx);

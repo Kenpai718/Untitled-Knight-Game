@@ -3,6 +3,7 @@ class Wizard extends AbstractBoss {
         super(game, x, y, false, STATS.WIZARD.NAME, STATS.WIZARD.MAX_HP, STATS.WIZARD.WIDTH, STATS.WIZARD.HEIGHT, STATS.WIZARD.SCALE, STATS.WIZARD.PHYSICS);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/wizard.png");
         this.h = h;
+        this.activeBoss = true;
         this.left = left;
         this.right = right;
         this.top = top;
@@ -244,16 +245,21 @@ class Wizard extends AbstractBoss {
             this.resetAnimationTimers(this.state);
             this.BB = BB;
         }
-        else if (this.state == this.states.reappear && isDone) {
+        else if (this.state == this.states.reappear) {
             this.updateBoxes();
-            if (this.game.camera.player.x < this.center.x)
+            if (this.animations[this.state][this.direction].elapsedTime < 0.15) {
+                if (this.game.camera.player.x < this.center.x)
                 this.direction = this.directions.left;
-            if (this.game.camera.player.x > this.center.x)
+                if (this.game.camera.player.x > this.center.x)
                 this.direction = this.directions.right;
-            this.resetAnimationTimers(this.state);
-            this.state = this.states.idle1;
-            this.vulnerable = true;
-            this.teleporting = false;
+            }
+            if (isDone) {
+                this.resetAnimationTimers(this.state);
+                this.state = this.states.idle1;
+                this.vulnerable = true;
+                this.teleporting = false;
+            }
+            else this.BB = BB;
         }
      }
 

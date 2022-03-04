@@ -1,4 +1,4 @@
-class DemonSlime extends AbstractEnemy {
+class DemonSlime extends AbstractBoss {
     constructor(game, x, y, guard) {
         super(game, x, y, guard, STATS.DEMON_SLIME.NAME, STATS.DEMON_SLIME.MAX_HP, STATS.DEMON_SLIME.WIDTH, STATS.DEMON_SLIME.HEIGHT, STATS.DEMON_SLIME.SCALE, STATS.DEMON_SLIME.PHYSICS);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/demon_slime.png");
@@ -191,7 +191,8 @@ class DemonSlime extends AbstractEnemy {
             if (this.animations[this.state][this.direction].isDone()) {
                 this.resetLevelMusic();
             }
-        } else if (this.hp <= (this.max_hp / 10) * 2 && this.phase == this.phases.slime) { // transition from slime to demon
+        } else if (this.hp <= (this.max_hp / 10) * 2 && this.phase == this.phases.slime || this.state == this.states.demonSpawn) { // transition from slime to demon
+            this.dead = false;
             if (this.animations[this.states.demonSpawn][this.direction].isDone()) {
                 this.state = this.states.demonIdle;
                 this.phase = this.phases.easy;
@@ -199,15 +200,20 @@ class DemonSlime extends AbstractEnemy {
                 this.hp = this.max_hp;
                 this.vulnerable = true;
                 this.canBeHit = true;
-                this.dead = false;
             } else if (this.animations[this.states.slimeDie2][this.direction].isDone()) {
                 this.state = this.states.demonSpawn;
+                if (this.hp < this.max_hp) {
+                    this.hp+=2.125;
+                }
             } else if (this.animations[this.states.slimeDie1][this.direction].isDone()) {
                 this.state = this.states.slimeDie2;
                 this.cueBossMusic();
+                this.activeBoss = true;
+                this.hp = 0;
             } else {
                 this.velocity.x = 0;
                 this.state = this.states.slimeDie1;
+                this.hp = 0;
             }
         } else {
             if (this.phase != this.phases.slime && this.phase != this.phases.legendary) { // determine phase by health
@@ -254,7 +260,6 @@ class DemonSlime extends AbstractEnemy {
             super.drawWithFadeOut(ctx, this.animations[this.state][this.direction]);
         } else {
             this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
-            this.healthbar.draw(ctx);
         }
     };
 

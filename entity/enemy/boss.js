@@ -3,7 +3,7 @@ class AbstractBoss extends AbstractEnemy {
         super(game, x, y, onGuard, name, max_hp, width, height, scale, physics);
 
         this.healthbar = new HealthBar(game, this, true);
-        this.active = false;
+        this.activeBoss = false;
 
         let self = this;   
     }
