@@ -21,8 +21,9 @@ class DemonSlime extends AbstractBoss {
         this.attackMaxCooldown = 2.5;
         this.attackFrame = 0;
         this.stopBugFromHappening = false;
-        
+
         this.hue = 0; //changed during legendary phase
+        this.legendary_hue = -160; //super saiyan blue
 
         this.loadAnimations();
         this.updateBoxes();
@@ -205,10 +206,7 @@ class DemonSlime extends AbstractBoss {
                 this.canBeHit = true;
             } else if (this.animations[this.states.slimeDie2][this.direction].isDone()) {
                 this.state = this.states.demonSpawn;
-                if (this.hp < this.max_hp) { //rising hp healthbar as it heals
-                    this.hp += 2.125;
-                    if (this.hp > this.max_hp) this.hp = this.max_hp;
-                }
+                this.regen();
             } else if (this.animations[this.states.slimeDie1][this.direction].isDone()) {
                 this.state = this.states.slimeDie2;
                 this.cueBossMusic();
@@ -224,8 +222,9 @@ class DemonSlime extends AbstractBoss {
                 if (this.hp < (this.max_hp / 10) * 1) {
                     this.phase = this.phases.legendary;
                     this.state = this.states.demonRebirth;
-                    super.healToHalf();
                     this.attackMaxCooldown = 1.3;
+                    this.legend_hp_start = this.hp; //previous hp used to calculate heal amount to half hp
+                    this.legendary_healed = false;  //boolean to control if healed to half yet
                 } else if (this.hp < (this.max_hp / 10) * 5) {
                     this.phase = this.phases.hard;
                     this.attackMaxCooldown = 1.7;
@@ -257,23 +256,53 @@ class DemonSlime extends AbstractBoss {
             super.checkInDeathZone(); // die if out of map
         }
         this.animations[this.state][this.direction].update(TICK);
+
+        /*
+        * LEGENDARY PHASE SPECIAL STUFF
+        * color change while in legendary phase and also heals self to half hp
+        * change the hue over time note; -180 = blue and -22 = hot red
+        */
+        if (this.phase == this.phases.legendary) {
+            //transition hue to the blue phase
+            if (this.hue > this.legendary_hue && !this.dead) {
+                this.hue--;
+                //regenerate hp to half while transforming
+                if (this.hp < (this.max_hp / 2)) {
+                    this.regen();
+                }
+            }
+
+            //once in blue phase show the healing score
+            if (this.hue == this.legendary_hue && !this.legendary_healed) {
+                if (this.hp < (this.max_hp / 2)) this.hp = Math.round((this.max_hp / 2));
+                this.legendary_healed = true;
+                ASSET_MANAGER.playAsset(SFX.HEAL);
+                console.log((this.max_hp / 2) - this.legend_hp_start);
+                this.game.addEntityToFront(new Score(this.game, this, (this.max_hp / 2) - this.legend_hp_start, PARAMS.HEAL_ID, false));
+            }
+
+            //dead revert to previous hue over time
+            if (this.hue < 0 && this.dead) {
+                if (this.hue < 0) {
+                    this.hue++;
+                }
+            }
+        }
     };
 
     draw(ctx) {
         if (this.dead) {
             if (this.phase == this.phases.legendary) {
-                if(this.hue < 0) this.hue++; //change the hue over time note; -180 = blue and -22 = hot red 
                 ctx.filter = "hue-rotate(" + this.hue + "deg)";
                 super.drawWithFadeOut(ctx, this.animations[this.state][this.direction]);
                 ctx.filter = "none"
             } else {
-               super.drawWithFadeOut(ctx, this.animations[this.state][this.direction]); 
+                super.drawWithFadeOut(ctx, this.animations[this.state][this.direction]);
             }
-            
+
         } else {
             //if legendary draw it as a different color
             if (this.phase == this.phases.legendary) {
-                if(this.hue > -160) this.hue--; //change the hue over time note; -180 = blue and -22 = hot red 
                 ctx.filter = "hue-rotate(" + this.hue + "deg)";
                 this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
                 ctx.filter = "none"
@@ -307,6 +336,14 @@ class DemonSlime extends AbstractBoss {
             this.HB = null;
         }
     };
+
+    //rising hp healthbar as it heals
+    regen() {
+        if (this.hp < this.max_hp) {
+            this.hp += 2;
+            if (this.hp > this.max_hp) this.hp = this.max_hp;
+        }
+    }
 
     isAttacking() {
         return (this.state == this.states.slimeMove || this.state == this.states.demonSpawn || this.state == this.states.demonSlash || this.state == this.states.demonBreath || this.state == this.states.demonShoot || this.state == this.states.demonJump || this.state == this.states.demonRebirth);
