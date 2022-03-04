@@ -33,20 +33,26 @@ class Chest extends AbstractInteractable {
         this.opened = false;
         this.collected = false;
 
-
-        // When Debug box is true, select boundary box to display
-        this.displayBoundingbox = true;
-
         //fade out logic
         this.myOpacity = 100;
         this.openElapsed = 0;
         this.fadeOutTime = 1;
+
         //posible diamond reward
         this.max = 20;
         this.min = 10;
 
+
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
+        this.diamond = [];
+        this.diamond[0] = new Animator(this.spritesheet, 19, 84, 10, 8, 1, 0, 0, false, false, false);
+        this.diamond[1] = new Animator(this.spritesheet, 35, 84, 10, 8, 1, 0, 0, false, false, false);
+        this.diamond[2] = new Animator(this.spritesheet, 51, 84, 10, 8, 1, 0, 0, false, false, false);
+        this.diamond[3] = new Animator(this.spritesheet, 67, 84, 10, 8, 1, 0, 0, false, false, false);
+        this.diamond[4] = new Animator(this.spritesheet, 83, 84, 10, 8, 1, 0, 0, false, false, false);
+        this.diamond[5] = new Animator(this.spritesheet, 99, 84, 10, 8, 1, 0, 0, false, false, false);
+
         // Other
-        this.loadAnimations();
         this.updateBB();
     };
 
@@ -62,7 +68,6 @@ class Chest extends AbstractInteractable {
     };
 
     update() {
-
 
         // If Chest is hit by player, change to Opened state
         let that = this;
@@ -92,13 +97,6 @@ class Chest extends AbstractInteractable {
         if (this.opened) this.openElapsed += this.game.clockTick;
         
     };
-
-
-    loadAnimations() {
-        this.diamondAnimation = new Animator(this.spritesheet, 19, 84, 10, 8, 6, 0.2, 6, 0, 1, 0);
-    };
-
-
 
     draw(ctx) {
 
@@ -137,7 +135,7 @@ class Chest extends AbstractInteractable {
             //ctx.fillText("🏹 x" + that.arrowStorage, that.x * PARAMS.BLOCKDIM - this.game.camera.x, that.y * PARAMS.BLOCKDIM - 5 - this.game.camera.y);
             //ctx.fillText("⚗️ x" + that.potionStorage, that.x * PARAMS.BLOCKDIM - this.game.camera.x, that.y * PARAMS.BLOCKDIM - 40 - this.game.camera.y);
             ctx.fillText("  x" + that.diamondStorage, that.x * PARAMS.BLOCKDIM - this.game.camera.x, that.y * PARAMS.BLOCKDIM - 5 - this.game.camera.y);
-            this.diamondAnimation.drawFrame(this.game.clockTick, ctx, that.x * PARAMS.BLOCKDIM - this.game.camera.x + 0, that.y * PARAMS.BLOCKDIM - 5 - this.game.camera.y - 17, 2.4);
+            this.diamond[(Math.floor(this.myOpacity / 16.5) + 1) % 6].drawFrame(this.game.clockTick, ctx, that.x * PARAMS.BLOCKDIM - this.game.camera.x, that.y * PARAMS.BLOCKDIM - this.game.camera.y - 24, 3);
 
             ctx.filter = "none";
 
@@ -159,4 +157,4 @@ class Chest extends AbstractInteractable {
 };
 
 
-// Money money money moneyyyy...
+// Money money moneyyyy...
