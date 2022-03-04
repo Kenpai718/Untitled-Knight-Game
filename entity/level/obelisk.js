@@ -21,6 +21,7 @@ class Obelisk extends AbstractInteractable {
         this.timer = 0;
         this.settimer = false;
 
+        this.active = this.initial;
         this.playOnce = false;
 
         this.loadAnimations();
@@ -97,12 +98,13 @@ class Obelisk extends AbstractInteractable {
         
         this.state = this.states.idle;
         this.settimer = false;
+        this.active = !this.active;
         this.timer = 0;
     }
 
 
     draw(ctx) {
-        if(!this.initial) ctx.filter = "hue-rotate(180deg)";
+        if(!this.active) ctx.filter = "hue-rotate(180deg)";
         this.animations[this.state].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, 1);
         ctx.filter = "none";
     };
