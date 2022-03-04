@@ -1162,6 +1162,8 @@ var level1_4 = {
         { x: 65, y: 34, direction: 1 },   //top floor right near right obelisk
         { x: 1, y: 27, direction: 1 }, //exit door plat (chest on top)
         { x: 24, y: 34, direction: 0 }, //chest udner miniboss fight
+
+        { x: 73, y: 43, direction: 0 }, //above right most obelisk
     ],
     ground: [
         //{ x: 0, y: 0, width: 15, height: 1, type: 1 },
@@ -1251,6 +1253,7 @@ var level1_4 = {
         { x: 39, y: 34, width: 4, height: 1, type: 0 }, //middle floor plat
         { x: 30, y: 33, width: 3, height: 1, type: 0 }, //middle floor plat top left over spikes
         { x: 53, y: 34, width: 1, height: 1, type: 0 }, //middle floor plat top left over spikes
+        { x: 73, y: 42, width: 1, height: 1, type: 0 }, //above right most chest and obelisk
     ],
 
     obelisks: [
@@ -1293,6 +1296,7 @@ var level1_4 = {
         { x: 0, y: 9, width: 36 }, //bottom floor left
         { x: 48, y: 23, width: 22 }, //middle
         { x: 13, y: 45, width: 75 }, //top
+        {x: 1, y: 45, width: 10 }, //top floor left
     ],
 
     chains: [
