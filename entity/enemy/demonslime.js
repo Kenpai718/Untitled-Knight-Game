@@ -20,6 +20,7 @@ class DemonSlime extends AbstractEnemy {
         this.attackCooldown = 0;
         this.attackMaxCooldown = 2.5;
         this.attackFrame = 0;
+        this.stopBugFromHappening = false;
 
         this.loadAnimations();
         this.updateBoxes();
@@ -198,6 +199,7 @@ class DemonSlime extends AbstractEnemy {
                 this.hp = this.max_hp;
                 this.vulnerable = true;
                 this.canBeHit = true;
+                this.dead = false;
             } else if (this.animations[this.states.slimeDie2][this.direction].isDone()) {
                 this.state = this.states.demonSpawn;
             } else if (this.animations[this.states.slimeDie1][this.direction].isDone()) {
@@ -213,13 +215,13 @@ class DemonSlime extends AbstractEnemy {
                     this.phase = this.phases.legendary;
                     this.state = this.states.demonRebirth;
                     this.hp = this.max_hp / 2;
-                    this.attackMaxCooldown = 1;
+                    this.attackMaxCooldown = 1.3;
                 } else if (this.hp < (this.max_hp / 10) * 5) {
                     this.phase = this.phases.hard;
-                    this.attackMaxCooldown = 1.5;
+                    this.attackMaxCooldown = 1.7;
                 } else if (this.hp < (this.max_hp / 10) * 9) {
                     this.phase = this.phases.normal;
-                    this.attackMaxCooldown = 2;
+                    this.attackMaxCooldown = 2.2;
                 }
             } else if (this.phase == this.phases.legendary && this.animations[this.states.demonRebirth][this.direction].isDone()) {
                 this.state = this.states.demonIdle;
@@ -374,6 +376,7 @@ class DemonSlime extends AbstractEnemy {
                     this.velocity.x = 0;
                 }
             }
+            // handles demon shoot attack
             if (!this.event && this.state == this.states.demonShoot) {
                 this.loadEvent();
             } else if (this.event && this.event.finished) {
@@ -382,6 +385,12 @@ class DemonSlime extends AbstractEnemy {
             }
             // handles run away movement based on phase
             if (this.checkAnimationDone(this.currentAttack)) {
+                // fixes bug where first player attack doesn't do damage
+                if (!this.stopBugFromHappening) {
+                    this.stopBugFromHappening = true;
+                    this.vulnerable = true;
+                    this.canBeHit = true;
+                }
                 if (this.phase < this.phases.hard && this.canBeHit) { // run away after attack
                     this.state = this.states.demonMove;
                     this.direction = this.runAwayDirection;
@@ -410,7 +419,13 @@ class DemonSlime extends AbstractEnemy {
                 this.attackCooldown = 0;
                 this.canAttack = true;
                 this.runAway = false;
-                this.event = null;
+                this.vulnerable = true;
+                this.canBeHit = true;
+                this.stopBugFromHappening = false;
+                if (this.event) {
+                    this.event = null;
+                    this.hp -= 10;
+                }
                 this.resetAnimationTimers(this.currentAttack);
                 this.resetAnimationTimers(this.states.demonRebirth);
                 this.currentAttack = null;
@@ -420,7 +435,9 @@ class DemonSlime extends AbstractEnemy {
         if (!this.canBeHit) {
             this.damagedCooldown += TICK;
             // only set damaged if in slime phase, idle, or moving
-            if (this.state == this.states.demonIdle || this.state == this.states.demonMove || this.phase == this.phases.slime) this.state = this.phase == this.phases.slime ? this.states.slimeDamaged : this.states.demonDamaged;
+            if (this.state == this.states.demonIdle || this.state == this.states.demonMove || this.phase == this.phases.slime) {
+                this.state = this.phase == this.phases.slime ? this.states.slimeDamaged : this.states.demonDamaged;
+            }
             // once damaged animation is over, set animation to idle
             if ((this.checkAnimationDone(this.states.demonDamaged) || this.checkAnimationDone(this.states.slimeDamaged)) && !this.vulnerable) this.state = this.phase == this.phases.slime ? this.states.slimeIdle : this.states.demonIdle;
             // resets everything one the cooldown is over
@@ -429,8 +446,8 @@ class DemonSlime extends AbstractEnemy {
                 this.resetAnimationTimers(this.states.demonDamaged);
                 this.state = this.phase == this.phases.slime ? this.states.slimeIdle : this.states.demonIdle;
                 this.damagedCooldown = 0;
-                this.vulnerable = true;
                 this.canBeHit = true;
+                this.vulnerable = true;
             }
         }
     };
@@ -457,18 +474,18 @@ class DemonSlime extends AbstractEnemy {
         switch (this.state) {
             case this.states.demonShoot:
             case this.states.slimeMove:
-                damage = 3;
+                damage = 5;
                 break;
             case this.states.demonSpawn:
             case this.states.demonRebirth:
-                damage = 5;
+                damage = 7;
                 break;
             case this.states.demonSlash:
             case this.states.demonBreath:
-                damage = 10;
+                damage = 15;
                 break;
             case this.states.demonJump:
-                damage = 20;
+                damage = 30;
                 break;
         }
         return damage;
