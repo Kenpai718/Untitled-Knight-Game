@@ -37,8 +37,9 @@ class Chest extends AbstractInteractable {
         this.myOpacity = 100;
         this.openElapsed = 0;
         this.fadeOutTime = 1;
-        //possible diamond reward
-        this.max = 30;
+
+        //posible diamond reward
+        this.max = 20;
         this.min = 10;
 
 

@@ -191,13 +191,19 @@ class TrappedFloor extends AbstractBarrier {
 };
 
 class Ground extends AbstractBarrier {
-    constructor(game, x, y, w, h, type) {
+    constructor(game, x, y, w, h, left, right) {
         super(game, x, y, w, h, 16, 16);
-        this.type = type;
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
         // left is for left corner piece, middle is for middle piece, right is for right corner piece
         this.types = { left : 0, middle : 1, right : 2};
         // switch expression to get the source coordinates depending on the type
+        this.srcY = 16;
+        this.scale = PARAMS.BLOCKDIM;
+        this.updateBB();
+        this.loadImage(left, right);
+    };
+
+    switchType () {
         switch (this.type) {
             case this.types.left:
                 this.srcX = 16;
@@ -209,28 +215,43 @@ class Ground extends AbstractBarrier {
                 this.srcX = 48;
                 break;
         }
-        this.srcY = 16;
-        this.scale = PARAMS.BLOCKDIM;
-        this.updateBB();
-        this.loadImage();
-    };
+    }
 
-    loadImage() {
+    loadImage(left, right) {
         let sW = this.srcWidth;
         let sH = this.srcHeight;
+        this.type = this.types.middle;
+        this.switchType();
         for (var i = 0; i < this.w; i++) 
             this.ctx.drawImage(this.spritesheet, this.srcX, this.srcY, sW, sH, i * sW, 0, sW, sH);
+        if (left) {
+            this.type = this.types.left;
+            this.switchType();
+            this.ctx.drawImage(this.spritesheet, this.srcX, this.srcY, sW, sH, 0, 0, sW, sH);
+        }
+        if (right) {
+            this.type = this.types.right;
+            this.switchType();
+            this.ctx.drawImage(this.spritesheet, this.srcX, this.srcY, sW, sH, (this.w-1) * sW, 0, sW, sH);
+        }
     }
 
 };
 
 class Walls extends AbstractBarrier {
-    constructor(game, x, y, w, h, type) {
+    constructor(game, x, y, w, h, type, corner) {
         super(game, x, y, w, h, 16, 16);
         this.type = type;
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
         // left : middle left wall, leftCorner : bottom left corner wall, right : middle right wall, rightCorner : bottom right corner wall
         this.types = { left : 0, leftCorner : 1, right : 2, rightCorner : 3};
+        
+        this.scale = PARAMS.BLOCKDIM;
+        this.updateBB();
+        this.loadImage(corner);
+    };
+
+    switchType() {
         // switch expression to get the source coordinates depending on the type
         switch (this.type) {
             case this.types.left:
@@ -250,16 +271,19 @@ class Walls extends AbstractBarrier {
                 this.srcY = 48;
                 break;
         }
-        this.scale = PARAMS.BLOCKDIM;
-        this.updateBB();
-        this.loadImage();
-    };
+    }
 
-    loadImage() {
+    loadImage(corner) {
         let sW = this.srcWidth;
         let sH = this.srcHeight;
+        this.switchType();
         for (var i = 0; i < this.h; i++) 
             this.ctx.drawImage(this.spritesheet, this.srcX, this.srcY, sW, sH, 0, i * sH, sW, sH);
+        if (corner) {
+            this.type++;
+            this.switchType();
+            this.ctx.drawImage(this.spritesheet, this.srcX, this.srcY, sW, sH, 0, (this.h - 1) * sH, sW, sH);
+        }
     }
 };
 

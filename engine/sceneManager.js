@@ -355,7 +355,7 @@ class SceneManager {
              * use to test the shop!
              */
             if (this.currentLevel == 0) {
-                this.player.myInventory.diamonds = 999;
+                this.player.myInventory.diamonds = 9999;
             }
         }
 
@@ -935,7 +935,7 @@ class SceneManager {
         if (dict.ground) {
             for (var i = 0; i < dict.ground.length; i++) {
                 let ground = dict.ground[i];
-                let g = new Ground(this.game, ground.x, h - ground.y - 1, ground.width, 1, ground.type);
+                let g = new Ground(this.game, ground.x, h - ground.y - 1, ground.width, 1, ground.left, ground.right);
                 array.push(g);
             }
         }
@@ -960,7 +960,7 @@ class SceneManager {
         if (dict.walls) {
             for (var i = 0; i < dict.walls.length; i++) {
                 let walls = dict.walls[i];
-                array.push(new Walls(this.game, walls.x, h - walls.y - 1, 1, walls.height, walls.type));
+                array.push(new Walls(this.game, walls.x, h - walls.y - 1, 1, walls.height, walls.type, walls.corner));
             }
         }
         if (dict.blocks) {
@@ -1137,8 +1137,9 @@ class SceneManager {
      */
     positionEntity(entity, x, y) {
         entity.x = x * PARAMS.BLOCKDIM - entity.BB.left;
-        entity.y = y * PARAMS.BLOCKDIM - entity.BB.bottom;
+        entity.y = Math.ceil(y * PARAMS.BLOCKDIM - entity.BB.bottom);
         entity.updateBoxes();
+        entity.lastBB = entity.BB;
     }
 
     getLevelTimer() {
