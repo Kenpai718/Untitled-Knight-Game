@@ -447,7 +447,7 @@ var level1_1 = {
         },
 
         {
-            x: 100, y: 2,
+            x: 102, y: 2,
             title: "    Secrets!!!",
             text: [
                 "-You may find secrets in unexpected places!",
@@ -473,7 +473,11 @@ var level1_1 = {
     chests: [
         { x: 76, y: 7, direction: 0 },
         { x: 112, y: 10, direction: 0 },
-        { x: 104, y: 1, direction: 0 }
+
+        //secret room
+        { x: 102, y: 5, direction: 0 },
+        { x: 100, y: 1, direction: 0 },
+        { x: 104, y: 1, direction: 1 },
     ],
     ground: [
         { x: 0, y: 0, width: 15, height: 1, type: 1 },
@@ -497,6 +501,7 @@ var level1_1 = {
     platforms: [
         { x: 68, y: 4, width: 3, height: 1 },
         { x: 75, y: 6, width: 3, height: 1 },
+        { x: 101, y: 4, width: 3, height: 1, direction: 0 },
     ],
 
     bricks: [
