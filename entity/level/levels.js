@@ -1831,22 +1831,18 @@ var levelBoss1 = {
     player: { x: 40, y: 1 },
     music: MUSIC.BETWEEN_HEAVEN_AND_EARTH,
 
-    wizard: { x: 75, y: 2, left: 61, right: 102, top: 6, bottom: 1 },
     events: [
         {
             space: [
                 { x: 62, y: 20, width: 39, height: 20 }
             ],
             walls: [
-                { x: 60, y: 5, height: 5, type: 2 }, // temporary
-                { x: 102, y: 5, height: 5, type: 0 }, // temporary
-                { x: 103, y: 5, height: 5, type: 2 }, // temporary
-                { x: 59, y: 5, height: 5, type: 0 }, // temporary
+                { x: 60, y: 5, height: 5, type: 2 },
+                { x: 102, y: 5, height: 5, type: 0 }, 
+                { x: 103, y: 5, height: 5, type: 2 }, 
+                { x: 59, y: 5, height: 5, type: 0 },
             ],
-            shrooms: [
-                { x: 70, y: 1, guard: false },
-                { x: 60, y: 1, guard: false }
-            ]
+            wizard: { x: 75, y: 2, left: 61, right: 102, top: 6, bottom: 1 },
         }
     ],
     doors: [

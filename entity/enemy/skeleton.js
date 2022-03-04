@@ -56,6 +56,7 @@ class Skeleton extends AbstractEnemy {
         // Other
         this.loadAnimations();
         this.updateBoxes();
+        this.lastBB = this.BB;
     };
 
     updateHB() {
