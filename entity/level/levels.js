@@ -1099,7 +1099,7 @@ var level1_3 = {
     ],
     walls: [
         { x: 16, y: 40, height: 3, type: 0 }, //secret room cover
-        { x: 52, y: 25, width: 1, height: 1 }, //subtle hint to go left to find the treasure room
+        { x: 52, y: 25, height: 1, type: 2 }, //subtle hint to go left to find the treasure room
         { x: 57, y: 22, height: 8, type: 0 },
         { x: 53, y: 25, height: 8, type: 2 },
         { x: 70, y: 25, height: 12, type: 0 },
