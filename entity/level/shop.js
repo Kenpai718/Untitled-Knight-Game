@@ -35,15 +35,25 @@ class Shop {
         this.highlighted = false;
 
         // GUI icons and cost
+        // this.health = [];
+        // this.healthCost = [20, 40, 60, 80, "MAX"];
+        // this.attack = [];
+        // this.attackCost = [25, 50, 75, 100, "MAX"];
+        // this.arrow = [];
+        // this.arrowCost = [30, 60, 90, 120, "MAX"];
+        // this.arrowPackCost = [10, 10, 10, 10, 10];
+        // this.armor = [];
+        // this.armorCost = [60, 90, 120, "MAX"];
+        //economy inflation
         this.health = [];
-        this.healthCost = [20, 40, 60, 80, "MAX"];
+        this.healthCost = [25, 50, 75, 100, "MAX"];
         this.attack = [];
-        this.attackCost = [25, 50, 75, 100, "MAX"];
+        this.attackCost = [75, 125, 175, 225, "MAX"];
         this.arrow = [];
-        this.arrowCost = [30, 60, 90, 120, "MAX"];
+        this.arrowCost = [50, 100, 150, 210, "MAX"];
         this.arrowPackCost = [10, 10, 10, 10, 10];
         this.armor = [];
-        this.armorCost = [60, 90, 120, "MAX"];
+        this.armorCost = [75, 125, 200, "MAX"];
 
         // animations speeds
         this.seconds = 0;

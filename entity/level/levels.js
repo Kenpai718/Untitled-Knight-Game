@@ -97,8 +97,8 @@ var testLevel = {
         { x: 25, y: 14, height: 14, type: 2 }
     ],
     obelisks: [
-        { x: 4.5, y: 1, brickX: 15, brickY: 1, brickWidth: 1, brickHeight: 1, initial: true, repeat: true},
-        { x: 4.5, y: 1, brickX: 10, brickY: 12, brickWidth: 1, brickHeight: 5, initial: false, repeat: true}
+        { x: 4.5, y: 1, brickX: 15, brickY: 1, brickWidth: 1, brickHeight: 1, initial: true, repeat: true },
+        { x: 4.5, y: 1, brickX: 10, brickY: 12, brickWidth: 1, brickHeight: 5, initial: false, repeat: true }
     ],
     shrooms: [
         { x: 16, y: 1, guard: true }
@@ -352,7 +352,7 @@ var titleScene = {
  */
 var level1_1 = {
     ID: 1,
-    label: "1-1",
+    label: "1",
     width: 120, height: 15,
     player: { x: 2, y: 1 },
     music: MUSIC.FODLAN_WINDS,
@@ -447,7 +447,7 @@ var level1_1 = {
         },
 
         {
-            x: 100, y: 2,
+            x: 102, y: 2,
             title: "    Secrets!!!",
             text: [
                 "-You may find secrets in unexpected places!",
@@ -473,7 +473,11 @@ var level1_1 = {
     chests: [
         { x: 76, y: 7, direction: 0 },
         { x: 112, y: 10, direction: 0 },
-        { x: 104, y: 1, direction: 0 }
+
+        //secret room
+        { x: 102, y: 5, direction: 0 },
+        { x: 100, y: 1, direction: 0 },
+        { x: 104, y: 1, direction: 1 },
     ],
     ground: [
         { x: 0, y: 0, width: 15, height: 1, type: 1 },
@@ -497,6 +501,7 @@ var level1_1 = {
     platforms: [
         { x: 68, y: 4, width: 3, height: 1 },
         { x: 75, y: 6, width: 3, height: 1 },
+        { x: 101, y: 4, width: 3, height: 1, direction: 0 },
     ],
 
     bricks: [
@@ -574,7 +579,7 @@ var level1_1 = {
 
 var level1_2 = {
     ID: 2,
-    label: "1-2",
+    label: "2",
     width: 120, height: 36,
     player: { x: 1, y: 2 },
     music: MUSIC.CHASING_DAYBREAK,
@@ -872,7 +877,7 @@ var level1_2 = {
 
 var level1_3 = {
     ID: 3,
-    label: "1-3",
+    label: "3",
     width: 120, height: 42,
     player: { x: 1, y: 1 },
     music: MUSIC.BETWEEN_HEAVEN_AND_EARTH,
@@ -927,7 +932,8 @@ var level1_3 = {
     ],
     npcs: [
         { x: 51, y: 10 },
-        { x: 10, y: 16 }
+        { x: 10, y: 16 },
+        { x: 39, y: 35 },
 
     ],
 
@@ -959,7 +965,7 @@ var level1_3 = {
         { x: 100, y: 23, brickX: 105, brickY: 30, brickWidth: 11, brickHeight: 8 },
         { x: 17, y: 11, brickX: 19, brickY: 15, brickWidth: 6, brickHeight: 3 },
         { x: 50, y: 35.5, brickX: 42, brickY: 37, brickWidth: 1, brickHeight: 5 },
-        { x: 68, y: 22.5, brickX: 70, brickY: 30, brickWidth: 2, brickHeight: 18 },
+        { x: 68, y: 22.5, brickX: 70, brickY: 30, brickWidth: 2, brickHeight: 17 },
     ],
     shrooms: [
         { x: 107, y: 32, guard: false },
@@ -1076,6 +1082,7 @@ var level1_3 = {
         { x: 31, y: 23, width: 1, height: 1 },
         { x: 28, y: 27, width: 3, height: 1 },
         //obelisk to treasure room
+
         { x: 50, y: 34, width: 3, height: 1 },
         { x: 57, y: 35, width: 3, height: 1 },
         { x: 64, y: 35, width: 3, height: 1 }, //chest on top
@@ -1092,6 +1099,7 @@ var level1_3 = {
     ],
     walls: [
         { x: 16, y: 40, height: 3, type: 0 }, //secret room cover
+        { x: 52, y: 25, width: 1, height: 1 }, //subtle hint to go left to find the treasure room
         { x: 57, y: 22, height: 8, type: 0 },
         { x: 53, y: 25, height: 8, type: 2 },
         { x: 70, y: 25, height: 12, type: 0 },
@@ -1117,7 +1125,7 @@ var level1_3 = {
 
 var level1_4 = {
     ID: 4,
-    label: "1-4",
+    label: "4",
     width: 75, height: 50,
     player: { x: 3, y: 5 }, //regular spawn
     //player: { x: 65, y: 45 }, //top right spawn
@@ -1458,6 +1466,8 @@ var treasureroom = {
     player: { x: 40, y: 28 },
     music: MUSIC.SPLENDOUR,
 
+    npcs: [{ x: 37, y: 28 }],
+
     //quick access to all levels
     doors: [
 
@@ -1480,7 +1490,7 @@ var treasureroom = {
         { x: 64, y: 49, width: 5, height: 5 }, // Top Right
         { x: 1, y: 50, width: 19, height: 1 }, // Top Right
         { x: 1, y: 49, width: 4, height: 37 }, // Top Right // height!
-        
+
         { x: 1, y: 12, width: 78, height: 13 }, // Underground
     ],
     obelisks: [
@@ -1512,10 +1522,10 @@ var treasureroom = {
 
     trap: [
         //Center
-        { x: 20, y: 20, width: 9, height: 5, type: 4, percent: 0.1, rate: 50},
-        { x: 55, y: 20, width: 9, height: 5, type: 4, percent: 0.1, rate: 50},
-        { x: 1, y: 8, width: 6, height: 9, type: 4, percent: 0.2, rate: 500},
-        { x: 64, y: 38, width: 1, height: 1, type: 3, percent: 8, rate: 100},
+        { x: 20, y: 20, width: 9, height: 5, type: 4, percent: 0.1, rate: 50 },
+        { x: 55, y: 20, width: 9, height: 5, type: 4, percent: 0.1, rate: 50 },
+        { x: 1, y: 8, width: 6, height: 9, type: 4, percent: 0.2, rate: 500 },
+        { x: 64, y: 38, width: 1, height: 1, type: 3, percent: 8, rate: 100 },
     ],
 
     bricks: [
@@ -1524,7 +1534,7 @@ var treasureroom = {
         { x: 29, y: 20, width: 4, height: 8, type: 0 },
         //{ x: 48, y: 20, width: 4, height: 6, type: 0 },
         { x: 51, y: 24, width: 4, height: 10, type: 0 }, // Height Centers!
-        
+
         { x: 33, y: 24, width: 18, height: 1, type: 0 },
         { x: 33, y: 23, width: 3, height: 1, type: 0 },
         { x: 33, y: 22, width: 1, height: 1, type: 0 },
@@ -1563,11 +1573,11 @@ var treasureroom = {
 
         { x: 33, y: 13, width: 18, height: 10, type: 0 },
         { x: 29, y: 0, width: 51, height: 1, type: 0 }, // Bottom bottom floor
-        
+
         // tall
         { x: 55, y: 8, width: 3, height: 8, type: 0 },
         { x: 76, y: 8, width: 4, height: 8, type: 0 },
-        
+
         // med
         { x: 73, y: 3, width: 3, height: 3, type: 0 },
         { x: 58, y: 3, width: 3, height: 3, type: 0 },
@@ -1588,21 +1598,21 @@ var treasureroom = {
         { x: 68, y: 24, width: 1, height: 12, type: 0 },
         { x: 66, y: 21, width: 2, height: 9, type: 0 },
         { x: 64, y: 20, width: 2, height: 8, type: 0 },
-        
+
 
         { x: 20, y: 15, width: 9, height: 3, type: 1 }, // Spike floors
         { x: 55, y: 15, width: 9, height: 1, type: 1 },
         { x: 1, y: 0, width: 6, height: 1, type: 1 }, // Spike floor 
-        
-        
-        //Fall down spikes
-        { x: 1, y: 37, width: 2, height: 1, type: 1  },
-        { x: 3, y: 31, width: 2, height: 1, type: 1  },
-        { x: 1, y: 25, width: 3, height: 1, type: 1  },
-        { x: 2, y: 20, width: 3, height: 1, type: 1  },
 
-        { x: 1, y: 13, width: 1, height: 1, type: 1  },
-        { x: 4, y: 13, width: 1, height: 1, type: 1  },
+
+        //Fall down spikes
+        { x: 1, y: 37, width: 2, height: 1, type: 1 },
+        { x: 3, y: 31, width: 2, height: 1, type: 1 },
+        { x: 1, y: 25, width: 3, height: 1, type: 1 },
+        { x: 2, y: 20, width: 3, height: 1, type: 1 },
+
+        { x: 1, y: 13, width: 1, height: 1, type: 1 },
+        { x: 4, y: 13, width: 1, height: 1, type: 1 },
     ],
 
     spikes: [
@@ -1766,23 +1776,23 @@ var treasureroom = {
 
 
     columns: [
-        { x: 33, y: 48, height:23 },
-        { x: 34, y: 48, height:23 },
+        { x: 33, y: 48, height: 23 },
+        { x: 34, y: 48, height: 23 },
 
-        { x: 49, y: 48, height:23 },
-        { x: 50, y: 48, height:23 },
+        { x: 49, y: 48, height: 23 },
+        { x: 50, y: 48, height: 23 },
 
-        { x: 35, y: 22, height:5 },
-        { x: 48, y: 22, height:5 },
+        { x: 35, y: 22, height: 5 },
+        { x: 48, y: 22, height: 5 },
 
-        { x: 8, y: 12, height:4 },
-        { x: 27, y: 12, height:4 },
+        { x: 8, y: 12, height: 4 },
+        { x: 27, y: 12, height: 4 },
 
-        { x: 34, y: 3, height:3 },
-        { x: 35, y: 3, height:3 },
+        { x: 34, y: 3, height: 3 },
+        { x: 35, y: 3, height: 3 },
 
-        { x: 48, y: 3, height:3 },
-        { x: 49, y: 3, height:3 },
+        { x: 48, y: 3, height: 3 },
+        { x: 49, y: 3, height: 3 },
     ],
 
 
@@ -1805,7 +1815,7 @@ var treasureroom = {
                 { x: 75, y: 39, width: 4, height: 27 },
                 { x: 1, y: 12, width: 28, height: 4 }, // undergrounds
                 { x: 65, y: 39, width: 10, height: 2 },
-                { x: 29, y: 12, width: 50, height: 12 }, 
+                { x: 29, y: 12, width: 50, height: 12 },
                 //{ x: 33, y: 4, width: 16, height: 4 }, 
 
             ]
@@ -1838,8 +1848,8 @@ var levelBoss1 = {
             ],
             walls: [
                 { x: 60, y: 5, height: 5, type: 2 },
-                { x: 102, y: 5, height: 5, type: 0 }, 
-                { x: 103, y: 5, height: 5, type: 2 }, 
+                { x: 102, y: 5, height: 5, type: 0 },
+                { x: 103, y: 5, height: 5, type: 2 },
                 { x: 59, y: 5, height: 5, type: 0 },
             ],
             wizard: { x: 75, y: 2, left: 61, right: 102, top: 6, bottom: 1 },

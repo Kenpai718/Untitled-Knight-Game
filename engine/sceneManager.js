@@ -355,7 +355,7 @@ class SceneManager {
              * use to test the shop!
              */
             if (this.currentLevel == 0) {
-                this.player.myInventory.diamonds = 999;
+                this.player.myInventory.diamonds = 9999;
             }
         }
 
