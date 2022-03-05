@@ -942,6 +942,7 @@ class SceneManager {
                 interactable.removeFromWorld = false
             });
         }
+        //this.game.addEntity(new Slime(this.game, 100, 300, false));
         //this.game.addEntity(new DemonSlime(this.game, 100, 300, false));
         this.loadBackground(h, entities, this.level);
         let self = this;
@@ -1035,7 +1036,7 @@ class SceneManager {
                 let diamond = dict.diamonds[i];
                 let e = new Diamond(this.game, 0, 0, diamond.ammount);
                 e.x = diamond.x * PARAMS.BLOCKDIM - e.BB.left;
-                e.y = Math.ceil((h - diamond.y -1) * PARAMS.BLOCKDIM - e.BB.bottom);
+                e.y = Math.ceil((h - diamond.y - 1) * PARAMS.BLOCKDIM - e.BB.bottom);
                 array.push(e);
             }
         }
@@ -1063,6 +1064,15 @@ class SceneManager {
                 let skeleton = dict.skeletons[i];
                 let e = new Skeleton(this.game, 0, 0, skeleton.guard);
                 this.positionEntity(e, skeleton.x, h - skeleton.y);
+                array.push(e);
+            }
+        }
+        if (dict.slimes) {
+            for (var i = 0; i < dict.slimes.length; i++) {
+
+                let slime = dict.slimes[i];
+                let e = new Slime(this.game, 0, 0, slime.guard);
+                this.positionEntity(e, slime.x, h - slime.y);
                 array.push(e);
             }
         }
