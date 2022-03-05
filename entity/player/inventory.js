@@ -113,10 +113,10 @@ class Inventory {
 
         ctx.font = ctx.font.replace(/\d+px/, "14px");
         
-        this.attack[Math.floor(this.timer / .5) % 5].drawFrame(this.game.clockTick, ctx, 8, 200, 1);
+        this.attack[Math.floor(this.timer / .35) % 5].drawFrame(this.game.clockTick, ctx, 8, 200, 1);
         ctx.fillText("x(" + (this.attackUpgrade+1) + "/" + (this.maxUpgrade + 1) + ")", 8 + 55, 200 + 35);
 
-        this.arrow[this.arrowUpgrade].drawFrame(this.game.clockTick, ctx, 8, 250, 1.2);//1.7
+        this.arrow[this.arrowUpgrade].drawFrame(this.game.clockTick, ctx, 8, 250, 1.2);
         ctx.fillText("x(" + (this.arrowUpgrade+1) + "/" + (this.maxUpgrade + 1) + ")", 8 + 55, 250 + 30);
 
         this.armor[this.armorUpgrade].drawFrame(this.game.clockTick, ctx, 8, 300, .6);
