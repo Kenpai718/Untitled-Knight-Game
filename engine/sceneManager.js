@@ -584,9 +584,11 @@ class SceneManager {
                     ASSET_MANAGER.playAsset(SFX.SELECT);
                     PAUSED = false;
                     this.restart = true;
+                    // ensure the state of the level and player are from before the level start
                     this.levelStateTemp = this.levelState[this.currentLevel];
                     this.player.myCheckpoint = this.spawnCheckpoint;
                     this.loadLevel(this.currentLevel);
+                    this.player.myInventory.copyInventory(this.lastInventoryPerm);
                 } else if (this.returnMenuPauseBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     ASSET_MANAGER.playAsset(SFX.SELECT);
                     PAUSED = false;
@@ -1048,7 +1050,7 @@ class SceneManager {
             if (this.levelStateTemp)
                 state = this.levelStateTemp;
             else 
-            state = this.levelState[this.currentLevel];
+                state = this.levelState[this.currentLevel];
             this.game.enemies = this.saveEnemies(state.enemies);
             this.game.enemies.forEach(enemy => enemy.removeFromWorld = false);
             this.game.events = this.saveEvents(state.events);
@@ -1086,17 +1088,22 @@ class SceneManager {
                 }
                 interactable.removeFromWorld = false
             });
+            this.killCount = state.killCount;
         }
         //this.game.addEntity(new Slime(this.game, 100, 300, false));
         //this.game.addEntity(new DemonSlime(this.game, 100, 300, false));
         this.loadBackground(h, entities, this.level);
         let self = this;
         entities.forEach(entity => self.game.addEntity(entity));
+        // saves level state upon loading or reloading level
         if (!this.title && !this.usingLevelSelect && !this.restart) {
             this.saveLevelStateCheckpoint();
             this.savePlayerInfo();
-            if (!bool) {
+            if (!bool) { // save level upon loading, but not reloading. This is meant for restart.
+                //this.levelState[this.currentLevel] = this.levelStateTemp;
                 this.saveLevelState();
+                this.lastInventoryPerm = new Inventory(this.game);
+                this.lastInventoryPerm.copyInventory(this.lastInventory);
                 this.spawnCheckpoint = {x: spawnX * PARAMS.BLOCKDIM, y: (h - spawnY) * PARAMS.BLOCKDIM};
             }
         }
@@ -1729,3 +1736,9 @@ class Minimap {
 
     };
 };
+
+class Something {
+    constructor(game) {
+        this.game = game;
+    }
+}
