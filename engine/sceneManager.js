@@ -188,16 +188,28 @@ class SceneManager {
         this.game.shoot = false;
 
         //reset the checkpoint upon entering a new level
-        if (this.lastLevel != this.currentLevel && this.player != null) this.player.myCheckpoint = null;
+        if (this.lastLevel != this.currentLevel && this.player != null) this.player.myCheckpoint = {x: spawnX, y: theY * PARAMS.BLOCKDIM};
+        if (this.usingLevelSelect) {
+            this.player.removeFromWorld = true;
+            this.lastPlayer.removeFromWorld = true;
+            this.lastPlayer = null;
+            this.player = null;
+        }
         //make player if the last player hasnt been made yet
         this.player = this.lastPlayer ? this.lastPlayer : new Knight(this.game, 0, 0);
         //reset last player to default settings
         if (this.lastPlayer) {
-            this.player.resetToDefault();
+            this.player.resetToDefault();   
         }
+        if (this.player.myCheckpoint) {
+            this.player.x = this.player.myCheckpoint.x - this.player.BB.left;
+            this.player.y = this.player.myCheckpoint.y - this.player.BB.bottom;
+        }
+        else {
         //reposition the player
-        this.player.x = theX * PARAMS.BLOCKDIM - this.player.BB.left;
-        this.player.y = Math.ceil(theY * PARAMS.BLOCKDIM - this.player.BB.bottom);
+            this.player.x = spawnX - this.player.BB.left;
+            this.player.y = Math.ceil(spawnY - this.player.BB.bottom);
+        }
         //set gui elements based on player
         this.inventory = this.player.myInventory;
         this.heartsbar = new HeartBar(this.game, this.player);
@@ -249,10 +261,10 @@ class SceneManager {
     /**
      * Loads a valid level
      * Throws an error if that level has not been made yet
-     * @param {*} number level number found in levels array
-     * @param {*} usedDoor true/false if a door was used to load the leel
-     * @param {*} doorExitX x spawn location if a door was used
-     * @param {*} doorExitY y spawn location if a door was used
+     * @param {number} number level number found in levels array
+     * @param {boolean} usedDoor true/false if a door was used to load the leel
+     * @param {number} doorExitX x spawn location if a door was used
+     * @param {number} doorExitY y spawn location if a door was used
      */
     loadLevel(number, usedDoor, doorExitX, doorExitY) {
         // save the state of the enemies and interactables for the current level
@@ -268,8 +280,9 @@ class SceneManager {
                 this.player.dead = false;
             }
             this.title = false;
-            this.restart = false;
             this.transition = false;
+            this.usingLevelSelect = false;
+            this.restart = false;
         }
         this.clearEntities();
         if (number < 0 || number > this.levels.length - 1) {
@@ -288,11 +301,127 @@ class SceneManager {
         }
     }
 
+    /**
+     * saves the state of the level
+     */
     saveLevelState() {
         this.levelState[this.currentLevel] = {
-            enemies: [...this.game.enemies], interactables: [...this.game.interactables],
-            events: [...this.game.events], killCount: this.killCount
+            enemies: this.saveEnemies(this.game.enemies), interactables: this.saveInteractables(this.game.interactables),
+            events: this.saveEvents(this.game.events), killCount: this.killCount
         };
+    }
+
+    /**
+     * saves a temporary state of the level
+     */
+    saveLevelStateCheckpoint() {
+        this.levelStateTemp = {
+            enemies: this.saveEnemies(this.game.enemies), interactables: this.saveInteractables(this.game.interactables),
+            events: this.saveEvents(this.game.events), killCount: this.killCount
+        };
+    }
+
+    /**
+     * Creates a deep copy of all enemies in an array of enemies
+     * @param {[]} array array of enemies
+     * @returns a list of all saved enemies
+     */
+    saveEnemies(array) {
+        let enemies = [];
+        let self = this;
+        array.forEach(function (enemy) {
+            var newEnem = null;
+            if (enemy instanceof Mushroom) 
+                newEnem = new Mushroom(self.game, 0, 0, false);
+            else if (enemy instanceof Skeleton)
+                newEnem = new Skeleton(self.game, 0, 0, false);
+            else if (enemy instanceof Goblin)
+                newEnem = new Goblin(self.game, 0, 0, false);
+            else if (enemy instanceof FlyingEye)
+                newEnem = new FlyingEye(self.game, 0, 0, false);
+            else if (enemy instanceof Slime)
+                newEnem = new Slime(self.game, 0, 0, false);
+            else if (enemy instanceof DemonSlime)
+                newEnem = new DemonSlime(self.game, 0, 0, false);
+            else if (enemy instanceof Wizard)
+                newEnem = new Wizard(self.game, 0, 0, false);
+            if (newEnem) {
+                newEnem.x = enemy.x;
+                newEnem.y = enemy.y;
+                newEnem.max_hp = enemy.max_hp;
+                newEnem.hp = enemy.hp;
+                if (enemy.direction)
+                    newEnem.direction = enemy.direction;
+                enemies.push(newEnem);
+            }
+            else
+                throw new Error("Enemy type not accounted for: " + enemy.constructor.name);
+        });
+        return enemies;
+    }
+
+    /**
+     * Creates a deep copy of all interatables in an array of interatables
+     * @param {[]} array array of interatables
+     * @returns a list of all saved interatables
+     */
+    saveInteractables(array) {
+        let interactables = [];
+        let self = this;
+        array.forEach(function (interactable) {
+            var newIntr = null;
+            if (interactable instanceof Sign) {
+                newIntr = interactable;
+            }
+            if (interactable instanceof Obelisk) {
+                newIntr = new Obelisk(self.game, 0, 0);
+            }
+            if (interactable instanceof Chest) {
+                newIntr = new Chest(self.game, 0, 0);
+            }
+            if (interactable instanceof Door) {
+                newIntr = new Door(self.game, 0, 0, 0, {x:0, y:0, levelNum: 1});
+            }
+            if (interactable instanceof Diamond) {
+                newIntr = new Diamond(self.game, 0, 0);
+            }
+            if (newIntr) {
+                for (var i in interactable) {
+                    newIntr[i] = interactable[i];
+                }
+                interactables.push(newIntr);
+            }
+            else {
+                throw new Error("Interactable type not accounted for: " + interactable.constructor.name);
+            }
+
+        });
+        return interactables;
+    }
+
+    /**
+     * Creates a deep copy of all events in an array of events
+     * @param {[]} array array of events
+     * @returns a list of all saved events
+     */
+    saveEvents(array) {
+        let events = [];
+        let self = this;
+        array.forEach(function(event) {
+            var newEvent = new Event(self.game, [], [], []);
+            if (event instanceof Secret) {
+                var newEvent = new Secret(self.game, []);
+            }
+            for(var i in event) {
+                newEvent[i] = event[i];
+                if (event[i]  && event[i] == event.entities) {
+                    newEvent[i] = self.saveEnemies(event.entities);
+                }
+            }
+
+            events.push(newEvent);
+        })
+        return events;
     }
 
 
@@ -454,10 +583,15 @@ class SceneManager {
                 } else if (this.restartPauseBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     ASSET_MANAGER.playAsset(SFX.SELECT);
                     PAUSED = false;
+                    this.restart = true;
+                    this.levelStateTemp = this.levelState[this.currentLevel];
+                    this.player.myCheckpoint = this.spawnCheckpoint;
                     this.loadLevel(this.currentLevel);
                 } else if (this.returnMenuPauseBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     ASSET_MANAGER.playAsset(SFX.SELECT);
                     PAUSED = false;
+                    this.spawnCheckpoint = null;
+                    this.game.myReportCard.reset();
                     this.returnToMenu();
                 }
                 this.game.click = null;
@@ -516,12 +650,16 @@ class SceneManager {
         this.loadTitle();
     }
 
+    /**
+     * restart all necessary data about a level
+     */
     restartLevel() {
         this.currentLevel = 1;
         this.levelTimer = 0;
         this.levelState = [];
         this.lastPlayer = null;
         this.game.attack = false;
+        this.spawnCheckpoint = null;
         this.loadLevel(this.currentLevel, false);
         this.game.myReportCard.reset();
     }
@@ -838,9 +976,8 @@ class SceneManager {
         if (scene.height === undefined) throw ("Level must have a level height in terms of blockdim. EX: 1 = 82 pixels");
         if (scene.player === undefined) throw ("Level must have a player with x and y cordinates.");
 
-
-
         //initialize scene and player
+        let bool = this.level == scene;
         this.level = scene;
         this.levelH = scene.height;
         this.levelW = scene.width;
@@ -907,9 +1044,14 @@ class SceneManager {
                 }
             }
         } else { // load the enemies and interactables from their previous state
-            this.game.enemies = [...this.levelState[this.currentLevel].enemies];
+            let state = null;
+            if (this.levelStateTemp)
+                state = this.levelStateTemp;
+            else 
+            state = this.levelState[this.currentLevel];
+            this.game.enemies = this.saveEnemies(state.enemies);
             this.game.enemies.forEach(enemy => enemy.removeFromWorld = false);
-            this.game.events = [...this.levelState[this.currentLevel].events];
+            this.game.events = this.saveEvents(state.events);
             var that = this;
             this.game.events.forEach(events => {
                 if (!events.finished) {
@@ -926,11 +1068,10 @@ class SceneManager {
                     events.removeFromWorld = false;
                     events.activated = false;
                     events.active = false;
-                    that.game.addEntity(events);
+                    //that.game.addEntity(events);
                 }
             });
-            this.game.interactables = [...this.levelState[this.currentLevel].interactables];
-            var that = this;
+            this.game.interactables = this.saveInteractables(state.interactables);
             this.game.interactables.forEach(interactable => {
                 // if obelisk, add associated blocks as well
                 if (interactable instanceof Obelisk) {
@@ -938,6 +1079,10 @@ class SceneManager {
                     that.game.addEntity(interactable.bricks);
                 } else if (interactable instanceof Door) {
                     that.killsRequired = Math.max(interactable.killQuota, that.killsRequired);
+                }
+                if (interactable instanceof Sign) {
+                    that.game.addEntityToFront(interactable.myTextBox);
+                    interactable.myTextBox.removeFromWorld = false;
                 }
                 interactable.removeFromWorld = false
             });
@@ -947,6 +1092,14 @@ class SceneManager {
         this.loadBackground(h, entities, this.level);
         let self = this;
         entities.forEach(entity => self.game.addEntity(entity));
+        if (!this.title && !this.usingLevelSelect && !this.restart) {
+            this.saveLevelStateCheckpoint();
+            this.savePlayerInfo();
+            if (!bool) {
+                this.saveLevelState();
+                this.spawnCheckpoint = {x: spawnX * PARAMS.BLOCKDIM, y: (h - spawnY) * PARAMS.BLOCKDIM};
+            }
+        }
     }
 
     loadEnvironment(h, array, dict) {
@@ -991,13 +1144,6 @@ class SceneManager {
     }
 
     loadStaticEntities(h, array, dict) {
-        if (dict.signs) {
-            for (var i = 0; i < dict.signs.length; i++) {
-                let sign = dict.signs[i];
-                array.push(new Sign(this.game, sign.x, h - sign.y, sign.text, sign.title));
-            }
-        }
-
         //npc
         if (dict.npcs) {
             for (var i = 0; i < dict.npcs.length; i++) {
@@ -1010,6 +1156,12 @@ class SceneManager {
     }
 
     loadDynamicEntities(h, array, dict) {
+        if (dict.signs) {
+            for (var i = 0; i < dict.signs.length; i++) {
+                let sign = dict.signs[i];
+                array.push(new Sign(this.game, sign.x, h - sign.y, sign.text, sign.title));
+            }
+        }
         if (dict.chests) {
             for (var i = 0; i < dict.chests.length; i++) {
                 let chest = dict.chests[i];
@@ -1040,6 +1192,7 @@ class SceneManager {
                 array.push(e);
             }
         }
+        
     }
 
     loadEnemies(h, array, dict) {
