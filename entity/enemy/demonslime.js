@@ -227,7 +227,7 @@ class DemonSlime extends AbstractBoss {
             }
         } else {
             if (this.phase != this.phases.slime && this.phase != this.phases.legendary) { // determine phase by health
-                if (this.hp < (this.max_hp / 1) * 1) { //at 25% hp it transforms
+                if (this.hp < (this.max_hp / 7.5) * 1) { //at 25% hp it transforms
                     this.phase = this.phases.legendary;
                     this.state = this.states.demonRebirth;
                     this.attackMaxCooldown = 1.3;
