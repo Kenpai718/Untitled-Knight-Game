@@ -56,13 +56,8 @@ class Shop {
         this.armorCost = [75, 125, 200, "MAX"];
 
         // animations speeds
-        this.seconds = 0;
-        this.secondsx2 = 0;
-        this.secondsx8 = 0;
-        this.temp = 0;
-        this.tempx2 = 0;
-        this.tempx8 = 0;
-
+        this.timer = 0;
+        
         this.purchases = {
             arrow_pack: ["You got 10 more arrows!"],
             potion: ["You got a... health potion...?", "Wizard: ... :)"],
@@ -105,21 +100,9 @@ class Shop {
             }
         }
 
-        this.temp += this.game.clockTick * 1;
-        this.tempx2 += this.game.clockTick * 2;
-        this.tempx8 += this.game.clockTick * 8;
-        if (this.temp > 1) {
-            this.temp--;
-            this.seconds += 1;
-        }
-        if (this.tempx2 > 1) {
-            this.tempx2--;
-            this.secondsx2 += 1;
-        }
-        if (this.tempx8 > 1) {
-            this.tempx8--;
-            this.secondsx8 += 1;
-        }
+        this.timer += this.game.clockTick * 1;
+
+
 
 
         // Purchasing (clicked button in shop) 
@@ -429,10 +412,11 @@ class Shop {
         this.arrow[2] = new Animator(this.arrow_sprite, 86, 46, 43, 34, 1, 0, 0, false, false, false);
         this.arrow[3] = new Animator(this.arrow_sprite, 130, 46, 43, 34, 1, 0, 0, false, false, false);
 
-        this.attack[0] = new Animator(this.attack_sprite, 45, 0, 45, 45, 1, 0, 0, false, false, false);
-        this.attack[1] = new Animator(this.attack_sprite, 90, 0, 45, 45, 1, 0, 0, false, false, false);
-        this.attack[2] = new Animator(this.attack_sprite, 135, 0, 45, 45, 1, 0, 0, false, false, false);
-        this.attack[3] = new Animator(this.attack_sprite, 180, 0, 45, 45, 1, 0, 0, false, false, false);
+        this.attack[0] = new Animator(this.attack_sprite, 0, 0, 45, 45, 1, 0, 0, false, false, false);
+        this.attack[1] = new Animator(this.attack_sprite, 45, 0, 45, 45, 1, 0, 0, false, false, false);
+        this.attack[2] = new Animator(this.attack_sprite, 90, 0, 45, 45, 1, 0, 0, false, false, false);
+        this.attack[3] = new Animator(this.attack_sprite, 135, 0, 45, 45, 1, 0, 0, false, false, false);
+        this.attack[4] = new Animator(this.attack_sprite, 180, 0, 45, 45, 1, 0, 0, false, false, false);
 
         this.button[0] = new Animator(this.interactables, 0, 0, 330, 130, 1, 0, 0, false, false, false);
         this.button[1] = new Animator(this.interactables, 0, 130, 330, 130, 1, 0, 0, false, false, false);
@@ -460,8 +444,8 @@ class Shop {
 
     draw(ctx) {
 
-        let tempFont = ctx.font;
-        let tempFill = ctx.fillStyle;
+        let timerFont = ctx.font;
+        let timerFill = ctx.fillStyle;
 
         // Shop Border and lines
         ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
@@ -506,10 +490,10 @@ class Shop {
 
 
         // Item Animations
-        this.health[this.secondsx2 % 5].drawFrame(this.game.clockTick, ctx, this.x + 5 + 8, this.y + this.height / 7 * 3.55, 1.7);
-        this.attack[this.secondsx2 % 4].drawFrame(this.game.clockTick, ctx, this.x + 5 + 10, this.y + this.height / 7 * 4.3, 1.6);
-        this.arrow[this.seconds % 4].drawFrame(this.game.clockTick, ctx, this.x + 5 + 10, this.y + this.height / 7 * 5.4, 1.8);
-        this.armor[this.seconds % 4].drawFrame(this.game.clockTick, ctx, this.x + 5, this.y + this.height / 7 * 6.45, 1);
+        this.health[Math.floor(this.timer / .5) % 5].drawFrame(this.game.clockTick, ctx, this.x + 5 + 8, this.y + this.height / 7 * 3.55, 1.7);
+        this.attack[Math.floor(this.timer / .35) % 5].drawFrame(this.game.clockTick, ctx, this.x + 5 + 10, this.y + this.height / 7 * 4.3, 1.6);
+        this.arrow[Math.floor(this.timer / 1) % 4].drawFrame(this.game.clockTick, ctx, this.x + 5 + 10, this.y + this.height / 7 * 5.4, 1.8);
+        this.armor[Math.floor(this.timer / 1) % 4].drawFrame(this.game.clockTick, ctx, this.x + 5, this.y + this.height / 7 * 6.45, 1);
 
         if (this.maxed) {
             this.distract.drawFrame(this.game.clockTick, ctx, 1220, 161, 1);
@@ -521,8 +505,8 @@ class Shop {
         this.manageExitButton(ctx);
 
 
-        ctx.fillStyle = tempFill;
-        ctx.font = tempFont;
+        ctx.fillStyle = timerFill;
+        ctx.font = timerFont;
 
         this.myTextBox.draw(ctx);
     };
@@ -541,7 +525,7 @@ class Shop {
             ctx.fillRect(this.x + this.width /6 * 5 - 20, this.y + this.height / 7 * 3.23 + 5, 330 * this.buttonscale - 10, 130 * this.buttonscale - 5);d
         */
 
-        let tempFill = ctx.fillStyle;
+        let timerFill = ctx.fillStyle;
         ctx.fillStyle = "white";
 
 
@@ -564,13 +548,13 @@ class Shop {
             ctx.fillRect(this.ButtonBB6.x, this.ButtonBB6.y, this.ButtonBB1.width, this.ButtonBB1.height); // Armor Upgrade
         }
 
-        ctx.fillStyle = tempFill;
+        ctx.fillStyle = timerFill;
 
     };
 
     manageExitButton(ctx) {
 
-        let tempFill = ctx.fillStyle;
+        let timerFill = ctx.fillStyle;
         ctx.fillStyle = this.exitButtonColor;
         ctx.fillRect(this.x + this.width - 60, this.y + 20, 40, 40);
         ctx.fillStyle = "white";
@@ -581,7 +565,7 @@ class Shop {
         ctx.fillRect(this.x + this.width - 60, this.y + 20 + 35, 5, 5);
         ctx.fillRect(this.x + this.width - 60 + 35, this.y + 20 + 35, 5, 5);
 
-        ctx.fillStyle = tempFill;
+        ctx.fillStyle = timerFill;
     };
 
     manageProgress(ctx) {
@@ -602,7 +586,7 @@ class Shop {
 
     manageButtons(ctx) {
 
-        let tempFilter = ctx.filter;
+        let timerFilter = ctx.filter;
 
         // determine if player is able to purchase an item
         let self = this;
@@ -635,38 +619,38 @@ class Shop {
         if (!item1) {
             ctx.filter = "grayscale(1)";
         }
-        this.button[this.secondsx8 % 6].drawFrame(this.game.clockTick, ctx, this.ButtonBB1.x, this.ButtonBB1.y, this.buttonscale);
-        ctx.filter = tempFilter;
+        this.button[Math.floor(this.timer / .125) % 6].drawFrame(this.game.clockTick, ctx, this.ButtonBB1.x, this.ButtonBB1.y, this.buttonscale);
+        ctx.filter = timerFilter;
 
         if (!item2) {
             ctx.filter = "grayscale(1)";
         }
-        this.button[this.secondsx8 % 6].drawFrame(this.game.clockTick, ctx, this.ButtonBB2.x, this.ButtonBB2.y, this.buttonscale);
-        ctx.filter = tempFilter;
+        this.button[Math.floor(this.timer / .125) % 6].drawFrame(this.game.clockTick, ctx, this.ButtonBB2.x, this.ButtonBB2.y, this.buttonscale);
+        ctx.filter = timerFilter;
 
         if (!item3) {
             ctx.filter = "grayscale(1)";
         }
-        this.button[this.secondsx8 % 6].drawFrame(this.game.clockTick, ctx, this.ButtonBB3.x, this.ButtonBB3.y, this.buttonscale);
-        ctx.filter = tempFilter;
+        this.button[Math.floor(this.timer / .125) % 6].drawFrame(this.game.clockTick, ctx, this.ButtonBB3.x, this.ButtonBB3.y, this.buttonscale);
+        ctx.filter = timerFilter;
 
         if (!item4) {
             ctx.filter = "grayscale(1)";
         }
-        this.button[this.secondsx8 % 6].drawFrame(this.game.clockTick, ctx, this.ButtonBB4.x, this.ButtonBB4.y, this.buttonscale);
-        ctx.filter = tempFilter;
+        this.button[Math.floor(this.timer / .125) % 6].drawFrame(this.game.clockTick, ctx, this.ButtonBB4.x, this.ButtonBB4.y, this.buttonscale);
+        ctx.filter = timerFilter;
 
         if (!item5) {
             ctx.filter = "grayscale(1)";
         }
-        this.button[this.secondsx8 % 6].drawFrame(this.game.clockTick, ctx, this.ButtonBB5.x, this.ButtonBB5.y, this.buttonscale);
-        ctx.filter = tempFilter;
+        this.button[Math.floor(this.timer / .125) % 6].drawFrame(this.game.clockTick, ctx, this.ButtonBB5.x, this.ButtonBB5.y, this.buttonscale);
+        ctx.filter = timerFilter;
 
         if (!item6) {
             ctx.filter = "grayscale(1)";
         }
-        this.button[this.secondsx8 % 6].drawFrame(this.game.clockTick, ctx, this.ButtonBB6.x, this.ButtonBB6.y, this.buttonscale);
-        ctx.filter = tempFilter;
+        this.button[Math.floor(this.timer / .125) % 6].drawFrame(this.game.clockTick, ctx, this.ButtonBB6.x, this.ButtonBB6.y, this.buttonscale);
+        ctx.filter = timerFilter;
 
 
         // buttton purchasing cost text
@@ -689,38 +673,38 @@ class Shop {
         if (!item1) {
             ctx.filter = "grayscale(1)";
         }
-        this.diamond[this.secondsx8 % 6].drawFrame(this.game.clockTick, ctx, this.x + this.width / 6 * 5 - 19, this.y + this.height / 7 * 1.39 + this.customPurchaseHeight, 3.4);
-        ctx.filter = tempFilter;
+        this.diamond[Math.floor(this.timer / .125) % 6].drawFrame(this.game.clockTick, ctx, this.x + this.width / 6 * 5 - 19, this.y + this.height / 7 * 1.39 + this.customPurchaseHeight, 3.4);
+        ctx.filter = timerFilter;
 
         if (!item2) {
             ctx.filter = "grayscale(1)";
         }
-        this.diamond[this.secondsx8 % 6].drawFrame(this.game.clockTick, ctx, this.x + this.width / 6 * 5 - 19, this.y + this.height / 7 * 2.39 + this.customPurchaseHeight, 3.4);
-        ctx.filter = tempFilter;
+        this.diamond[Math.floor(this.timer / .125) % 6].drawFrame(this.game.clockTick, ctx, this.x + this.width / 6 * 5 - 19, this.y + this.height / 7 * 2.39 + this.customPurchaseHeight, 3.4);
+        ctx.filter = timerFilter;
 
         if (!item3) {
             ctx.filter = "grayscale(1)";
         }
-        this.diamond[this.secondsx8 % 6].drawFrame(this.game.clockTick, ctx, this.x + this.width / 6 * 5 - 19, this.y + this.height / 7 * 3.39 + this.customPurchaseHeight, 3.4);
-        ctx.filter = tempFilter;
+        this.diamond[Math.floor(this.timer / .125) % 6].drawFrame(this.game.clockTick, ctx, this.x + this.width / 6 * 5 - 19, this.y + this.height / 7 * 3.39 + this.customPurchaseHeight, 3.4);
+        ctx.filter = timerFilter;
 
         if (!item4) {
             ctx.filter = "grayscale(1)";
         }
-        this.diamond[this.secondsx8 % 6].drawFrame(this.game.clockTick, ctx, this.x + this.width / 6 * 5 - 19, this.y + this.height / 7 * 4.39 + this.customPurchaseHeight, 3.4);
-        ctx.filter = tempFilter;
+        this.diamond[Math.floor(this.timer / .125) % 6].drawFrame(this.game.clockTick, ctx, this.x + this.width / 6 * 5 - 19, this.y + this.height / 7 * 4.39 + this.customPurchaseHeight, 3.4);
+        ctx.filter = timerFilter;
 
         if (!item5) {
             ctx.filter = "grayscale(1)";
         }
-        this.diamond[this.secondsx8 % 6].drawFrame(this.game.clockTick, ctx, this.x + this.width / 6 * 5 - 19, this.y + this.height / 7 * 5.39 + this.customPurchaseHeight, 3.4);
-        ctx.filter = tempFilter;
+        this.diamond[Math.floor(this.timer / .125) % 6].drawFrame(this.game.clockTick, ctx, this.x + this.width / 6 * 5 - 19, this.y + this.height / 7 * 5.39 + this.customPurchaseHeight, 3.4);
+        ctx.filter = timerFilter;
 
         if (!item6) {
             ctx.filter = "grayscale(1)";
         }
-        this.diamond[this.secondsx8 % 6].drawFrame(this.game.clockTick, ctx, this.x + this.width / 6 * 5 - 19, this.y + this.height / 7 * 6.39 + this.customPurchaseHeight, 3.4);
-        ctx.filter = tempFilter;
+        this.diamond[Math.floor(this.timer / .125) % 6].drawFrame(this.game.clockTick, ctx, this.x + this.width / 6 * 5 - 19, this.y + this.height / 7 * 6.39 + this.customPurchaseHeight, 3.4);
+        ctx.filter = timerFilter;
 
     };
 
@@ -737,7 +721,7 @@ class Shop {
     };
 
     drawDebug(ctx) {
-        let tempStyle = ctx.strokeStyle;
+        let timerStyle = ctx.strokeStyle;
         ctx.strokeStyle = "Red";
         ctx.strokeRect(this.ButtonBB1.x, this.ButtonBB1.y, this.ButtonBB1.width, this.ButtonBB1.height);
         ctx.strokeRect(this.ButtonBB2.x, this.ButtonBB2.y, this.ButtonBB2.width, this.ButtonBB2.height);
@@ -751,6 +735,6 @@ class Shop {
         ctx.strokeStyle = "White";
         ctx.strokeRect(this.ExitBB.x, this.ExitBB.y, this.ExitBB.width, this.ExitBB.height);
 
-        ctx.strokeStyle = tempStyle;
+        ctx.strokeStyle = timerStyle;
     };
 };
