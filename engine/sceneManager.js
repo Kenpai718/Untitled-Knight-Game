@@ -910,13 +910,31 @@ class SceneManager {
             this.game.enemies = [...this.levelState[this.currentLevel].enemies];
             this.game.enemies.forEach(enemy => enemy.removeFromWorld = false);
             this.game.events = [...this.levelState[this.currentLevel].events];
-            this.game.events.forEach(events => events.removeFromWorld = false);
+            var that = this;
+            this.game.events.forEach(events => {
+                if (!events.finished) {
+                    if (events.blocks) {
+                        events.blocks.forEach(block => {
+                            block.removeFromWorld = false;
+                        });
+                    }
+                    if (events.entities) {
+                        events.entities.forEach(entity => {
+                            entity.removeFromWorld = false;
+                        });
+                    }
+                    events.removeFromWorld = false;
+                    events.activated = false;
+                    events.active = false;
+                    that.game.addEntity(events);
+                }
+            });
             this.game.interactables = [...this.levelState[this.currentLevel].interactables];
             var that = this;
             this.game.interactables.forEach(interactable => {
                 // if obelisk, add associated blocks as well
                 if (interactable instanceof Obelisk) {
-                    interactable.bricks.removeFromWorld = false;
+                    interactable.bricks.removeFromWorld = interactable.lastBrickState;
                     that.game.addEntity(interactable.bricks);
                 } else if (interactable instanceof Door) {
                     that.killsRequired = Math.max(interactable.killQuota, that.killsRequired);

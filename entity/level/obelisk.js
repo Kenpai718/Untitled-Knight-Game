@@ -3,9 +3,9 @@
 class Obelisk extends AbstractInteractable {
     constructor(game, x, y, brickX, brickY, brickWidth, brickHeight, initial = true, repeat = false) {
         super(game, x, y);
-        
+
         this.initial = initial; // defaults bricks to appear or be hidden
-        this.repeat = repeat; // Allows for the Obelisk to spawn / despawn blocks more than once 
+        this.repeat = repeat; // Allows for the Obelisk to spawn / despawn blocks more than once
         this.bricks = new Brick(this.game, brickX, this.game.camera.level.height - brickY - 1, brickWidth, brickHeight);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/Obelisk_full.png");
         this.states = { idle: 0, notIdle: 1 };
@@ -15,12 +15,17 @@ class Obelisk extends AbstractInteractable {
         this.x *= PARAMS.BLOCKDIM;
         this.y *= PARAMS.BLOCKDIM;
         this.playSound = false;
-
-        if(this.initial) this.game.addEntity(this.bricks);
-        
+        this.game.addEntity(this.bricks);
+        if (this.initial) {
+            this.lastBrickState = false;
+        } else {
+            this.lastBrickState = true;
+            this.bricks.removeFromWorld = true;
+        }
         this.timer = 0;
         this.settimer = false;
 
+        this.active = this.initial;
         this.playOnce = false;
 
         this.loadAnimations();
@@ -60,19 +65,18 @@ class Obelisk extends AbstractInteractable {
                     }
                 }
             });
-        } else if ( this.timer > 0.13*14 && this.initial){ // this.animations[this.states.notIdle].isDone()
+        } else if (this.animations[this.states.notIdle].isDone() && this.initial){ // this.animations[this.states.notIdle].isDone()
             this.switchstate();
-
             this.bricks.removeFromWorld = true;
-
-        } else if( this.timer > 0.13*14 && !this.initial){
+            this.lastBrickState = true;
+            this.animations[this.states.notIdle].elapsedTime = 0;
+        } else if (this.animations[this.states.notIdle].isDone() && !this.initial){
             this.switchstate();
-
             this.bricks.removeFromWorld = false;
-            this.game.addEntity(this.bricks);
-            
+            this.lastBrickState = false;
+            this.animations[this.states.notIdle].elapsedTime = 0;
         }
-        
+
 
         if (this.playSound && !this.playOnce) {
 
@@ -94,15 +98,18 @@ class Obelisk extends AbstractInteractable {
 
     switchstate(){
         if(this.repeat) this.initial = !this.initial;
-        
+
         this.state = this.states.idle;
         this.settimer = false;
+        this.active = !this.active;
         this.timer = 0;
     }
 
 
     draw(ctx) {
+        if(!this.active) ctx.filter = "hue-rotate(180deg)";
         this.animations[this.state].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, 1);
+        ctx.filter = "none";
     };
 
     drawDebug(ctx) {
@@ -112,8 +119,8 @@ class Obelisk extends AbstractInteractable {
 
     loadAnimations() {
         this.animations = [];
-        this.animations[this.states.idle] = new Animator(this.spritesheet, 11, 380, 190, 380, 14, 0.1, 0, false, true, false);
-        this.animations[this.states.notIdle] = new Animator(this.spritesheet, 11, 0, 190, 380, 14, 0.13, 0, false, true, false);
+        this.animations[this.states.idle] = new Animator(this.spritesheet, 11, 380, 190, 380, 14, 0.1, 0, false, false, false);
+        this.animations[this.states.notIdle] = new Animator(this.spritesheet, 11, 0, 190, 380, 14, 0.13, 0, false, false, false);
     };
 
     updateBB() {
