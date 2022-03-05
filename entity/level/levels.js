@@ -641,7 +641,6 @@ var level1_2 = {
         { x: 82, y: 19, direction: 0 },
         { x: 58, y: 1, direction: 1 }, //secret 
         { x: 58, y: 4, direction: 1 },
-        { x: 58, y: 4, direction: 1 },
         { x: 52, y: 1, direction: 1 },
         { x: 117, y: 8, direction: 0 },
         { x: 118.5, y: 8, direction: 1 },
@@ -649,7 +648,7 @@ var level1_2 = {
 
     npcs: [
         { x: 7, y: 2 },
-        { x: 38, y: 22 }
+        { x: 37, y: 21 }
     ],
 
     ground: [
@@ -772,8 +771,8 @@ var level1_2 = {
     slimes: [
         //secret slimes
         { x: 52, y: 1, guard: true },
-        { x: 52, y: 1, guard: true },
-        { x: 52, y: 1, guard: true },
+        { x: 53, y: 1, guard: true },
+        { x: 53, y: 1, guard: true },
 
         { x: 28, y: 27, guard: true },
         { x: 102, y: 9, guard: true },
