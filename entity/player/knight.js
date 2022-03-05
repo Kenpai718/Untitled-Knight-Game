@@ -203,7 +203,7 @@ class Knight extends AbstractPlayer {
 
             //when idling set player direction according to mouse
             if (PARAMS.AUTO_FOCUS) {
-                if (this.action == this.states.idle) {
+                if (this.action == this.states.idle || this.action == this.states.attack1 || this.action == this.states.attack2) {
                     if (this.game.mouse.x > (this.BB.x + this.BB.width / 2) - this.game.camera.x && this.facing == 0) {
                         this.facing = 1;
                     }
@@ -211,6 +211,30 @@ class Knight extends AbstractPlayer {
                         this.facing = 0;
                     }
                 }
+                
+                /*
+                let time = this.animations[this.facing][this.action][this.myInventory.armorUpgrade].currentFrame();
+                if (this.action == this.states.attack1 || this.action == this.states.attack2) {
+                    let x = this.game.mouse.x + this.game.camera.x;
+                    if (x < this.x + this.width / 2)
+                        this.facing = this.dir.left;
+                    if (x > this.x + this.width / 2)
+                        this.facing = this.dir.right;
+                }
+                //...
+                */
+
+                
+                let time = this.animations[this.facing][this.action][this.myInventory.armorUpgrade].elapsedTime;
+                if (this.action == this.states.attack1 || this.action == this.states.attack2) {
+                    let x = this.game.mouse.x + this.game.camera.x;
+                    if (x < this.x + this.width / 2)
+                        this.facing = this.dir.left;
+                    if (x > this.x + this.width / 2)
+                        this.facing = this.dir.right;
+                }
+                this.animations[this.facing][this.action][this.myInventory.armorUpgrade].elapsedTime = time;
+                
             }
 
 

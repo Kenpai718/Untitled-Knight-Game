@@ -31,6 +31,7 @@ class AbstractEntity {
 
         //movement speed on canvas
         this.velocity = { x: 0, y: 0 };
+        this.fallAcc = 800;
 
         //if the child class does not have these methods then it will throw an error
         this.checkRequiredMethods();

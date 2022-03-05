@@ -10,7 +10,7 @@ class Inventory {
         const STARTING_ATTACK_UPGRADE = 0;
         const STARTING_ARROW_UPGRADE = 0;
         const STARTING_ARMOR_UPGRADE = 0;
-        this.maxStack = 999;
+        this.maxStack = 9999;
         this.maxUpgrade = 4;
         this.maxxed = false;
 
@@ -23,8 +23,18 @@ class Inventory {
         this.arrowUpgrade = STARTING_ARROW_UPGRADE;
         this.armorUpgrade = STARTING_ARMOR_UPGRADE;
 
-        // Other
-        this.loadAnimations();
+       
+        this.diamond = [];
+
+        this.diamond[0] = new Animator(this.spritesheet, 19, 84, 10, 8, 1, 0, 0, false, false, false);
+        this.diamond[1] = new Animator(this.spritesheet, 35, 84, 10, 8, 1, 0, 0, false, false, false);
+        this.diamond[2] = new Animator(this.spritesheet, 51, 84, 10, 8, 1, 0, 0, false, false, false);
+        this.diamond[3] = new Animator(this.spritesheet, 67, 84, 10, 8, 1, 0, 0, false, false, false);
+        this.diamond[4] = new Animator(this.spritesheet, 83, 84, 10, 8, 1, 0, 0, false, false, false);
+        this.diamond[5] = new Animator(this.spritesheet, 99, 84, 10, 8, 1, 0, 0, false, false, false);
+
+        this.timerx4 = 0;
+        this.secondsx4 = 0;
     };
 
     copyInventory(inventory) {
@@ -40,6 +50,11 @@ class Inventory {
     };
 
     update() {
+        this.timerx4 += this.game.clockTick*4;
+        if(this.timerx4 > 1){
+             this.secondsx4++;
+             this.timerx4--;
+        }
 
         if(this.arrows > this.maxStack) {
             this.arrows = this.maxStack;
@@ -73,11 +88,7 @@ class Inventory {
         ctx.fillText("🏹 x" + this.arrows, 5, (PARAMS.HEART_DIM * PARAMS.GUI_SCALE) * 2 + 10);
         ctx.fillText("⚗️ x" + this.potions, 130, (PARAMS.HEART_DIM * PARAMS.GUI_SCALE) * 2 + 10);
         ctx.fillText("💎 x" + this.diamonds, 7, (PARAMS.HEART_DIM * PARAMS.GUI_SCALE) * 2 + 50 -1);
-        this.animations.drawFrame(this.game.clockTick, ctx, 8, 133, 2.5);
+        this.diamond[this.secondsx4%6].drawFrame(this.game.clockTick, ctx, 8, 133, 2.5);
         ctx.font = PARAMS.DEFAULT_FONT;
-    };
-
-    loadAnimations() {
-        this.animations = new Animator(this.spritesheet, 19, 84, 10, 8, 6, 0.2, 6, 0, 1, 0);
     };
 };
