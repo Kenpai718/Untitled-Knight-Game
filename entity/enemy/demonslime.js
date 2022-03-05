@@ -44,7 +44,7 @@ class DemonSlime extends AbstractBoss {
     loadEvent() {
         let enemies = [];
         let x = randomInt(5) + 1; //spawn up to 5 slimes
-        let spawnx = this.direction == this.directions.right ? this.BB.right : this.BB.left;
+        let spawnx = this.direction == this.directions.right ? this.AR2.right : this.AR2.left;
         let spawny = this.BB.top - (this.BB.top / 1.5);
         for (var i = 0; i < x; i++) {
             //let enemy = new FlyingEye(this.game, spawnx, spawny, true);
@@ -559,7 +559,7 @@ class DemonSlime extends AbstractBoss {
             if (this.damagedCooldown >= 0.5) {
                 this.resetAnimationTimers(this.states.slimeDamaged);
                 this.resetAnimationTimers(this.states.demonDamaged);
-                this.state = this.phase == this.phases.slime ? this.states.slimeIdle : this.states.demonIdle;
+                this.state = this.phase == this.phases.slime ? this.states.slimeIdle : this.phase != this.phases.legendary ? this.states.demonIdle : this.state;
                 this.damagedCooldown = 0;
                 this.canBeHit = true;
                 this.vulnerable = true;
