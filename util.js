@@ -177,9 +177,21 @@ const STATS = {
         WIDTH: 288,
         HEIGHT: 160,
         DAMAGE: 0,
+        PROJECTILE: 7.5,
         SCALE: 3,
         PHYSICS: {MAX_RUN: (PLAYER_PHYSICS.MAX_RUN - 60) * 3, MAX_FALL: 500}
-    }
+    },
+
+    SLIME: {
+        NAME: "Slime",
+        MAX_HP: 30,
+        WIDTH: 82,
+        HEIGHT: 82,
+        DAMAGE: 0,
+        SCALE: 3,
+        PROJECTILE: 5,
+        PHYSICS: {MAX_RUN: (PLAYER_PHYSICS.MAX_RUN - 60) * 3, MAX_FALL: 500}
+    },
 
 }
 

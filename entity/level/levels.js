@@ -575,6 +575,12 @@ var level1_1 = {
     skeletons: [
         { x: 47, y: 7, guard: true }
     ],
+    
+    slimes: [
+        {x: 97, y: 2, guard: false},
+        {x: 104, y: 2, guard: false},
+
+    ]
 }
 
 var level1_2 = {
@@ -635,14 +641,14 @@ var level1_2 = {
         { x: 82, y: 19, direction: 0 },
         { x: 58, y: 1, direction: 1 }, //secret 
         { x: 58, y: 4, direction: 1 },
-        { x: 58, y: 4, direction: 1 },
+        { x: 52, y: 1, direction: 1 },
         { x: 117, y: 8, direction: 0 },
         { x: 118.5, y: 8, direction: 1 },
     ],
 
     npcs: [
         { x: 7, y: 2 },
-        { x: 38, y: 22 }
+        { x: 37, y: 21 }
     ],
 
     ground: [
@@ -664,6 +670,7 @@ var level1_2 = {
             indicate: true,
             bricks: [
                 { x: 58, y: 5, width: 2, height: 5 }, //blocks covering chests
+                { x: 52, y: 1, width: 6, height: 1 }, //secret 2
                 //{ x: 59, y: 6, width: 1, height: 1 }, //entrance to fall into secret room
                 //{ x: 60, y: 4, width: 1, height: 1 }, //shortcut to right room
             ],
@@ -681,7 +688,8 @@ var level1_2 = {
 
     bricks: [
         { x: 45, y: 0, width: 16, height: 1 },
-        { x: 46, y: 5, width: 12, height: 5 },
+        { x: 46, y: 5, width: 12, height: 4 }, //secret
+        { x: 46, y: 1, width: 6, height: 1 }, //secret 2
         { x: 0, y: 5, width: 41, height: 2 },
         { x: 5, y: 18, width: 55, height: 7 },
         { x: 57, y: 11, width: 3, height: 1 },
@@ -759,6 +767,17 @@ var level1_2 = {
     ],
     flyingeyes: [
         { x: 75, y: 21, guard: true },
+    ],
+    slimes: [
+        //secret slimes
+        { x: 52, y: 1, guard: true },
+        { x: 53, y: 1, guard: true },
+        { x: 53, y: 1, guard: true },
+
+        { x: 28, y: 27, guard: true },
+        { x: 102, y: 9, guard: true },
+        { x: 91, y: 9, guard: true },
+        
     ],
     windows: [
         { x: 2, y: 9, width: 1, height: 1.5 },
@@ -990,6 +1009,13 @@ var level1_3 = {
         { x: 90, y: 19, guard: true },
         { x: 92, y: 19, guard: true },
     ],
+
+    slimes: [
+        {x:65, y:38, guard: true},
+        { x: 6, y: 37, guard: true}, //secret slime
+        { x: 7, y: 37, guard: true}, //secret slime
+    ],
+
     chests: [
         //secret
         { x: 6, y: 36, direction: 1 },
@@ -1009,7 +1035,9 @@ var level1_3 = {
         { x: 6, y: 37 },
         { x: 12, y: 37 },
         { x: 18, y: 14 },
-        { x: 50, y: 28 },
+        { x: 52, y: 26 }, //subtle hint to go left to find the treasure room
+        { x: 49, y: 27 },
+
         { x: 116, y: 24 },
         { x: 119, y: 24 },
     ],
@@ -1099,7 +1127,6 @@ var level1_3 = {
     ],
     walls: [
         { x: 16, y: 40, height: 3, type: 0 }, //secret room cover
-        //{ x: 52, y: 25, height: 1, type: 2 }, //subtle hint to go left to find the treasure room
         { x: 57, y: 22, height: 8, type: 0 },
         { x: 53, y: 25, height: 8, type: 2 },
         { x: 70, y: 25, height: 12, type: 0 },
@@ -1400,6 +1427,12 @@ var level1_4 = {
         { x: 20, y: 42, width: 5, height: 5 },
         { x: 12, y: 26, width: 2, height: 2 },
     ],
+    slimes: [
+        {x: 29, y: 3, guard: true},
+        {x: 31, y: 36, guard: true},
+        {x: 41, y: 37, guard: true},
+        
+    ],
     shrooms: [
         { x: 72, y: 24, guard: false },
 
@@ -1456,7 +1489,14 @@ var level1_4 = {
             walls: [
                 { x: 26, y: 45, height: 7, type: 2 }
             ],
-            demon: { x: 10, y: 38, guard: false }
+            demon: { x: 8, y: 38, guard: false },
+            slimes: [
+                { x: 10, y: 38, guard: false },
+                { x: 12, y: 38, guard: false },
+                { x: 14, y: 38, guard: false },
+                { x: 16, y: 38, guard: false },
+            ]
+            
         }
     ]
 

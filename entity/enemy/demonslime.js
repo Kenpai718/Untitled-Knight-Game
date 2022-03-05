@@ -4,7 +4,7 @@ class DemonSlime extends AbstractBoss {
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/demon_slime.png");
         // states, direcetions and phases
         this.states = { slimeIdle: 0, slimeMove: 1, slimeDamaged: 2, slimeDie1: 3, slimeDie2: 4, demonSpawn: 5, demonIdle: 6, demonMove: 7, demonDamaged: 8, demonSlash: 9, demonJump: 10, demonBreath: 11, demonShoot: 12, death: 13, demonRebirth: 14 };
-        this.directions = { left: 0, right: 1 };
+        this.directions = { left: 1, right: 0 };
         this.phases = { slime: 0, easy: 1, normal: 2, hard: 3, legendary: 4 };
         this.state = this.states.slimeIdle;
         this.direction = this.directions.right;
@@ -21,25 +21,34 @@ class DemonSlime extends AbstractBoss {
         this.attackMaxCooldown = 2.5;
         this.attackFrame = 0;
         this.stopBugFromHappening = false;
-        
+
         this.hue = 0; //changed during legendary phase
+        this.legendary_hue = -160; //super saiyan blue
 
         this.loadAnimations();
         this.updateBoxes();
         this.lastBB = this.BB;
         this.fallAcc = 500;
+        this.projectileTick = 0;
+        this.projectileSpawnTime = 0.5;
+        this.projectileScale = 2;
 
         this.myLevelMusic = this.game.camera.myMusic; //save current level music once the boss music stars
         this.myBossMusic = MUSIC.SIGNORA;
     };
 
+
+    /**
+     * Spawn some weaker slimes
+     */
     loadEvent() {
         let enemies = [];
-        let x = randomInt(3) + 1;
-        let spawnx = this.direction == this.directions.right ? this.BB.right : this.BB.left;
-        let spawny = this.BB.top;
+        let x = randomInt(5) + 1; //spawn up to 5 slimes
+        let spawnx = this.direction == this.directions.right ? this.AR2.right : this.AR2.left;
+        let spawny = this.BB.top - (this.BB.top / 1.5);
         for (var i = 0; i < x; i++) {
-            let enemy = new FlyingEye(this.game, spawnx, spawny, true);
+            //let enemy = new FlyingEye(this.game, spawnx, spawny, true);
+            let enemy = new Slime(this.game, spawnx, spawny, false);
             enemy.aggro = true;
             enemies.push(enemy);
         }
@@ -205,10 +214,7 @@ class DemonSlime extends AbstractBoss {
                 this.canBeHit = true;
             } else if (this.animations[this.states.slimeDie2][this.direction].isDone()) {
                 this.state = this.states.demonSpawn;
-                if (this.hp < this.max_hp) { //rising hp healthbar as it heals
-                    this.hp += 2.125;
-                    if (this.hp > this.max_hp) this.hp = this.max_hp;
-                }
+                this.regen();
             } else if (this.animations[this.states.slimeDie1][this.direction].isDone()) {
                 this.state = this.states.slimeDie2;
                 this.cueBossMusic();
@@ -221,11 +227,12 @@ class DemonSlime extends AbstractBoss {
             }
         } else {
             if (this.phase != this.phases.slime && this.phase != this.phases.legendary) { // determine phase by health
-                if (this.hp < (this.max_hp / 10) * 1) {
+                if (this.hp < (this.max_hp / 7.5) * 1) { //at 25% hp it transforms
                     this.phase = this.phases.legendary;
                     this.state = this.states.demonRebirth;
-                    super.healToHalf();
                     this.attackMaxCooldown = 1.3;
+                    this.legend_hp_start = this.hp; //previous hp used to calculate heal amount to half hp
+                    this.legendary_healed = false;  //boolean to control if healed to half yet
                 } else if (this.hp < (this.max_hp / 10) * 5) {
                     this.phase = this.phases.hard;
                     this.attackMaxCooldown = 1.7;
@@ -257,23 +264,53 @@ class DemonSlime extends AbstractBoss {
             super.checkInDeathZone(); // die if out of map
         }
         this.animations[this.state][this.direction].update(TICK);
+
+        /*
+        * LEGENDARY PHASE SPECIAL STUFF
+        * color change while in legendary phase and also heals self to half hp
+        * change the hue over time note; -180 = blue and -22 = hot red
+        */
+        if (this.phase == this.phases.legendary) {
+            //transition hue to the blue phase
+            if (this.hue > this.legendary_hue && !this.dead) {
+                this.hue--;
+                //regenerate hp to half while transforming
+                if (this.hp < (this.max_hp / 2)) {
+                    this.regen();
+                }
+            }
+
+            //once in blue phase show the healing score
+            if (this.hue == this.legendary_hue && !this.legendary_healed) {
+                if (this.hp < (this.max_hp / 2)) this.hp = Math.round((this.max_hp / 2));
+                this.legendary_healed = true;
+                ASSET_MANAGER.playAsset(SFX.HEAL);
+                console.log((this.max_hp / 2) - this.legend_hp_start);
+                this.game.addEntityToFront(new Score(this.game, this, (this.max_hp / 2) - this.legend_hp_start, PARAMS.HEAL_ID, false));
+            }
+
+            //dead revert to previous hue over time
+            if (this.hue < 0 && this.dead) {
+                if (this.hue < 0) {
+                    this.hue++;
+                }
+            }
+        }
     };
 
     draw(ctx) {
         if (this.dead) {
             if (this.phase == this.phases.legendary) {
-                if(this.hue < 0) this.hue++; //change the hue over time note; -180 = blue and -22 = hot red 
                 ctx.filter = "hue-rotate(" + this.hue + "deg)";
                 super.drawWithFadeOut(ctx, this.animations[this.state][this.direction]);
                 ctx.filter = "none"
             } else {
-               super.drawWithFadeOut(ctx, this.animations[this.state][this.direction]); 
+                super.drawWithFadeOut(ctx, this.animations[this.state][this.direction]);
             }
-            
+
         } else {
             //if legendary draw it as a different color
             if (this.phase == this.phases.legendary) {
-                if(this.hue > -160) this.hue--; //change the hue over time note; -180 = blue and -22 = hot red 
                 ctx.filter = "hue-rotate(" + this.hue + "deg)";
                 this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
                 ctx.filter = "none"
@@ -295,18 +332,28 @@ class DemonSlime extends AbstractBoss {
             if (this.state == this.states.slimeMove) {
                 if (this.attackFrame >= 3 && this.attackFrame <= 5) this.updateHB();
             } else if (this.state == this.states.demonJump) {
-                if (this.attackFrame >= 12 && this.attackFrame <= 16) this.updateHB();
+                if (this.attackFrame >= 12 && this.attackFrame <= 15) this.updateHB();
             } else if (this.state == this.states.demonSlash) {
                 if (this.attackFrame >= 10 && this.attackFrame <= 12) this.updateHB();
             } else if (this.state == this.states.demonBreath) {
-                if (this.attackFrame >= 7 && this.attackFrame <= 16) this.updateHB();
-            } else if (this.state == this.states.demonRebirth || this.state == this.states.demonSpawn || this.state == this.states.demonShoot) {
+                if (this.attackFrame >= 6 && this.attackFrame <= 16) this.updateHB();
+            } else if (this.state == this.states.demonRebirth) {
+                if (this.attackFrame >= 13 && this.attackFrame <= 20) this.updateHB();
+            } else if (this.state == this.states.demonSpawn || this.state == this.states.demonShoot) {
                 this.updateHB();
             }
         } else {
             this.HB = null;
         }
     };
+
+    //rising hp healthbar as it heals
+    regen() {
+        if (this.hp < this.max_hp) {
+            this.hp += 2;
+            if (this.hp > this.max_hp) this.hp = this.max_hp;
+        }
+    }
 
     isAttacking() {
         return (this.state == this.states.slimeMove || this.state == this.states.demonSpawn || this.state == this.states.demonSlash || this.state == this.states.demonBreath || this.state == this.states.demonShoot || this.state == this.states.demonJump || this.state == this.states.demonRebirth);
@@ -354,8 +401,17 @@ class DemonSlime extends AbstractBoss {
                             if (self.canAttack == true) self.resetAnimationTimers(self.states.demonRebirth);
                             self.canAttack = false;
                             self.runAway = true;
-                            self.state = self.currentAttack ? self.currentAttack : randomInt(5) <= 3 ? self.states.demonJump : self.states.demonShoot;
+                            //60% chance to attack demon jump or 40% demon shoot
+                            self.state = self.currentAttack ? self.currentAttack : randomInt(11) <= 6 ? self.states.demonJump : self.states.demonShoot;
+
+                            //self.state = self.states.demonShoot;;
+                            if (self.state == self.states.demonShoot) {
+                                self.checkDirection(entity);
+                                self.shootProjectile();
+                            }
+
                             self.currentAttack = self.state;
+
                         }
                     }
                 }
@@ -377,12 +433,45 @@ class DemonSlime extends AbstractBoss {
                         } else if (self.phase >= self.phases.hard) {
                             self.state = self.states.demonRebirth;
                             self.velocity.x = self.direction == self.directions.right ? self.myMaxSpeed / 3 : -self.myMaxSpeed / 3;
+
+                            //prevent it from becoming a smooth criminal
+                            //switch to walking state after the rebirth dash has finished
+                            if (self.checkAnimationDone(self.state)) {
+                                self.state = self.states.demonMove;
+                            }
                         }
                     }
                 }
             }
         });
     };
+
+    /**
+     * Checks position of player and checks direction to match
+     * @param {*} player 
+     */
+    checkDirection(player) {
+        if (player.BB.x > this.BB.x) this.direction = this.directions.right;
+        else this.direction = this.directions.left;
+    }
+
+    /**
+     * Fireball projectile
+     */
+    shootProjectile() {
+        const TICK = this.game.clockTick;
+        this.projectileTick += TICK;
+
+        if (this.projectileTick > this.projectileSpawnTime) { //shoot a projectile every few seconds
+            //console.log("slime projectile fired");
+            this.projectileTick = 0;
+            this.projectileSpawnTime = 0.5 + randomInt(2); //randomize the shooting interval from 0.5 to 1.5
+            if (this.direction == this.directions.right)
+                this.game.addEntity(new SlimeProjectile(this.game, this.BB.left + (this.width), this.BB.top - 10, this.direction, this.projectileScale, STATS.DEMON_SLIME.PROJECTILE));
+            else
+                this.game.addEntity(new SlimeProjectile(this.game, this.BB.left - (this.width), this.BB.top - 10, this.direction, this.projectileScale, STATS.DEMON_SLIME.PROJECTILE));
+        }
+    }
 
     checkCooldowns(TICK) {
         // handles cooldowns based on attacks
@@ -423,9 +512,11 @@ class DemonSlime extends AbstractBoss {
                 } else if (this.phase < this.phases.hard) { // keep the timer going if hit while running away
                     this.attackCooldown += TICK;
                 } else if (this.phase >= this.phases.hard) { // run away with rebirth attack if phase is hard
-                    this.state = this.states.demonRebirth;
-                    this.direction = this.runAwayDirection;
-                    this.velocity.x = this.direction == this.directions.right ? this.myMaxSpeed / 3 : -this.myMaxSpeed / 3;
+                    if (this.currentAttack != this.states.demonRebirth) {
+                        this.state = this.states.demonRebirth;
+                        this.direction = this.runAwayDirection;
+                        this.velocity.x = this.direction == this.directions.right ? this.myMaxSpeed / 3 : -this.myMaxSpeed / 3;
+                    }
                 }
             }
             // handles behavior after rebirth run away
@@ -468,7 +559,7 @@ class DemonSlime extends AbstractBoss {
             if (this.damagedCooldown >= 0.5) {
                 this.resetAnimationTimers(this.states.slimeDamaged);
                 this.resetAnimationTimers(this.states.demonDamaged);
-                this.state = this.phase == this.phases.slime ? this.states.slimeIdle : this.states.demonIdle;
+                this.state = this.phase == this.phases.slime ? this.states.slimeIdle : this.phase != this.phases.legendary ? this.states.demonIdle : this.state;
                 this.damagedCooldown = 0;
                 this.canBeHit = true;
                 this.vulnerable = true;
@@ -486,7 +577,7 @@ class DemonSlime extends AbstractBoss {
     };
 
     setDamagedState() {
-        if (this.canBeHit && (this.state == this.states.demonIdle || this.state == this.states.demonMove || this.phase == this.phases.slime)) {
+        if (this.canBeHit && (this.state == this.states.demonIdle || this.state == this.states.demonMove || this.state == this.states.demonShoot || this.phase == this.phases.slime)) {
             this.vulnerable = false;
             this.canBeHit = false;
             this.velocity.x = 0;
@@ -515,3 +606,100 @@ class DemonSlime extends AbstractBoss {
         return damage;
     };
 };
+
+class Slime extends DemonSlime {
+    constructor(game, x, y, guard) {
+        super(game, x, y, guard);
+
+        //overiding demon slime behavior to be a basic slime
+        this.max_hp = 30;
+        this.hp = this.max_hp;
+        this.name = "Slime";
+        this.states.death = this.states.slimeDie1;
+        this.width = PARAMS.BLOCKDIM;
+        this.height = PARAMS.BLOCKDIM;
+
+        this.projectileScale = 0.5;
+        this.projectileTick = 0;
+        this.projectileSpawnTime = 2; //projectile every 2 seconds
+        this.projectileScale = 0.7;
+    }
+
+    update() {
+        const TICK = this.game.clockTick;
+        if (this.dead) {
+            super.setDead();
+        } else { // transition from slime to demon
+            this.velocity.y += 1500 * TICK;
+            if (this.velocity.y >= this.myMaxFall) this.velocity.y = this.myMaxFall;
+            if (this.velocity.y <= -this.myMaxFall) this.velocity.y = -this.myMaxFall;
+            if (this.velocity.x >= this.myMaxSpeed) this.velocity.x = this.myMaxSpeed;
+            if (this.velocity.x <= -this.myMaxSpeed) this.velocity.x = -this.myMaxSpeed;
+            this.x += this.velocity.x * TICK;
+            this.y += this.velocity.y * TICK;
+            this.updateBoxes();
+
+            let dist = { x: 0, y: 0 }; // the displacement needed between entities
+            dist = super.checkEnvironmentCollisions(dist); // check if colliding with environment and adjust entity accordingly
+            this.updatePositionAndVelocity(dist); //set where entity is based on interactions/collisions put on dist
+            this.checkEntityInteractions(); // handles phase behavior
+            this.checkCooldowns(TICK); //check and reset the cooldowns of its actions
+            this.checkHB(); // handle hitbox timing for each attack
+            this.setIdleAction(); // set what the demonslime does when no ones around
+            super.setAggro(this.playerInSight); // aggro gui
+            super.updateVelocity(); // update velocity based on collisions
+            super.checkInDeathZone(); // die if out of map
+        }
+        this.animations[this.state][this.direction].update(TICK);
+
+    };
+
+    checkEntityInteractions() {
+        this.playerInSight = false;
+        let self = this;
+        this.game.entities.forEach(function (entity) {
+            if (entity instanceof AbstractPlayer) {
+                // set damaged state if hit
+                if (entity.HB && self.BB.collide(entity.HB)) {
+                    self.setDamagedState();
+                }
+                // handles movement based on phase
+                if ((entity.BB && self.VB.collide(entity.BB)) || self.aggro) {
+                    self.playerInSight = true;
+                    self.aggro = true;
+                    if (!self.AR1.collide(entity.BB) && self.canAttack && self.canBeHit) {
+                        self.direction = entity.BB.left < self.BB.left ? self.directions.left : self.directions.right;
+                        //player not in range move towards player
+                        if (self.phase == self.phases.slime) {
+                            self.state = self.states.slimeMove;
+                            self.velocity.x = self.direction == self.directions.right ? self.myMaxSpeed / 12 : -self.myMaxSpeed / 12;
+
+                            //shoot a projectile when not in range
+                            self.shootProjectile();
+                        }
+                    }
+                }
+            }
+        });
+    };
+
+    /**
+ * Fireball projectile
+ */
+    shootProjectile() {
+        const TICK = this.game.clockTick;
+        this.projectileTick += TICK;
+
+        if (this.projectileTick > this.projectileSpawnTime) { //shoot a projectile every few seconds
+            console.log("slime projectile fired");
+            this.projectileTick = 0;
+            this.projectileSpawnTime = 2 + randomInt(4); //randomize the shooting interval from 2 to 5s
+            if (this.direction == this.directions.right)
+                this.game.addEntity(new SlimeProjectile(this.game, this.BB.left + (this.width), this.BB.top - 10, this.direction, this.projectileScale, STATS.SLIME.PROJECTILE));
+            else
+                this.game.addEntity(new SlimeProjectile(this.game, this.BB.left - (this.width), this.BB.top - 10, this.direction, this.projectileScale, STATS.SLIME.PROJECTILE));
+        }
+    }
+
+
+}

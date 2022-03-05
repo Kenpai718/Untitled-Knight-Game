@@ -244,6 +244,8 @@ class AbstractEnemy extends AbstractEntity {
                 amount = 4 + baseBonus; 
             } else if(this instanceof FlyingEye) {
                 amount = 5 + baseBonus; 
+            } else if (this instanceof Slime) {
+                amount = 5 + baseBonus;
             } else if (this instanceof DemonSlime) {
                 amount = 50 + randomInt(50); 
             } else if (this instanceof Wizard) {
