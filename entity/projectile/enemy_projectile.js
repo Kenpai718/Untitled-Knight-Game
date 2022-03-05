@@ -77,18 +77,46 @@ class FlyingEyeProjectile extends AbstractEntity {
         }
 
         this.game.entities.forEach(function (entity) {
-            //if it hits something in environment stick to the ground
-            //stick to ground
-            if (entity instanceof AbstractPlayer && self.BB.collide(entity.BB) && entity.vulnerable) {
-                if (self.state == self.states.move) {
-                    self.velocity = 0;
-                    self.state = self.states.destroy;
-                    self.width *= 2;
-                    self.height *= 2;
+            if (entity instanceof AbstractPlayer) {
+                let hitPlayer = self.BB.collide(entity.BB);
+                if (hitPlayer) {
+                    if (self.state == self.states.move) {
+                        self.velocity = 0;
+                        self.state = self.states.destroy;
+                        self.width *= 2;
+                        self.height *= 2;
+                    }
+                    if(entity.vulnerable) entity.takeDamage(self.getDamageValue(), self.critical);
                 }
-                entity.takeDamage(self.getDamageValue(), self.critical);
+
+                //allow player to destroy it
+                let playerHit = entity.HB && entity.HB.collide(self.BB);
+                if(playerHit) {
+                    //console.log("destroyed projectile");
+                    if (self.state == self.states.move) {
+                        self.velocity = 0;
+                        self.state = self.states.destroy;
+                        self.width *= 2;
+                        self.height *= 2;
+                    }
+                }
             }
-            if (entity.BB && self.BB.collide(entity.BB)) {
+        });
+
+        this.game.projectiles.forEach(function (entity) {
+            if (entity instanceof Arrow || entity instanceof BladeBeam) {
+                //allow arrow to destroy it
+                let hit = entity.BB && entity.BB.collide(self.BB);
+                if(hit) {
+                    //console.log("destroyed projectile");
+                    if (self.state == self.states.move) {
+                        self.velocity = 0;
+                        self.state = self.states.destroy;
+                        self.width *= 2;
+                        self.height *= 2;
+                    }
+                    
+                }
             }
         });
     }
@@ -117,12 +145,14 @@ class FlyingEyeProjectile extends AbstractEntity {
     }
 }
 
-class DemonSlimeProjectile extends FlyingEyeProjectile {
-    constructor(game, x, y, dir, scale) {
-        super(game, x, y, dir, scale);
+class SlimeProjectile extends FlyingEyeProjectile {
+    constructor(game, x, y, dir, newScale, newDmg) {
+        super(game, x, y, dir, newScale);
 
-        this.scale = this.scale * 2;
-        this.damage = 5;
+        this.scale = this.scale * newScale;
+        this.width = this.width * newScale;
+        this.height = this.height * newScale;
+        this.damage = newDmg;
     }
 
     draw(ctx) {
