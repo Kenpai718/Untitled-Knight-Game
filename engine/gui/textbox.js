@@ -289,7 +289,7 @@ class SceneTextBox {
             let xBuffer = 30; //buffer between box width and text
             let yBuffer = this.fontSize / 2;
             let boxWidth = (this.fontSize * maxLen) + xBuffer;
-            let boxHeight = ((this.fontSize + this.lineBuffer - 1) * totalLines) + (yBuffer * 2);
+            let boxHeight = ((this.fontSize + this.lineBuffer) * totalLines) + (yBuffer * 2);
             let myBoxX = this.x;
             let myBoxY = this.y;
             ctx.globalAlpha = 0.5;
@@ -303,7 +303,7 @@ class SceneTextBox {
             for (let i = 0; i < totalLines; i++) {
                 let line = new String(theText[i]);
                 let textX = myBoxX + (xBuffer / 2);
-                let textY = myBoxY + (this.fontSize * i) + this.fontSize + yBuffer;
+                let textY = myBoxY + (this.fontSize * i) + this.fontSize + (yBuffer * 2);
                 ctx.fillText(line, textX, textY + (i * this.lineBuffer));
             }
             ctx.align = "left";
