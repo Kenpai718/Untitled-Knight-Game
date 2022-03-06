@@ -459,9 +459,11 @@ class AbstractPlayer extends AbstractEntity {
                     if (!entity.setCheckpoint) {
                         //ASSET_MANAGER.playAsset(SFX.CHECKPOINT);
                         entity.setCheckpoint = true;
-                        self.myCheckpoint = { x: Math.round(self.x), y: Math.round(self.y)};
+                        let x = self.x + entity.BB.left - self.BB.left;
+                        let y = self.y + entity.BB.bottom - self.BB.bottom;
+                        self.myCheckpoint = { x: Math.round(x), y: Math.round(y)};
                         self.game.camera.savePlayerInfo();
-                        self.game.camera.saveLevelState();
+                        self.game.camera.saveLevelStateCheckpoint();
                         self.game.addEntityToFront(new Score(self.game, self, 0, PARAMS.CHECKPOINT_ID, false));
                         //console.log("saved checkpoint", self.myCheckpoint.x, self.myCheckpoint.y);
                     }

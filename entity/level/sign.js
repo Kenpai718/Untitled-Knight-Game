@@ -1,4 +1,4 @@
-class Sign extends AbstractBackFeature {
+class Sign extends AbstractInteractable {
     constructor(game, x, y, text, title) {
         super(game, x, y);
 
