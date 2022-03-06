@@ -44,6 +44,7 @@
         ];
 
         this.myReportBox.setMessage(labels, true);
+        this.myReportBox.centerBottomMulti();
         this.myReportBox.draw(ctx);
 
     }
