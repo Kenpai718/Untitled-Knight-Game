@@ -271,6 +271,7 @@ class SceneManager {
         if (!this.title && !this.restart && !this.transition) {
             this.saveLevelState();
             this.savePlayerInfo();
+            this.levelStateTemp = null;
         } else {
             // if player dies reset their hp and inventory to what it was upon entering the level
             if (this.restart && this.lastPlayer) {
