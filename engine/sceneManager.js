@@ -36,7 +36,7 @@ class SceneManager {
 
         //levels array to load levels by calling levels[0], levels[1], etc
         this.makeTextBox();
-        this.currentLevel = 6; // CHANGE TO 1 BEFORE SUBMISSION
+        this.currentLevel = 1; // CHANGE TO 1 BEFORE SUBMISSION
         this.setupAllLevels();
         this.loadTitle();
         this.loadPaused();
@@ -85,9 +85,9 @@ class SceneManager {
             ]
 
         let creditX = 860;
-        let creditY = 1210;
+        let creditY = (this.game.surfaceHeight / 2) + 40 * 3.5;
         let controlX = 870;
-        let controlY = 1270;
+        let controlY = (this.game.surfaceHeight / 2) + 40 * 3.5;
         this.myControlBox = new SceneTextBox(this.game, controlX, controlY, controlInfo);
         this.myCreditBox = new SceneTextBox(this.game, creditX, creditY, creditInfo);
 
@@ -513,7 +513,6 @@ class SceneManager {
             this.levelTimer = 0;
             //keep attemping to play title music until the user clicks
             if (!MUSIC_MANAGER.isPlaying(MUSIC.TITLE)) {
-                //console.log("attempting to play title music");
                 if (this.game.userInteracted) {
                     MUSIC_MANAGER.pauseBackgroundMusic();
                     MUSIC_MANAGER.autoRepeat(MUSIC.TITLE);
@@ -525,25 +524,19 @@ class SceneManager {
             //update menu buttons
             this.textColor = 0;
             if (this.game.mouse) {
-                if (this.startGameBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
-                    this.textColor = 1;
-                } else if (this.controlsBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
-                    this.textColor = 2;
-                } else if (this.creditsBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
-                    this.textColor = 3;
-                } else if (this.levelSelectBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
-                    this.textColor = 4;
-                }
+                if (this.startGameBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) this.textColor = 1;
+                else if (this.controlsBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) this.textColor = 2;
+                else if (this.creditsBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) this.textColor = 3;
+                else if (this.levelSelectBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) this.textColor = 4;
             }
             if (this.game.click) {
                 if (this.startGameBB.collideMouse(this.game.click.x, this.game.click.y)) {
-                    if (!this.usingLevelSelect) {
-                        ASSET_MANAGER.playAsset(SFX.CLICK);
-                        ASSET_MANAGER.playAsset(SFX.SELECT);
-                        this.game.myReportCard.reset();
-                        this.game.attack = false;
-                        this.loadLevel(this.currentLevel, false);
-                    }
+                    ASSET_MANAGER.playAsset(SFX.CLICK);
+                    ASSET_MANAGER.playAsset(SFX.SELECT);
+                    this.game.myReportCard.reset();
+                    this.game.attack = false;
+                    this.cutscene = true;
+                    this.loadLevel(this.currentLevel, false);
                 } else if (this.controlsBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     ASSET_MANAGER.playAsset(SFX.CLICK);
                     this.credits = false;
@@ -553,12 +546,9 @@ class SceneManager {
                     this.controls = false;
                     this.credits = !this.credits;
                 } else if (this.levelSelectBB.collideMouse(this.game.click.x, this.game.click.y)) {
-                    //hide the button after you click it
-                    if (!this.usingLevelSelect) {
-                        ASSET_MANAGER.playAsset(SFX.CLICK);
-                        ASSET_MANAGER.playAsset(SFX.SELECT);
-                        this.loadLevelSelect();
-                    }
+                    ASSET_MANAGER.playAsset(SFX.CLICK);
+                    ASSET_MANAGER.playAsset(SFX.SELECT);
+                    this.loadLevelSelect();
                 }
                 this.game.click = null;
             }
@@ -569,16 +559,9 @@ class SceneManager {
         if (PAUSED) {
             this.textColor = 0;
             if (this.game.mouse) {
-                if (this.controlsPauseBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
-                    this.textColor = 1;
-                    //console.log("hovering pause");
-                } else if (this.restartPauseBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
-                    //console.log("hovering restart");
-                    this.textColor = 2;
-                } else if (this.returnMenuPauseBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
-                    //console.log("hovering menu");
-                    this.textColor = 3;
-                }
+                if (this.controlsPauseBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) this.textColor = 1;
+                else if (this.restartPauseBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) this.textColor = 2;
+                else if (this.returnMenuPauseBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) this.textColor = 3;
             }
             if (this.game.click) {
                 if (this.controlsPauseBB.collideMouse(this.game.click.x, this.game.click.y)) {
@@ -610,20 +593,15 @@ class SceneManager {
         if (this.transition) {
             this.textColor = 0;
             if (this.game.mouse) {
-                if (this.nextLevelBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
-                    this.textColor = 1;
-                } else if (this.restartLevelBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
-                    this.textColor = 2;
-                } else if (this.returnToMenuBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
-                    this.textColor = 3;
-                }
+                if (this.nextLevelBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) this.textColor = 1;
+                else if (this.restartLevelBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) this.textColor = 2;
+                else if (this.returnToMenuBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) this.textColor = 3;
             }
 
             this.bufferTimer += this.game.clockTick;
             if (this.game.click && this.bufferTimer > this.maxBufferTime) {
                 if (this.nextLevelBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     ASSET_MANAGER.playAsset(SFX.CLICK);
-                    // load next level code goes here when level 2 is added
                     this.game.myReportCard.reset();
                     this.restartLevel();
                     this.bufferTimer = 0;

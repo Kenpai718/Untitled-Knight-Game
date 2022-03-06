@@ -50,7 +50,7 @@ class TextBox {
         ctx.drawImage(this.canvas, this.x - this.game.camera.x - this.canvas.width / 3,
             this.y - this.game.camera.y - this.canvas.height * 1.2);
         ctx.filter = "none";
-        
+
     };
 
 
@@ -96,7 +96,7 @@ class TextBox {
 
             ctx.fillStyle = this.boxColor;
             ctx.strokeStyle = this.borderColor;
-            
+
             //let myBoxX = (this.x - this.game.camera.x) - (boxWidth / 3);
             //let myBoxY = (this.y - this.game.camera.y) - (boxHeight * 1.2);
             ctx.globalAlpha = 0.5;
@@ -115,7 +115,7 @@ class TextBox {
                 let line = new String(theText[i]);
                 let textX = (xBuffer / 2);
                 let textY = (this.fontSize * i) + (boxHeight / totalLines) + (yBuffer / 2);
-                
+
                 ctx.fillText(line, textX, textY + (i * 5));
             }
             ctx.align = "left";
@@ -127,7 +127,7 @@ class TextBox {
         let totalLines = 1;
 
         //make the text box
-        
+
 
         //draw the text box
         //width = line length, height = num lines
@@ -191,8 +191,8 @@ class SceneTextBox {
 
     /**
     * change message and visibility
-    * @param {*} theText 
-    * @param {*} theIsVisible 
+    * @param {*} theText
+    * @param {*} theIsVisible
     */
     setMessage(theText, theIsVisible) {
         this.text = theText;
@@ -201,8 +201,8 @@ class SceneTextBox {
 
     /**
      * Put textbox in a new spot
-     * @param {*} newX 
-     * @param {*} newY 
+     * @param {*} newX
+     * @param {*} newY
      */
     setPos(newX, newY) {
         this.x = newX;
@@ -264,13 +264,12 @@ class SceneTextBox {
 
     /**
      * Builds line by line
-     * @param {*} ctx 
-     * @param {*} theText 
+     * @param {*} ctx
+     * @param {*} theText
      */
     buildMultiLineBox(ctx, theText) {
         let maxLen = 0;
         let totalLines = theText.length;
-
         //if its one line build from a one line textbox
         if (totalLines <= 1) {
             let line = theText[0];
@@ -291,9 +290,9 @@ class SceneTextBox {
             let xBuffer = 30; //buffer between box width and text
             let yBuffer = 10;
             let boxWidth = (this.fontSize * maxLen) + xBuffer;
-            let boxHeight = ((this.fontSize * totalLines) * 2) + yBuffer;
+            let boxHeight = ((this.fontSize + 5) * totalLines) + yBuffer;
             let myBoxX = (this.x) - (boxWidth / 3);
-            let myBoxY = (this.y) - (boxHeight * 1.5);
+            let myBoxY = (this.y);
             ctx.globalAlpha = 0.5;
             ctx.fillRect(myBoxX, myBoxY, boxWidth, boxHeight);
             ctx.globalAlpha = 1;
@@ -314,8 +313,8 @@ class SceneTextBox {
 
     /**
      * Build one line of textbox
-     * @param {*} ctx 
-     * @param {*} theText 
+     * @param {*} ctx
+     * @param {*} theText
      */
     buildSingleLineBox(ctx, theText) {
         let maxLen = theText.length;
@@ -375,4 +374,3 @@ class SceneTextBox {
 
     }
 }
-
