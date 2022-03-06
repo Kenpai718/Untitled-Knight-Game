@@ -68,6 +68,7 @@ class Door extends AbstractInteractable {
             scene.updateKillQuota(this.killQuota - scene.killCount);
             let message = "Must defeat " + scene.remainingKills + " more enemies to advance";
             scene.myTextBox.setMessage(message, true);
+            scene.myTextBox.centerTop();
         } else {
             let scene = this.game.camera;
             this.killQuotaMessage = false;

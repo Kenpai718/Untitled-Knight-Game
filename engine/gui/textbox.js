@@ -134,7 +134,7 @@ class TextBox {
         let xBuffer = 30; //buffer between box width and text
         let yBuffer = 14;
         let boxWidth = (this.fontSize * maxLen) + xBuffer;
-        let boxHeight = ((this.fontSize * totalLines) * 2) + yBuffer;
+        let boxHeight = ((this.fontSize + this.lineBuffer) * totalLines) + (yBuffer * 2);
         canvas.width = boxWidth+4;
         canvas.height = boxHeight+4;
         ctx.fillStyle = this.boxColor;
@@ -185,7 +185,7 @@ class SceneTextBox {
         this.myFadeTime = 0;
         this.myOpacity = 100;
         this.doFade = false;
-
+        this.maxLength = 0;
     };
 
     /**
@@ -194,8 +194,10 @@ class SceneTextBox {
     * @param {*} theIsVisible
     */
     setMessage(theText, theIsVisible) {
+        this.maxLength = 0;
         this.text = theText;
         this.show = theIsVisible;
+        if (theText instanceof Array) for (var i = 0; i < theText.length; i++) this.maxLength = Math.max(this.maxLength, theText[i].length);
     }
 
     /**
@@ -355,18 +357,23 @@ class SceneTextBox {
     //methods to position it
 
     centerTop() {
-        this.x = (this.game.surfaceWidth / 2);
+        this.x = (this.game.surfaceWidth / 2) - ((this.fontSize * this.text.length) / 2);
         this.y = 150;
     }
 
+    centerTopMulti() {
+        this.x = (this.game.surfaceWidth / 2) - ((this.fontSize * this.maxLength) / 2);
+        this.y = 50;
+    }
+
     centerBottomSingle() {
-        this.x = (this.game.surfaceWidth / 2) - 75;
-        this.y = (this.game.surfaceHeight) - 45;
+        this.x = (this.game.surfaceWidth / 2) - ((this.fontSize * this.text.length) / 2);
+        this.y = (this.game.surfaceHeight) - (this.fontSize * 6);
     }
 
     centerBottomMulti() {
-        this.x = (this.game.surfaceWidth / 2) - 95;
-        this.y = (this.game.surfaceHeight) - 5;
+        this.x = (this.game.surfaceWidth / 2) - ((this.fontSize * this.maxLength) / 2);
+        this.y = (this.game.surfaceHeight - (this.text.length * (this.fontSize + this.lineBuffer)) - (this.fontSize * 3));
     }
 
     drawDebug() {
