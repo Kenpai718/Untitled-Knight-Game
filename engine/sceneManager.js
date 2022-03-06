@@ -964,6 +964,12 @@ class SceneManager {
                 array.push(new TrappedFloor(this.game, trap.x, h - trap.y - 1, trap.width, trap.height, trap.type, trap.percent, trap.rate));
             }
         }
+        if (dict.moveable) {
+            for (var i = 0; i < dict.moveable.length; i++) {
+                let moveable = dict.moveable[i];
+                array.push(new MoveableBlocks(this.game, moveable.x, h - moveable.y - 1, moveable.width, moveable.height));
+            }
+        }
         if (dict.bricks) {
             for (var i = 0; i < dict.bricks.length; i++) {
                 let bricks = dict.bricks[i];
@@ -1270,6 +1276,7 @@ class Minimap {
         this.colors = {
             ground: "dimgray",
             trap: "orange",
+            moveable: "purple",
             brick: "silver",
             wall: "maroon",
             platform: "purple",
@@ -1391,6 +1398,19 @@ class Minimap {
                 let myY = trap.y * PARAMS.SCALE;
                 let myW = trap.width * PARAMS.SCALE;
                 let myH = trap.height * PARAMS.SCALE;
+
+                //ctx.fillRect(this.x + myX, this.y + (this.h - myY + 3/2 * PARAMS.SCALE), myW, myH);
+                ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);
+            }
+        }
+        ctx.fillStyle = this.colors.moveable;
+        if (this.level.moveable) {
+            for (var i = 0; i < this.level.moveable.length; i++) {
+                let moveable = this.level.moveable[i];
+                let myX = moveable.x * PARAMS.SCALE;
+                let myY = moveable.y * PARAMS.SCALE;
+                let myW = moveable.width * PARAMS.SCALE;
+                let myH = moveable.height * PARAMS.SCALE;
 
                 //ctx.fillRect(this.x + myX, this.y + (this.h - myY + 3/2 * PARAMS.SCALE), myW, myH);
                 ctx.fillRect(this.x + myX, this.y - myY + (this.h + 3) * PARAMS.SCALE, myW, myH);

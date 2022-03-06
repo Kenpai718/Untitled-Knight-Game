@@ -450,6 +450,44 @@ class Platform extends AbstractBarrier {
     
 };
 
+class MoveableBlocks extends Platform {
+
+    /*
+    constructor(game, x, y, w, h) {
+        super(game, x, y, w, h, 16, 13);
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
+        this.scale = PARAMS.BLOCKDIM;
+        this.srcX = 144;
+        this.srcY = 32;
+        this.updateBB();
+        this.loadImage();
+    };
+
+    loadImage() {
+        let sW = this.srcWidth;
+        let sH = this.srcHeight;
+        for (var i = 0; i < this.w; i++) 
+            this.ctx.drawImage(this.spritesheet, this.srcX, this.srcY, sW, sH, i * sW, 0, sW, sH);
+    }
+    */
+   constructor(game, x, y, w, h){
+    super(game, x, y, w, h);
+    this.time = 10;
+    this.timer = 0;
+   }
+
+   update(){
+
+    this.timer += this.game.clockTick;
+
+    if(this.timer < this.time){
+        this.x -= 1 * this.game.clockTick;
+        this.updateBB();
+    }
+
+   }
+};
+
 class BackgroundWalls {
     constructor(game, x, y, w, h) {
         Object.assign(this, { game, x, y, w, h});

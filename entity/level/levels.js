@@ -113,7 +113,10 @@ var testLevel = {
     flyingeyes: [
         { x: 17, y: 5, guard: false },
         { x: 15, y: 7, guard: true }
-    ]
+    ],
+    moveable: [
+        { x: 10, y: 8, width: 3, height: 1},
+    ],
 }
 
 /**
