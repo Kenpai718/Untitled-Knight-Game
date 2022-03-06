@@ -5,8 +5,8 @@
  * each index is a new line string.
  */
 class TextBox {
-    constructor(game, x, y, text) {
-        Object.assign(this, { game, x, y, text });
+    constructor(game, x, y, text, lineBuffer = 5) {
+        Object.assign(this, { game, x, y, text, lineBuffer });
         this.fontSize = 15;
 
 
@@ -88,9 +88,9 @@ class TextBox {
             //draw the text box
             //width = line length, height = num lines
             let xBuffer = 30; //buffer between box width and text
-            let yBuffer = 10;
+            let yBuffer = this.fontSize / 2;
             let boxWidth = (this.fontSize * maxLen) + xBuffer;
-            let boxHeight = ((this.fontSize * totalLines) * 2) + yBuffer;
+            let boxHeight = ((this.fontSize + this.lineBuffer) * totalLines) + (yBuffer * 2);
             canvas.width = boxWidth+4;
             canvas.height = boxHeight+4;
 
@@ -114,9 +114,9 @@ class TextBox {
             for (let i = 0; i < totalLines; i++) {
                 let line = new String(theText[i]);
                 let textX = (xBuffer / 2);
-                let textY = (this.fontSize * i) + (boxHeight / totalLines) + (yBuffer / 2);
+                let textY = (this.fontSize * i) + this.fontSize + (yBuffer * 2);
 
-                ctx.fillText(line, textX, textY + (i * 5));
+                ctx.fillText(line, textX, textY + (i * this.lineBuffer));
             }
             ctx.align = "left";
         }
@@ -171,9 +171,8 @@ class TextBox {
  * each index is a new line string.
  */
 class SceneTextBox {
-    constructor(game, x, y, text) {
-        Object.assign(this, { game, x, y, text });
-        this.fontSize = 20;
+    constructor(game, x, y, text, fontSize = 20, lineBuffer = 5) {
+        Object.assign(this, { game, x, y, text, fontSize, lineBuffer });
 
         this.boxColor = "BlueViolet";
         this.borderColor = "Azure";
@@ -288,11 +287,11 @@ class SceneTextBox {
             //draw the text box
             //width = line length, height = num lines
             let xBuffer = 30; //buffer between box width and text
-            let yBuffer = 10;
+            let yBuffer = this.fontSize / 2;
             let boxWidth = (this.fontSize * maxLen) + xBuffer;
-            let boxHeight = ((this.fontSize + 5) * totalLines) + yBuffer;
-            let myBoxX = (this.x) - (boxWidth / 3);
-            let myBoxY = (this.y);
+            let boxHeight = ((this.fontSize + this.lineBuffer) * totalLines) + (yBuffer * 2);
+            let myBoxX = this.x;
+            let myBoxY = this.y;
             ctx.globalAlpha = 0.5;
             ctx.fillRect(myBoxX, myBoxY, boxWidth, boxHeight);
             ctx.globalAlpha = 1;
@@ -304,8 +303,8 @@ class SceneTextBox {
             for (let i = 0; i < totalLines; i++) {
                 let line = new String(theText[i]);
                 let textX = myBoxX + (xBuffer / 2);
-                let textY = myBoxY + (this.fontSize * i) + (boxHeight / totalLines) + (yBuffer / 2);
-                ctx.fillText(line, textX, textY + (i * 5));
+                let textY = myBoxY + (this.fontSize * i) + this.fontSize + (yBuffer * 2);
+                ctx.fillText(line, textX, textY + (i * this.lineBuffer));
             }
             ctx.align = "left";
         }
@@ -327,11 +326,11 @@ class SceneTextBox {
         //draw the text box
         //width = line length, height = num lines
         let xBuffer = 30; //buffer between box width and text
-        let yBuffer = 14;
+        let yBuffer = 30;
         let boxWidth = (this.fontSize * maxLen) + xBuffer;
-        let boxHeight = ((this.fontSize * totalLines) * 2) + yBuffer;
-        let myBoxX = (this.x) - (boxWidth / 3);
-        let myBoxY = (this.y) - (boxHeight * 1.5);
+        let boxHeight = this.fontSize + yBuffer;
+        let myBoxX = this.x;
+        let myBoxY = this.y;
         ctx.globalAlpha = 0.5;
         ctx.fillRect(myBoxX, myBoxY, boxWidth, boxHeight);
         ctx.globalAlpha = 1;
@@ -345,7 +344,7 @@ class SceneTextBox {
         ctx.fillStyle = this.textColor;
         ctx.align = "center";
         let textX = myBoxX + (xBuffer / 2);
-        let textY = myBoxY + (this.fontSize) + (boxHeight / 5) + (yBuffer / 2);
+        let textY = myBoxY + (this.fontSize) + (yBuffer / 2);
         ctx.fillText(theText, textX, textY);
         ctx.align = "left";
     }

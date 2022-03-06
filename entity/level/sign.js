@@ -21,7 +21,7 @@ class Sign extends AbstractInteractable {
         this.animationY = this.BB.y - this.scale / 4;
 
         //textbox specific to this sign
-        this.myTextBox = new TextBox(this.game, this.BB.x, this.BB.y, this.text, true);
+        this.myTextBox = new TextBox(this.game, this.BB.x, this.BB.y, this.text, 10);
         this.game.addEntityToFront(this.myTextBox);
         this.myHoverMsg = "Tap \'W\' to read";
 
@@ -70,7 +70,7 @@ class Sign extends AbstractInteractable {
                         self.isReading = false;
                         self.showText = false;
                     }
-                    
+
                 }
             }
         });
@@ -97,7 +97,7 @@ class Sign extends AbstractInteractable {
         //scene manager will handle drawing the textbox
         if (!this.showText) {
             this.read ? ctx.fillStyle = "Silver" : ctx.fillStyle = "SpringGreen";
-    
+
             let titleOffset = (this.fontSize * this.title.length) / 4.5;
             let textOffset = (this.fontSize * this.myHoverMsg.length) / 9;
             ctx.fillText(this.title,
