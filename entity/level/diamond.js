@@ -18,7 +18,7 @@ class Diamond extends AbstractInteractable {
     };
 
     updateBB() {
-        this.BB = new BoundingBox(this.x +1, this.y, this.width * this.scale, this.height * this.scale)
+        this.BB = new BoundingBox(this.x +1, this.y +1, this.width * this.scale , this.height * this.scale);
     };
 
     update() {
