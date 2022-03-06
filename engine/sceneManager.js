@@ -36,7 +36,7 @@ class SceneManager {
 
         //levels array to load levels by calling levels[0], levels[1], etc
         this.makeTextBox();
-        this.currentLevel = 6; // CHANGE TO 1 BEFORE SUBMISSION
+        this.currentLevel = 1; // CHANGE TO 1 BEFORE SUBMISSION
         this.setupAllLevels();
         this.loadTitle();
         this.loadPaused();
@@ -278,7 +278,7 @@ class SceneManager {
             // if player dies reset their hp and inventory to what it was upon entering the level
             if (this.restart && this.lastPlayer) {
                 this.player.hp = this.lastHP;
-                this.player.max_hp = this.last
+                this.player.max_hp = this.lastMaxHP;
                 this.player.myInventory = new Inventory(this.game)
                 this.player.myInventory.copyInventory(this.lastInventory);
                 this.player.dead = false;
@@ -593,7 +593,6 @@ class SceneManager {
                     this.player.myCheckpoint = this.spawnCheckpoint;
                     this.loadLevel(this.currentLevel);
                     this.player.myInventory.copyInventory(this.lastInventoryPerm);
-                    this.player.lastMaxHP
                 } else if (this.returnMenuPauseBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     ASSET_MANAGER.playAsset(SFX.SELECT);
                     PAUSED = false;
