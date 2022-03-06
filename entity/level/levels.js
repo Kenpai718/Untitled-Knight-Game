@@ -365,7 +365,7 @@ var level1_1 = {
     ],
 
     npcs: [
-        { x: 55, y: 6 }
+        { x: 55, y: 5 }
     ],
 
     signs: [
@@ -590,7 +590,7 @@ var level1_2 = {
     ID: 2,
     label: "2",
     width: 120, height: 36,
-    player: { x: 1, y: 2 },
+    player: { x: 1, y: 1 },
     music: MUSIC.CHASING_DAYBREAK,
     doors: [
         { x: 116, y: 3, killQuota: 7, exitLocation: { x: 4, y: 3, levelNum: 3 }, transition: false }, //next level to 3
@@ -650,8 +650,8 @@ var level1_2 = {
     ],
 
     npcs: [
-        { x: 7, y: 2 },
-        { x: 37, y: 21 }
+        { x: 7, y: 1 },
+        { x: 38, y: 21 }
     ],
 
     ground: [

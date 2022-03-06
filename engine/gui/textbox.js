@@ -19,10 +19,11 @@ class TextBox {
 
         //logic to handle fading out
         this.myFadeTime = 0;
-        this.myOpacity = 100;
+        this.myOpacity = 0;
         this.doFade = false;
-
-
+        this.canvas = document.createElement("canvas");
+        this.ctx = this.canvas.getContext("2d");
+        this.createTextBox(this.canvas, this.ctx, text);
     };
 
     update() {
@@ -31,7 +32,6 @@ class TextBox {
 
     draw(ctx) {
         if (this.show) {
-            this.drawTextBox(ctx, this.text);
             this.doFade = true;
             this.myOpacity = 100;
         }
@@ -40,30 +40,33 @@ class TextBox {
         if (!this.show && this.doFade) {
             if (this.myOpacity > 0) {
                 this.myOpacity -= 2;
-                ctx.filter = "opacity(" + this.myOpacity + "%)";
-                this.drawTextBox(ctx, this.text);
-                ctx.filter = "none";
             } else {
-                this.myOpacity = 100;
+                this.myOpacity = 0;
                 this.doFade = false;
             }
         }
+
+        ctx.filter = "opacity(" + this.myOpacity + "%)";
+        ctx.drawImage(this.canvas, this.x - this.game.camera.x - this.canvas.width / 3,
+            this.y - this.game.camera.y - this.canvas.height * 1.2);
+        ctx.filter = "none";
+        
     };
 
 
     /**
      * Constructs a textbox to draw onto the canvas
      */
-    drawTextBox(ctx, theText) {
+    createTextBox(canvas, ctx, theText) {
         //ctx.font = PARAMS.DEFAULT_FONT;
-        ctx.font = this.fontSize + 'px "Press Start 2P"'
-        if (theText instanceof Array) this.buildMultiLineBox(ctx, theText);
-        else if (isString(theText)) this.buildSingleLineBox(ctx, theText);
+        ctx.font = this.fontSize + 'px "Press Start 2P"';
+        if (theText instanceof Array) this.buildMultiLineBox(canvas, ctx, theText);
+        else if (isString(theText)) this.buildSingleLineBox(canvas, ctx, theText);
         else throw "Cannot draw textbox because text is not a string or a string in an array!";
         ctx.font = PARAMS.DEFAULT_FONT;
     }
 
-    buildMultiLineBox(ctx, theText) {
+    buildMultiLineBox(canvas, ctx, theText) {
         let maxLen = 0;
         let totalLines = theText.length;
 
@@ -88,12 +91,18 @@ class TextBox {
             let yBuffer = 10;
             let boxWidth = (this.fontSize * maxLen) + xBuffer;
             let boxHeight = ((this.fontSize * totalLines) * 2) + yBuffer;
-            let myBoxX = (this.x - this.game.camera.x) - (boxWidth / 3);
-            let myBoxY = (this.y - this.game.camera.y) - (boxHeight * 1.2);
+            canvas.width = boxWidth+4;
+            canvas.height = boxHeight+4;
+
+            ctx.fillStyle = this.boxColor;
+            ctx.strokeStyle = this.borderColor;
+            
+            //let myBoxX = (this.x - this.game.camera.x) - (boxWidth / 3);
+            //let myBoxY = (this.y - this.game.camera.y) - (boxHeight * 1.2);
             ctx.globalAlpha = 0.5;
-            ctx.fillRect(myBoxX, myBoxY, boxWidth, boxHeight);
+            ctx.fillRect(0, 0, boxWidth, boxHeight);
             ctx.globalAlpha = 1;
-            ctx.strokeRect(myBoxX + 1, myBoxY + 1, boxWidth, boxHeight);
+            ctx.strokeRect(1, 1, boxWidth, boxHeight);
 
             // console.log("is a string", maxLen, totalLines);
             //console.log(myBoxX, myBoxY, boxWidth, boxHeight);
@@ -101,23 +110,24 @@ class TextBox {
             //write the text line by line
             ctx.fillStyle = this.textColor;
             ctx.align = "center";
+            ctx.font = this.fontSize + 'px "Press Start 2P"';
             for (let i = 0; i < totalLines; i++) {
                 let line = new String(theText[i]);
-                let textX = myBoxX + (xBuffer / 2);
-                let textY = myBoxY + (this.fontSize * i) + (boxHeight / totalLines) + (yBuffer / 2);
+                let textX = (xBuffer / 2);
+                let textY = (this.fontSize * i) + (boxHeight / totalLines) + (yBuffer / 2);
+                
                 ctx.fillText(line, textX, textY + (i * 5));
             }
             ctx.align = "left";
         }
     }
 
-    buildSingleLineBox(ctx, theText) {
+    buildSingleLineBox(canvas, ctx, theText) {
         let maxLen = theText.length;
         let totalLines = 1;
 
         //make the text box
-        ctx.fillStyle = this.boxColor;
-        ctx.strokeStyle = this.borderColor;
+        
 
         //draw the text box
         //width = line length, height = num lines
@@ -125,12 +135,16 @@ class TextBox {
         let yBuffer = 14;
         let boxWidth = (this.fontSize * maxLen) + xBuffer;
         let boxHeight = ((this.fontSize * totalLines) * 2) + yBuffer;
-        let myBoxX = (this.x - this.game.camera.x) - (boxWidth / 3);
-        let myBoxY = (this.y - this.game.camera.y) - (boxHeight * 1.5);
+        canvas.width = boxWidth+4;
+        canvas.height = boxHeight+4;
+        ctx.fillStyle = this.boxColor;
+        ctx.strokeStyle = this.borderColor;
+        //let myBoxX = (this.x - this.game.camera.x) - (boxWidth / 3);
+        //let myBoxY = (this.y - this.game.camera.y) - (boxHeight * 1.5);
         ctx.globalAlpha = 0.5;
-        ctx.fillRect(myBoxX, myBoxY, boxWidth, boxHeight);
+        ctx.fillRect(0, 0, boxWidth, boxHeight);
         ctx.globalAlpha = 1;
-        ctx.strokeRect(myBoxX + 1, myBoxY + 1, boxWidth, boxHeight);
+        ctx.strokeRect(1, 1, boxWidth, boxHeight);
 
         // console.log("is a string", maxLen, totalLines);
        //console.log(myBoxX, myBoxY, boxWidth, boxHeight);
@@ -138,8 +152,8 @@ class TextBox {
         //write the text
         ctx.fillStyle = this.textColor;
         ctx.align = "center";
-        let textX = myBoxX + (xBuffer / 2);
-        let textY = myBoxY + (this.fontSize) + (boxHeight / 5) + (yBuffer / 2);
+        let textX = (xBuffer / 2);
+        let textY = (this.fontSize) + (boxHeight / 5) + (yBuffer / 2);
         ctx.fillText(theText, textX, textY);
         ctx.align = "left";
     }
