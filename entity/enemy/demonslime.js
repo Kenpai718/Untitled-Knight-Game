@@ -24,6 +24,7 @@ class DemonSlime extends AbstractBoss {
 
         this.hue = 0; //changed during legendary phase
         this.legendary_hue = -160; //super saiyan blue
+        this.legendaryMultiplier = 1.5; //bonus damage
 
         this.loadAnimations();
         this.updateBoxes();
@@ -70,22 +71,6 @@ class DemonSlime extends AbstractBoss {
         }
     };
 
-    updateHB() {
-        this.getOffsets();
-        if (this.phase != this.phases.slime) {
-            if (this.direction == this.directions.left && this.state == this.states.demonSlash) this.HB = new BoundingBox(this.x + this.offsetX - (85 * this.scale), this.y + this.offsetY, this.BB.right - (this.x + this.offsetX - (85 * this.scale)), this.height);
-            else if (this.direction == this.directions.right && this.state == this.states.demonSlash) this.HB = new BoundingBox(this.BB.left, this.BB.top, this.BB.right - (this.x + this.offsetX - (85 * this.scale)), this.height);
-            else if (this.state == this.states.demonRebirth) this.HB = new BoundingBox(this.BB.left, this.BB.top, this.BB.width, this.BB.height);
-            else if (this.state == this.states.demonJump) this.HB = new BoundingBox(this.x + this.offsetX - (75 * this.scale), this.y + this.offsetY, this.width + (150 * this.scale), this.height);
-            else if (this.direction == this.directions.left && this.state == this.states.demonBreath) this.HB = new BoundingBox(this.x + this.offsetX - (90 * this.scale), this.y + this.offsetY, this.BB.right - (this.x + this.offsetX - (90 * this.scale)), this.height);
-            else if (this.direction == this.directions.right && this.state == this.states.demonBreath) this.HB = new BoundingBox(this.BB.left, this.BB.top, this.BB.right - (this.x + this.offsetX - (90 * this.scale)), this.height);
-            else if (this.direction == this.directions.left && this.state == this.states.demonShoot) this.HB = new BoundingBox(this.x + this.offsetX - (100 * this.scale), this.y + this.offsetY, this.BB.right - (this.x + this.offsetX - (100 * this.scale)), this.height);
-            else if (this.direction == this.directions.right && this.state == this.states.demonShoot) this.HB = new BoundingBox(this.BB.left, this.BB.top, this.BB.right - (this.x + this.offsetX - (100 * this.scale)), this.height);
-        } else {
-            this.HB = new BoundingBox(this.BB.x, this.BB.y, this.BB.width, this.BB.height);
-        }
-    }
-
     updateBoxes() {
         this.lastBB = this.BB;
         this.getOffsets();
@@ -119,7 +104,6 @@ class DemonSlime extends AbstractBoss {
         ctx.strokeStyle = "yellow";
         if (this.AR3) this.drawBB(ctx, this.AR3);
     }
-
     drawBB(ctx, BB) {
         ctx.strokeRect(BB.left - this.game.camera.x, BB.top - this.game.camera.y, BB.width, BB.height);
     }
@@ -331,14 +315,19 @@ class DemonSlime extends AbstractBoss {
             this.attackFrame = this.animations[this.state][this.direction].currentFrame();
             if (this.state == this.states.slimeMove) {
                 if (this.attackFrame >= 3 && this.attackFrame <= 5) this.updateHB();
+                else this.HB = null;
             } else if (this.state == this.states.demonJump) {
                 if (this.attackFrame >= 12 && this.attackFrame <= 15) this.updateHB();
+                else this.HB = null;
             } else if (this.state == this.states.demonSlash) {
-                if (this.attackFrame >= 10 && this.attackFrame <= 12) this.updateHB();
+                if (this.attackFrame >= 9 && this.attackFrame <= 12) this.updateHB();
+                else this.HB = null;
             } else if (this.state == this.states.demonBreath) {
                 if (this.attackFrame >= 6 && this.attackFrame <= 16) this.updateHB();
+                else this.HB = null;
             } else if (this.state == this.states.demonRebirth) {
-                if (this.attackFrame >= 13 && this.attackFrame <= 20) this.updateHB();
+                if (this.attackFrame >= 9 && this.attackFrame <= 20) this.updateHB();
+                else this.HB = null;
             } else if (this.state == this.states.demonSpawn || this.state == this.states.demonShoot) {
                 this.updateHB();
             }
@@ -346,6 +335,52 @@ class DemonSlime extends AbstractBoss {
             this.HB = null;
         }
     };
+
+    updateHB() {
+        this.getOffsets();
+        if (this.phase != this.phases.slime) {
+            let frame = this.getCurrentFrame();
+            if (this.state == this.states.demonSlash) {
+                let xOffset = this.BB.width / 2;
+                let atkWidth = this.BB.width * 1.5;
+                let atkHeight = this.BB.height;
+
+                if (this.direction == this.directions.left) this.HB = new BoundingBox(this.BB.left - atkWidth + xOffset, this.BB.top, atkWidth, atkHeight);
+                else if (this.direction == this.directions.right) this.HB = new BoundingBox(this.BB.right - xOffset, this.BB.top, atkWidth, atkHeight);
+            }
+            else if (this.state == this.states.demonRebirth) {
+                this.HB = new BoundingBox(this.BB.left, this.BB.top, this.BB.width, this.BB.height);
+            }
+            else if (this.state == this.states.demonJump) {
+                if (this.direction == this.directions.left) this.HB = new BoundingBox(this.BB.left - (this.BB.width / 2), this.BB.top + this.BB.height / 2, this.BB.width * 2, this.BB.height / 2);
+                else this.HB = new BoundingBox(this.BB.left - (this.BB.width / 4), this.BB.top + this.BB.height / 2, this.BB.width * 2, this.BB.height / 2);
+            }
+            else if (this.state == this.states.demonBreath) {
+                let x = this.BB.left;
+                let y = this.BB.top;
+                let width =  this.BB.right - (this.x + this.offsetX - (90 * this.scale));
+                let height = this.height / 2;
+                if(frame > 11) { //hit from above
+                    y += height;
+                }
+
+                if (this.direction == this.directions.left) this.HB  = new BoundingBox(x - (width / 2), y, width, height);
+                else this.HB  = new BoundingBox(x, y, width, height);
+
+                
+            }
+            else if (this.state == this.states.demonShoot) {
+                let xOffset = this.BB.width;
+                let atkWidth = this.BB.width * 2;
+                let atkHeight = this.BB.height;
+
+                if (this.direction == this.directions.left) this.HB = new BoundingBox(this.BB.left - atkWidth + xOffset, this.BB.top, atkWidth, atkHeight);
+                else if (this.direction == this.directions.right) this.HB = new BoundingBox(this.BB.right - xOffset, this.BB.top, atkWidth, atkHeight);
+            }
+        } else {
+            this.HB = new BoundingBox(this.BB.x, this.BB.y, this.BB.width, this.BB.height);
+        }
+    }
 
     //rising hp healthbar as it heals
     regen() {
@@ -572,6 +607,10 @@ class DemonSlime extends AbstractBoss {
         this.animations[action][this.directions.right].elapsedTime = 0;
     };
 
+    getCurrentFrame() {
+        return (this.animations[this.state][this.direction].currentFrame());
+    }
+
     checkAnimationDone(action) {
         return (this.animations[action][this.directions.left].isDone() || this.animations[action][this.directions.right].isDone());
     };
@@ -593,16 +632,18 @@ class DemonSlime extends AbstractBoss {
                 break;
             case this.states.demonSpawn:
             case this.states.demonRebirth:
-                damage = 7;
+                damage = 7.5;
                 break;
             case this.states.demonSlash:
+                damage = 25;
             case this.states.demonBreath:
-                damage = 15;
+                damage = 20;
                 break;
             case this.states.demonJump:
                 damage = 30;
                 break;
         }
+        if(this.phase == this.phases.legendary) damage *= this.legendaryMultiplier;
         return damage;
     };
 };
