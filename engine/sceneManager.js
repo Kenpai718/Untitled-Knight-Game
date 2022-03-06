@@ -835,6 +835,19 @@ class SceneManager {
             //draw cursor in menus when cursor is disabled
             if (PAUSED || SHOP_ACTIVE || this.transition || this.title) this.myCursor.draw(ctx);
         }
+
+        //alert message that game lost focus
+        if(!this.game.inCanvas) {
+            
+            let fontSize = 20;
+            ctx.font = fontSize + 'px "Press Start 2P"';
+            let msg = "Your cursor is not in the game screen! Please click within the game to regain control!";
+            ctx.fillStyle = "black";
+            ctx.fillText(msg, (this.game.surfaceWidth / 2) - ((fontSize) * msg.length / 2) + 2, fontSize * 4 + 2);
+            ctx.fillStyle = "red";
+            ctx.fillText(msg, (this.game.surfaceWidth / 2) - ((fontSize) * msg.length / 2), fontSize * 4);
+
+        } 
         //console.log(this.player.BB.left + " " + this.player.BB.bottom);
     };
 
