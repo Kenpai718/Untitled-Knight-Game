@@ -25,7 +25,8 @@ class GameEngine {
         this.wheel = null;
         //check when user interacts with the game for the first time. It is needed to prevent multiple attempts to play music and bypass
         //browser restrictions!
-        this.userInteracted = false; 
+        this.userInteracted = false;
+        this.inCanvas = true; //check if focused
 
         this.myReportCard = new ReportCard(this);
 
@@ -77,7 +78,7 @@ class GameEngine {
 
     start() {
 
-        this.mouse = ({x: 1000, y: 0});
+        this.mouse = ({ x: 1000, y: 0 });
 
         this.running = true;
         const gameLoop = () => {
@@ -139,6 +140,7 @@ class GameEngine {
             }
 
             this.click = getXandY(e);
+
 
             switch (e.which) {
                 case 1:
@@ -249,6 +251,27 @@ class GameEngine {
                     break;
             }
         }, false);
+
+        /**
+         * Periodically checks if the game has focus
+         * If not then the game is paused
+         */
+        function checkGameFocus() {
+            const elem = document.getElementById("gameWorld");
+
+            if (elem === document.activeElement) {
+                //console.log("focused gained")
+                that.inCanvas = true;
+            }
+            else {
+                //console.log("focused lost")
+                that.inCanvas = false;
+                that.resetControls();
+                PAUSED = true;
+            }
+        }
+        setInterval(checkGameFocus, 300);
+
     };
 
     addEntity(entity) {
@@ -315,7 +338,7 @@ class GameEngine {
         this.drawLayer(this.events);
         this.drawHealth();
         this.drawLayer(this.information);
-        
+
 
         if (PARAMS.DEBUG) {
             this.drawDebug(this.foreground1);
