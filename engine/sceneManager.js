@@ -40,6 +40,7 @@ class SceneManager {
         this.setupAllLevels();
         this.loadTitle();
         this.loadPaused();
+        this.loadCutScene();
     };
 
     loadTitle() {
@@ -84,9 +85,9 @@ class SceneManager {
                 "Special Thanks to Chris Marriot!"
             ]
 
-        let creditX = 860;
+        let creditX = (this.game.surfaceWidth / 2) - ((20 * 32) / 2);
         let creditY = (this.game.surfaceHeight / 2) + 40 * 3.5;
-        let controlX = 870;
+        let controlX = (this.game.surfaceWidth / 2) - ((20 * 26) / 2);
         let controlY = (this.game.surfaceHeight / 2) + 40 * 3.5;
         this.myControlBox = new SceneTextBox(this.game, controlX, controlY, controlInfo);
         this.myCreditBox = new SceneTextBox(this.game, creditX, creditY, creditInfo);
@@ -129,6 +130,44 @@ class SceneManager {
         x = (this.game.surfaceWidth / 2) - ((40 * 9) / 2);
         y = (this.game.surfaceHeight / 2) + 40 * 3;
         this.returnMenuPauseBB = new BoundingBox(x, y, 40 * 9, -40);
+    }
+
+    loadCutScene() {
+        let beginScene1 =
+            [
+                "This is the story all about",
+                "that one time I got reincarnated",
+                "into a knight and had to save the",
+                "castle that was overrun by evil."
+            ];
+        let beginScene2 =
+            [
+                "insert second message here"
+            ];
+        let beginScene3 =
+            [
+                "insert third message here"
+            ];
+
+        var maxLength = 0;
+        for (var i = 0; i < beginScene1.length; i++) maxLength = Math.max(beginScene1[i].length, maxLength);
+        var x = (this.game.surfaceWidth / 2) - ((40 * maxLength) / 2);
+        var y = (this.game.surfaceHeight / 2) - 90 * Math.ceil(beginScene1.length / 2);
+        let beginScene1TB = new SceneTextBox(this.game, x, y, beginScene1, 40, 50);
+
+        maxLength = 0;
+        for (var i = 0; i < beginScene2.length; i++) maxLength = Math.max(beginScene2[i].length, maxLength);
+        x = (this.game.surfaceWidth / 2) - ((40 * maxLength) / 2);
+        y = (this.game.surfaceHeight / 2) - 90 * Math.ceil(beginScene2.length / 2);
+        let beginScene2TB = new SceneTextBox(this.game, x, y, beginScene2, 40, 50);
+
+        maxLength = 0;
+        for (var i = 0; i < beginScene3.length; i++) maxLength = Math.max(beginScene3[i].length, maxLength);
+        x = (this.game.surfaceWidth / 2) - ((40 * maxLength) / 2);
+        y = (this.game.surfaceHeight / 2) - 90 * Math.ceil(beginScene3.length / 2);
+        let beginScene3TB = new SceneTextBox(this.game, x, y, beginScene3, 40, 50);
+
+        this.beginSequence = [beginScene1TB, beginScene2TB, beginScene3TB];
     }
 
     /**
@@ -477,9 +516,10 @@ class SceneManager {
         this.updateTitleScreen();
         this.updateResultScreen();
         this.updatePauseMenu();
+        this.updateCutScene();
 
         //update game timer
-        if (!this.transition && !this.title && !PAUSED) this.levelTimer += this.game.clockTick;
+        if (!this.transition && !this.title && !PAUSED && !this.cutscene) this.levelTimer += this.game.clockTick;
         //debugging camera updates
         if (PARAMS.DEBUG) {
             /**
@@ -536,7 +576,10 @@ class SceneManager {
                     this.game.myReportCard.reset();
                     this.game.attack = false;
                     this.cutscene = true;
-                    this.loadLevel(this.currentLevel, false);
+                    this.title = false;
+                    this.clearEntities();
+                    this.player.removeFromWorld = true;
+                    //this.loadLevel(this.currentLevel, false);
                 } else if (this.controlsBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     ASSET_MANAGER.playAsset(SFX.CLICK);
                     this.credits = false;
@@ -616,6 +659,25 @@ class SceneManager {
             }
         }
     }
+
+    updateCutScene() {
+        if (this.cutscene) {
+            if (this.game.click) {
+                ASSET_MANAGER.playAsset(SFX.SELECT);
+                if (this.beginSequence.length > 0) {
+                    this.beginSequence.splice(0, 1);
+                    if (this.beginSequence == 0) {
+                        this.cutscene = false;
+                        this.title = true; // need this here because loadLevel needs this to be true to save the level state
+                        this.player.removeFromWorld = false;
+                        this.game.addEntity(this.player);
+                        this.loadLevel(this.currentLevel, false);
+                    }
+                }
+                this.game.click = false;
+            }
+        }
+    };
 
     /**
      * Menu Options
@@ -808,6 +870,7 @@ class SceneManager {
         this.drawGameplayGUI(ctx);
         this.drawTitleGUI(ctx);
         this.drawResultsGUI(ctx);
+        this.drawCutsceneGUI(ctx);
         //if(this.player.dead) ctx.drawImage(this.game_over, 0, 0);
         if (PARAMS.CURSOR) this.myCursor.draw(ctx);
         else {
@@ -818,7 +881,7 @@ class SceneManager {
     };
 
     drawGameplayGUI(ctx) {
-        if (!this.title && !this.transition) {
+        if (!this.title && !this.transition && !this.cutscene) {
             //current level
             ctx.font = PARAMS.BIG_FONT; //this is size 20 font
             ctx.fillStyle = "White";
@@ -935,6 +998,13 @@ class SceneManager {
             buildTextButton(ctx, "Return To Menu", this.returnToMenuBB, this.textColor == 3 && this.bufferTimer > this.maxBufferTime, "DeepSkyBlue");
 
             this.game.myReportCard.drawReportCard(ctx);
+        }
+    }
+
+    drawCutsceneGUI(ctx) {
+        if (this.cutscene && this.beginSequence.length != 0) {
+            this.beginSequence[0].show = true;
+            this.beginSequence[0].draw(ctx);
         }
     }
 
