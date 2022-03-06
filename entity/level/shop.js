@@ -57,7 +57,7 @@ class Shop {
 
         // animations speeds
         this.timer = 0;
-        
+
         this.purchases = {
             arrow_pack: ["You got 10 more arrows!"],
             potion: ["You got a... health potion...?", "Wizard: ... :)"],
@@ -74,7 +74,7 @@ class Shop {
         this.buttonscale = 0.5;
         this.customPurchaseHeight = -10; // Set to 0 for correct placement for horizontal lines
 
-        this.myTextBox = new SceneTextBox(this.game, (this.game.surfaceWidth / 2) - 50, 1100, "");
+        this.myTextBox = new SceneTextBox(this.game, (this.game.surfaceWidth / 2), this.y, "");
         this.myTextBox.show = true;
         this.messageTimer = 0;
         this.maxTimer = 6.5;
@@ -105,7 +105,7 @@ class Shop {
 
 
 
-        // Purchasing (clicked button in shop) 
+        // Purchasing (clicked button in shop)
         let self = this;
         this.game.entities.forEach(function (entity) {
             let mouseBB = new BoundingBox(self.game.mouse.x, self.game.mouse.y, 1, 1);
@@ -210,7 +210,7 @@ class Shop {
                             self.doTransaction(cost);
                             entity.myInventory.arrowUpgrade += 1;
                             entity.myInventory.arrows += 10;
-                            //entity.myInventory.arrows = Math.floor(entity.myInventory.arrows/2); 
+                            //entity.myInventory.arrows = Math.floor(entity.myInventory.arrows/2);
                             ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
                             self.currentMessage = self.purchases.arrow_upgrade;
                             self.messageTimer = 0;
@@ -295,7 +295,7 @@ class Shop {
             //highlighted buttons
             if (this.isHighlighted() && !this.purchased) {
                 if (this.highlightB1) {
-                    message = ["Wizard: 10 of the finest arrows here", "to snipe your enemies from afar!"]; // Arrow Pack   
+                    message = ["Wizard: 10 of the finest arrows here", "to snipe your enemies from afar!"]; // Arrow Pack
                 }
                 else if (this.highlightB2) {
                     message = ["Wizard: You want a potion?", "It'll heal you for 50HP."] // Health Potion
@@ -365,10 +365,10 @@ class Shop {
             }
 
         }
-        if (message instanceof Array) this.myTextBox.centerBottomMulti();
-        else this.myTextBox.centerBottomSingle();
         this.myTextBox.setMessage(message, true);
         this.currentMessage = message;
+        if (message instanceof Array) this.myTextBox.centerBottomMulti();
+        else this.myTextBox.centerBottomSingle();
 
     }
 
@@ -530,7 +530,7 @@ class Shop {
 
 
         if (this.highlightB1) {
-            ctx.fillRect(this.ButtonBB1.x, this.ButtonBB1.y, this.ButtonBB1.width, this.ButtonBB1.height - 1); // Arrow Pack   
+            ctx.fillRect(this.ButtonBB1.x, this.ButtonBB1.y, this.ButtonBB1.width, this.ButtonBB1.height - 1); // Arrow Pack
         }
         else if (this.highlightB2) {
             ctx.fillRect(this.ButtonBB2.x, this.ButtonBB2.y, this.ButtonBB1.width, this.ButtonBB1.height - 1); // Health Potion
