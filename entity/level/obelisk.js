@@ -73,6 +73,7 @@ class Obelisk extends AbstractInteractable {
         } else if (this.animations[this.states.notIdle].isDone() && !this.initial){
             this.switchstate();
             this.bricks.removeFromWorld = false;
+            this.game.addEntity(this.bricks);
             this.lastBrickState = false;
             this.animations[this.states.notIdle].elapsedTime = 0;
         }

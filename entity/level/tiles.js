@@ -570,19 +570,17 @@ class Banner extends AbstractBackFeature {
 
 class Chain extends AbstractBackFeature {
     constructor(game, x, y) {
-        super(game, x, y);
+        super(game, x, y, 1/2, 2);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
         this.srcX = 245;
         this.srcY = 7;
         this.srcW = 7;
         this.srcH = 26;
-        this.w = 1 / 2;
-        this.h = 2;
-        this.x += this.w;
+        this.x += this.w / 2;
     };
 
     draw(ctx) {
-        ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x * this.scale - this.game.camera.x, this.y * this.scale - this.game.camera.y, this.w * this.scale, this.h * this.scale);
+        ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x * this.scale - this.game.camera.x, this.y * this.scale - this.game.camera.y, this.w * this.scale, this.h *this.scale);
     };
 };
 
@@ -594,13 +592,16 @@ class CeilingChain extends AbstractBackFeature {
         this.srcY = 7;
         this.srcW = 3;
         this.srcH = 18;
-        this.x += this.w;
+        this.x += 1.5 * this.w;
     };
 
     draw(ctx) {
         let blockcount = this.h;
         for (var i = 0; i < blockcount; i++) {
-            ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x * this.scale - this.game.camera.x, (this.y - i * 2) * this.scale - this.game.camera.y, this.w * this.scale, this.h * this.scale);
+            ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, 
+                this.x * this.scale - this.game.camera.x, 
+                (this.y + i) * this.scale - this.game.camera.y,
+                this.scale * this.w, 1.375 * this.scale);
         }
     };
 };
@@ -623,7 +624,7 @@ class Column extends AbstractBackFeature {
         for (var i = 0; i < this.h - 1; i++) {
             ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, this.x * this.scale - this.game.camera.x, (this.y + i) * this.scale - this.game.camera.y, this.scale, this.scale);
         }
-        ctx.drawImage(this.spritesheet, this.baseX, this.baseY, this.baseW, this.baseH, this.x * this.scale - this.game.camera.x, this.y * this.scale - this.game.camera.y + (this.h - 1) * this.scale, this.w * this.scale, this.scale);
+        ctx.drawImage(this.spritesheet, this.baseX, this.baseY, this.baseW, this.baseH, this.x * this.scale - this.game.camera.x, this.y * this.scale - this.game.camera.y + (this.h - 1) * this.scale, this.scale, this.scale);
     };
 };
 
@@ -640,7 +641,10 @@ class Support extends AbstractBackFeature {
     draw(ctx) {
         let blockcount = this.w;
         for (var i = 0; i < blockcount; i++) {
-            ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, (this.x + i) * this.scale - this.game.camera.x, this.y * this.scale - this.game.camera.y, this.w * this.scale / 2, this.scale / 2);
+            ctx.drawImage(this.spritesheet, this.srcX, this.srcY, this.srcW, this.srcH, 
+                (this.x + i) * this.scale - this.game.camera.x, 
+                this.y * this.scale - this.game.camera.y, 
+                this.scale, this.scale / 2);
         }
     };
 }
