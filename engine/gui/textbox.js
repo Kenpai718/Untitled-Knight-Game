@@ -5,8 +5,8 @@
  * each index is a new line string.
  */
 class TextBox {
-    constructor(game, x, y, text) {
-        Object.assign(this, { game, x, y, text });
+    constructor(game, x, y, text, lineBuffer = 5) {
+        Object.assign(this, { game, x, y, text, lineBuffer });
         this.fontSize = 15;
 
 
@@ -88,9 +88,9 @@ class TextBox {
             //draw the text box
             //width = line length, height = num lines
             let xBuffer = 30; //buffer between box width and text
-            let yBuffer = 10;
+            let yBuffer = this.fontSize / 2;
             let boxWidth = (this.fontSize * maxLen) + xBuffer;
-            let boxHeight = ((this.fontSize * totalLines) * 2) + yBuffer;
+            let boxHeight = ((this.fontSize + this.lineBuffer) * totalLines) + (yBuffer * 2);
             canvas.width = boxWidth+4;
             canvas.height = boxHeight+4;
 
@@ -114,9 +114,9 @@ class TextBox {
             for (let i = 0; i < totalLines; i++) {
                 let line = new String(theText[i]);
                 let textX = (xBuffer / 2);
-                let textY = (this.fontSize * i) + (boxHeight / totalLines) + (yBuffer / 2);
+                let textY = (this.fontSize * i) + this.fontSize + (yBuffer * 2);
 
-                ctx.fillText(line, textX, textY + (i * 5));
+                ctx.fillText(line, textX, textY + (i * this.lineBuffer));
             }
             ctx.align = "left";
         }
