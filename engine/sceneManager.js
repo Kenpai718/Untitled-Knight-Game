@@ -199,7 +199,7 @@ class SceneManager {
         this.player = this.lastPlayer ? this.lastPlayer : new Knight(this.game, 0, 0);
         //reset last player to default settings
         if (this.lastPlayer) {
-            this.player.resetToDefault();   
+            this.player.resetToDefault();
         }
         if (this.player.myCheckpoint) {
             this.player.x = this.player.myCheckpoint.x - this.player.BB.left;
@@ -331,7 +331,7 @@ class SceneManager {
         let self = this;
         array.forEach(function (enemy) {
             var newEnem = null;
-            if (enemy instanceof Mushroom) 
+            if (enemy instanceof Mushroom)
                 newEnem = new Mushroom(self.game, 0, 0, false);
             else if (enemy instanceof Skeleton)
                 newEnem = new Skeleton(self.game, 0, 0, false);
@@ -374,7 +374,7 @@ class SceneManager {
                 newIntr = interactable;
             }
             if (interactable instanceof Obelisk) {
-                newIntr = new Obelisk(self.game, 0, 0);
+                newIntr = new Obelisk(self.game, 0, 0, 0, 0, 1, 1);
             }
             if (interactable instanceof Chest) {
                 newIntr = new Chest(self.game, 0, 0);
@@ -1049,7 +1049,7 @@ class SceneManager {
             let state = null;
             if (this.levelStateTemp)
                 state = this.levelStateTemp;
-            else 
+            else
                 state = this.levelState[this.currentLevel];
             this.game.enemies = this.saveEnemies(state.enemies);
             this.game.enemies.forEach(enemy => enemy.removeFromWorld = false);
@@ -1199,7 +1199,7 @@ class SceneManager {
                 array.push(e);
             }
         }
-        
+
     }
 
     loadEnemies(h, array, dict) {
