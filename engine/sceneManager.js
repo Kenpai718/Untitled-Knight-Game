@@ -1319,7 +1319,7 @@ class SceneManager {
         }
         if (dict.wizard) {
             let wizard = dict.wizard;
-            let e = new Wizard(this.game, 0, 0, wizard.left, wizard.right, wizard.top, wizard.bottom, h);
+            let e = new Wizard(this.game, 0, 0, wizard.left, wizard.right, h - wizard.top, h - wizard.bottom);
             this.positionEntity(e, wizard.x, h - wizard.y);
             array.push(e);
         }
