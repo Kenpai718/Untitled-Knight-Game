@@ -209,7 +209,7 @@ class FireballCircular extends Fireball {
         let disty = y - (source.y + source.height / 2);
         disty *= disty;
         this.r = Math.sqrt(distx + disty);
-        this.velocity = {x: 500, r: 3};
+        this.velocity = {x: 600, r: 3};
         this.initialDir = direction;
         this.width = 10;
         this.height = 10;
@@ -230,14 +230,15 @@ class FireballCircular extends Fireball {
         // deal with movement stuff
         if (this.r < 50 * this.scale) {
             this.x += (bool? 1 : -1) * this.velocity.x * TICK;
-            let distx = this.x - (this.source.BB.left + this.source.BB.width / 2);
+            let distx = this.source.center.x - this.x;
             let distxx = distx * distx;
-            let disty = this.y - (this.source.BB.top + this.source.BB.height / 2);
+            let disty = this.y - this.source.center.y;
             let distyy = disty * disty;
             this.r = Math.sqrt(distxx + distyy);
             if (this.r > 50 * this.scale) {
                 let x = -distx + Math.sqrt(this.r * this.r - distyy);
                 this.x += (bool? 1 : -1) * x;
+                this.r = 50 * this.scale;
             }
             this.angle = Math.atan(Math.abs(disty) / Math.abs(distx));
             if (!bool) this.angle = Math.PI - this.angle;
