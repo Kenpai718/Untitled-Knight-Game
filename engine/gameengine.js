@@ -25,7 +25,8 @@ class GameEngine {
         this.wheel = null;
         //check when user interacts with the game for the first time. It is needed to prevent multiple attempts to play music and bypass
         //browser restrictions!
-        this.userInteracted = false; 
+        this.userInteracted = false;
+        this.inCanvas = true; //check if focused
 
         this.myReportCard = new ReportCard(this);
 
@@ -60,6 +61,8 @@ class GameEngine {
             prevent: {
                 contextMenu: true,
                 scrolling: true,
+                dragging: true,
+                dropping: true,
             },
             debugging: false,
         };
@@ -77,7 +80,7 @@ class GameEngine {
 
     start() {
 
-        this.mouse = ({x: 1000, y: 0});
+        this.mouse = ({ x: 1000, y: 0 });
 
         this.running = true;
         const gameLoop = () => {
@@ -102,6 +105,18 @@ class GameEngine {
             }
             this.mouse = getXandY(e);
         });
+
+        //disable drags on the canvas
+        this.ctx.canvas.addEventListener('dragstart', (e) => {
+            if (this.options.prevent.dragging) {
+                e.preventDefault(); 
+            }
+        })
+        this.ctx.canvas.addEventListener('drop', (e) => {
+            if (this.options.prevent.dropping) {
+                e.preventDefault(); 
+            }
+        })
 
 
         //mouse was clicked
@@ -139,6 +154,7 @@ class GameEngine {
             }
 
             this.click = getXandY(e);
+
 
             switch (e.which) {
                 case 1:
@@ -182,9 +198,10 @@ class GameEngine {
             e.preventDefault(); //prevent scrolling from pressing a key
             switch (e.code) {
                 case "Escape":
-                    //no pause menu on title or transition screen
-                    PAUSED = !PAUSED;
-                    ASSET_MANAGER.playAsset(SFX.CLICK);
+                    if (!that.camera.title && !that.camera.cutscene) {
+                        PAUSED = !PAUSED;
+                        ASSET_MANAGER.playAsset(SFX.CLICK);
+                    }
                     break;
                 case "KeyD":
                 case "ArrowRight":
@@ -249,6 +266,28 @@ class GameEngine {
                     break;
             }
         }, false);
+
+        /**
+         * Periodically checks if the game has focus
+         * If not then the game is paused
+         */
+        function checkGameFocus() {
+            const elem = document.getElementById("gameWorld");
+
+            if (elem === document.activeElement) {
+                console.log("focused gained")
+                that.inCanvas = true;
+            }
+            else {
+                console.log("focused lost")
+                that.inCanvas = false;
+                that.resetControls();
+                if (!that.camera.title)
+                    PAUSED = true;
+            }
+        }
+        setInterval(checkGameFocus, 300);
+
     };
 
     addEntity(entity) {
@@ -315,7 +354,7 @@ class GameEngine {
         this.drawLayer(this.events);
         this.drawHealth();
         this.drawLayer(this.information);
-        
+
 
         if (PARAMS.DEBUG) {
             this.drawDebug(this.foreground1);

@@ -161,3 +161,114 @@ class SlimeProjectile extends FlyingEyeProjectile {
         ctx.filter = "none";
     }
 }
+
+class Fireball extends AbstractEntity {
+    constructor(game, source, x, y, scale, direction) {
+        super(game, x, y, "Fireball", 1, 20, 20, scale);
+        this.source = source;
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/wizard.png");
+        this.animations = [];
+        this.directions =  {right: 0, left: 1};
+        this.dir = direction;
+        this.loadAnimations();
+    }
+
+    loadAnimations() {
+        for (var i = 0; i < 2; i++) {
+            this.animations.push([]);
+        }
+
+        this.animations[0] = new Animator(this.spritesheet, 772, 25, 10, 20, 3, 0.15, 0, false, true, false);
+        this.animations[1] = new Animator(this.spritesheet, 708, 45, 10, 20, 3, 0.15, 0, true, true, false);
+    }
+
+    getDamageValue() {
+        let dmg = this.damage;
+        //critical bonus
+        if (this.isCriticalHit()) {
+            dmg = dmg * PARAMS.CRITICAL_BONUS;
+        }
+        return dmg;
+    }
+
+    setDamagedState() {
+        this.vulnerable = false;
+        this.state = this.states.damaged;
+    };
+
+}
+
+class FireballCircular extends Fireball {
+    constructor(game, source, x, y, scale, direction) {
+        super(game, source, x, y, scale, direction);
+        this.angle = 0;
+        if (this.dir == this.directions.right) 
+            this.angle = Math.PI;
+        let distx = x - (source.x + source.width / 2);
+        distx *= distx;
+        let disty = y - (source.y + source.height / 2);
+        disty *= disty;
+        this.r = Math.sqrt(distx + disty);
+        this.velocity = {x: 600, r: 3};
+        this.initialDir = direction;
+        this.width = 10;
+        this.height = 10;
+        this.updateBB();
+        this.stay = false;
+        this.release = false;
+        this.destroy = 3;
+    }
+
+    updateBB() {
+        this.BB = new BoundingBox(this.x - this.width / 2 * this.scale, this.y, this.width * this.scale, this.height * this.scale);
+    }
+
+    update() {
+        let TICK = this.game.clockTick;
+        let bool = this.initialDir == this.directions.right;
+
+        // deal with movement stuff
+        if (this.r < 50 * this.scale) {
+            this.x += (bool? 1 : -1) * this.velocity.x * TICK;
+            let distx = this.source.center.x - this.x;
+            let distxx = distx * distx;
+            let disty = this.y - this.source.center.y;
+            let distyy = disty * disty;
+            this.r = Math.sqrt(distxx + distyy);
+            if (this.r > 50 * this.scale) {
+                let x = -distx + Math.sqrt(this.r * this.r - distyy);
+                this.x += (bool? 1 : -1) * x;
+                this.r = 50 * this.scale;
+            }
+            this.angle = Math.atan(Math.abs(disty) / Math.abs(distx));
+            if (!bool) this.angle = Math.PI - this.angle;
+        }
+        else {
+            if (!this.stay) {
+                this.angle += (bool? 1: -1) * this.velocity.r * TICK;
+                this.location = {x: this.source.BB.left + this.source.BB.width / 2, y: this.source.BB.top + this.source.BB.height / 2};
+            }
+            if (this.release) {
+                this.r += this.velocity.x * 2 * TICK;
+                this.destroy -= TICK;
+                if (this.destroy <= 0)
+                    this.removeFromWorld;
+            }
+            this.x = this.r * Math.cos(this.angle) + this.location.x;
+            this.y = this.r * Math.sin(this.angle) + this.location.y;
+        }
+        this.animations[this.dir].update(TICK);
+        this.updateBB();
+    }
+
+    draw(ctx) {
+        this.animations[this.dir].drawFrame(this.game.clockTick, ctx, this.x - this.width / 2 * this.scale - this.game.camera.x, this.y - this.height * 3 / 4 * this.scale - this.game.camera.y, this.scale);
+    }
+
+    drawDebug(ctx) {
+        ctx.strokeStyle = "red";
+        //ctx.strokeRect(this.BB.left, this.BB.top, this.BB.width, this.BB.height);
+        ctx.strokeRect(this.BB.left - this.game.camera.x, this.BB.top - this.game.camera.y, this.BB.width, this.BB.height);
+    }
+    
+}

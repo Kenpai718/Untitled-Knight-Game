@@ -84,10 +84,10 @@ class SceneManager {
                 "Special Thanks to Chris Marriot!"
             ]
 
-        let creditX = 860;
-        let creditY = 1210;
-        let controlX = 870;
-        let controlY = 1270;
+        let creditX = (this.game.surfaceWidth / 2) - ((20 * 32) / 2);
+        let creditY = (this.game.surfaceHeight / 2) + 40 * 3.5;
+        let controlX = (this.game.surfaceWidth / 2) - ((20 * 26) / 2);
+        let controlY = (this.game.surfaceHeight / 2) + 40 * 3.5;
         this.myControlBox = new SceneTextBox(this.game, controlX, controlY, controlInfo);
         this.myCreditBox = new SceneTextBox(this.game, creditX, creditY, creditInfo);
 
@@ -129,6 +129,44 @@ class SceneManager {
         x = (this.game.surfaceWidth / 2) - ((40 * 9) / 2);
         y = (this.game.surfaceHeight / 2) + 40 * 3;
         this.returnMenuPauseBB = new BoundingBox(x, y, 40 * 9, -40);
+    }
+
+    loadCutScene() {
+        let beginScene1 =
+            [
+                "This is the story all about",
+                "that one time I got reincarnated",
+                "into a knight and had to save the",
+                "castle that was overrun by evil."
+            ];
+        let beginScene2 =
+            [
+                "insert second message here"
+            ];
+        let beginScene3 =
+            [
+                "insert third message here"
+            ];
+
+        var maxLength = 0;
+        for (var i = 0; i < beginScene1.length; i++) maxLength = Math.max(beginScene1[i].length, maxLength);
+        var x = (this.game.surfaceWidth / 2) - ((40 * maxLength) / 2);
+        var y = (this.game.surfaceHeight / 2) - 90 * Math.ceil(beginScene1.length / 2);
+        let beginScene1TB = new SceneTextBox(this.game, x, y, beginScene1, 40, 50);
+
+        maxLength = 0;
+        for (var i = 0; i < beginScene2.length; i++) maxLength = Math.max(beginScene2[i].length, maxLength);
+        x = (this.game.surfaceWidth / 2) - ((40 * maxLength) / 2);
+        y = (this.game.surfaceHeight / 2) - 90 * Math.ceil(beginScene2.length / 2);
+        let beginScene2TB = new SceneTextBox(this.game, x, y, beginScene2, 40, 50);
+
+        maxLength = 0;
+        for (var i = 0; i < beginScene3.length; i++) maxLength = Math.max(beginScene3[i].length, maxLength);
+        x = (this.game.surfaceWidth / 2) - ((40 * maxLength) / 2);
+        y = (this.game.surfaceHeight / 2) - 90 * Math.ceil(beginScene3.length / 2);
+        let beginScene3TB = new SceneTextBox(this.game, x, y, beginScene3, 40, 50);
+
+        this.beginSequence = [beginScene1TB, beginScene2TB, beginScene3TB];
     }
 
     /**
@@ -236,6 +274,7 @@ class SceneManager {
                 this.player.x = this.player.myCheckpoint.x;
                 this.player.y = this.player.myCheckpoint.y;
                 this.player.updateBB();
+
             }
 
             //mercy rule: after dying the player is healed a bit
@@ -256,6 +295,7 @@ class SceneManager {
         this.lastHP = this.player.hp;
         this.lastInventory = new Inventory(this.game);
         this.lastInventory.copyInventory(this.player.myInventory);
+        this.lastMaxHP = this.player.max_hp;
     }
 
     /**
@@ -276,6 +316,7 @@ class SceneManager {
             // if player dies reset their hp and inventory to what it was upon entering the level
             if (this.restart && this.lastPlayer) {
                 this.player.hp = this.lastHP;
+                this.player.max_hp = this.lastMaxHP;
                 this.player.myInventory = new Inventory(this.game)
                 this.player.myInventory.copyInventory(this.lastInventory);
                 this.player.dead = false;
@@ -344,8 +385,11 @@ class SceneManager {
                 newEnem = new Slime(self.game, 0, 0, false);
             else if (enemy instanceof DemonSlime)
                 newEnem = new DemonSlime(self.game, 0, 0, false);
-            else if (enemy instanceof Wizard)
+            else if (enemy instanceof Wizard) {
                 newEnem = new Wizard(self.game, 0, 0, false);
+                for (var i in enemy)
+                    newEnem[i] = enemy[i];
+            }
             if (newEnem) {
                 newEnem.x = enemy.x;
                 newEnem.y = enemy.y;
@@ -474,9 +518,10 @@ class SceneManager {
         this.updateTitleScreen();
         this.updateResultScreen();
         this.updatePauseMenu();
+        this.updateCutScene();
 
         //update game timer
-        if (!this.transition && !this.title && !PAUSED) this.levelTimer += this.game.clockTick;
+        if (!this.transition && !this.title && !PAUSED && !this.cutscene) this.levelTimer += this.game.clockTick;
         //debugging camera updates
         if (PARAMS.DEBUG) {
             /**
@@ -510,7 +555,6 @@ class SceneManager {
             this.levelTimer = 0;
             //keep attemping to play title music until the user clicks
             if (!MUSIC_MANAGER.isPlaying(MUSIC.TITLE)) {
-                //console.log("attempting to play title music");
                 if (this.game.userInteracted) {
                     MUSIC_MANAGER.pauseBackgroundMusic();
                     MUSIC_MANAGER.autoRepeat(MUSIC.TITLE);
@@ -522,25 +566,22 @@ class SceneManager {
             //update menu buttons
             this.textColor = 0;
             if (this.game.mouse) {
-                if (this.startGameBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
-                    this.textColor = 1;
-                } else if (this.controlsBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
-                    this.textColor = 2;
-                } else if (this.creditsBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
-                    this.textColor = 3;
-                } else if (this.levelSelectBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
-                    this.textColor = 4;
-                }
+                if (this.startGameBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) this.textColor = 1;
+                else if (this.controlsBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) this.textColor = 2;
+                else if (this.creditsBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) this.textColor = 3;
+                else if (this.levelSelectBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) this.textColor = 4;
             }
             if (this.game.click) {
                 if (this.startGameBB.collideMouse(this.game.click.x, this.game.click.y)) {
-                    if (!this.usingLevelSelect) {
-                        ASSET_MANAGER.playAsset(SFX.CLICK);
-                        ASSET_MANAGER.playAsset(SFX.SELECT);
-                        this.game.myReportCard.reset();
-                        this.game.attack = false;
-                        this.loadLevel(this.currentLevel, false);
-                    }
+                    ASSET_MANAGER.playAsset(SFX.CLICK);
+                    ASSET_MANAGER.playAsset(SFX.SELECT);
+                    this.game.myReportCard.reset();
+                    this.game.attack = false;
+                    this.cutscene = true;
+                    this.loadCutScene();
+                    this.title = false;
+                    this.clearEntities();
+                    this.player.removeFromWorld = true;
                 } else if (this.controlsBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     ASSET_MANAGER.playAsset(SFX.CLICK);
                     this.credits = false;
@@ -550,12 +591,9 @@ class SceneManager {
                     this.controls = false;
                     this.credits = !this.credits;
                 } else if (this.levelSelectBB.collideMouse(this.game.click.x, this.game.click.y)) {
-                    //hide the button after you click it
-                    if (!this.usingLevelSelect) {
-                        ASSET_MANAGER.playAsset(SFX.CLICK);
-                        ASSET_MANAGER.playAsset(SFX.SELECT);
-                        this.loadLevelSelect();
-                    }
+                    ASSET_MANAGER.playAsset(SFX.CLICK);
+                    ASSET_MANAGER.playAsset(SFX.SELECT);
+                    this.loadLevelSelect();
                 }
                 this.game.click = null;
             }
@@ -566,16 +604,9 @@ class SceneManager {
         if (PAUSED) {
             this.textColor = 0;
             if (this.game.mouse) {
-                if (this.controlsPauseBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
-                    this.textColor = 1;
-                    //console.log("hovering pause");
-                } else if (this.restartPauseBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
-                    //console.log("hovering restart");
-                    this.textColor = 2;
-                } else if (this.returnMenuPauseBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
-                    //console.log("hovering menu");
-                    this.textColor = 3;
-                }
+                if (this.controlsPauseBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) this.textColor = 1;
+                else if (this.restartPauseBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) this.textColor = 2;
+                else if (this.returnMenuPauseBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) this.textColor = 3;
             }
             if (this.game.click) {
                 if (this.controlsPauseBB.collideMouse(this.game.click.x, this.game.click.y)) {
@@ -606,20 +637,15 @@ class SceneManager {
         if (this.transition) {
             this.textColor = 0;
             if (this.game.mouse) {
-                if (this.nextLevelBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
-                    this.textColor = 1;
-                } else if (this.restartLevelBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
-                    this.textColor = 2;
-                } else if (this.returnToMenuBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) {
-                    this.textColor = 3;
-                }
+                if (this.nextLevelBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) this.textColor = 1;
+                else if (this.restartLevelBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) this.textColor = 2;
+                else if (this.returnToMenuBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) this.textColor = 3;
             }
 
             this.bufferTimer += this.game.clockTick;
             if (this.game.click && this.bufferTimer > this.maxBufferTime) {
                 if (this.nextLevelBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     ASSET_MANAGER.playAsset(SFX.CLICK);
-                    // load next level code goes here when level 2 is added
                     this.game.myReportCard.reset();
                     this.restartLevel();
                     this.bufferTimer = 0;
@@ -634,6 +660,25 @@ class SceneManager {
             }
         }
     }
+
+    updateCutScene() {
+        if (this.cutscene) {
+            if (this.game.click) {
+                ASSET_MANAGER.playAsset(SFX.SELECT);
+                if (this.beginSequence.length > 0) {
+                    this.beginSequence.splice(0, 1);
+                    if (this.beginSequence == 0) {
+                        this.cutscene = false;
+                        this.title = true; // need this here because loadLevel needs this to be true to save the level state
+                        this.player.removeFromWorld = false;
+                        this.game.addEntity(this.player);
+                        this.loadLevel(this.currentLevel, false);
+                    }
+                }
+                this.game.click = false;
+            }
+        }
+    };
 
     /**
      * Menu Options
@@ -826,17 +871,31 @@ class SceneManager {
         this.drawGameplayGUI(ctx);
         this.drawTitleGUI(ctx);
         this.drawResultsGUI(ctx);
+        this.drawCutsceneGUI(ctx);
         //if(this.player.dead) ctx.drawImage(this.game_over, 0, 0);
         if (PARAMS.CURSOR) this.myCursor.draw(ctx);
         else {
             //draw cursor in menus when cursor is disabled
             if (PAUSED || SHOP_ACTIVE || this.transition || this.title) this.myCursor.draw(ctx);
         }
+
+        //alert message that game lost focus
+        if(!this.game.inCanvas) {
+            
+            let fontSize = 20;
+            ctx.font = fontSize + 'px "Press Start 2P"';
+            let msg = "Your cursor is not in the game screen! Please click within the game to regain control!";
+            ctx.fillStyle = "black";
+            ctx.fillText(msg, (this.game.surfaceWidth / 2) - ((fontSize) * msg.length / 2) + 2, fontSize * 4 + 2);
+            ctx.fillStyle = "red";
+            ctx.fillText(msg, (this.game.surfaceWidth / 2) - ((fontSize) * msg.length / 2), fontSize * 4);
+
+        } 
         //console.log(this.player.BB.left + " " + this.player.BB.bottom);
     };
 
     drawGameplayGUI(ctx) {
-        if (!this.title && !this.transition) {
+        if (!this.title && !this.transition && !this.cutscene) {
             //current level
             ctx.font = PARAMS.BIG_FONT; //this is size 20 font
             ctx.fillStyle = "White";
@@ -953,6 +1012,13 @@ class SceneManager {
             buildTextButton(ctx, "Return To Menu", this.returnToMenuBB, this.textColor == 3 && this.bufferTimer > this.maxBufferTime, "DeepSkyBlue");
 
             this.game.myReportCard.drawReportCard(ctx);
+        }
+    }
+
+    drawCutsceneGUI(ctx) {
+        if (this.cutscene && this.beginSequence.length != 0) {
+            this.beginSequence[0].show = true;
+            this.beginSequence[0].draw(ctx);
         }
     }
 
@@ -1259,7 +1325,7 @@ class SceneManager {
         }
         if (dict.wizard) {
             let wizard = dict.wizard;
-            let e = new Wizard(this.game, 0, 0, wizard.left, wizard.right, wizard.top, wizard.bottom, h);
+            let e = new Wizard(this.game, 0, 0, wizard.left, wizard.right, h - wizard.top, h - wizard.bottom);
             this.positionEntity(e, wizard.x, h - wizard.y);
             array.push(e);
         }

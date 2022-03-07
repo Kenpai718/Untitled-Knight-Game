@@ -5,8 +5,8 @@
  * each index is a new line string.
  */
 class TextBox {
-    constructor(game, x, y, text) {
-        Object.assign(this, { game, x, y, text });
+    constructor(game, x, y, text, lineBuffer = 5) {
+        Object.assign(this, { game, x, y, text, lineBuffer });
         this.fontSize = 15;
 
 
@@ -50,7 +50,7 @@ class TextBox {
         ctx.drawImage(this.canvas, this.x - this.game.camera.x - this.canvas.width / 3,
             this.y - this.game.camera.y - this.canvas.height * 1.2);
         ctx.filter = "none";
-        
+
     };
 
 
@@ -88,15 +88,15 @@ class TextBox {
             //draw the text box
             //width = line length, height = num lines
             let xBuffer = 30; //buffer between box width and text
-            let yBuffer = 10;
+            let yBuffer = this.fontSize / 2;
             let boxWidth = (this.fontSize * maxLen) + xBuffer;
-            let boxHeight = ((this.fontSize * totalLines) * 2) + yBuffer;
+            let boxHeight = ((this.fontSize + this.lineBuffer) * totalLines) + (yBuffer * 2);
             canvas.width = boxWidth+4;
             canvas.height = boxHeight+4;
 
             ctx.fillStyle = this.boxColor;
             ctx.strokeStyle = this.borderColor;
-            
+
             //let myBoxX = (this.x - this.game.camera.x) - (boxWidth / 3);
             //let myBoxY = (this.y - this.game.camera.y) - (boxHeight * 1.2);
             ctx.globalAlpha = 0.5;
@@ -114,9 +114,9 @@ class TextBox {
             for (let i = 0; i < totalLines; i++) {
                 let line = new String(theText[i]);
                 let textX = (xBuffer / 2);
-                let textY = (this.fontSize * i) + (boxHeight / totalLines) + (yBuffer / 2);
-                
-                ctx.fillText(line, textX, textY + (i * 5));
+                let textY = (this.fontSize * i) + this.fontSize + (yBuffer * 2);
+
+                ctx.fillText(line, textX, textY + (i * this.lineBuffer));
             }
             ctx.align = "left";
         }
@@ -127,14 +127,14 @@ class TextBox {
         let totalLines = 1;
 
         //make the text box
-        
+
 
         //draw the text box
         //width = line length, height = num lines
         let xBuffer = 30; //buffer between box width and text
         let yBuffer = 14;
         let boxWidth = (this.fontSize * maxLen) + xBuffer;
-        let boxHeight = ((this.fontSize * totalLines) * 2) + yBuffer;
+        let boxHeight = ((this.fontSize + this.lineBuffer) * totalLines) + (yBuffer * 2);
         canvas.width = boxWidth+4;
         canvas.height = boxHeight+4;
         ctx.fillStyle = this.boxColor;
@@ -171,9 +171,8 @@ class TextBox {
  * each index is a new line string.
  */
 class SceneTextBox {
-    constructor(game, x, y, text) {
-        Object.assign(this, { game, x, y, text });
-        this.fontSize = 20;
+    constructor(game, x, y, text, fontSize = 20, lineBuffer = 5) {
+        Object.assign(this, { game, x, y, text, fontSize, lineBuffer });
 
         this.boxColor = "BlueViolet";
         this.borderColor = "Azure";
@@ -186,23 +185,25 @@ class SceneTextBox {
         this.myFadeTime = 0;
         this.myOpacity = 100;
         this.doFade = false;
-
+        this.maxLength = 0;
     };
 
     /**
     * change message and visibility
-    * @param {*} theText 
-    * @param {*} theIsVisible 
+    * @param {*} theText
+    * @param {*} theIsVisible
     */
     setMessage(theText, theIsVisible) {
+        this.maxLength = 0;
         this.text = theText;
         this.show = theIsVisible;
+        if (theText instanceof Array) for (var i = 0; i < theText.length; i++) this.maxLength = Math.max(this.maxLength, theText[i].length);
     }
 
     /**
      * Put textbox in a new spot
-     * @param {*} newX 
-     * @param {*} newY 
+     * @param {*} newX
+     * @param {*} newY
      */
     setPos(newX, newY) {
         this.x = newX;
@@ -264,13 +265,12 @@ class SceneTextBox {
 
     /**
      * Builds line by line
-     * @param {*} ctx 
-     * @param {*} theText 
+     * @param {*} ctx
+     * @param {*} theText
      */
     buildMultiLineBox(ctx, theText) {
         let maxLen = 0;
         let totalLines = theText.length;
-
         //if its one line build from a one line textbox
         if (totalLines <= 1) {
             let line = theText[0];
@@ -289,11 +289,11 @@ class SceneTextBox {
             //draw the text box
             //width = line length, height = num lines
             let xBuffer = 30; //buffer between box width and text
-            let yBuffer = 10;
+            let yBuffer = this.fontSize / 2;
             let boxWidth = (this.fontSize * maxLen) + xBuffer;
-            let boxHeight = ((this.fontSize * totalLines) * 2) + yBuffer;
-            let myBoxX = (this.x) - (boxWidth / 3);
-            let myBoxY = (this.y) - (boxHeight * 1.5);
+            let boxHeight = ((this.fontSize + this.lineBuffer) * totalLines) + (yBuffer * 2);
+            let myBoxX = this.x;
+            let myBoxY = this.y;
             ctx.globalAlpha = 0.5;
             ctx.fillRect(myBoxX, myBoxY, boxWidth, boxHeight);
             ctx.globalAlpha = 1;
@@ -305,8 +305,8 @@ class SceneTextBox {
             for (let i = 0; i < totalLines; i++) {
                 let line = new String(theText[i]);
                 let textX = myBoxX + (xBuffer / 2);
-                let textY = myBoxY + (this.fontSize * i) + (boxHeight / totalLines) + (yBuffer / 2);
-                ctx.fillText(line, textX, textY + (i * 5));
+                let textY = myBoxY + (this.fontSize * i) + this.fontSize + (yBuffer * 2);
+                ctx.fillText(line, textX, textY + (i * this.lineBuffer));
             }
             ctx.align = "left";
         }
@@ -314,8 +314,8 @@ class SceneTextBox {
 
     /**
      * Build one line of textbox
-     * @param {*} ctx 
-     * @param {*} theText 
+     * @param {*} ctx
+     * @param {*} theText
      */
     buildSingleLineBox(ctx, theText) {
         let maxLen = theText.length;
@@ -328,11 +328,11 @@ class SceneTextBox {
         //draw the text box
         //width = line length, height = num lines
         let xBuffer = 30; //buffer between box width and text
-        let yBuffer = 14;
+        let yBuffer = 30;
         let boxWidth = (this.fontSize * maxLen) + xBuffer;
-        let boxHeight = ((this.fontSize * totalLines) * 2) + yBuffer;
-        let myBoxX = (this.x) - (boxWidth / 3);
-        let myBoxY = (this.y) - (boxHeight * 1.5);
+        let boxHeight = this.fontSize + yBuffer;
+        let myBoxX = this.x;
+        let myBoxY = this.y;
         ctx.globalAlpha = 0.5;
         ctx.fillRect(myBoxX, myBoxY, boxWidth, boxHeight);
         ctx.globalAlpha = 1;
@@ -346,7 +346,7 @@ class SceneTextBox {
         ctx.fillStyle = this.textColor;
         ctx.align = "center";
         let textX = myBoxX + (xBuffer / 2);
-        let textY = myBoxY + (this.fontSize) + (boxHeight / 5) + (yBuffer / 2);
+        let textY = myBoxY + (this.fontSize) + (yBuffer / 2);
         ctx.fillText(theText, textX, textY);
         ctx.align = "left";
     }
@@ -357,22 +357,26 @@ class SceneTextBox {
     //methods to position it
 
     centerTop() {
-        this.x = (this.game.surfaceWidth / 2);
+        this.x = (this.game.surfaceWidth / 2) - ((this.fontSize * this.text.length) / 2);
         this.y = 150;
     }
 
+    centerTopMulti() {
+        this.x = (this.game.surfaceWidth / 2) - ((this.fontSize * this.maxLength) / 2);
+        this.y = 50;
+    }
+
     centerBottomSingle() {
-        this.x = (this.game.surfaceWidth / 2) - 75;
-        this.y = (this.game.surfaceHeight) - 45;
+        this.x = (this.game.surfaceWidth / 2) - ((this.fontSize * this.text.length) / 2);
+        this.y = (this.game.surfaceHeight) - (this.fontSize * 6);
     }
 
     centerBottomMulti() {
-        this.x = (this.game.surfaceWidth / 2) - 95;
-        this.y = (this.game.surfaceHeight) - 5;
+        this.x = (this.game.surfaceWidth / 2) - ((this.fontSize * this.maxLength) / 2);
+        this.y = (this.game.surfaceHeight - (this.text.length * (this.fontSize + this.lineBuffer)) - (this.fontSize * 3));
     }
 
     drawDebug() {
 
     }
 }
-
