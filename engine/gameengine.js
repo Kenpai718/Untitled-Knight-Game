@@ -185,7 +185,7 @@ class GameEngine {
             switch (e.code) {
                 case "Escape":
                     //no pause menu on title or transition screen
-                    PAUSED = !PAUSED;
+                    PAUSED = this.camera.cutscene == false ? !PAUSED: PAUSED;
                     ASSET_MANAGER.playAsset(SFX.CLICK);
                     break;
                 case "KeyD":
