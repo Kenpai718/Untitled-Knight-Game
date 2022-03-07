@@ -25,7 +25,7 @@ class GameEngine {
         this.wheel = null;
         //check when user interacts with the game for the first time. It is needed to prevent multiple attempts to play music and bypass
         //browser restrictions!
-        this.userInteracted = false; 
+        this.userInteracted = false;
 
         this.myReportCard = new ReportCard(this);
 
@@ -183,7 +183,7 @@ class GameEngine {
             switch (e.code) {
                 case "Escape":
                     //no pause menu on title or transition screen
-                    PAUSED = !PAUSED;
+                    PAUSED = this.camera.cutscene == false ? !PAUSED: PAUSED;
                     ASSET_MANAGER.playAsset(SFX.CLICK);
                     break;
                 case "KeyD":
@@ -315,7 +315,7 @@ class GameEngine {
         this.drawLayer(this.events);
         this.drawHealth();
         this.drawLayer(this.information);
-        
+
 
         if (PARAMS.DEBUG) {
             this.drawDebug(this.foreground1);
