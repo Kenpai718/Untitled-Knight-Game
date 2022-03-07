@@ -61,6 +61,8 @@ class GameEngine {
             prevent: {
                 contextMenu: true,
                 scrolling: true,
+                dragging: true,
+                dropping: true,
             },
             debugging: false,
         };
@@ -103,6 +105,18 @@ class GameEngine {
             }
             this.mouse = getXandY(e);
         });
+
+        //disable drags on the canvas
+        this.ctx.canvas.addEventListener('dragstart', (e) => {
+            if (this.options.prevent.dragging) {
+                e.preventDefault(); 
+            }
+        })
+        this.ctx.canvas.addEventListener('drop', (e) => {
+            if (this.options.prevent.dropping) {
+                e.preventDefault(); 
+            }
+        })
 
 
         //mouse was clicked
@@ -260,11 +274,11 @@ class GameEngine {
             const elem = document.getElementById("gameWorld");
 
             if (elem === document.activeElement) {
-                //console.log("focused gained")
+                console.log("focused gained")
                 that.inCanvas = true;
             }
             else {
-                //console.log("focused lost")
+                console.log("focused lost")
                 that.inCanvas = false;
                 that.resetControls();
                 PAUSED = true;
