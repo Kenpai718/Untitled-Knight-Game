@@ -385,8 +385,11 @@ class SceneManager {
                 newEnem = new Slime(self.game, 0, 0, false);
             else if (enemy instanceof DemonSlime)
                 newEnem = new DemonSlime(self.game, 0, 0, false);
-            else if (enemy instanceof Wizard)
+            else if (enemy instanceof Wizard) {
                 newEnem = new Wizard(self.game, 0, 0, false);
+                for (var i in enemy)
+                    newEnem[i] = enemy[i];
+            }
             if (newEnem) {
                 newEnem.x = enemy.x;
                 newEnem.y = enemy.y;

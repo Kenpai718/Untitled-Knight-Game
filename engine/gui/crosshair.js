@@ -7,7 +7,6 @@ class Cursor {
         this.scale = 64;
         this.types = { default: 0, can_hit: 1, cannot_hit: 2 };
         this.myType = 0;
-
     }
 
     update() {
@@ -49,6 +48,7 @@ class Cursor {
         }
 
         if (PARAMS.DEBUG) {
+            this.BB = new BoundingBox(this.game.mouse.x - (this.scale / 2) + this.game.camera.x, this.game.mouse.y - (this.scale / 2) + this.game.camera.y, this.scale, this.scale);
             ctx.fillStyle = "Red";
             ctx.StrokeStyle = "Red";
             ctx.fillText(this.myType, this.BB.x - this.game.camera.x, this.BB.y - this.game.camera.y);
