@@ -1774,8 +1774,8 @@ var treasureroom = {
     ],
 
     chains: [
-        { x: 23.8, y: 22 },
-        { x: 58.8, y: 22 },
+        { x: 24, y: 22 },
+        { x: 59, y: 22 },
 
         { x: 61.8, y: 12 },
         { x: 70.8, y: 12 },
@@ -1785,25 +1785,25 @@ var treasureroom = {
         { x: 1.8, y: 36 },
         { x: 2.8, y: 24 },
         { x: 0.8, y: 12 },
-        { x: 65.25, y: 3 },
-        { x: 67.25, y: 3 },
+        { x: 65, y: 3 },
+        { x: 68, y: 3 },
     ],
 
     ceilingChains: [
-        { x: 29, y: 28, height: 2 },
-        { x: 30, y: 28, height: 1.5 },
+        { x: 29, y: 29, height: 2 },
+        { x: 30, y: 29, height: 1 },
 
-        { x: 54, y: 28, height: 2 },
-        { x: 53, y: 28, height: 1.5 },
+        { x: 54, y: 29, height: 2 },
+        { x: 53, y: 29, height: 1 },
 
-        { x: 54, y: 28, height: 2 },
-        { x: 53, y: 28, height: 1.5 },
+        //{ x: 54, y: 28, height: 2 },
+        //{ x: 53, y: 28, height: 1.5 },
 
         { x: 60, y: 24, height: 1 },
-        { x: 63, y: 23, height: 1.5 },
+        { x: 63, y: 24, height: 1.5 },
 
         { x: 23, y: 24, height: 1 },
-        { x: 20, y: 23, height: 1.5 },
+        { x: 20, y: 24, height: 1.5 },
 
         { x: 22, y: 50, height: 1 },
         { x: 20, y: 50, height: 1.5 },
@@ -1811,15 +1811,17 @@ var treasureroom = {
         { x: 1, y: 50, height: 2 },
         { x: 4, y: 50, height: 1.5 },
 
-        { x: 78, y: 36, height: 4 },
+        { x: 4, y: 30, height: 2 },
+        { x: 1, y: 24, height: 3 },
+
+        { x: 78, y: 39, height: 4 },
         { x: 70, y: 39, height: 1 },
 
         { x: 61, y: 39, height: 1 },
-        { x: 62, y: 38, height: 2 },
+        { x: 62, y: 39, height: 2 },
         { x: 63, y: 39, height: 1 },
 
-        { x: 4, y: 29, height: 2 },
-        { x: 1, y: 21, height: 3 },
+        
 
     ],
 
