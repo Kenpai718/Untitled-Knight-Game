@@ -40,7 +40,6 @@ class SceneManager {
         this.setupAllLevels();
         this.loadTitle();
         this.loadPaused();
-        this.loadCutScene();
     };
 
     loadTitle() {
@@ -576,10 +575,10 @@ class SceneManager {
                     this.game.myReportCard.reset();
                     this.game.attack = false;
                     this.cutscene = true;
+                    this.loadCutScene();
                     this.title = false;
                     this.clearEntities();
                     this.player.removeFromWorld = true;
-                    //this.loadLevel(this.currentLevel, false);
                 } else if (this.controlsBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     ASSET_MANAGER.playAsset(SFX.CLICK);
                     this.credits = false;
