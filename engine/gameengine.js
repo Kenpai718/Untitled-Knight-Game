@@ -184,9 +184,10 @@ class GameEngine {
             e.preventDefault(); //prevent scrolling from pressing a key
             switch (e.code) {
                 case "Escape":
-                    //no pause menu on title or transition screen
-                    PAUSED = this.camera.cutscene == false ? !PAUSED: PAUSED;
-                    ASSET_MANAGER.playAsset(SFX.CLICK);
+                    if (!that.camera.title && !that.camera.cutscene) {
+                        PAUSED = !PAUSED;
+                        ASSET_MANAGER.playAsset(SFX.CLICK);
+                    }
                     break;
                 case "KeyD":
                 case "ArrowRight":
