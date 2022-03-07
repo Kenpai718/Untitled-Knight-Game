@@ -982,7 +982,7 @@ var level1_3 = {
 
     ],
     obelisks: [
-        { x: 7, y: 1, brickX: 10, brickY: 12, brickWidth: 3, brickHeight: 13 },
+        { x: 7, y: 1, brickX: 10, brickY: 12, brickWidth: 3, brickHeight: 10 },
         { x: 79, y: 15, brickX: 81, brickY: 17, brickWidth: 3, brickHeight: 3 },
         { x: 100, y: 23, brickX: 105, brickY: 30, brickWidth: 11, brickHeight: 8 },
         { x: 17, y: 11, brickX: 19, brickY: 15, brickWidth: 6, brickHeight: 3 },
@@ -1038,7 +1038,7 @@ var level1_3 = {
         { x: 6, y: 37 },
         { x: 12, y: 37 },
         { x: 18, y: 14 },
-        { x: 52, y: 26 }, //subtle hint to go left to find the treasure room
+        { x: 52, y: 26 }, //subtle hint to go left to find the treasure room                                                                                                        :c
         { x: 49, y: 27 },
 
         { x: 116, y: 24 },
@@ -1089,8 +1089,9 @@ var level1_3 = {
 
         { x: 91, y: 42, width: 1, height: 18 },
         { x: 90, y: 42, width: 1, height: 16 },
+        { x: 89, y: 32, width: 1, height: 2 },
         { x: 89, y: 42, width: 1, height: 10 },
-        { x: 69, y: 42, width: 21, height: 12 },
+        { x: 69, y: 42, width: 20, height: 12 },
         { x: 85, y: 30, width: 5, height: 1 },
         { x: 87, y: 29, width: 3, height: 1 },
         { x: 89, y: 28, width: 1, height: 1 },
@@ -1758,10 +1759,10 @@ var treasureroom = {
         { x: 25, y: 11 },
         { x: 29, y: 11 },
 
-        { x: 63, y: 3 },
-        { x: 70, y: 3 },
+        { x: 63, y: 2 },
+        { x: 70, y: 2 },
 
-        { x: 55, y: 42 },
+        { x: 55, y: 43 },
         { x: 61, y: 43 },
 
         { x: 30, y: 42 },
@@ -1784,6 +1785,8 @@ var treasureroom = {
         { x: 1.8, y: 36 },
         { x: 2.8, y: 24 },
         { x: 0.8, y: 12 },
+        { x: 65.25, y: 3 },
+        { x: 67.25, y: 3 },
     ],
 
     ceilingChains: [
@@ -1877,6 +1880,32 @@ var treasureroom = {
             ]
         }
     ],
+
+    signs: [
+        {
+            x: 66.5, y: 2,
+            title: "  Encrypted Message",
+            text: [
+                "4576656E206D7920636C6F736573742066726965",
+                "6E642077686F6D204920747275737465642C2074",
+                "6865206F6E652077686F20617465206D79206272",
+                "6561642C20686173206C69667465642068697320",
+                "6865656C20616761696E7374206D652E - 5073616C6D732034313A39",
+            ],
+
+        },
+
+        {
+            x: 62, y: 42,
+            title: "  Hear ye hear ye",
+            text: ["Vasts amount of opportunities are open before you,",
+            "but let not your heart corrupt lest you lose your freedom,",
+            "for the pits of hell shall surely open and swallow the greedy,",
+            "thus, seize the moment to go above and beyond the fools that came before you..",
+            ],
+
+        },
+    ]
 
 
 }
