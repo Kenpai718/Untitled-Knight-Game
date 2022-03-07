@@ -450,6 +450,39 @@ class Platform extends AbstractBarrier {
     
 };
 
+class MoveableBlocks extends Platform {
+
+   constructor(game, x, y, w, h){
+    super(game, x, y, w, h);
+    this.time = 10;
+    this.timer = 0;
+    this.directions = {left: 0, right: 1, up: 2, down: 3};
+    this.direction = this.directions.left;
+    this.velocity = 0.1;
+   }
+
+   update(){
+
+    const TICK = this.game.clockTick;
+
+    this.timer += TICK;
+
+    if(this.timer < this.time){
+        this.x -= 1 * TICK;
+        
+        if(this.direction == this.directions.left) this.x -= this.velocity * TICK;
+        if(this.direction == this.directions.right) this.x += this.velocity * TICK;
+        if(this.direction == this.directions.up) this.y -= this.velocity * TICK;
+        if(this.direction == this.directions.down) this.y += this.velocity * TICK;
+        
+        
+        this.updateBB();
+
+    }
+
+   }
+};
+
 class BackgroundWalls {
     constructor(game, x, y, w, h) {
         Object.assign(this, { game, x, y, w, h});
