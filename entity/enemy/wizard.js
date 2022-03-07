@@ -21,6 +21,7 @@ class Wizard extends AbstractBoss {
         // attack phases
         this.phases = { no_attack: 0, fire_ring: 1, arrow_rain: 2 };
         this.phase = this.phases.no_attack;
+        this.totalPhases = 3;
 
         // states/animation
         this.states = {
@@ -102,7 +103,7 @@ class Wizard extends AbstractBoss {
         }
         // phase phaseCooldown
         if (this.phaseCooldown <= 0 && !this.teleporting) {
-            let random = Math.round(Math.random());
+            let random = randomInt(this.totalPhases);
             this.changePhase(random);
         }
         // wizard eye hit cooldown
@@ -279,14 +280,30 @@ class Wizard extends AbstractBoss {
 
     summonArrows(theAmount) {
 
-        let startX = this.x;
-        let startY = this.y;
         let spaceX = 100; //space in between arrows
         let spaceY = 50;
         let arrow_type = this.game.camera.player.myInventory.arrowUpgrade;
+        let player = this.game.camera.player;
+        let target = { x: this.game.camera.player.BB.mid, y: this.game.camera.player.BB.top };
+        let startX;
+        let startY;
+        let random = randomInt(4);
+
+        if (random == 0) { //from the wizard position
+            startX = this.x;
+            startY = this.y;
+        } else if (random == 1) { //from above the player
+            startX = player.BB.left;
+            startY = player.BB.top - 500;
+        } else if (random == 2) { //start left of player
+            startX = player.BB.left - 600;
+            startY = player.BB.top - (this.BB.height / 2);
+        } else { //start right of player
+            startX = player.BB.right + 600;
+            startY = player.BB.top - (this.BB.height / 2);
+        }
 
         for (let i = 0; i < theAmount; i++) {
-            let target = { x: this.game.camera.player.BB.mid, y: this.game.camera.player.BB.top };
             let arrow = new Arrow(this.game, startX + (i * spaceX), startY - (i * spaceY), target, arrow_type, false);
             this.game.addEntityToFront(arrow);
             ASSET_MANAGER.playAsset(SFX.BOW_SHOT);
@@ -473,7 +490,6 @@ class Wizard extends AbstractBoss {
                     //green aura that decreases to indicate when the attack will hit
                     if (this.auraAmount > 0) {
                         this.auraAmount -= (1000 * TICK) / 1000; //decrease aura amount over time
-                        console.log(this.auraAmount)
                         this.aura = "drop-shadow(0 0 " + this.auraAmount + "rem springgreen) opacity(100%)";
                         if (this.auraAmount < 0) this.auraAmount = 0;
                     } else {
@@ -484,7 +500,7 @@ class Wizard extends AbstractBoss {
                     if (!this.arrow) {
                         if (this.auraAmount <= 0) {
                             this.arrow = true;
-                            this.summonArrows(3 + randomInt(6));
+                            this.summonArrows(3 + randomInt(3));
                         }
                     }
 
@@ -517,13 +533,15 @@ class Wizard extends AbstractBoss {
 
 
     /**
-     * changes the type of attack being done
+     * changes the type of attack being done and gives it the default values
      * @param {*} phase the current phase
      */
     changePhase(phase) {
         let phases = this.phases;
         this.phase = phase;
         this.resetAnimationTimers(this.state);
+        this.auraAmount = 1;
+        this.aura = "none";
         switch (phase) {
             case phases.no_attack:
                 this.avoid = true;
@@ -539,9 +557,11 @@ class Wizard extends AbstractBoss {
                 break;
             case phases.arrow_rain:
                 this.avoid = false;
-                this.phaseCooldown = 5;
+                this.phaseCooldown = 12;
                 this.state = this.states.raise;
                 this.arrow = false;
+                this.arrowTimer = 0;
+                this.auraAmount = 1;
                 break;
         }
 

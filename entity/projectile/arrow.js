@@ -101,8 +101,7 @@ class Arrow extends AbstractEntity {
                 //do damage to enemy hit by player arrow
                 if (entity instanceof AbstractPlayer && !self.playerTeam) {
                     if (!self.hit && !self.stuck && !entity.dead) {
-                        self.doArrowHit(entity);
-                        if (!entity.aggro) entity.aggro = true;
+                        if(entity.vulnerable) self.doArrowHit(entity);
                     }
                 }
             }
