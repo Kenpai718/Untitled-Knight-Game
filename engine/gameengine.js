@@ -198,9 +198,10 @@ class GameEngine {
             e.preventDefault(); //prevent scrolling from pressing a key
             switch (e.code) {
                 case "Escape":
-                    //no pause menu on title or transition screen
-                    PAUSED = !PAUSED;
-                    ASSET_MANAGER.playAsset(SFX.CLICK);
+                    if (!that.camera.title && !that.camera.cutscene) {
+                        PAUSED = !PAUSED;
+                        ASSET_MANAGER.playAsset(SFX.CLICK);
+                    }
                     break;
                 case "KeyD":
                 case "ArrowRight":
@@ -281,7 +282,8 @@ class GameEngine {
                 console.log("focused lost")
                 that.inCanvas = false;
                 that.resetControls();
-                PAUSED = true;
+                if (!that.camera.title)
+                    PAUSED = true;
             }
         }
         setInterval(checkGameFocus, 300);
