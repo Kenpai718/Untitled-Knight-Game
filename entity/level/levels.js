@@ -331,7 +331,7 @@ var titleScene = {
     ],
 
     skeletons: [
-        { x: 2, y: 7, guard: true }
+        { x: 2, y: 7, guard: true, initialState: 6 }
     ],
 
     shrooms: [
@@ -578,7 +578,7 @@ var level1_1 = {
     skeletons: [
         { x: 47, y: 7, guard: true }
     ],
-    
+
     slimes: [
         {x: 97, y: 2, guard: false},
         {x: 104, y: 2, guard: false},
@@ -642,7 +642,7 @@ var level1_2 = {
         { x: 2, y: 25, direction: 1 },
         //{ x: 50, y: 7, direction: 0 },
         { x: 82, y: 19, direction: 0 },
-        { x: 58, y: 1, direction: 1 }, //secret 
+        { x: 58, y: 1, direction: 1 }, //secret
         { x: 58, y: 4, direction: 1 },
         { x: 52, y: 1, direction: 1 },
         { x: 117, y: 8, direction: 0 },
@@ -780,7 +780,7 @@ var level1_2 = {
         { x: 28, y: 27, guard: true },
         { x: 102, y: 9, guard: true },
         { x: 91, y: 9, guard: true },
-        
+
     ],
     windows: [
         { x: 2, y: 9, width: 1, height: 1.5 },
@@ -1184,7 +1184,7 @@ var level1_4 = {
     ],
     chests: [
         { x: 29, y: 1, direction: 0 },    //bottom floor
-        { x: 37, y: 12, direction: 1 },   //secret room 
+        { x: 37, y: 12, direction: 1 },   //secret room
         { x: 38.5, y: 12, direction: 1 }, //secret room
         { x: 40, y: 12, direction: 1 }, //secret room
         { x: 52, y: 12, direction: 1 },   //middle floor
@@ -1264,7 +1264,7 @@ var level1_4 = {
         { x: 48, y: 36, width: 1, height: 6, type: 0 }, //top floor spikes right wall (bottom)
         { x: 48, y: 45, width: 1, height: 3, type: 0 }, //top floor spikes right wall (TOP)
         { x: 45, y: 43, width: 1, height: 13, type: 0 }, //top floor spikes left wall
-        { x: 42, y: 45, width: 1, height: 7, type: 0 }, //top floor spikes right wall (TOP) 2 
+        { x: 42, y: 45, width: 1, height: 7, type: 0 }, //top floor spikes right wall (TOP) 2
         { x: 38, y: 42, width: 1, height: 5, type: 0 }, //top floor spikes left wall (TOP) 2
         { x: 38, y: 45, width: 1, height: 1, type: 0 }, //top floor spikes left wall (TOP) 2
         { x: 35, y: 37, width: 1, height: 7, type: 0 }, //top floor spikes left (TOP) 3
@@ -1435,7 +1435,7 @@ var level1_4 = {
         {x: 29, y: 3, guard: true},
         {x: 31, y: 36, guard: true},
         {x: 41, y: 37, guard: true},
-        
+
     ],
     shrooms: [
         { x: 72, y: 24, guard: false },
@@ -1500,7 +1500,7 @@ var level1_4 = {
                 { x: 14, y: 38, guard: false },
                 { x: 16, y: 38, guard: false },
             ]
-            
+
         }
     ]
 
@@ -1650,7 +1650,7 @@ var treasureroom = {
 
         { x: 20, y: 15, width: 9, height: 3, type: 1 }, // Spike floors
         { x: 55, y: 15, width: 9, height: 1, type: 1 },
-        { x: 1, y: 0, width: 6, height: 1, type: 1 }, // Spike floor 
+        { x: 1, y: 0, width: 6, height: 1, type: 1 }, // Spike floor
 
 
         //Fall down spikes
@@ -1860,13 +1860,13 @@ var treasureroom = {
             indicate: true,
             bricks: [
                 { x: 5, y: 50, width: 20, height: 1 }, //hide top path
-                { x: 24, y: 49, width: 1, height: 1 }, //hide path entrance 
+                { x: 24, y: 49, width: 1, height: 1 }, //hide path entrance
                 { x: 1, y: 50, width: 4, height: 38 }, //hide drop down
                 { x: 75, y: 39, width: 4, height: 27 },
                 { x: 1, y: 12, width: 28, height: 4 }, // undergrounds
                 { x: 65, y: 39, width: 10, height: 2 },
                 { x: 29, y: 12, width: 50, height: 12 },
-                //{ x: 33, y: 4, width: 16, height: 4 }, 
+                //{ x: 33, y: 4, width: 16, height: 4 },
 
             ]
         },
