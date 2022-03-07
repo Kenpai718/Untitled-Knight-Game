@@ -19,7 +19,7 @@ class Wizard extends AbstractBoss {
         /** battle phases */
 
         // attack phases
-        this.phases = {no_attack: 0, fire_ring: 1};
+        this.phases = { no_attack: 0, fire_ring: 1, arrow_rain: 2 };
         this.phase = this.phases.no_attack;
 
         // states/animation
@@ -47,12 +47,15 @@ class Wizard extends AbstractBoss {
         this.telportTimer = 0;
         this.appearTime = 0;
         this.disappearTime = 0;
+        this.arrowTimer = 0;
+        this.aura = "none";
+        this.auraAmount = 1; //decreases to 0 to show it is charging
 
 
         /** constructing teleportation information */
-        
+
         this.teleporting = false;
-        this.teleportLocation = {x: 0, y: 0};
+        this.teleportLocation = { x: 0, y: 0 };
 
         // canvas for teleportation
         this.canvas = document.createElement("canvas");
@@ -66,6 +69,7 @@ class Wizard extends AbstractBoss {
         this.right = right;
         this.top = top;
         this.bottom = bottom;
+
     }
 
     // use after any change to this.x or this.y
@@ -74,7 +78,7 @@ class Wizard extends AbstractBoss {
         this.AR = new BoundingBox(this.x + (40 * this.scale), this.y + this.offsetyBB, this.width - (80 * this.scale), this.heightBB);
         this.VB = new BoundingBox(this.x - (80 * this.scale), this.y, this.width + (160 * this.scale), this.height);
         this.BB = new BoundingBox(this.x + this.offsetxBB * this.scale, this.y + this.offsetyBB * this.scale, this.widthBB * this.scale, this.heightBB * this.scale);
-        this.center = {x: this.BB.left + this.BB.width / 2, y: this.BB.top + this.BB.height / 2};
+        this.center = { x: this.BB.left + this.BB.width / 2, y: this.BB.top + this.BB.height / 2 };
     };
 
     getDamageValue() {
@@ -97,7 +101,7 @@ class Wizard extends AbstractBoss {
             this.wait -= TICK;
         }
         // phase phaseCooldown
-        if(this.phaseCooldown <= 0 && !this.teleporting) {
+        if (this.phaseCooldown <= 0 && !this.teleporting) {
             let random = Math.round(Math.random());
             this.changePhase(random);
         }
@@ -118,7 +122,7 @@ class Wizard extends AbstractBoss {
 
     getOffsets() {
         switch (this.state) {
-            default: 
+            default:
                 this.offsetxBB = 21;
                 this.offsetyBB = 10;
                 this.widthBB = 32;
@@ -152,14 +156,14 @@ class Wizard extends AbstractBoss {
                 if (playerInVB || playerAtkInVB || self.aggro) {
                 }*/
                 //else {
-                    /*if (self.state == self.state.attack1) {
-                        self.velocity.x = 0;
-                        self.velocity.y = 0;
-                    }
+                /*if (self.state == self.state.attack1) {
+                    self.velocity.x = 0;
+                    self.velocity.y = 0;
+                }
 
-                    if (self.state != self.states.idle1)
-                        self.resetAnimationTimers(self.state);
-                    self.state = self.states.idle1;*/
+                if (self.state != self.states.idle1)
+                    self.resetAnimationTimers(self.state);
+                self.state = self.states.idle1;*/
                 //}
                 if (entity.HB && self.BB.collide(entity.HB)) {
                     self.setDamagedState();
@@ -232,7 +236,7 @@ class Wizard extends AbstractBoss {
     update() {
         let TICK = this.game.clockTick;
         this.checkCooldowns();
-        let dist = {x: 0, y: 0};
+        let dist = { x: 0, y: 0 };
         let self = this;
         dist = this.checkEntityInteractions(dist, TICK);
         // if avoiding player teleport when player is too close, if not teleporting already
@@ -256,6 +260,10 @@ class Wizard extends AbstractBoss {
         switch (this.phase) {
             case phases.fire_ring:
                 this.fireRing(6);
+                //this.arrowRain();
+                break;
+            case phases.arrow_rain:
+                this.arrowRain();
                 break;
         }
 
@@ -265,8 +273,26 @@ class Wizard extends AbstractBoss {
         }
         // does not update animation if teleporting, which allows current frame to be the frame to use when teleporting
         else this.animations[this.state][this.direction].update(TICK);
-        
+
         this.lastBB = this.BB;
+    }
+
+    summonArrows(theAmount) {
+
+        let startX = this.x;
+        let startY = this.y;
+        let spaceX = 100; //space in between arrows
+        let spaceY = 50;
+        let arrow_type = this.game.camera.player.myInventory.arrowUpgrade;
+
+        for (let i = 0; i < theAmount; i++) {
+            let target = { x: this.game.camera.player.BB.mid, y: this.game.camera.player.BB.top };
+            let arrow = new Arrow(this.game, startX + (i * spaceX), startY - (i * spaceY), target, arrow_type, false);
+            this.game.addEntityToFront(arrow);
+            ASSET_MANAGER.playAsset(SFX.BOW_SHOT);
+        }
+
+
     }
 
     /**
@@ -328,9 +354,9 @@ class Wizard extends AbstractBoss {
             this.updateBoxes();
             if (this.reappearTime < 0.15) {
                 if (this.game.camera.player.x < this.center.x)
-                this.direction = this.directions.left;
+                    this.direction = this.directions.left;
                 if (this.game.camera.player.x > this.center.x)
-                this.direction = this.directions.right;
+                    this.direction = this.directions.right;
             }
             if (this.reappearTime <= 0) {
                 this.vulnerable = true;
@@ -338,12 +364,12 @@ class Wizard extends AbstractBoss {
             }
             else this.BB = BB;
         }
-     }
+    }
 
-     /**
-      * logic for the fire ring which creates a ring of fire to follow and then release
-      * @param {*} max the max amount of fireballs to cast in the circle
-      */
+    /**
+     * logic for the fire ring which creates a ring of fire to follow and then release
+     * @param {*} max the max amount of fireballs to cast in the circle
+     */
     fireRing(max) {
         let TICK = this.game.clockTick;
         let states = this.states;
@@ -369,9 +395,9 @@ class Wizard extends AbstractBoss {
                     this.fire = true;
                     let fireball = null;
                     if (this.dir == this.direction.left)
-                        fireball = new FireballCircular(this.game, this, 
-                            this.center.x - 10 * this.scale, 
-                            this.center.y - 4 * this.scale, 
+                        fireball = new FireballCircular(this.game, this,
+                            this.center.x - 10 * this.scale,
+                            this.center.y - 4 * this.scale,
                             this.scale, this.direction);
                     else
                         fireball = new FireballCircular(this.game, this,
@@ -420,6 +446,77 @@ class Wizard extends AbstractBoss {
     }
 
     /**
+     * Summons arrows and then teleports after a certain amount of time
+     * Has an indicator with a green aura
+     */
+    arrowRain() {
+        let TICK = this.game.clockTick;
+        let states = this.states;
+        let dir = this.direction;
+        let animation = this.animations[this.state][this.direction];
+        let isDone = animation.isDone();
+        let frame = animation.currentFrame();
+        let self = this;
+
+        switch (this.state) {
+            //initial starting state 
+            case states.raise:
+                if (isDone) {
+                    this.resetAnimationTimers(this.state);
+                    this.state = states.casting;
+                }
+                break;
+            //casting state shoots arrows after done charging aura
+            case states.casting:
+
+                if (!this.teleporting) {
+                    //green aura that decreases to indicate when the attack will hit
+                    if (this.auraAmount > 0) {
+                        this.auraAmount -= (1000 * TICK) / 1000; //decrease aura amount over time
+                        console.log(this.auraAmount)
+                        this.aura = "drop-shadow(0 0 " + this.auraAmount + "rem springgreen) opacity(100%)";
+                        if (this.auraAmount < 0) this.auraAmount = 0;
+                    } else {
+                        this.aura = "none";
+                    }
+
+                    //spawns arrows if done charging
+                    if (!this.arrow) {
+                        if (this.auraAmount <= 0) {
+                            this.arrow = true;
+                            this.summonArrows(3 + randomInt(6));
+                        }
+                    }
+
+                    //if arrow was fire start counting the timer and if done switch state and reset to default
+                    if (this.arrow) {
+                        this.arrowTimer += TICK;
+                        let finished = this.arrowTimer > 1.5;
+                        if (finished) {
+                            this.state = states.lower;
+                            this.resetAnimationTimers(this.state);
+                            this.arrow = false;
+                            this.arrowTimer = 0;
+                            this.auraAmount = 1;
+                        }
+                    }
+                }
+
+                break;
+            //ending state to start animation loop again
+            case states.lower:
+                if (isDone) {
+                    this.state = states.raise;
+                    this.activateTeleport();
+                    this.resetAnimationTimers(this.state);
+                    this.arrow = false;
+                }
+                break;
+        }
+    }
+
+
+    /**
      * changes the type of attack being done
      * @param {*} phase the current phase
      */
@@ -430,17 +527,24 @@ class Wizard extends AbstractBoss {
         switch (phase) {
             case phases.no_attack:
                 this.avoid = true;
-                this.phaseCooldown = 5;
+                this.phaseCooldown = 1;
                 this.state = this.states.idle1;
                 break;
             case phases.fire_ring:
                 this.avoid = false;
                 this.phaseCooldown = 10;
                 this.state = this.states.idleto2;
+                //this.state = this.states.raise;
                 this.fire = false;
                 break;
+            case phases.arrow_rain:
+                this.avoid = false;
+                this.phaseCooldown = 5;
+                this.state = this.states.raise;
+                this.arrow = false;
+                break;
         }
-            
+
     }
 
     draw(ctx) {
@@ -468,10 +572,11 @@ class Wizard extends AbstractBoss {
             let h = 80 * this.scale - this.tHeight;
 
             this.animations[this.state][this.direction].drawFrame(this.game.clockTick, this.ctx, 0, 0, 1);
-            ctx.drawImage(this.canvas, this.x - this.game.camera.x + w / 2, this.y - this.game.camera.y + h / 2 , this.tWidth, this.tHeight);
+            ctx.drawImage(this.canvas, this.x - this.game.camera.x + w / 2, this.y - this.game.camera.y + h / 2, this.tWidth, this.tHeight);
         }
         // nonteleporting visuals
         else {
+            ctx.filter = this.aura;
             this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
             this.tWidth = 80 * this.scale;
             this.tHeight = 80 * this.scale;
@@ -479,6 +584,6 @@ class Wizard extends AbstractBoss {
         ctx.filter = "none";
     }
 
-    
+
 
 }
