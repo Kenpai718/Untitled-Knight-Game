@@ -88,32 +88,39 @@ class Arrow extends AbstractEntity {
                 //do damage to enemy hit by player arrow
                 if (entity instanceof AbstractEnemy && self.playerTeam) {
                     if (!self.hit && !self.stuck && !entity.dead) {
-                        //log to report card
-                        if (entity.canTakeDamage()) self.game.myReportCard.myDamageDealt += self.getDamageValue();
-                        ASSET_MANAGER.playAsset(SFX.ARROW_HIT);
-                        self.removeFromWorld = true;
-                        self.hit = true;
-                        entity.takeDamage(self.getDamageValue(), self.critical);
-                        entity.setDamagedState();
+                        self.doArrowHit(entity);
                         if (!entity.aggro) entity.aggro = true;
-
                     }
-                } else if (entity instanceof AbstractPlayer && !self.playerTeam) {
-                    if (!self.hit && !self.stuck && !entity.dead) {
-                        //do damage to player from enemy arrow
-                        //log to report card
-                        if (entity.canTakeDamage()) self.game.myReportCard.myDamageTaken += self.getDamageValue();
-                        ASSET_MANAGER.playAsset(SFX.ARROW_HIT);
-                        self.removeFromWorld = true;
-                        self.hit = true;
-                        entity.takeDamage(self.getDamageValue(), self.critical);
-                    }
-
                 }
             }
         });
 
+        //hit an entity
+        this.game.entities.forEach(function (entity) {
+            if (entity.BB && self.BB.collide(entity.BB)) {
+                //do damage to enemy hit by player arrow
+                if (entity instanceof AbstractPlayer && !self.playerTeam) {
+                    if (!self.hit && !self.stuck && !entity.dead) {
+                        self.doArrowHit(entity);
+                        if (!entity.aggro) entity.aggro = true;
+                    }
+                }
+            }
+        });
+
+
+
+
         this.updateBB();
+    }
+
+    doArrowHit(entity) {
+        if (entity.canTakeDamage()) this.game.myReportCard.myDamageDealt += this.getDamageValue();
+        ASSET_MANAGER.playAsset(SFX.ARROW_HIT);
+        this.removeFromWorld = true;
+        this.hit = true;
+        entity.takeDamage(this.getDamageValue(), this.critical);
+        entity.setDamagedState();
     }
 
     updateBB() {
