@@ -268,7 +268,8 @@ class GameEngine {
                 //console.log("focused lost")
                 that.inCanvas = false;
                 that.resetControls();
-                PAUSED = true;
+                if (!that.camera.title)
+                    PAUSED = true;
             }
         }
         setInterval(checkGameFocus, 300);
