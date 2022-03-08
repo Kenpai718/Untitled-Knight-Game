@@ -38,7 +38,7 @@ var testLevel = {
 
         { x: 12, y: 3, killQuota: 0, exitLocation: { x: 10, y: 45, levelNum: 4 }, transition: false }, //door to level 4
         { x: 20, y: 3, killQuota: 0, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: true }, //door to level 4
-        { x: 24, y: 3, killQuota: 0, exitLocation: { x: 41, y: 26, levelNum: 5 }, transition: false }, //door to level 4
+        { x: 24, y: 3, killQuota: 0, exitLocation: { x: 41, y: 29, levelNum: 5 }, transition: false }, //door to level 4
 
     ],
 
@@ -972,7 +972,7 @@ var level1_3 = {
     doors: [
         { x: 1, y: 3, killQuota: 0, exitLocation: { x: 114, y: 1, levelNum: 2 }, transition: false }, //go back to level 2
         { x: 117, y: 25, killQuota: 8, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: false }, // change to level 4 once theres a level 4
-        { x: 34, y: 35, killQuota: 0, exitLocation: { x: 41, y: 26, levelNum: 5 }, transition: false } // change to treasure room
+        { x: 34, y: 35, killQuota: 0, exitLocation: { x: 41, y: 29, levelNum: 5 }, transition: false } // change to treasure room
     ],
     ground: [
         { x: 0, y: 0, width: 10, type: 1 },
