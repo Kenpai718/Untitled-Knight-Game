@@ -43,7 +43,7 @@ class Score {
         var offset = this.score < 10 ? 6 : 12;
 
         if (this.type == PARAMS.DMG_ID) {
-            if (this.score > 0) {
+            if (this.score >= 0) {
                 if (this.isCritical) {
 
                     ctx.font = PARAMS.CRITICAL_FONT;

@@ -164,10 +164,14 @@ class AbstractEntity {
     * Dead if too far below the initial level height
     */
     checkInDeathZone() {
-        let lvlHeight = this.game.camera.levelH * PARAMS.BLOCKDIM;
-        if (this.y >= (lvlHeight + this.game.surfaceHeight / 2)) {
+        if (this.isDeathZone()) {
             this.takeDamage(this.max_hp, false);
         }
+    }
+
+    isDeathZone() {
+        let lvlHeight = this.game.camera.levelH * PARAMS.BLOCKDIM;
+        return (this.y >= (lvlHeight + this.game.surfaceHeight / 2));
     }
 
     /**

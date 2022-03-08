@@ -89,7 +89,7 @@ class Mushroom extends AbstractEnemy {
             // attack hitbox timing
             if (this.state == this.states.attack) {
                 this.attackFrame = this.animations[this.state][this.direction].currentFrame();
-                if (this.attackFrame >= 6) this.updateHB();
+                if (this.attackFrame >= 7) this.updateHB();
             } else {
                 this.HB = null;
             }
@@ -119,17 +119,18 @@ class Mushroom extends AbstractEnemy {
     // only use when attacking
     updateHB() {
         this.getOffsets();
-        if (this.direction == this.directions.left) this.HB = new BoundingBox(this.x + (30 * this.scale), this.y + this.offsetyBB, (this.width - (60 * this.scale)) / 2, this.heightBB);
-        else this.HB = new BoundingBox(this.x + (30 * this.scale) + ((this.width - (60 * this.scale)) / 2), this.y + this.offsetyBB, (this.width - (60 * this.scale)) / 2, this.heightBB);
+        if (this.direction == this.directions.left) this.HB = new BoundingBox(this.BB.left - this.BB.width, this.BB.top, this.BB.width * 1.5, this.BB.height);
+        else this.HB = new BoundingBox(this.BB.left + (this.BB.width), this.BB.top, this.BB.width * 1.5, this.BB.height);
     };
 
     // use after any change to this.x or this.y
     updateBoxes() {
         this.lastBB = this.BB;
         this.getOffsets();
-        this.AR = new BoundingBox(this.x + (40 * this.scale), this.y + this.offsetyBB, this.width - (80 * this.scale), this.heightBB);
-        this.VB = new BoundingBox(this.x - (80 * this.scale), this.y, this.width + (160 * this.scale), this.height);
         this.BB = new BoundingBox(this.x + this.offsetxBB, this.y + this.offsetyBB, this.widthBB, this.heightBB);
+        if (this.direction == this.directions.left) this.AR = new BoundingBox(this.BB.left - (this.BB.width), this.BB.top, this.BB.width * 1.5, this.BB.height);
+        else this.AR = new BoundingBox(this.BB.left + (this.BB.width), this.BB.top, this.BB.width * 1.5, this.BB.height);
+        this.VB = new BoundingBox(this.BB.left - (80 * this.scale), this.BB.top - this.BB.height / 2, this.width + (160 * this.scale), this.BB.height * 2);
     };
 
     // only used by updateHB and updateBoxes to get bounding boxes to fit properly
@@ -160,6 +161,7 @@ class Mushroom extends AbstractEnemy {
                 }
                 // knight is in attack range
                 if (entity.BB && self.AR.collide(entity.BB) && self.vulnerable) {
+                    console.log("knight in mushroom attack range")
                     self.velocity.x = 0;
                     if (self.canAttack || !self.animations[self.states.attack][self.direction].isDone()) {
                         self.runAway = true;
@@ -225,3 +227,44 @@ class Mushroom extends AbstractEnemy {
     };
 
 };
+
+//op mushroom that you are supposed to run from
+class BigMushroom extends Mushroom {
+    constructor(game, x, y, onGuard) {
+        super(game, x, y, onGuard);
+        this.scale = 10;
+        this.max_hp = this.max_hp * 5;
+        this.hp = this.max_hp;
+        this.myJumpHeight = PLAYER_JUMP_HEIGHT;
+    }
+
+    // only use when attacking
+    updateHB() {
+        this.getOffsets();
+        if (this.direction == this.directions.left) this.HB = new BoundingBox(this.BB.left - this.BB.width, this.BB.top, this.BB.width * 1.5, this.BB.height);
+        else this.HB = new BoundingBox(this.BB.left + (this.BB.width), this.BB.top, this.BB.width * 1.5, this.BB.height);
+    };
+
+    //It will track you down until the end of the earth
+    updateBoxes() {
+        this.lastBB = this.BB;
+        this.getOffsets();
+        this.BB = new BoundingBox(this.x + this.offsetxBB, this.y + this.offsetyBB, this.widthBB, this.heightBB);
+        if (this.direction == this.directions.left) this.AR = new BoundingBox(this.BB.left - (this.BB.width), this.BB.top, this.BB.width * 1.5, this.BB.height);
+        else this.AR = new BoundingBox(this.BB.left + (this.BB.width), this.BB.top, this.BB.width * 1.5, this.BB.height);
+        this.VB = new BoundingBox(this.BB.left - (this.game.surfaceWidth / 2), this.BB.top - this.game.surfaceHeight, this.game.surfaceWidth * 3, this.game.surfaceHeight * 3);
+    };
+
+
+    //do big boi damage
+    getDamageValue() {
+        return 25;
+    };
+
+    //such a big boi it cant take damage
+    takeDamage(damage, isCritical) {
+        damage = 0;
+        super.takeDamage(damage, isCritical);
+        if(super.isDeathZone()) this.hp = 0;
+    }
+}
