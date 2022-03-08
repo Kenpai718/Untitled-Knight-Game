@@ -275,11 +275,11 @@ class GameEngine {
             const elem = document.getElementById("gameWorld");
 
             if (elem === document.activeElement) {
-                console.log("focused gained")
+                //console.log("focused gained")
                 that.inCanvas = true;
             }
             else {
-                console.log("focused lost")
+                //console.log("focused lost")
                 that.inCanvas = false;
                 that.resetControls();
                 if (!that.camera.title)

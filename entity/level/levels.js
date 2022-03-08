@@ -979,6 +979,8 @@ var level1_3 = {
         { x: 16, y: 10, width: 3, type: 1 },
         //obelisk to right room
         { x: 68, y: 21, width: 2, type: 1 }, //chest on top
+        { x: 70, y: 25, width: 14, type: 1},
+        { x: 99, y: 22, width: 21, type: 1 },
 
     ],
     obelisks: [
@@ -986,8 +988,8 @@ var level1_3 = {
         { x: 79, y: 15, brickX: 81, brickY: 17, brickWidth: 3, brickHeight: 3 },
         { x: 100, y: 23, brickX: 105, brickY: 30, brickWidth: 11, brickHeight: 8 },
         { x: 17, y: 11, brickX: 19, brickY: 15, brickWidth: 6, brickHeight: 3 },
-        { x: 50, y: 35.5, brickX: 42, brickY: 37, brickWidth: 1, brickHeight: 5 },
-        { x: 68, y: 22.5, brickX: 70, brickY: 30, brickWidth: 2, brickHeight: 17 },
+        { x: 67, y: 36.5, brickX: 42, brickY: 37, brickWidth: 1, brickHeight: 5 },
+        { x: 68, y: 22.5, brickX: 70, brickY: 30, brickWidth: 2, brickHeight: 18 },
     ],
     shrooms: [
         { x: 107, y: 32, guard: false },
@@ -1026,6 +1028,7 @@ var level1_3 = {
         { x: 9, y: 36, direction: 1 },
         { x: 10.5, y: 36, direction: 1 },
 
+        { x: 75, y: 13, direction: 0 },
         { x: 77, y: 15, direction: 0 },
         { x: 54, y: 5, directon: 0 },
         { x: 29, y: 28, directon: 0 },
@@ -1035,11 +1038,18 @@ var level1_3 = {
         { x: 65, y: 36, direction: 0 }, //chest on top
     ],
     torches: [
+        { x: 4, y: 3 },
         { x: 6, y: 37 },
         { x: 12, y: 37 },
         { x: 18, y: 14 },
-        { x: 52, y: 26 }, //subtle hint to go left to find the treasure room                                                                                                        :c
-        { x: 49, y: 27 },
+        { x: 23, y: 5},
+        { x: 34, y: 5},
+        { x: 41, y: 10},
+        { x: 53, y: 7},
+        { x: 68, y: 25},
+        { x: 52.5, y: 27 }, //subtle hint to go left to find the treasure room                                                                                                        :c
+        { x: 49, y: 30 },
+        { x: 49, y: 14 },
 
         { x: 116, y: 24 },
         { x: 119, y: 24 },
@@ -1055,11 +1065,11 @@ var level1_3 = {
         { x: 36, y: 0, width: 48, height: 1 },
         { x: 17, y: 42, width: 6, height: 2 },
         { x: 77, y: 14, width: 7, height: 14 },
-        { x: 71, y: 25, width: 13, height: 8 },
+        { x: 71, y: 24, width: 13, height: 7 },
         { x: 71, y: 17, width: 2, height: 1 },
         { x: 71, y: 16, width: 1, height: 1 },
         { x: 84, y: 12, width: 15, height: 13 },
-        { x: 99, y: 22, width: 21, height: 23 },
+        { x: 99, y: 21, width: 21, height: 22 },
         { x: 30, y: 32, width: 13, height: 2 },
         { x: 28, y: 42, width: 2, height: 12 },
         { x: 30, y: 42, width: 13, height: 5 },
@@ -1117,12 +1127,12 @@ var level1_3 = {
 
         { x: 50, y: 34, width: 3, height: 1 },
         { x: 57, y: 35, width: 3, height: 1 },
-        { x: 64, y: 35, width: 3, height: 1 }, //chest on top
+        { x: 64, y: 35, width: 5, height: 1 }, //chest on top
 
         { x: 40, y: 7, width: 2, height: 1 },
         { x: 49, y: 12, width: 2, height: 1 },
         { x: 59, y: 22, width: 5, height: 1 },
-        { x: 69, y: 12, width: 5, height: 1 },
+        { x: 69, y: 12, width: 8, height: 1 },
         { x: 89, y: 17, width: 3, height: 1 },
         { x: 95, y: 21, width: 1, height: 1 },
         { x: 45, y: 30, width: 2, height: 1 },
@@ -1133,7 +1143,7 @@ var level1_3 = {
         { x: 16, y: 40, height: 3, type: 0 }, //secret room cover
         { x: 57, y: 22, height: 8, type: 0 },
         { x: 53, y: 25, height: 8, type: 2 },
-        { x: 70, y: 25, height: 12, type: 0 },
+        { x: 70, y: 24, height: 11, type: 0 },
         { x: 19, y: 11, height: 2, type: 2 },
         { x: 22, y: 26, height: 4, type: 2 },
         { x: 20, y: 40, height: 5, type: 2 },
