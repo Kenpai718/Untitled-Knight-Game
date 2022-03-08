@@ -82,30 +82,37 @@ class Arrow extends AbstractEntity {
         //unstick arrow if the wall that it hit is no longer there (like through an obelisk)
         if (this.stuck && !hitWall) this.stuck = false;
 
-        //hit an entity
-        this.game.enemies.forEach(function (entity) {
-            if (entity.BB && self.BB.collide(entity.BB)) {
-                //do damage to enemy hit by player arrow
-                if (entity instanceof AbstractEnemy && self.playerTeam) {
-                    if (!self.hit && !self.stuck && !entity.dead) {
-                        self.doArrowHit(entity);
-                        if (!entity.aggro) entity.aggro = true;
+        //player's arrow try to do damage to enemy
+        if (this.playerTeam) {
+            this.game.enemies.forEach(function (entity) {
+                if (entity.BB && self.BB.collide(entity.BB)) {
+                    //do damage to enemy hit by player arrow
+                    if (entity instanceof AbstractEnemy) {
+                        if (!self.hit && !self.stuck && !entity.dead) {
+                            self.doArrowHit(entity);
+                            if (!entity.aggro) entity.aggro = true;
+                        }
                     }
                 }
-            }
-        });
-
-        //hit an entity
-        this.game.entities.forEach(function (entity) {
-            if (entity.BB && self.BB.collide(entity.BB)) {
-                //do damage to enemy hit by player arrow
-                if (entity instanceof AbstractPlayer && !self.playerTeam) {
-                    if (!self.hit && !self.stuck && !entity.dead) {
-                        if(entity.vulnerable) self.doArrowHit(entity);
-                    }
+            });
+        } else { //enemy arrow try to hit the player
+            let player = this.game.camera.player;
+            if (player.BB && self.BB.collide(player.BB)) {
+                if (!self.hit && !self.stuck && !player.dead) {
+                    if (player.vulnerable) self.doArrowHit(player);
                 }
             }
-        });
+            // this.game.entities.forEach(function (entity) {
+            //     if (entity.BB && self.BB.collide(entity.BB)) {
+            //         //do damage to enemy hit by player arrow
+            //         if (entity instanceof AbstractPlayer) {
+            //             if (!self.hit && !self.stuck && !entity.dead) {
+            //                 if (entity.vulnerable) self.doArrowHit(entity);
+            //             }
+            //         }
+            //     }
+            // });
+        }
 
 
 
