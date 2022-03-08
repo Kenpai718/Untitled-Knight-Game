@@ -48,9 +48,13 @@ class Wizard extends AbstractBoss {
         this.appearTime = 0;
         this.disappearTime = 0;
 
+        // skeleton spawn logic
+        this.skeletonVar = 1; // used to choose a random int between 0 and skeletonVar - 1
+        this.skeletonBase = 1; // wizard will spawn at least skeletonBase skeletons
+        this.skeletonChance = 10; // percentage chance that the wizard will spawn skeletons (out of 100)
 
         /** constructing teleportation information */
-        
+
         this.teleporting = false;
         this.teleportLocation = {x: 0, y: 0};
 
@@ -118,7 +122,7 @@ class Wizard extends AbstractBoss {
 
     getOffsets() {
         switch (this.state) {
-            default: 
+            default:
                 this.offsetxBB = 21;
                 this.offsetyBB = 10;
                 this.widthBB = 32;
@@ -246,6 +250,7 @@ class Wizard extends AbstractBoss {
                     let dist = Math.sqrt(distx * distx + disty * disty);
                     if (dist < 60 * self.scale) {
                         self.activateTeleport();
+                        if (randomInt(100) < self.skeletonChance) self.loadEvent(randomInt(self.skeletonVar) + self.skeletonBase);
                     }
                 }
             })
@@ -265,7 +270,7 @@ class Wizard extends AbstractBoss {
         }
         // does not update animation if teleporting, which allows current frame to be the frame to use when teleporting
         else this.animations[this.state][this.direction].update(TICK);
-        
+
         this.lastBB = this.BB;
     }
 
@@ -369,9 +374,9 @@ class Wizard extends AbstractBoss {
                     this.fire = true;
                     let fireball = null;
                     if (this.dir == this.direction.left)
-                        fireball = new FireballCircular(this.game, this, 
-                            this.center.x - 10 * this.scale, 
-                            this.center.y - 4 * this.scale, 
+                        fireball = new FireballCircular(this.game, this,
+                            this.center.x - 10 * this.scale,
+                            this.center.y - 4 * this.scale,
                             this.scale, this.direction);
                     else
                         fireball = new FireballCircular(this.game, this,
@@ -420,6 +425,24 @@ class Wizard extends AbstractBoss {
     }
 
     /**
+     * Summons 3 to 5 skeletons
+     *
+     */
+    loadEvent(numberOfEnemies) {
+        let enemies = [];
+        let h = this.game.camera.level.height;
+        let spawnOffset = 80;
+        for (var i = 0; i < numberOfEnemies; i++) {
+            let enemy = new Skeleton(this.game, this.x + (i * spawnOffset), (this.game.camera.level.height - 1), false, 6); // the 6 is for the rebirth state
+            enemy.y = Math.ceil((enemy.y * PARAMS.BLOCKDIM) - enemy.BB.bottom + 20); // tried using postion entity but it needed a bit more of an offset
+            enemy.aggro = true;
+            enemies.push(enemy);
+        }
+        this.event = new Event(this.game, [], [], enemies, true, false);
+        this.game.addEntity(this.event);
+    };
+
+    /**
      * changes the type of attack being done
      * @param {*} phase the current phase
      */
@@ -440,7 +463,7 @@ class Wizard extends AbstractBoss {
                 this.fire = false;
                 break;
         }
-            
+
     }
 
     draw(ctx) {
@@ -479,6 +502,6 @@ class Wizard extends AbstractBoss {
         ctx.filter = "none";
     }
 
-    
+
 
 }
