@@ -52,6 +52,10 @@ class Wizard extends AbstractBoss {
         this.aura = "none";
         this.auraAmount = 1; //decreases to 0 to show it is charging
 
+        // skeleton spawn logic
+        this.skeletonVar = 1; // used to choose a random int between 0 and skeletonVar - 1
+        this.skeletonBase = 1; // wizard will spawn at least skeletonBase skeletons
+        this.skeletonChance = 10; // percentage chance that the wizard will spawn skeletons (out of 100)
 
         /** constructing teleportation information */
 
@@ -251,6 +255,7 @@ class Wizard extends AbstractBoss {
                     let dist = Math.sqrt(distx * distx + disty * disty);
                     if (dist < 60 * self.scale) {
                         self.activateTeleport();
+                        if (randomInt(100) < self.skeletonChance) self.loadEvent(randomInt(self.skeletonVar) + self.skeletonBase);
                     }
                 }
             })
@@ -463,6 +468,25 @@ class Wizard extends AbstractBoss {
     }
 
     /**
+     * Summons 3 to 5 skeletons
+     *
+     */
+    loadEvent(numberOfEnemies) {
+        let enemies = [];
+        let h = this.game.camera.level.height;
+        let spawnOffset = 80;
+        for (var i = 0; i < numberOfEnemies; i++) {
+            let enemy = new Skeleton(this.game, this.x + (i * spawnOffset), (this.game.camera.level.height - 1), false, 6); // the 6 is for the rebirth state
+            enemy.y = Math.ceil((enemy.y * PARAMS.BLOCKDIM) - enemy.BB.bottom + 20); // tried using postion entity but it needed a bit more of an offset
+            enemy.aggro = true;
+            enemies.push(enemy);
+        }
+        this.event = new Event(this.game, [], [], enemies, true, false);
+        this.game.addEntity(this.event);
+    };
+
+    /**
+     * changes the type of attack being done
      * Summons arrows and then teleports after a certain amount of time
      * Has an indicator with a green aura
      */
@@ -534,6 +558,7 @@ class Wizard extends AbstractBoss {
 
     /**
      * changes the type of attack being done and gives it the default values
+
      * @param {*} phase the current phase
      */
     changePhase(phase) {

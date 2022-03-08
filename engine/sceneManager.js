@@ -881,7 +881,7 @@ class SceneManager {
 
         //alert message that game lost focus
         if(!this.game.inCanvas) {
-            
+
             let fontSize = 20;
             ctx.font = fontSize + 'px "Press Start 2P"';
             let msg = "Your cursor is not in the game screen! Please click within the game to regain control!";
@@ -890,7 +890,7 @@ class SceneManager {
             ctx.fillStyle = "red";
             ctx.fillText(msg, (this.game.surfaceWidth / 2) - ((fontSize) * msg.length / 2), fontSize * 4);
 
-        } 
+        }
         //console.log(this.player.BB.left + " " + this.player.BB.bottom);
     };
 
@@ -1295,7 +1295,8 @@ class SceneManager {
         if (dict.skeletons) {
             for (var i = 0; i < dict.skeletons.length; i++) {
                 let skeleton = dict.skeletons[i];
-                let e = new Skeleton(this.game, 0, 0, skeleton.guard);
+                let state = skeleton.initialState ? skeleton.initialState : 0;
+                let e = new Skeleton(this.game, 0, 0, skeleton.guard, state);
                 this.positionEntity(e, skeleton.x, h - skeleton.y);
                 array.push(e);
             }

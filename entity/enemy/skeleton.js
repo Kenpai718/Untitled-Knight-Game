@@ -9,7 +9,7 @@
 
 class Skeleton extends AbstractEnemy {
 
-    constructor(game, x, y, onGuard) {
+    constructor(game, x, y, onGuard, initialState = 0) {
 
         super(game, x, y, onGuard, STATS.SKELETON.NAME, STATS.SKELETON.MAX_HP, STATS.SKELETON.WIDTH, STATS.SKELETON.HEIGHT, STATS.SKELETON.SCALE, STATS.SKELETON.PHYSICS);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/skeleton.png");
@@ -48,10 +48,10 @@ class Skeleton extends AbstractEnemy {
 
         // Mapping animations and mob states
         this.animations = []; // [state][direction]
-        this.states = { idle: 0, damaged: 1, death: 2, attack: 3, move: 4, block: 5 };
+        this.states = { idle: 0, damaged: 1, death: 2, attack: 3, move: 4, block: 5, rebirth: 6 };
         this.directions = { left: 0, right: 1 };
         this.direction = this.directions.left;
-        this.state = this.states.idle;
+        this.state = initialState;
 
         // Other
         this.loadAnimations();
@@ -84,8 +84,9 @@ class Skeleton extends AbstractEnemy {
 
         this.seconds += this.game.clockTick;
         const TICK = this.game.clockTick;
-
-        if (this.dead) { // skeleton is dead play death animation and remove
+        if (this.state == this.states.rebirth) {
+            if (this.animations[this.state][this.direction].isDone()) this.state = this.states.idle;
+        } else if (this.dead) { // skeleton is dead play death animation and remove
             super.setDead();
         } else { // not dead keep moving
             this.velocity.y += this.fallAcc * TICK; //constant falling
@@ -364,7 +365,7 @@ class Skeleton extends AbstractEnemy {
     loadAnimations() {
 
         let numDir = 2;
-        let numStates = 6;
+        let numStates = 7;
         for (var i = 0; i < numStates; i++) { //defines action
             this.animations.push([]);
             for (var j = 0; j < numDir; j++) { //defines directon: left = 0, right = 1
@@ -397,6 +398,10 @@ class Skeleton extends AbstractEnemy {
         // Block Animation
         this.animations[5][0] = new Animator(this.spritesheet, 491, 505, 40, 46, 4, 0.2, -190, 0, 1, 0); // 0.2
         this.animations[5][1] = new Animator(this.spritesheet, 669, 505, 40, 46, 4, 0.2, 110, 0, 1, 0);
+
+        // Rebirth Animation
+        this.animations[6][0] = new Animator(this.spritesheet, 492, 200, 56, 51, 4, 0.15, -206, 1, 0, 0); //0.1
+        this.animations[6][1] = new Animator(this.spritesheet, 652, 200, 56, 51, 4, 0.15, 94, 1, 0, 0);
     };
 
     draw(ctx) {
@@ -433,6 +438,11 @@ class Skeleton extends AbstractEnemy {
                     if (this.direction == 1)
                         this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x + 7 - this.game.camera.x, this.y - 24 - this.game.camera.y, this.scale);
                     else this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x + 14 - this.game.camera.x, this.y - 24 - this.game.camera.y, this.scale);
+                    break;
+                case 6: // Death
+                    if (this.direction == 1)
+                        this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - 10 - this.game.camera.x, this.y - 37 - this.game.camera.y, this.scale);
+                    else this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - 10 - this.game.camera.x, this.y - 37 - this.game.camera.y, this.scale);
                     break;
             }
         }
