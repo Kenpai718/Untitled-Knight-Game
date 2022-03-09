@@ -223,7 +223,7 @@ class AbstractPlayer extends AbstractEntity {
      */
     respawnPlayer() {
         // remove the current level from the level states if no checkpoint
-        if(this.myCheckpoint == null) if (this.game.camera.levelState[this.game.camera.currentLevel]) this.game.camera.levelState.splice(this.game.camera.levelState.indexOf(this.game.camera.currentLevel, 1));
+        //if(this.myCheckpoint == null) if (this.game.camera.levelState[this.game.camera.currentLevel]) this.game.camera.levelState.splice(this.game.camera.levelState.indexOf(this.game.camera.currentLevel, 1));
         // set restart flag to true so self the state isn't saved
         this.game.camera.restart = true;
         this.game.camera.loadLevel(this.game.camera.currentLevel);
