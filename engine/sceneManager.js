@@ -226,7 +226,8 @@ class SceneManager {
         this.game.shoot = false;
 
         //reset the checkpoint upon entering a new level
-        if (this.lastLevel != this.currentLevel && this.player != null) this.player.myCheckpoint = {x: spawnX, y: theY * PARAMS.BLOCKDIM};
+        if (this.lastLevel != this.currentLevel && this.player != null) 
+            this.player.myCheckpoint = null;
         if (this.usingLevelSelect) {
             this.player.removeFromWorld = true;
             this.lastPlayer.removeFromWorld = true;
@@ -274,7 +275,15 @@ class SceneManager {
                 this.player.x = this.player.myCheckpoint.x;
                 this.player.y = this.player.myCheckpoint.y;
                 this.player.updateBB();
-
+            }
+            else {
+                //console.log("respawn from spawnpoint");
+                this.player.x = 0;
+                this.player.y = 0;
+                this.player.updateBB();
+                this.player.x = this.spawnCheckpoint.x - this.player.BB.left;
+                this.player.y = this.spawnCheckpoint.y - this.player.BB.bottom;
+                this.player.updateBB();
             }
 
             //mercy rule: after dying the player is healed a bit
@@ -1114,9 +1123,9 @@ class SceneManager {
             }
         } else { // load the enemies and interactables from their previous state
             let state = null;
-            if (this.levelStateTemp)
+            if (this.levelStateTemp) 
                 state = this.levelStateTemp;
-            else
+            else 
                 state = this.levelState[this.currentLevel];
             this.game.enemies = this.saveEnemies(state.enemies);
             this.game.enemies.forEach(enemy => enemy.removeFromWorld = false);
