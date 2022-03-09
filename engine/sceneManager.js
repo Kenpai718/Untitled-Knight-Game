@@ -1172,10 +1172,6 @@ class SceneManager {
                 state = this.levelStateTemp;
             else 
                 state = this.levelState[this.currentLevel];
-            console.log("hello");
-            if (state == this.levelStateTemp) console.log("load level via checkpoint");
-            else console.log("load level via spawnpoint");
-            
             this.game.enemies = this.loadSavedEnemies(state.enemies);
             //this.game.enemies.forEach(enemy => enemy.removeFromWorld = false);
             this.game.events = this.saveEvents(state.events);
