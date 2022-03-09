@@ -18,10 +18,13 @@ class Wizard extends AbstractBoss {
 
         /** battle phases */
 
-        // attack phases
-        this.phases = { no_attack: 0, fire_ring: 1, arrow_rain: 2 };
-        this.phase = this.phases.no_attack;
-        this.totalPhases = 3;
+        this.phases = {initial: 0, middle: 1, desparate: 2, final: 3};
+        this.phase = this.phases.initial;
+
+        // actions
+        this.actions = {no_attack: 0, fire_ring: 1, arrow_rain: 2};
+        this.action = this.actions.no_attack;
+        this.totalActions = 3;
 
         // states/animation
         this.states = {
@@ -43,7 +46,7 @@ class Wizard extends AbstractBoss {
         this.fireCircle = [];
 
         // timers for cooldown
-        this.phaseCooldown = 5;
+        this.actionCooldown = 5;
         this.damagedCooldown = 0;
         this.telportTimer = 0;
         this.appearTime = 0;
@@ -55,7 +58,7 @@ class Wizard extends AbstractBoss {
         // skeleton spawn logic
         this.skeletonVar = 1; // used to choose a random int between 0 and skeletonVar - 1
         this.skeletonBase = 1; // wizard will spawn at least skeletonBase skeletons
-        this.skeletonChance = 10; // percentage chance that the wizard will spawn skeletons (out of 100)
+        this.skeletonChance = 100; // percentage chance that the wizard will spawn skeletons (out of 100)
 
         /** constructing teleportation information */
 
@@ -74,6 +77,17 @@ class Wizard extends AbstractBoss {
         this.right = right;
         this.top = top;
         this.bottom = bottom;
+
+        /** buff wizard based on the player */
+        // hp buff base 500, max 1000 (300 for health upgrades 200 for all max upgrade)
+        this.player = this.game.camera.player;
+        let inventory = this.player.myInventory;
+        this.max_hp += 75 * inventory.healthUpgrade;
+        if (inventory.healthUpgrade >= 4 && inventory.attackUpgrade >= 4 && inventory.arrowUpgrade >= 4 && inventory.armorUpgrade >= 3)
+            this.max_hp += 200;
+        this.hp = this.max_hp;
+        
+        // 
 
     }
 
@@ -96,19 +110,30 @@ class Wizard extends AbstractBoss {
         if (this.avoid) {
             this.activateTeleport();
         }
+        if (this.hp / this.max_hp < 0.75 && this.phase < this.phases.middle) {
+            this.phase = this.phases.middle;
+        }
+        else if (this.hp / this.max_hp < 0.50 && this.phase < this.phases.desparate) {
+            this.phase = this.phases.desparate;
+        }
+        else if (this.hp / this.max_hp < 0.25 && this.phase < this.phase.final) {
+            this.phase = this.phases.final;
+            this.activateTeleport();
+            this.disappearTime = 5;
+        }
     }
 
     checkCooldowns() {
         let TICK = this.game.clockTick;
-        this.phaseCooldown -= TICK;
+        this.actionCooldown -= TICK;
         // cooldown for to stop casting something
         if (this.state == this.states.casting) {
             this.wait -= TICK;
         }
-        // phase phaseCooldown
-        if (this.phaseCooldown <= 0 && !this.teleporting) {
-            let random = randomInt(this.totalPhases);
-            this.changePhase(random);
+        // action change
+        if(this.actionCooldown <= 0 && !this.teleporting) {
+            let random = randomInt(this.totalActions);
+            this.changeAction(random);
         }
         // wizard eye hit cooldown
         if (!this.vulnerable) {
@@ -261,14 +286,25 @@ class Wizard extends AbstractBoss {
             })
         }
 
-        // define all of the phases
+        // define all of the actionss
+        let actions = this.actions;
         let phases = this.phases;
-        switch (this.phase) {
-            case phases.fire_ring:
-                this.fireRing(6);
-                //this.arrowRain();
+        switch (this.action) {
+            case actions.fire_ring:
+                switch (this.phase) {
+                    case phases.initial:
+                        this.fireRing(3);
+                        break;
+                    case phases.middle:
+                        this.fireRing(6);
+                        break;
+                    case phases.desparate:
+                    case phases.final:
+                        this.fireRing(10);
+                        break;
+                }
                 break;
-            case phases.arrow_rain:
+            case actions.arrow_rain:
                 this.arrowRain();
                 break;
         }
@@ -416,16 +452,18 @@ class Wizard extends AbstractBoss {
                 if (frame == 5 && !this.fire) {
                     this.fire = true;
                     let fireball = null;
-                    if (this.dir == this.direction.left)
-                        fireball = new FireballCircular(this.game, this,
-                            this.center.x - 10 * this.scale,
-                            this.center.y - 4 * this.scale,
+                    if (this.dir == this.directions.left)
+                        fireball = new FireballCircular(this.game, this, 
+                            this.center.x - 10 * this.scale, 
+                            this.center.y - 4 * this.scale, 
                             this.scale, this.direction);
                     else
                         fireball = new FireballCircular(this.game, this,
                             this.center.x + 10 * this.scale,
                             this.center.y - 4 * this.scale,
                             this.scale, this.direction);
+                    //if (this.phase >= this.phases.desparate)
+                        fireball.blue = true;
                     this.fireCircle.push(fireball);
                     this.game.addEntity(fireball);
                 }
@@ -461,7 +499,7 @@ class Wizard extends AbstractBoss {
                     this.resetAnimationTimers(this.state);
                     this.state = states.idle1;
                     this.activateTeleport();
-                    this.phaseCooldown = 0;
+                    this.actionCooldown = 0;
                 }
                 break;
         }
@@ -476,7 +514,7 @@ class Wizard extends AbstractBoss {
         let h = this.game.camera.level.height;
         let spawnOffset = 80;
         for (var i = 0; i < numberOfEnemies; i++) {
-            let enemy = new Skeleton(this.game, this.x + (i * spawnOffset), (this.game.camera.level.height - 1), false, 6); // the 6 is for the rebirth state
+            let enemy = new Skeleton(this.game, this.x + (i * spawnOffset), this.bottom, false, 6); // the 6 is for the rebirth state
             enemy.y = Math.ceil((enemy.y * PARAMS.BLOCKDIM) - enemy.BB.bottom + 20); // tried using postion entity but it needed a bit more of an offset
             enemy.aggro = true;
             enemies.push(enemy);
@@ -558,31 +596,30 @@ class Wizard extends AbstractBoss {
 
     /**
      * changes the type of attack being done and gives it the default values
-
-     * @param {*} phase the current phase
+     * @param {*} action the current action
      */
-    changePhase(phase) {
-        let phases = this.phases;
-        this.phase = phase;
+    changeAction(action) {
+        let actions = this.actions;
+        this.action = action;
         this.resetAnimationTimers(this.state);
         this.auraAmount = 1;
         this.aura = "none";
-        switch (phase) {
-            case phases.no_attack:
+        switch (action) {
+            case actions.no_attack:
                 this.avoid = true;
-                this.phaseCooldown = 1;
+                this.actionCooldown = 5;
                 this.state = this.states.idle1;
                 break;
-            case phases.fire_ring:
+            case actions.fire_ring:
                 this.avoid = false;
-                this.phaseCooldown = 10;
+                this.actionCooldown = 10;
                 this.state = this.states.idleto2;
                 //this.state = this.states.raise;
                 this.fire = false;
                 break;
-            case phases.arrow_rain:
+            case actions.arrow_rain:
                 this.avoid = false;
-                this.phaseCooldown = 12;
+                this.actionCooldown = 12;
                 this.state = this.states.raise;
                 this.arrow = false;
                 this.arrowTimer = 0;

@@ -163,8 +163,10 @@ class SlimeProjectile extends FlyingEyeProjectile {
 }
 
 class Fireball extends AbstractEntity {
-    constructor(game, source, x, y, scale, direction) {
+    constructor(game, source, x, y, scale, direction, blue) {
         super(game, x, y, "Fireball", 1, 20, 20, scale);
+        this.blue = blue;
+        this.damage = 5;
         this.source = source;
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/wizard.png");
         this.animations = [];
@@ -184,6 +186,7 @@ class Fireball extends AbstractEntity {
 
     getDamageValue() {
         let dmg = this.damage;
+        if (this.blue) dmg *= 3;
         //critical bonus
         if (this.isCriticalHit()) {
             dmg = dmg * PARAMS.CRITICAL_BONUS;
@@ -196,11 +199,30 @@ class Fireball extends AbstractEntity {
         this.state = this.states.damaged;
     };
 
+    hit() {
+        let self = this;
+
+        this.game.entities.forEach(function (entity) {
+            if (entity instanceof AbstractPlayer) {
+                let hitPlayer = self.BB.collide(entity.BB);
+                if (hitPlayer) {
+                    if(entity.vulnerable) entity.takeDamage(self.getDamageValue(), self.critical);
+                }
+            }
+        });
+    }
+
+    draw(ctx) {
+        ctx.filter = "hue-rotate(180deg)";
+        this.animations[this.dir].drawFrame(this.game.clockTick, ctx, this.x - this.width / 2 * this.scale - this.game.camera.x, this.y - this.height * 3 / 4 * this.scale - this.game.camera.y, this.scale);
+        ctx.filter = "none";
+    }
+
 }
 
 class FireballCircular extends Fireball {
-    constructor(game, source, x, y, scale, direction) {
-        super(game, source, x, y, scale, direction);
+    constructor(game, source, x, y, scale, direction, blue) {
+        super(game, source, x, y, scale, direction, blue);
         this.angle = 0;
         if (this.dir == this.directions.right) 
             this.angle = Math.PI;
@@ -257,12 +279,9 @@ class FireballCircular extends Fireball {
             this.x = this.r * Math.cos(this.angle) + this.location.x;
             this.y = this.r * Math.sin(this.angle) + this.location.y;
         }
-        this.animations[this.dir].update(TICK);
         this.updateBB();
-    }
-
-    draw(ctx) {
-        this.animations[this.dir].drawFrame(this.game.clockTick, ctx, this.x - this.width / 2 * this.scale - this.game.camera.x, this.y - this.height * 3 / 4 * this.scale - this.game.camera.y, this.scale);
+        this.hit();
+        this.animations[this.dir].update(TICK);
     }
 
     drawDebug(ctx) {

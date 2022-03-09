@@ -161,7 +161,7 @@ class Mushroom extends AbstractEnemy {
                 }
                 // knight is in attack range
                 if (entity.BB && self.AR.collide(entity.BB) && self.vulnerable) {
-                    console.log("knight in mushroom attack range")
+                    //console.log("knight in mushroom attack range")
                     self.velocity.x = 0;
                     if (self.canAttack || !self.animations[self.states.attack][self.direction].isDone()) {
                         self.runAway = true;
