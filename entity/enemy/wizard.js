@@ -45,7 +45,7 @@ class Wizard extends AbstractBoss {
 
         // spawned attacks
         this.fireCircle = [];
-        this.beamDamage = 5;
+        this.beamDamage = 5; //initial beam damage. it ramps up with phases.
 
         // timers for cooldown
         this.actionCooldown = 5;
@@ -156,7 +156,7 @@ class Wizard extends AbstractBoss {
         if (this.actionCooldown <= 0 && !this.teleporting) {
             let random = randomInt(this.totalActions);
             this.changeAction(random);
-            //this.changeAction(2);
+            //this.changeAction(3);
         }
         // wizard hit cooldown
         if (!this.vulnerable) {
@@ -373,6 +373,7 @@ class Wizard extends AbstractBoss {
                     break;
                 case actions.beam:
                     //beam is invincible once it reaches half hp phase
+                    //phases are handled by shootWindblast() method
                     this.beam();
                     break;
             }
@@ -750,10 +751,25 @@ class Wizard extends AbstractBoss {
      * At the desprate phase and beyond the projectiles become indestructible
      */
     shootWindblast() {
+
+        let damage = this.beamDamage; //damage of the blast
+        let speed = 1.0;              //speed multiplier based on phase
+        let isDestroyable = true;     //if this projectile can be destroyed or not. Later phases it cant
+        //set speed and damage based on the phase
+        if(this.phase > this.phases.initial) {
+            speed = speed + (this.phase / 10); //multiplier of the initial windball speed
+
+            //hard phase: cant be destroyed and does more damage
+            if(this.phase >= this.phases.desparate) {
+                damage *= 1.5;
+                isDestroyable = true;
+            }
+        }
+        
         if (this.direction == this.directions.right)
-            this.game.addEntity(new WindBall(this.game, this.BB.right - this.BB.width, this.BB.top - 10, this.direction, 2, this.beamDamage, this.phase < this.phases.desparate));
+            this.game.addEntity(new WindBall(this.game, this.BB.right - this.BB.width, this.BB.top - 10, this.direction, 2, damage, isDestroyable, speed));
         else
-            this.game.addEntity(new WindBall(this.game, this.BB.left - this.BB.width * 2, this.BB.top - 10, this.direction, 2, this.beamDamage, this.phase < this.phases.desparate));
+            this.game.addEntity(new WindBall(this.game, this.BB.left - this.BB.width * 2, this.BB.top - 10, this.direction, 2, damage, isDestroyable, speed));
     }
 
 

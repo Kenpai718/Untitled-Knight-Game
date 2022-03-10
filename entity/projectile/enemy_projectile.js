@@ -15,6 +15,7 @@ class FlyingEyeProjectile extends AbstractEntity {
         this.elapsedTime = 0;
         this.damage = STATS.EYE_PROJECTILE.DAMAGE
         this.canDestroy = true;
+        this.canDamage = true; //if player hits projectile it explodes. Set this to false so they dont take damage from it.
         this.updateBB();
     }
 
@@ -87,7 +88,7 @@ class FlyingEyeProjectile extends AbstractEntity {
                         self.width *= 2;
                         self.height *= 2;
                     }
-                    if (entity.vulnerable) entity.takeDamage(self.getDamageValue(), self.critical);
+                    if (entity.vulnerable && self.canDamage) entity.takeDamage(self.getDamageValue(), self.critical);
                 }
 
                 if (self.canDestroy) {
@@ -98,6 +99,7 @@ class FlyingEyeProjectile extends AbstractEntity {
                         if (self.state == self.states.move) {
                             self.velocity = 0;
                             self.state = self.states.destroy;
+                            self.canDamage = false;
                             self.width *= 2;
                             self.height *= 2;
                         }
@@ -116,6 +118,7 @@ class FlyingEyeProjectile extends AbstractEntity {
                         if (self.state == self.states.move) {
                             self.velocity = 0;
                             self.state = self.states.destroy;
+                            self.canDamage = false;
                             self.width *= 2;
                             self.height *= 2;
                         }
@@ -168,17 +171,21 @@ class SlimeProjectile extends FlyingEyeProjectile {
 }
 
 class WindBall extends FlyingEyeProjectile {
-    constructor(game, x, y, dir, newScale, newDmg, canDestroy) {
+    constructor(game, x, y, dir, newScale, newDmg, canDestroy, speedMultiplier) {
         super(game, x, y, dir, newScale);
 
         this.scale = this.scale * newScale;
         this.width = this.width * newScale;
         this.height = this.height * newScale;
         this.damage = newDmg;
+        if(!speedMultiplier) this.speedMultiplier = 1;
+        else this.speedMultiplier = speedMultiplier;
+        this.velocity = 550;
+        if (dir == this.directions.left)
+            this.velocity = -550;
 
         this.canDestroy = canDestroy;
-
-        this.velocity = this.velocity * 1.5;
+        this.velocity = this.velocity * this.speedMultiplier;
     }
 
     draw(ctx) {
