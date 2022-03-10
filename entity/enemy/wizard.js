@@ -762,7 +762,7 @@ class Wizard extends AbstractBoss {
             //hard phase: cant be destroyed and does more damage
             if(this.phase >= this.phases.desparate) {
                 damage *= 1.5;
-                isDestroyable = true;
+                isDestroyable = false;
             }
         }
         
