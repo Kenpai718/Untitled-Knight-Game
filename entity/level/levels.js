@@ -39,7 +39,8 @@ var testLevel = {
         { x: 12, y: 3, killQuota: 0, exitLocation: { x: 10, y: 4, levelNum: 4 }, transition: false }, //door to level 4
         { x: 20, y: 3, killQuota: 0, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: true }, //door to level 4
         { x: 24, y: 3, killQuota: 0, exitLocation: { x: 41, y: 24, levelNum: 5 }, transition: false }, //door to level 4
-        { x: -1.9, y: 9, killQuota: 0, exitLocation: { x: 2, y: 1, levelNum: 6 }, transition: false }, //door to level 4
+        //{ x: -1.9, y: 9, killQuota: 0, exitLocation: { x: 2, y: 1, levelNum: 6 }, transition: false }, //door to level 4
+        { x: -1.9, y: 9, killQuota: 0, exitLocation: { x: 40, y: 1, levelNum: 6 }, transition: false }, //door to level 4
 
     ],
 
