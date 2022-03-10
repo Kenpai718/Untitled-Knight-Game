@@ -189,12 +189,15 @@ class WindBall extends FlyingEyeProjectile {
 }
 
 class Fireball extends AbstractEntity {
-    constructor(game, source, x, y, scale, direction) {
+    constructor(game, source, x, y, scale, direction, blue, max) {
         super(game, x, y, "Fireball", 1, 20, 20, scale);
+        this.blue = blue;
+        this.damage = 5;
+        if (max) this.damage = 7.5
         this.source = source;
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/wizard.png");
         this.animations = [];
-        this.directions = { right: 0, left: 1 };
+        this.directions =  {right: 0, left: 1};
         this.dir = direction;
         this.loadAnimations();
     }
@@ -210,6 +213,7 @@ class Fireball extends AbstractEntity {
 
     getDamageValue() {
         let dmg = this.damage;
+        if (this.blue) dmg *= 2;
         //critical bonus
         if (this.isCriticalHit()) {
             dmg = dmg * PARAMS.CRITICAL_BONUS;
@@ -229,7 +233,7 @@ class Fireball extends AbstractEntity {
             if (entity instanceof AbstractPlayer) {
                 let hitPlayer = self.BB.collide(entity.BB);
                 if (hitPlayer) {
-                    if (entity.vulnerable) entity.takeDamage(self.getDamageValue(), self.critical);
+                    if(entity.vulnerable) entity.takeDamage(self.getDamageValue(), self.critical);
                 }
             }
         });
@@ -244,17 +248,17 @@ class Fireball extends AbstractEntity {
 }
 
 class FireballCircular extends Fireball {
-    constructor(game, source, x, y, scale, direction) {
-        super(game, source, x, y, scale, direction);
+    constructor(game, source, x, y, scale, direction, blue, max) {
+        super(game, source, x, y, scale, direction, blue, max);
         this.angle = 0;
-        if (this.dir == this.directions.right)
+        if (this.dir == this.directions.right) 
             this.angle = Math.PI;
-        let distx = x - (source.x + source.width / 2);
+        let distx = x - source.center.x;
         distx *= distx;
-        let disty = y - (source.y + source.height / 2);
+        let disty = y - source.center.y;
         disty *= disty;
         this.r = Math.sqrt(distx + disty);
-        this.velocity = { x: 600, r: 3 };
+        this.velocity = {x: 600, r: 3};
         this.initialDir = direction;
         this.width = 10;
         this.height = 10;
@@ -274,24 +278,22 @@ class FireballCircular extends Fireball {
 
         // deal with movement stuff
         if (this.r < 50 * this.scale) {
-            this.x += (bool ? 1 : -1) * this.velocity.x * TICK;
+            this.x += (bool? 1 : -1) * this.velocity.x * TICK;
             let distx = this.x - this.source.center.x;
             let distxx = distx * distx;
             let disty = this.y - this.source.center.y;
             let distyy = disty * disty;
             this.r = Math.sqrt(distxx + distyy);
             if (this.r > 50 * this.scale) {
-                let x = -distx + Math.sqrt(this.r * this.r - distyy);
-                this.x += (bool? 1 : -1) * x;
                 this.r = 50 * this.scale;
             }
-            this.angle = Math.atan(Math.abs(disty) / Math.abs(distx));
+            this.angle = Math.asin(Math.abs(disty) / Math.abs(this.r));
             if (!bool) this.angle = Math.PI - this.angle;
         }
         else {
             if (!this.stay) {
-                this.angle += (bool ? 1 : -1) * this.velocity.r * TICK;
-                this.location = { x: this.source.BB.left + this.source.BB.width / 2, y: this.source.BB.top + this.source.BB.height / 2 };
+                this.angle += (bool? 1: -1) * this.velocity.r * TICK;
+                this.location = {x: this.source.BB.left + this.source.BB.width / 2, y: this.source.BB.top + this.source.BB.height / 2};
             }
             if (this.release) {
                 this.r += this.velocity.x * 2 * TICK;
@@ -302,12 +304,9 @@ class FireballCircular extends Fireball {
             this.x = this.r * Math.cos(this.angle) + this.location.x;
             this.y = this.r * Math.sin(this.angle) + this.location.y;
         }
-        this.animations[this.dir].update(TICK);
         this.updateBB();
-    }
-
-    draw(ctx) {
-        this.animations[this.dir].drawFrame(this.game.clockTick, ctx, this.x - this.width / 2 * this.scale - this.game.camera.x, this.y - this.height * 3 / 4 * this.scale - this.game.camera.y, this.scale);
+        this.hit();
+        this.animations[this.dir].update(TICK);
     }
 
     drawDebug(ctx) {
@@ -315,5 +314,5 @@ class FireballCircular extends Fireball {
         //ctx.strokeRect(this.BB.left, this.BB.top, this.BB.width, this.BB.height);
         ctx.strokeRect(this.BB.left - this.game.camera.x, this.BB.top - this.game.camera.y, this.BB.width, this.BB.height);
     }
-
+    
 }
