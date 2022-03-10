@@ -339,6 +339,7 @@ class Wizard extends AbstractBoss {
             switch (this.action) {
                 case actions.fire_ring:
                     switch (this.phase) {
+                        //pass in how many fireballs per phase
                         case phases.initial:
                             this.fireRing(3);
                             break;
@@ -354,9 +355,24 @@ class Wizard extends AbstractBoss {
                     }
                     break;
                 case actions.arrow_rain:
-                    this.arrowRain();
+                    switch (this.phase) {
+                        //pass in number of base arrows to spawn in
+                        case phases.initial:
+                            this.arrowRain(3);
+                            break;
+                        case phases.middle:
+                            this.arrowRain(4);
+                            break;
+                        case phases.desparate:
+                            this.arrowRain(5);
+                            break;
+                        case phases.final:
+                            this.arrowRain(7);
+                            break;
+                    }
                     break;
                 case actions.beam:
+                    //beam is invincible once it reaches half hp phase
                     this.beam();
                     break;
             }
@@ -396,102 +412,11 @@ class Wizard extends AbstractBoss {
     }
 
     /**
-* Checks position of player and checks direction to match
-*/
+    * Checks position of player and checks direction to match
+    */
     checkDirection() {
         if (this.player.BB.x > this.BB.x) this.direction = this.directions.right;
         else this.direction = this.directions.left;
-    }
-
-    /**
- * Summons multiple projectiles together that looks like a wind beam
- */
-    beam() {
-        let TICK = this.game.clockTick;
-        let states = this.states;
-        let dir = this.direction;
-        let animation = this.animations[this.state][this.direction];
-        let isDone = animation.isDone();
-        let frame = animation.currentFrame();
-        let self = this;
-
-        switch (this.state) {
-            case states.attack:
-                if (this.teleporting) animation.elapsedTime = 0; //keep reset until done teleporting
-                else {
-                    //tracking until shooting projectile
-                    (frame < 6) ? this.tracking = true : this.tracking = false;
-
-                    if (frame == 6) {
-                        //shoot main projectile
-                        this.shootWindblast();
-                    } else if (frame == 8) {
-                        //chance to follow up with an extra trailing blast at the end
-                        if (randomInt(11) >= 8) this.shootWindblast();
-                    }
-                    if (isDone) {
-                        //randomly chose to shoot again or teleport away after cooldown animation
-                        let rand = randomInt(11);
-                        if (rand <= 6) this.state = states.atoidle;
-                        this.resetAnimationTimers(this.state);
-                    }
-                }
-                break;
-            case states.atoidle:
-                if (isDone) { //once cooldown is done teleport and attack again
-                    this.activateTeleport();
-                    this.state = states.attack;
-                    this.resetAnimationTimers(states.attack);
-                    this.resetAnimationTimers(states.atoidle);
-                }
-                break;
-
-        }
-    }
-
-    /**
-     * Summons a projectile used to make up a beam
-     * At the desprate phase and beyond the projectiles become indestructible
-     */
-    shootWindblast() {
-        if (this.direction == this.directions.right)
-            this.game.addEntity(new WindBall(this.game, this.BB.right - this.BB.width, this.BB.top - 10, this.direction, 2, this.beamDamage, this.phase < this.phases.desparate));
-        else
-            this.game.addEntity(new WindBall(this.game, this.BB.left - this.BB.width * 2, this.BB.top - 10, this.direction, 2, this.beamDamage, this.phase < this.phases.desparate));
-    }
-
-
-    summonArrows(theAmount) {
-        let spaceX = 100; //space in between arrows
-        let spaceY = 50;
-        let arrow_type = this.game.camera.player.myInventory.arrowUpgrade;
-        let player = this.game.camera.player;
-        let target = { x: this.game.camera.player.BB.mid, y: this.game.camera.player.BB.top };
-        let startX;
-        let startY;
-        let random = randomInt(4);
-
-        if (random == 0) { //from the wizard position
-            startX = this.x;
-            startY = this.y;
-        } else if (random == 1) { //from above the player
-            startX = player.BB.left;
-            startY = player.BB.top - 500;
-        } else if (random == 2) { //start left of player
-            startX = player.BB.left - 600;
-            startY = player.BB.top - (this.BB.height / 2);
-        } else { //start right of player
-            startX = player.BB.right + 600;
-            startY = player.BB.top - (this.BB.height / 2);
-        }
-
-        for (let i = 0; i < theAmount; i++) {
-            let arrow = new Arrow(this.game, startX + (i * spaceX), startY - (i * spaceY), target, arrow_type, false);
-            this.game.addEntityToFront(arrow);
-            ASSET_MANAGER.playAsset(SFX.BOW_SHOT);
-        }
-
-
     }
 
     /**
@@ -564,6 +489,8 @@ class Wizard extends AbstractBoss {
             else this.BB = BB;
         }
     }
+
+    /** ATTACKS BELOW */
 
     /**
      * logic for the fire ring which creates a ring of fire to follow and then release
@@ -668,8 +595,10 @@ class Wizard extends AbstractBoss {
      * changes the type of attack being done
      * Summons arrows and then teleports after a certain amount of time
      * Has an indicator with a green aura
+     * 
+     * @param base number of arrows to spawn in
      */
-    arrowRain() {
+    arrowRain(numArrows) {
         let TICK = this.game.clockTick;
         let states = this.states;
         let dir = this.direction;
@@ -703,7 +632,7 @@ class Wizard extends AbstractBoss {
                     if (!this.arrow) {
                         if (this.auraAmount <= 0) {
                             this.arrow = true;
-                            this.summonArrows(3 + randomInt(3));
+                            this.summonArrows(numArrows + randomInt(3));
                         }
                     }
 
@@ -732,6 +661,99 @@ class Wizard extends AbstractBoss {
                 }
                 break;
         }
+    }
+
+    /**
+     * Spawns arrows randomly a set distance that targets the player
+     * @param {*} theAmount 
+     */
+    summonArrows(theAmount) {
+        let spaceX = 100; //space in between arrows
+        let spaceY = 50;
+        let arrow_type = this.player.myInventory.arrowUpgrade;
+        let target = { x: this.player.BB.mid, y: this.player.BB.top };
+        let startX;
+        let startY;
+        let random = randomInt(4);
+
+        if (random == 0) { //from the wizard position
+            startX = this.x;
+            startY = this.y;
+        } else if (random == 1) { //from above the player
+            startX = this.player.BB.left;
+            startY = this.player.BB.top - 500;
+        } else if (random == 2) { //start left of player
+            startX = this.player.BB.left - 600;
+            startY = this.player.BB.top - (this.BB.height / 2);
+        } else { //start right of player
+            startX = this.player.BB.right + 600;
+            startY = this.player.BB.top - (this.BB.height / 2);
+        }
+
+        for (let i = 0; i < theAmount; i++) {
+            let arrow = new Arrow(this.game, startX + (i * spaceX), startY - (i * spaceY), target, arrow_type, false);
+            this.game.addEntityToFront(arrow);
+            ASSET_MANAGER.playAsset(SFX.BOW_SHOT);
+        }
+
+
+    }
+
+    /**
+    * Summons multiple projectiles together that looks like a wind beam
+    */
+    beam() {
+        let TICK = this.game.clockTick;
+        let states = this.states;
+        let dir = this.direction;
+        let animation = this.animations[this.state][this.direction];
+        let isDone = animation.isDone();
+        let frame = animation.currentFrame();
+        let self = this;
+
+        switch (this.state) {
+            case states.attack:
+                if (this.teleporting) animation.elapsedTime = 0; //keep reset until done teleporting
+                else {
+                    //tracking until shooting projectile
+                    (frame < 6) ? this.tracking = true : this.tracking = false;
+
+                    if (frame == 6) {
+                        //shoot main projectile
+                        this.shootWindblast();
+                    } else if (frame == 8) {
+                        //chance to follow up with an extra trailing blast at the end
+                        if (randomInt(11) >= 8) this.shootWindblast();
+                    }
+                    if (isDone) {
+                        //randomly chose to shoot again or teleport away after cooldown animation
+                        let rand = randomInt(11);
+                        if (rand <= 6) this.state = states.atoidle;
+                        this.resetAnimationTimers(this.state);
+                    }
+                }
+                break;
+            case states.atoidle:
+                if (isDone) { //once cooldown is done teleport and attack again
+                    this.activateTeleport();
+                    this.state = states.attack;
+                    this.resetAnimationTimers(states.attack);
+                    this.resetAnimationTimers(states.atoidle);
+                }
+                break;
+
+        }
+    }
+
+    /**
+     * Summons a projectile used to make up a beam
+     * At the desprate phase and beyond the projectiles become indestructible
+     */
+    shootWindblast() {
+        if (this.direction == this.directions.right)
+            this.game.addEntity(new WindBall(this.game, this.BB.right - this.BB.width, this.BB.top - 10, this.direction, 2, this.beamDamage, this.phase < this.phases.desparate));
+        else
+            this.game.addEntity(new WindBall(this.game, this.BB.left - this.BB.width * 2, this.BB.top - 10, this.direction, 2, this.beamDamage, this.phase < this.phases.desparate));
     }
 
 
