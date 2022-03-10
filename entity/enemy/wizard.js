@@ -58,7 +58,7 @@ class Wizard extends AbstractBoss {
         // skeleton spawn logic
         this.skeletonVar = 1; // used to choose a random int between 0 and skeletonVar - 1
         this.skeletonBase = 1; // wizard will spawn at least skeletonBase skeletons
-        this.skeletonChance = 10; // percentage chance that the wizard will spawn skeletons (out of 100)
+        this.skeletonChance = 15; // percentage chance that the wizard will spawn skeletons (out of 100)
 
         /** constructing teleportation information */
 
@@ -87,7 +87,7 @@ class Wizard extends AbstractBoss {
         if (this.maxStats)
             this.max_hp += 200;
         this.hp = this.max_hp;
-        
+
     }
 
     // use after any change to this.x or this.y
@@ -137,14 +137,19 @@ class Wizard extends AbstractBoss {
 
                 if (this.hp / this.max_hp < 0.75 && this.phase < this.phases.middle) {
                     this.phase = this.phases.middle;
+                    this.skeletonChance = 20;
+                    this.skeletonVar = 3;
                     this.activateTeleport();
                 }
                 else if (this.hp / this.max_hp < 0.50 && this.phase < this.phases.desparate) {
                     this.phase = this.phases.desparate;
+                    this.skeletonChance = 25;
                     this.activateTeleport();
                 }
                 else if (this.hp / this.max_hp < 0.25 && this.phase < this.phases.final) {
                     this.phase = this.phases.final;
+                    this.skeletonChance = 30;
+                    this.skeletonBase = 2;
                     this.activateTeleport();
                     //this.disappearTime = 5;
                 }
@@ -324,7 +329,6 @@ class Wizard extends AbstractBoss {
                         let dist = Math.sqrt(distx * distx + disty * disty);
                         if (dist < 60 * self.scale) {
                             self.activateTeleport();
-                            if (randomInt(100) < self.skeletonChance) self.loadEvent(randomInt(self.skeletonVar) + self.skeletonBase);
                         }
                     }
                 })
@@ -413,6 +417,7 @@ class Wizard extends AbstractBoss {
         this.teleportLocation.x = ex;
         this.teleportLocation.y = ey;
         this.disappearTime = .75;
+        if (randomInt(100) < this.skeletonChance) this.loadEvent(randomInt(this.skeletonVar) + this.skeletonBase);
     }
 
     /**
@@ -500,9 +505,9 @@ class Wizard extends AbstractBoss {
                     this.fire = true;
                     let fireball = null;
                     if (this.direction == this.directions.left)
-                        fireball = new FireballCircular(this.game, this, 
-                            this.center.x - 10 * this.scale, 
-                            this.center.y - 4 * this.scale, 
+                        fireball = new FireballCircular(this.game, this,
+                            this.center.x - 10 * this.scale,
+                            this.center.y - 4 * this.scale,
                             this.scale, this.direction, false, this.maxStats);
                     else
                         fireball = new FireballCircular(this.game, this,
@@ -585,7 +590,7 @@ class Wizard extends AbstractBoss {
         let self = this;
 
         switch (this.state) {
-            //initial starting state 
+            //initial starting state
             case states.raise:
                 if (isDone) {
                     this.resetAnimationTimers(this.state);

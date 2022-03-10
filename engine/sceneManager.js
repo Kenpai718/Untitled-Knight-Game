@@ -36,7 +36,7 @@ class SceneManager {
 
         //levels array to load levels by calling levels[0], levels[1], etc
         this.makeTextBox();
-        this.currentLevel = 1; // CHANGE TO 1 BEFORE SUBMISSION
+        this.currentLevel = 6; // CHANGE TO 1 BEFORE SUBMISSION
         this.setupAllLevels();
         this.loadTitle();
         this.loadPaused();
@@ -143,11 +143,12 @@ class SceneManager {
             ];
         let beginScene2 =
             [
-                "insert second message here"
+                "All I had to do was take down",
+                "the mastermind behind the operation."
             ];
         let beginScene3 =
             [
-                "insert third message here"
+                "Little did I know..."
             ];
 
         var maxLength = 0;
@@ -228,7 +229,7 @@ class SceneManager {
         this.game.shoot = false;
 
         //reset the checkpoint upon entering a new level
-        if (this.lastLevel != this.currentLevel && this.player != null) 
+        if (this.lastLevel != this.currentLevel && this.player != null)
             this.player.myCheckpoint = null;
         if (this.usingLevelSelect) {
             this.player.removeFromWorld = true;
@@ -429,7 +430,7 @@ class SceneManager {
             }
             else
                 throw new Error("Enemy type not accounted for: " + enemy.constructor.name);*/
-                
+
         });
         return enemies;
     }
@@ -1170,9 +1171,9 @@ class SceneManager {
             }
         } else { // load the enemies and interactables from their previous state
             let state = null;
-            if (this.levelStateTemp) 
+            if (this.levelStateTemp)
                 state = this.levelStateTemp;
-            else 
+            else
                 state = this.levelState[this.currentLevel];
             this.game.enemies = this.loadSavedEnemies(state.enemies);
             //this.game.enemies.forEach(enemy => enemy.removeFromWorld = false);
