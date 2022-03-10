@@ -13,6 +13,7 @@ class FlyingEyeProjectile extends AbstractEntity {
             this.velocity = -400;
         this.state = this.states.move;
         this.elapsedTime = 0;
+        this.explodeTime = 2;
         this.damage = STATS.EYE_PROJECTILE.DAMAGE
         this.canDestroy = true;
         this.canDamage = true; //if player hits projectile it explodes. Set this to false so they dont take damage from it.
@@ -61,6 +62,19 @@ class FlyingEyeProjectile extends AbstractEntity {
         this.updateBB();
         this.hit();
         this.animations[this.state][this.dir].update(TICK);
+
+        //timer for when projectile expires and EXPLOSIIIIION
+        this.elapsedTime += this.game.clockTick;
+        if (this.state == this.states.move && this.elapsedTime >= this.explodeTime) {
+            this.state = this.states.destroy;
+            this.width *= 2;
+            this.height *= 2;
+            this.updateBB();
+        }
+        else if(this.state == this.states.destroy) {
+            if (this.animations[this.state][this.dir].isDone())
+                this.removeFromWorld = true;
+        }
     }
 
     hit() {
@@ -130,18 +144,7 @@ class FlyingEyeProjectile extends AbstractEntity {
     }
 
     draw(ctx) {
-        this.elapsedTime += this.game.clockTick;
         this.animations[this.state][this.dir].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
-        if (this.state == this.states.move && this.elapsedTime >= 2) {
-            this.state = this.states.destroy;
-            this.width *= 2;
-            this.height *= 2;
-            this.updateBB();
-        }
-        else {
-            if (this.animations[this.state][this.dir].isDone())
-                this.removeFromWorld = true;
-        }
     }
 
     drawDebug(ctx) {
