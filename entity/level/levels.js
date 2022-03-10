@@ -1187,7 +1187,7 @@ var level1_4 = {
     ],
     doors: [
         { x: 3, y: 6, killQuota: 0, exitLocation: { x: 115, y: 23, levelNum: 3 }, transition: false }, //starting door
-        { x: 6, y: 26, killQuota: 8, exitLocation: { x: 2, y: 1, levelNum: 6 }, transition: false }, //exit door
+        { x: 6, y: 26, killQuota: 8, exitLocation: { x: 2, y: 1, levelNum: 3 }, transition: true }, //exit door
     ],
     npcs: [
         { x: 5, y: 4 },

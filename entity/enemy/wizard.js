@@ -22,7 +22,7 @@ class Wizard extends AbstractBoss {
         this.phase = this.phases.initial;
 
         // actions
-        this.actions = {no_attack: 0, fire_ring: 1, arrow_rain: 2};
+        this.actions = {stunned: -1, fire_ring: 0, no_attack: 1, arrow_rain: 2};
         this.action = this.actions.no_attack;
         this.totalActions = 3;
 
@@ -41,8 +41,10 @@ class Wizard extends AbstractBoss {
         // define special state booleans
         this.hit = false;
         this.avoid = true;
+        this.fire = false;
 
         // spawned attacks
+        this.fireball = null;
         this.fireCircle = [];
 
         // timers for cooldown
@@ -51,6 +53,7 @@ class Wizard extends AbstractBoss {
         this.telportTimer = 0;
         this.appearTime = 0;
         this.disappearTime = 0;
+        this.ringWait = 0;
         this.arrowTimer = 0;
         this.aura = "none";
         this.auraAmount = 1; //decreases to 0 to show it is charging
@@ -81,13 +84,25 @@ class Wizard extends AbstractBoss {
         /** buff wizard based on the player */
         this.player = this.game.camera.player;
         let inventory = this.player.myInventory;
-        this.maxStats = inventory.healthUpgrade >= 4 && inventory.attackUpgrade >= 4 && inventory.arrowUpgrade >= 4 && inventory.armorUpgrade >= 3;
-        // hp buff base 500, max 1000 (300 for health upgrades 200 for all max upgrade)
-        this.max_hp += 75 * inventory.healthUpgrade;
-        if (this.maxStats)
-            this.max_hp += 200;
-        this.hp = this.max_hp;
         
+        
+        // hp buff: base 1000, max 500
+        this.max_hp += 125 * inventory.healthUpgrade;
+
+        // fireball buff: base 5, max 8
+        this.fireballDmg = 5 + inventory.attackUpgrade / 2;
+        
+        // buff if player is fully upgraded
+        // hp buff: max 2000
+        // fireball buff: max 10
+        //
+        this.maxStats = inventory.healthUpgrade >= 4 && inventory.attackUpgrade >= 4 && inventory.arrowUpgrade >= 4 && inventory.armorUpgrade >= 3;
+        if (this.maxStats) {
+            this.max_hp += 200;
+            this.fireballDmg += 2;
+        }
+
+        this.hp = this.max_hp;
     }
 
     // use after any change to this.x or this.y
@@ -110,7 +125,11 @@ class Wizard extends AbstractBoss {
             this.hp / this.max_hp < 0.25 && this.phase < this.phases.final)) {
             this.state = this.states.stun;
             this.fireCircle.forEach(fireball => fireball.removeFromWorld = true);
-            this.stunned = 4;
+            this.fireCircle = [];
+            this.actionCooldown = 4;
+            this.action = this.actions.stunned;
+            if (this.fireball)
+                this.fireball.removeFromWorld = true;
         }
         if (this.state == this.states.stun) {
             this.resetAnimationTimers(this.state);
@@ -124,36 +143,39 @@ class Wizard extends AbstractBoss {
     checkCooldowns() {
         let TICK = this.game.clockTick;
         this.actionCooldown -= TICK;
-        // cooldown for to stop casting something
-        if (this.state == this.states.casting) {
-            this.wait -= TICK;
-        }
-        if (this.state == this.states.stun) {
-            this.stunned -= TICK;
-            if (this.stunned <= 0) {
-                this.resetAnimationTimers(this.state);
-                let random = randomInt(this.totalActions);
-                this.changeAction(random);
-
-                if (this.hp / this.max_hp < 0.75 && this.phase < this.phases.middle) {
-                    this.phase = this.phases.middle;
+        this.ringWait -= TICK;
+        // action change
+        if(this.actionCooldown <= 0 && !this.teleporting) {
+            this.resetAnimationTimers(this.state);
+            if (this.state == this.states.stun) {
+                if (this.hp / this.max_hp < 0.25 && this.phase < this.phases.final) {
+                    this.phase = this.phases.final;
                     this.activateTeleport();
+                    //this.disappearTime = 5;
                 }
                 else if (this.hp / this.max_hp < 0.50 && this.phase < this.phases.desparate) {
                     this.phase = this.phases.desparate;
                     this.activateTeleport();
                 }
-                else if (this.hp / this.max_hp < 0.25 && this.phase < this.phases.final) {
-                    this.phase = this.phases.final;
+                else if (this.hp / this.max_hp < 0.75 && this.phase < this.phases.middle) {
+                    this.phase = this.phases.middle;
                     this.activateTeleport();
-                    //this.disappearTime = 5;
                 }
             }
-        }
-        // action change
-        if(this.actionCooldown <= 0 && !this.teleporting) {
-            let random = randomInt(this.totalActions);
-            this.changeAction(random);
+            if (this.fireCircle.length == 0 ) {
+                let random = randomInt(this.totalActions);
+                this.changeAction(random);
+            }
+            else if (this.phase >= this.phases.desparate && this.action != this.actions.fire_ring && this.fireCircle.length > 0 && this.ringWait <= 0) {
+                this.changeAction(this.actions.fire_ring);
+                this.state = this.states.raise;
+                this.fireCircle.forEach(fireball => fireball.stay = true);
+                
+            }
+            else {
+                let random = randomInt(this.totalActions - 1) + 1;
+                this.changeAction(random);
+            }
         }
         // wizard hit cooldown
         if (!this.vulnerable) {
@@ -234,7 +256,7 @@ class Wizard extends AbstractBoss {
         for (let i = 0; i < 15; i++) {
             this.animations.push([]);
             for (let j = 0; j < 2; j++) {
-                this.animations.push({});
+                this.animations[i].push([]);
             }
         }
 
@@ -292,7 +314,9 @@ class Wizard extends AbstractBoss {
         if (this.dead) {
             super.setDead();
             this.animations[this.state][this.direction].update(TICK);
-            this.fireCircle = [];
+            this.fireCircle.forEach(fireball => fireball.removeFromWorld = true);
+            if (this.fireball)
+                this.fireball.removeFromWorld = true;
         }
         else if (this.state == this.states.stun) {
             this.velocity.y += this.fallAcc * TICK;
@@ -313,6 +337,7 @@ class Wizard extends AbstractBoss {
             let dist = { x: 0, y: 0 };
             let self = this;
             dist = this.checkEntityInteractions(dist, TICK);
+            if (this.state != this.states.stun) {
             // if avoiding player teleport when player is too close, if not teleporting already
             if (this.avoid && !this.teleporting) {
                 this.game.entities.forEach(function (entity) {
@@ -327,7 +352,8 @@ class Wizard extends AbstractBoss {
                             if (randomInt(100) < self.skeletonChance) self.loadEvent(randomInt(self.skeletonVar) + self.skeletonBase);
                         }
                     }
-                })
+                });
+                }
             }
 
             // define all of the actionss
@@ -484,31 +510,92 @@ class Wizard extends AbstractBoss {
         let frame = animation.currentFrame();
         switch (this.state) {
             case states.idleto2:
-                if (isDone) {
+                if (frame == 3 && !this.fire) {
+                    this.fire = true;
+                    if (this.direction == this.directions.left)
+                        this.fireball = new Fireball(this.game, this,
+                            this.center.x - 16 * this.scale,
+                            this.center.y - 4 * this.scale,
+                            this.scale, this.direction, false, this.fireballDmg);
+                    else
+                        this.fireball = new Fireball(this.game, this,
+                            this.center.x + 16 * this.scale,
+                            this.center.y - 4 * this.scale,
+                            this.scale, this.direction, false, this.fireballDmg);
+                    if (this.phase >= this.phases.desparate)
+                        this.fireball.blue = true;
+                    this.fireball.state = this.fireball.states.ignite1;
+                        this.game.addEntityToFront(this.fireball);
+                    if (this.phase == this.phases.final) {
+                        let angle = 0;
+                        for (var i = 0; i < max; i++) {
+                            this.fireCircle.push(new FireballCircular(this.game, this,
+                                0, 0, this.scale, this.direction, true, this.fireballDmg));
+                        }
+                        let self = this;
+                        this.fireCircle.forEach(fireball => {
+                            self.game.addEntity(fireball);
+                            fireball.state = fireball.states.ignite1;
+                            fireball.stay = true;
+                            fireball.r = 50 * fireball.scale;
+                            fireball.angle = angle;
+                            angle += 2 * Math.PI / max;
+                        });
+                    }
+                }
+                else if (isDone) {
                     this.resetAnimationTimers(this.state);
-                    this.state = states.throw;
+                    this.fire = false;
+                    if (this.phase == this.phases.final) {
+                        this.state = states.idle2;
+                    }
+                    else
+                        this.state = states.throw;
+                }
+                break;
+            case states.idle2:
+                if (this.fireball.animations[this.fireball.states.ignite2][this.fireball.dir].isDone()) {
+                    let random = randomInt(this.totalActions - 1) + 1;
+                    this.changeAction(random);
+                    this.activateTeleport();
+                    this.ringWait = 10;
+                    if (this.fireball)
+                        this.fireball.removeFromWorld = true;
+                    this.fireCircle.forEach(fireball => fireball.stay = false);
                 }
                 break;
             case states.throw:
                 if (isDone) {
                     this.fire = false;
                     this.resetAnimationTimers(this.state);
-                    if (this.fireCircle.length == max)
-                        this.state = states.idle1;
+                    if (this.fireCircle.length == max) {
+                        if (this.phase == this.phases.desparate) {
+                            let random = randomInt(this.totalActions - 1) + 1;
+                            this.changeAction(random);
+                            this.activateTeleport();
+                            this.ringWait = 10;
+                        }
+                        else
+                            this.state = states.idle1;
+                    }
                 }
                 if (frame == 5 && !this.fire) {
                     this.fire = true;
                     let fireball = null;
+                    if (this.fireCircle.length == max - 1) {
+                        if (this.fireball)
+                            this.fireball.removeFromWorld = true;
+                    }
                     if (this.direction == this.directions.left)
                         fireball = new FireballCircular(this.game, this, 
                             this.center.x - 10 * this.scale, 
                             this.center.y - 4 * this.scale, 
-                            this.scale, this.direction, false, this.maxStats);
+                            this.scale, this.direction, false, this.fireballDmg);
                     else
                         fireball = new FireballCircular(this.game, this,
                             this.center.x + 10 * this.scale,
                             this.center.y - 4 * this.scale,
-                            this.scale, this.direction, false, this.maxStats);
+                            this.scale, this.direction, false, this.fireballDmg);
                     if (this.phase >= this.phases.desparate)
                         fireball.blue = true;
                     this.fireCircle.push(fireball);
@@ -529,13 +616,14 @@ class Wizard extends AbstractBoss {
                 break;
             case states.raise:
                 if (isDone) {
+                    
                     this.resetAnimationTimers(this.state);
                     this.state = states.casting;
-                    this.wait = .5;
+                    this.ringWait = .5;
                 }
                 break;
             case states.casting:
-                if (this.wait <= 0) {
+                if (this.ringWait <= 0) {
                     this.fireCircle.forEach(fireball => fireball.release = true);
                     this.fireCircle = [];
                     this.state = states.lower;
@@ -643,7 +731,7 @@ class Wizard extends AbstractBoss {
 
     /**
      * changes the type of attack being done and gives it the default values
-     * @param {*} action the current action
+     * @param {number} action the current action
      */
     changeAction(action) {
         let actions = this.actions;
@@ -683,9 +771,7 @@ class Wizard extends AbstractBoss {
         }
         else {
             // visuals of being hit
-            if (this.hit) {
-                ctx.filter = "brightness(150000%)";
-            }
+            
             // telport visuals
             if (this.teleporting) {
                 this.ctx.filter = "brightness(150000%)";
@@ -709,7 +795,10 @@ class Wizard extends AbstractBoss {
             }
             // nonteleporting visuals
             else {
-                ctx.filter += this.aura;
+                if (this.hit) {
+                    ctx.filter = "brightness(150000%)";
+                }
+                else ctx.filter = this.aura;
                 this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
                 this.tWidth = 80 * this.scale;
                 this.tHeight = 80 * this.scale;

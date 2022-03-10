@@ -163,26 +163,58 @@ class SlimeProjectile extends FlyingEyeProjectile {
 }
 
 class Fireball extends AbstractEntity {
-    constructor(game, source, x, y, scale, direction, blue, max) {
-        super(game, x, y, "Fireball", 1, 20, 20, scale);
+    constructor(game, source, x, y, scale, direction, blue, dmg) {
+        super(game, x, y, "Fireball", 1, 10, 10, scale);
         this.blue = blue;
-        this.damage = 5;
-        if (max) this.damage = 7.5
+        if (dmg)
+            this.damage = dmg;
+        else
+            this.damage = 5;
         this.source = source;
+        this.width = 10;
+        this.height = 10;
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/wizard.png");
         this.animations = [];
         this.directions =  {right: 0, left: 1};
         this.dir = direction;
+        this.states = {ignite1: 0, ignite2: 1, still1: 2, still2: 3, move: 4};
+        this.state = this.states.move;
         this.loadAnimations();
+        this.stay = true;
+        this.updateBB();
+    }
+
+    updateBB() {
+        this.BB = new BoundingBox(this.x - this.width / 2 * this.scale, this.y - this.height / 2 * this.scale, this.width * this.scale, this.height * this.scale);
     }
 
     loadAnimations() {
-        for (var i = 0; i < 2; i++) {
+        for (var i = 0; i < 5; i++) {
             this.animations.push([]);
+            for (var j = 0; j < 2; j++) {
+                this.animations[i].push([]);
+            }
         }
 
-        this.animations[0] = new Animator(this.spritesheet, 772, 25, 10, 20, 3, 0.15, 0, false, true, false);
-        this.animations[1] = new Animator(this.spritesheet, 708, 45, 10, 20, 3, 0.15, 0, true, true, false);
+        //ignite1
+        this.animations[0][0] = new Animator(this.spritesheet, 640, 20, 10, 20, 3, 0.075, 0, false, false, false);
+        this.animations[0][1] = new Animator(this.spritesheet, 760, 40, 10, 20, 3, 0.075, 0, true, false, false);
+
+        // ignite2
+        this.animations[1][0] = new Animator(this.spritesheet, 710, 20, 10, 20, 3, 0.075, 0, false, false, false);
+        this.animations[1][1] = new Animator(this.spritesheet, 680, 40, 10, 20, 3, 0.075, 0, true, false, false);
+
+        // still1
+        this.animations[2][0] = new Animator(this.spritesheet, 670, 20, 10, 20, 4, 0.15, 0, false, true, false);
+        this.animations[2][1] = new Animator(this.spritesheet, 740, 40, 10, 20, 4, 0.15, 0, true, true, false);
+
+        // still2
+        this.animations[3][0] = new Animator(this.spritesheet, 750, 20, 10, 20, 3, 0.15, 0, false, true, false);
+        this.animations[3][1] = new Animator(this.spritesheet, 660, 40, 10, 20, 3, 0.15, 0, true, true, false);
+        
+        // move
+        this.animations[4][0] = new Animator(this.spritesheet, 760, 20, 10, 20, 4, 0.15, 0, false, true, false);
+        this.animations[4][1] = new Animator(this.spritesheet, 640, 40, 10, 20, 4, 0.15, 0, true, true, false);
     }
 
     getDamageValue() {
@@ -200,6 +232,22 @@ class Fireball extends AbstractEntity {
         this.state = this.states.damaged;
     };
 
+    update() {
+        let TICK = this.game.clockTick;
+        this.updateBB();
+        this.hit();
+        this.animations[this.state][this.dir].update(TICK);
+        if (this.animations[this.state][this.dir].isDone()) {
+            if (this.state == this.states.ignite1)
+                this.state = this.states.ignite2;
+            else if (this.state == this.states.ignite2) {
+                if (this.stay)
+                    this.state = this.states.still2;
+                else this.state = this.states.move;
+            }
+        } 
+    }
+
     hit() {
         let self = this;
 
@@ -215,15 +263,20 @@ class Fireball extends AbstractEntity {
 
     draw(ctx) {
         if (this.blue) ctx.filter = "hue-rotate(180deg)";
-        this.animations[this.dir].drawFrame(this.game.clockTick, ctx, this.x - this.width / 2 * this.scale - this.game.camera.x, this.y - this.height * 3 / 4 * this.scale - this.game.camera.y, this.scale);
+        this.animations[this.state][this.dir].drawFrame(this.game.clockTick, ctx, this.x - this.width / 2 * this.scale - this.game.camera.x, this.y - this.height * 6 / 4 * this.scale - this.game.camera.y, this.scale);
         ctx.filter = "none";
+    }
+
+    drawDebug(ctx) {
+        ctx.strokeStyle = "red";
+        ctx.strokeRect(this.BB.left - this.game.camera.x, this.BB.top - this.game.camera.y, this.BB.width, this.BB.height);
     }
 
 }
 
 class FireballCircular extends Fireball {
-    constructor(game, source, x, y, scale, direction, blue, max) {
-        super(game, source, x, y, scale, direction, blue, max);
+    constructor(game, source, x, y, scale, direction, blue, dmg) {
+        super(game, source, x, y, scale, direction, blue, dmg);
         this.angle = 0;
         if (this.dir == this.directions.right) 
             this.angle = Math.PI;
@@ -236,15 +289,13 @@ class FireballCircular extends Fireball {
         this.initialDir = direction;
         this.width = 10;
         this.height = 10;
-        this.updateBB();
-        this.stay = false;
+        //this.updateBB();
         this.release = false;
         this.destroy = 3;
+        this.stay = false;
+        this.location = {x: this.source.BB.left + this.source.BB.width / 2, y: this.source.BB.top + this.source.BB.height / 2};
     }
 
-    updateBB() {
-        this.BB = new BoundingBox(this.x - this.width / 2 * this.scale, this.y, this.width * this.scale, this.height * this.scale);
-    }
 
     update() {
         let TICK = this.game.clockTick;
@@ -278,15 +329,9 @@ class FireballCircular extends Fireball {
             this.x = this.r * Math.cos(this.angle) + this.location.x;
             this.y = this.r * Math.sin(this.angle) + this.location.y;
         }
-        this.updateBB();
-        this.hit();
-        this.animations[this.dir].update(TICK);
+        super.update();
     }
 
-    drawDebug(ctx) {
-        ctx.strokeStyle = "red";
-        //ctx.strokeRect(this.BB.left, this.BB.top, this.BB.width, this.BB.height);
-        ctx.strokeRect(this.BB.left - this.game.camera.x, this.BB.top - this.game.camera.y, this.BB.width, this.BB.height);
-    }
+    
     
 }
