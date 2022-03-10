@@ -156,7 +156,7 @@ class Wizard extends AbstractBoss {
         if (this.actionCooldown <= 0 && !this.teleporting) {
             let random = randomInt(this.totalActions);
             this.changeAction(random);
-            //this.changeAction(3);
+            //this.changeAction(2);
         }
         // wizard hit cooldown
         if (!this.vulnerable) {
@@ -693,7 +693,7 @@ class Wizard extends AbstractBoss {
                     //green aura that decreases to indicate when the attack will hit
                     if (this.auraAmount > 0) {
                         this.auraAmount -= (1000 * TICK) / 1000; //decrease aura amount over time
-                        this.aura = "drop-shadow(0 0 " + this.auraAmount + "rem springgreen) opacity(100%)";
+                        this.aura = "drop-shadow(0 0 " + this.auraAmount + "rem magenta) opacity(100%)";
                         if (this.auraAmount < 0) this.auraAmount = 0;
                     } else {
                         this.aura = "none";
@@ -809,7 +809,7 @@ class Wizard extends AbstractBoss {
             }
             // nonteleporting visuals
             else {
-                ctx.filter += this.aura;
+                ctx.filter = this.aura;
                 this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
                 this.tWidth = 80 * this.scale;
                 this.tHeight = 80 * this.scale;
