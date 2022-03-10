@@ -14,6 +14,8 @@ class FlyingEyeProjectile extends AbstractEntity {
         this.state = this.states.move;
         this.elapsedTime = 0;
         this.damage = STATS.EYE_PROJECTILE.DAMAGE
+        this.canDestroy = true;
+        this.canDamage = true; //if player hits projectile it explodes. Set this to false so they dont take damage from it.
         this.updateBB();
     }
 
@@ -78,7 +80,7 @@ class FlyingEyeProjectile extends AbstractEntity {
 
         this.game.entities.forEach(function (entity) {
             if (entity instanceof AbstractPlayer) {
-                let hitPlayer = self.BB.collide(entity.BB);
+                let hitPlayer = self.BB.collide(entity.BB) && entity.vulnerable;
                 if (hitPlayer) {
                     if (self.state == self.states.move) {
                         self.velocity = 0;
@@ -86,18 +88,21 @@ class FlyingEyeProjectile extends AbstractEntity {
                         self.width *= 2;
                         self.height *= 2;
                     }
-                    if(entity.vulnerable) entity.takeDamage(self.getDamageValue(), self.critical);
+                    if (entity.vulnerable && self.canDamage) entity.takeDamage(self.getDamageValue(), self.critical);
                 }
 
-                //allow player to destroy it
-                let playerHit = entity.HB && entity.HB.collide(self.BB);
-                if(playerHit) {
-                    //console.log("destroyed projectile");
-                    if (self.state == self.states.move) {
-                        self.velocity = 0;
-                        self.state = self.states.destroy;
-                        self.width *= 2;
-                        self.height *= 2;
+                if (self.canDestroy) {
+                    //allow player to destroy it
+                    let playerHit = entity.HB && entity.HB.collide(self.BB);
+                    if (playerHit) {
+                        //console.log("destroyed projectile");
+                        if (self.state == self.states.move) {
+                            self.velocity = 0;
+                            self.state = self.states.destroy;
+                            self.canDamage = false;
+                            self.width *= 2;
+                            self.height *= 2;
+                        }
                     }
                 }
             }
@@ -105,17 +110,20 @@ class FlyingEyeProjectile extends AbstractEntity {
 
         this.game.projectiles.forEach(function (entity) {
             if (entity instanceof Arrow || entity instanceof BladeBeam) {
-                //allow arrow to destroy it
-                let hit = entity.BB && entity.BB.collide(self.BB);
-                if(hit) {
-                    //console.log("destroyed projectile");
-                    if (self.state == self.states.move) {
-                        self.velocity = 0;
-                        self.state = self.states.destroy;
-                        self.width *= 2;
-                        self.height *= 2;
+                if (self.canDestroy) {
+                    //allow arrow to destroy it
+                    let hit = entity.BB && entity.BB.collide(self.BB);
+                    if (hit) {
+                        //console.log("destroyed projectile");
+                        if (self.state == self.states.move) {
+                            self.velocity = 0;
+                            self.state = self.states.destroy;
+                            self.canDamage = false;
+                            self.width *= 2;
+                            self.height *= 2;
+                        }
+
                     }
-                    
                 }
             }
         });
@@ -157,6 +165,31 @@ class SlimeProjectile extends FlyingEyeProjectile {
 
     draw(ctx) {
         ctx.filter = "saturate(1000%) hue-rotate(-20deg)"; //turn it red
+        super.draw(ctx);
+        ctx.filter = "none";
+    }
+}
+
+class WindBall extends FlyingEyeProjectile {
+    constructor(game, x, y, dir, newScale, newDmg, canDestroy, speedMultiplier) {
+        super(game, x, y, dir, newScale);
+
+        this.scale = this.scale * newScale;
+        this.width = this.width * newScale;
+        this.height = this.height * newScale;
+        this.damage = newDmg;
+        if(!speedMultiplier) this.speedMultiplier = 1;
+        else this.speedMultiplier = speedMultiplier;
+        this.velocity = 550;
+        if (dir == this.directions.left)
+            this.velocity = -550;
+
+        this.canDestroy = canDestroy;
+        this.velocity = this.velocity * this.speedMultiplier;
+    }
+
+    draw(ctx) {
+        this.canDestroy ? ctx.filter = "saturate(1000%) hue-rotate(100deg)" : ctx.filter = "saturate(1000%) hue-rotate(-100deg)"; //turn it green for destroyable and blue for undestroyable
         super.draw(ctx);
         ctx.filter = "none";
     }

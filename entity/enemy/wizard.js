@@ -18,13 +18,13 @@ class Wizard extends AbstractBoss {
 
         /** battle phases */
 
-        this.phases = {initial: 0, middle: 1, desparate: 2, final: 3};
+        this.phases = { initial: 0, middle: 1, desparate: 2, final: 3 };
         this.phase = this.phases.initial;
 
         // actions
-        this.actions = {stunned: -1, fire_ring: 0, no_attack: 1, arrow_rain: 2};
+        this.actions = {stunned: -1, fire_ring: 0, no_attack: 1, arrow_rain: 2, beam: 3};
         this.action = this.actions.no_attack;
-        this.totalActions = 3;
+        this.totalActions = 4;
 
         // states/animation
         this.states = {
@@ -42,10 +42,12 @@ class Wizard extends AbstractBoss {
         this.hit = false;
         this.avoid = true;
         this.fire = false;
+        this.tracking = false;
 
         // spawned attacks
         this.fireball = null;
         this.fireCircle = [];
+        this.beamDamage = 5; //initial beam damage. it ramps up with phases.
 
         // timers for cooldown
         this.actionCooldown = 5;
@@ -366,6 +368,7 @@ class Wizard extends AbstractBoss {
             switch (this.action) {
                 case actions.fire_ring:
                     switch (this.phase) {
+                        //pass in how many fireballs per phase
                         case phases.initial:
                             this.fireRing(3);
                             break;
@@ -381,7 +384,26 @@ class Wizard extends AbstractBoss {
                     }
                     break;
                 case actions.arrow_rain:
-                    this.arrowRain();
+                    switch (this.phase) {
+                        //pass in number of base arrows to spawn in
+                        case phases.initial:
+                            this.arrowRain(3);
+                            break;
+                        case phases.middle:
+                            this.arrowRain(4);
+                            break;
+                        case phases.desparate:
+                            this.arrowRain(5);
+                            break;
+                        case phases.final:
+                            this.arrowRain(7);
+                            break;
+                    }
+                    break;
+                case actions.beam:
+                    //beam is invincible once it reaches half hp phase
+                    //phases are handled by shootWindblast() method
+                    this.beam();
                     break;
             }
 
@@ -393,41 +415,38 @@ class Wizard extends AbstractBoss {
         }
         // does not update animation if teleporting, which allows current frame to be the frame to use when teleporting
 
+        //vertically track the player
+        //used in the beam phase
+        if (this.tracking) {
+            let buffer = this.BB.height / 2;
+
+            if (this.BB.top + buffer > this.player.BB.top) {
+                if (this.velocity.y > 0) this.velocity.y = 0;
+                this.velocity.y -= (this.fallAcc) * TICK;
+            } else {
+                if (this.velocity.y < 0) this.velocity.y = 0;
+                this.velocity.y += (this.fallAcc) * TICK;
+            }
+
+            this.y += this.velocity.y * TICK;
+            this.updateBoxes();
+            let dist = { x: 0, y: 0 }; //the displacement needed between entities
+            dist = super.checkEnvironmentCollisions(dist); //check if colliding with environment and adjust entity accordingly
+            this.updatePositionAndVelocity(dist); //set where entity is based on interactions/collisions put on dist
+            this.checkEntityInteractions(dist, TICK);
+            this.checkCooldowns();
+            this.checkDirection();
+        }
+
         this.lastBB = this.BB;
     }
 
-    summonArrows(theAmount) {
-
-        let spaceX = 100; //space in between arrows
-        let spaceY = 50;
-        let arrow_type = this.game.camera.player.myInventory.arrowUpgrade;
-        let player = this.game.camera.player;
-        let target = { x: this.game.camera.player.BB.mid, y: this.game.camera.player.BB.top };
-        let startX;
-        let startY;
-        let random = randomInt(4);
-
-        if (random == 0) { //from the wizard position
-            startX = this.x;
-            startY = this.y;
-        } else if (random == 1) { //from above the player
-            startX = player.BB.left;
-            startY = player.BB.top - 500;
-        } else if (random == 2) { //start left of player
-            startX = player.BB.left - 600;
-            startY = player.BB.top - (this.BB.height / 2);
-        } else { //start right of player
-            startX = player.BB.right + 600;
-            startY = player.BB.top - (this.BB.height / 2);
-        }
-
-        for (let i = 0; i < theAmount; i++) {
-            let arrow = new Arrow(this.game, startX + (i * spaceX), startY - (i * spaceY), target, arrow_type, false);
-            this.game.addEntityToFront(arrow);
-            ASSET_MANAGER.playAsset(SFX.BOW_SHOT);
-        }
-
-
+    /**
+    * Checks position of player and checks direction to match
+    */
+    checkDirection() {
+        if (this.player.BB.x > this.BB.x) this.direction = this.directions.right;
+        else this.direction = this.directions.left;
     }
 
     /**
@@ -501,6 +520,8 @@ class Wizard extends AbstractBoss {
             else this.BB = BB;
         }
     }
+
+    /** ATTACKS BELOW */
 
     /**
      * logic for the fire ring which creates a ring of fire to follow and then release
@@ -667,8 +688,10 @@ class Wizard extends AbstractBoss {
      * changes the type of attack being done
      * Summons arrows and then teleports after a certain amount of time
      * Has an indicator with a green aura
+     * 
+     * @param base number of arrows to spawn in
      */
-    arrowRain() {
+    arrowRain(numArrows) {
         let TICK = this.game.clockTick;
         let states = this.states;
         let dir = this.direction;
@@ -692,7 +715,7 @@ class Wizard extends AbstractBoss {
                     //green aura that decreases to indicate when the attack will hit
                     if (this.auraAmount > 0) {
                         this.auraAmount -= (1000 * TICK) / 1000; //decrease aura amount over time
-                        this.aura = "drop-shadow(0 0 " + this.auraAmount + "rem springgreen) opacity(100%)";
+                        this.aura = "drop-shadow(0 0 " + this.auraAmount + "rem magenta) opacity(100%)";
                         if (this.auraAmount < 0) this.auraAmount = 0;
                     } else {
                         this.aura = "none";
@@ -702,7 +725,7 @@ class Wizard extends AbstractBoss {
                     if (!this.arrow) {
                         if (this.auraAmount <= 0) {
                             this.arrow = true;
-                            this.summonArrows(3 + randomInt(3));
+                            this.summonArrows(numArrows + randomInt(3));
                         }
                     }
 
@@ -733,6 +756,114 @@ class Wizard extends AbstractBoss {
         }
     }
 
+    /**
+     * Spawns arrows randomly a set distance that targets the player
+     * @param {*} theAmount 
+     */
+    summonArrows(theAmount) {
+        let spaceX = 100; //space in between arrows
+        let spaceY = 50;
+        let arrow_type = this.player.myInventory.arrowUpgrade;
+        let target = { x: this.player.BB.mid, y: this.player.BB.top };
+        let startX;
+        let startY;
+        let random = randomInt(4);
+
+        if (random == 0) { //from the wizard position
+            startX = this.x;
+            startY = this.y;
+        } else if (random == 1) { //from above the player
+            startX = this.player.BB.left;
+            startY = this.player.BB.top - 500;
+        } else if (random == 2) { //start left of player
+            startX = this.player.BB.left - 600;
+            startY = this.player.BB.top - (this.BB.height / 2);
+        } else { //start right of player
+            startX = this.player.BB.right + 600;
+            startY = this.player.BB.top - (this.BB.height / 2);
+        }
+
+        for (let i = 0; i < theAmount; i++) {
+            let arrow = new Arrow(this.game, startX + (i * spaceX), startY - (i * spaceY), target, arrow_type, false);
+            this.game.addEntityToFront(arrow);
+            ASSET_MANAGER.playAsset(SFX.BOW_SHOT);
+        }
+
+
+    }
+
+    /**
+    * Summons multiple projectiles together that looks like a wind beam
+    */
+    beam() {
+        let TICK = this.game.clockTick;
+        let states = this.states;
+        let dir = this.direction;
+        let animation = this.animations[this.state][this.direction];
+        let isDone = animation.isDone();
+        let frame = animation.currentFrame();
+        let self = this;
+
+        switch (this.state) {
+            case states.attack:
+                if (this.teleporting) animation.elapsedTime = 0; //keep reset until done teleporting
+                else {
+                    //tracking until shooting projectile
+                    (frame < 6) ? this.tracking = true : this.tracking = false;
+
+                    if (frame == 6) {
+                        //shoot main projectile
+                        this.shootWindblast();
+                    } else if (frame == 8) {
+                        //chance to follow up with an extra trailing blast at the end
+                        if (randomInt(11) >= 8) this.shootWindblast();
+                    }
+                    if (isDone) {
+                        //randomly chose to shoot again or teleport away after cooldown animation
+                        let rand = randomInt(11);
+                        if (rand <= 6) this.state = states.atoidle;
+                        this.resetAnimationTimers(this.state);
+                    }
+                }
+                break;
+            case states.atoidle:
+                if (isDone) { //once cooldown is done teleport and attack again
+                    this.activateTeleport();
+                    this.state = states.attack;
+                    this.resetAnimationTimers(states.attack);
+                    this.resetAnimationTimers(states.atoidle);
+                }
+                break;
+
+        }
+    }
+
+    /**
+     * Summons a projectile used to make up a beam
+     * At the desprate phase and beyond the projectiles become indestructible
+     */
+    shootWindblast() {
+
+        let damage = this.beamDamage; //damage of the blast
+        let speed = 1.0;              //speed multiplier based on phase
+        let isDestroyable = true;     //if this projectile can be destroyed or not. Later phases it cant
+        //set speed and damage based on the phase
+        if(this.phase > this.phases.initial) {
+            speed = speed + (this.phase / 10); //multiplier of the initial windball speed
+
+            //hard phase: cant be destroyed and does more damage
+            if(this.phase >= this.phases.desparate) {
+                damage *= 1.5;
+                isDestroyable = false;
+            }
+        }
+        
+        if (this.direction == this.directions.right)
+            this.game.addEntity(new WindBall(this.game, this.BB.right - this.BB.width, this.BB.top - 10, this.direction, 2, damage, isDestroyable, speed));
+        else
+            this.game.addEntity(new WindBall(this.game, this.BB.left - this.BB.width * 2, this.BB.top - 10, this.direction, 2, damage, isDestroyable, speed));
+    }
+
 
     /**
      * changes the type of attack being done and gives it the default values
@@ -744,6 +875,7 @@ class Wizard extends AbstractBoss {
         this.resetAnimationTimers(this.state);
         this.auraAmount = 1;
         this.aura = "none";
+        this.tracking = false;
         switch (action) {
             case actions.no_attack:
                 this.avoid = true;
@@ -764,6 +896,11 @@ class Wizard extends AbstractBoss {
                 this.arrow = false;
                 this.arrowTimer = 0;
                 this.auraAmount = 1;
+                break;
+            case actions.beam:
+                this.avoid = false;
+                this.actionCooldown = 15;
+                this.state = this.states.attack;
                 break;
         }
 
