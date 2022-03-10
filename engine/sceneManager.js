@@ -244,6 +244,10 @@ class SceneManager {
             this.player.x = this.player.myCheckpoint.x - this.player.BB.left;
             this.player.y = this.player.myCheckpoint.y - this.player.BB.bottom;
         }
+        else if (this.spawnCheckpoint) {
+            this.player.x = this.spawnCheckpoint.x - this.player.BB.left;
+            this.player.y = this.spawnCheckpoint.y - this.player.BB.bottom;
+        }
         else {
         //reposition the player
             this.player.x = spawnX - this.player.BB.left;
@@ -321,6 +325,8 @@ class SceneManager {
             this.saveLevelState();
             this.savePlayerInfo();
             this.levelStateTemp = null;
+            this.player.myCheckpoint = null;
+            this.spawnCheckpoint = null;
         } else {
             // if player dies reset their hp and inventory to what it was upon entering the level
             if (this.restart && this.lastPlayer) {
@@ -333,7 +339,6 @@ class SceneManager {
             this.title = false;
             this.transition = false;
             this.usingLevelSelect = false;
-            this.restart = false;
         }
         this.clearEntities();
         if (number < 0 || number > this.levels.length - 1) {
@@ -350,6 +355,7 @@ class SceneManager {
                 this.loadScene(lvlData, lvlData.player.x, lvlData.player.y);
             }
         }
+        this.restart = false;
     }
 
     /**
@@ -381,6 +387,17 @@ class SceneManager {
         let enemies = [];
         let self = this;
         array.forEach(function (enemy) {
+            var newEnem = {name: enemy.name, x: enemy.x, y: enemy.y, hp: enemy.hp, max_hp: enemy.max_hp, direction: enemy.direction};
+            if (enemy.name == "Wizard") {
+                newEnem.left = enemy.left;
+                newEnem.right = enemy.right;
+                newEnem.top = enemy.top;
+                newEnem.bottom = enemy.bottom;
+            }
+            enemies.push(newEnem);
+
+
+            /* older saving codem ay discard when confirmed to work well.
             var newEnem = null;
             if (enemy instanceof Mushroom)
                 newEnem = new Mushroom(self.game, 0, 0, false);
@@ -396,8 +413,8 @@ class SceneManager {
                 newEnem = new DemonSlime(self.game, 0, 0, false);
             else if (enemy instanceof Wizard) {
                 newEnem = new Wizard(self.game, 0, 0, false);
-                for (var i in enemy)
-                    newEnem[i] = enemy[i];
+                //for (var i in enemy)
+                //    newEnem[i] = enemy[i];
             }
             if (newEnem) {
                 newEnem.x = enemy.x;
@@ -409,7 +426,35 @@ class SceneManager {
                 enemies.push(newEnem);
             }
             else
-                throw new Error("Enemy type not accounted for: " + enemy.constructor.name);
+                throw new Error("Enemy type not accounted for: " + enemy.constructor.name);*/
+                
+        });
+        return enemies;
+    }
+
+    loadSavedEnemies(array) {
+        let enemies = [];
+        let self = this;
+        array.forEach(function(enemy) {
+            var newEnem = null;
+            if (enemy.name == "Mushroom")
+                newEnem = new Mushroom(self.game, enemy.x, enemy.y, false);
+            else if (enemy.name == "Skeleton")
+                newEnem = new Skeleton(self.game, enemy.x, enemy.y, false);
+            else if (enemy.name == "Goblin")
+                newEnem = new Goblin(self.game, enemy.x, enemy.y, false);
+            else if (enemy.name == "Flying Eye")
+                newEnem = new FlyingEye(self.game, enemy.x, enemy.y, false);
+            else if (enemy.name == "Slime")
+                newEnem = new Slime(self.game, enemy.x, enemy.y, false);
+            else if (enemy.name == "Demon Slime")
+                newEnem = new DemonSlime(self.game, enemy.x, enemy.y, false);
+            else if (enemy.name == "Wizard")
+                newEnem = new Wizard(self.game, enemy.x, enemy.y, enemy.left, enemy.right, enemy.top, enemy.bottom);
+            newEnem.hp = enemy.hp;
+            newEnem.max_hp = enemy.max_hp;
+            newEnem.direction = enemy.direction;
+            enemies.push(newEnem);
         });
         return enemies;
     }
@@ -469,7 +514,7 @@ class SceneManager {
             for(var i in event) {
                 newEvent[i] = event[i];
                 if (event[i]  && event[i] == event.entities) {
-                    newEvent[i] = self.saveEnemies(event.entities);
+                    newEvent[i] = self.loadSavedEnemies(self.saveEnemies(event.entities));
                 }
             }
 
@@ -626,8 +671,8 @@ class SceneManager {
                     PAUSED = false;
                     this.restart = true;
                     // ensure the state of the level and player are from before the level start
-                    this.levelStateTemp = this.levelState[this.currentLevel];
-                    this.player.myCheckpoint = this.spawnCheckpoint;
+                    this.levelStateTemp = null;
+                    this.player.myCheckpoint = null//this.spawnCheckpoint;
                     this.loadLevel(this.currentLevel);
                     this.player.myInventory.copyInventory(this.lastInventoryPerm);
                 } else if (this.returnMenuPauseBB.collideMouse(this.game.click.x, this.game.click.y)) {
@@ -1055,8 +1100,8 @@ class SceneManager {
         if (scene.player === undefined) throw ("Level must have a player with x and y cordinates.");
 
         //initialize scene and player
-        let bool = this.level == scene;
         this.level = scene;
+        let bool = this.currentLevel == scene;
         this.levelH = scene.height;
         this.levelW = scene.width;
         let h = scene.height;
@@ -1127,8 +1172,8 @@ class SceneManager {
                 state = this.levelStateTemp;
             else 
                 state = this.levelState[this.currentLevel];
-            this.game.enemies = this.saveEnemies(state.enemies);
-            this.game.enemies.forEach(enemy => enemy.removeFromWorld = false);
+            this.game.enemies = this.loadSavedEnemies(state.enemies);
+            //this.game.enemies.forEach(enemy => enemy.removeFromWorld = false);
             this.game.events = this.saveEvents(state.events);
             var that = this;
             this.game.events.forEach(events => {
@@ -1169,15 +1214,15 @@ class SceneManager {
         //this.game.addEntity(new Slime(this.game, 100, 300, false));
         //this.game.addEntity(new DemonSlime(this.game, 100, 300, false));
         this.loadBackground(h, entities, this.level);
-        let self = this;
-        entities.forEach(entity => self.game.addEntity(entity));
+        let game = this.game;
+        entities.forEach(entity => game.addEntity(entity));
         // saves level state upon loading or reloading level
-        if (!this.title && !this.usingLevelSelect && !this.restart) {
-            this.saveLevelStateCheckpoint();
+        if (!this.title && !this.usingLevelSelect && !this.restart && !bool) {
+            //this.saveLevelStateCheckpoint();
             this.savePlayerInfo();
             if (!bool) { // save level upon loading, but not reloading. This is meant for restart.
-                //this.levelState[this.currentLevel] = this.levelStateTemp;
                 this.saveLevelState();
+                console.log("Save level state");
                 this.lastInventoryPerm = new Inventory(this.game);
                 this.lastInventoryPerm.copyInventory(this.lastInventory);
                 this.spawnCheckpoint = {x: spawnX * PARAMS.BLOCKDIM, y: (h - spawnY) * PARAMS.BLOCKDIM};

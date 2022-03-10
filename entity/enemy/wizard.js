@@ -24,12 +24,12 @@ class Wizard extends AbstractBoss {
         // actions
         this.actions = {no_attack: 0, fire_ring: 1, arrow_rain: 2};
         this.action = this.actions.no_attack;
-        this.totalActions = 3;
+        this.totalActions = 2;
 
         // states/animation
         this.states = {
             idle1: 0, idleto2: 1, idle2: 2, idleto1: 3,
-            stoptofly: 4, fly: 5, flytostop: 6, attack: 7, atoidle: 8, dead: 9,
+            stoptofly: 4, fly: 5, flytostop: 6, attack: 7, atoidle: 8, death: 9,
             throw: 10, raise: 11, casting: 12, lower: 13,
         };
         this.state = this.states.idle1;
@@ -79,16 +79,15 @@ class Wizard extends AbstractBoss {
         this.bottom = bottom;
 
         /** buff wizard based on the player */
-        // hp buff base 500, max 1000 (300 for health upgrades 200 for all max upgrade)
         this.player = this.game.camera.player;
         let inventory = this.player.myInventory;
+        this.maxStats = inventory.healthUpgrade >= 4 && inventory.attackUpgrade >= 4 && inventory.arrowUpgrade >= 4 && inventory.armorUpgrade >= 3;
+        // hp buff base 500, max 1000 (300 for health upgrades 200 for all max upgrade)
         this.max_hp += 75 * inventory.healthUpgrade;
-        if (inventory.healthUpgrade >= 4 && inventory.attackUpgrade >= 4 && inventory.arrowUpgrade >= 4 && inventory.armorUpgrade >= 3)
+        if (this.maxStats)
             this.max_hp += 200;
         this.hp = this.max_hp;
         
-        // 
-
     }
 
     // use after any change to this.x or this.y
@@ -116,7 +115,7 @@ class Wizard extends AbstractBoss {
         else if (this.hp / this.max_hp < 0.50 && this.phase < this.phases.desparate) {
             this.phase = this.phases.desparate;
         }
-        else if (this.hp / this.max_hp < 0.25 && this.phase < this.phase.final) {
+        else if (this.hp / this.max_hp < 0.25 && this.phase < this.phases.final) {
             this.phase = this.phases.final;
             this.activateTeleport();
             this.disappearTime = 5;
@@ -265,56 +264,65 @@ class Wizard extends AbstractBoss {
 
     update() {
         let TICK = this.game.clockTick;
-        this.checkCooldowns();
-        let dist = { x: 0, y: 0 };
-        let self = this;
-        dist = this.checkEntityInteractions(dist, TICK);
-        // if avoiding player teleport when player is too close, if not teleporting already
-        if (this.avoid && !this.teleporting) {
-            this.game.entities.forEach(function (entity) {
-                if (entity instanceof AbstractPlayer) {
-                    let ex = entity.BB.left + entity.BB.width / 2;
-                    let ey = entity.BB.top + entity.BB.height / 2;
-                    let distx = ex - self.center.x;
-                    let disty = ey - self.center.y;
-                    let dist = Math.sqrt(distx * distx + disty * disty);
-                    if (dist < 60 * self.scale) {
-                        self.activateTeleport();
-                        if (randomInt(100) < self.skeletonChance) self.loadEvent(randomInt(self.skeletonVar) + self.skeletonBase);
+        if (this.dead) {
+            super.setDead();
+            this.animations[this.state][this.direction].update(TICK);
+            this.fireCircle = [];
+        }
+        else {
+            this.checkCooldowns();
+            let dist = { x: 0, y: 0 };
+            let self = this;
+            dist = this.checkEntityInteractions(dist, TICK);
+            // if avoiding player teleport when player is too close, if not teleporting already
+            if (this.avoid && !this.teleporting) {
+                this.game.entities.forEach(function (entity) {
+                    if (entity instanceof AbstractPlayer) {
+                        let ex = entity.BB.left + entity.BB.width / 2;
+                        let ey = entity.BB.top + entity.BB.height / 2;
+                        let distx = ex - self.center.x;
+                        let disty = ey - self.center.y;
+                        let dist = Math.sqrt(distx * distx + disty * disty);
+                        if (dist < 60 * self.scale) {
+                            self.activateTeleport();
+                            if (randomInt(100) < self.skeletonChance) self.loadEvent(randomInt(self.skeletonVar) + self.skeletonBase);
+                        }
                     }
-                }
-            })
-        }
+                })
+            }
 
-        // define all of the actionss
-        let actions = this.actions;
-        let phases = this.phases;
-        switch (this.action) {
-            case actions.fire_ring:
-                switch (this.phase) {
-                    case phases.initial:
-                        this.fireRing(3);
-                        break;
-                    case phases.middle:
-                        this.fireRing(6);
-                        break;
-                    case phases.desparate:
-                    case phases.final:
-                        this.fireRing(10);
-                        break;
-                }
-                break;
-            case actions.arrow_rain:
-                this.arrowRain();
-                break;
-        }
+            // define all of the actionss
+            let actions = this.actions;
+            let phases = this.phases;
+            switch (this.action) {
+                case actions.fire_ring:
+                    switch (this.phase) {
+                        case phases.initial:
+                            this.fireRing(3);
+                            break;
+                        case phases.middle:
+                            this.fireRing(6);
+                            break;
+                        case phases.desparate:
+                            this.fireRing(9)
+                            break;
+                        case phases.final:
+                            this.fireRing(13);
+                            break;
+                    }
+                    break;
+                case actions.arrow_rain:
+                    this.arrowRain();
+                    break;
+            }
 
-        // allow teleport when activated
-        if (this.teleporting) {
-            this.teleport();
+            // allow teleport when activated
+            if (this.teleporting) {
+                this.teleport();
+            }
+            else this.animations[this.state][this.direction].update(TICK);
         }
         // does not update animation if teleporting, which allows current frame to be the frame to use when teleporting
-        else this.animations[this.state][this.direction].update(TICK);
 
         this.lastBB = this.BB;
     }
@@ -452,17 +460,17 @@ class Wizard extends AbstractBoss {
                 if (frame == 5 && !this.fire) {
                     this.fire = true;
                     let fireball = null;
-                    if (this.dir == this.directions.left)
+                    if (this.direction == this.directions.left)
                         fireball = new FireballCircular(this.game, this, 
                             this.center.x - 10 * this.scale, 
                             this.center.y - 4 * this.scale, 
-                            this.scale, this.direction);
+                            this.scale, this.direction, false, this.maxStats);
                     else
                         fireball = new FireballCircular(this.game, this,
                             this.center.x + 10 * this.scale,
                             this.center.y - 4 * this.scale,
-                            this.scale, this.direction);
-                    //if (this.phase >= this.phases.desparate)
+                            this.scale, this.direction, false, this.maxStats);
+                    if (this.phase >= this.phases.desparate)
                         fireball.blue = true;
                     this.fireCircle.push(fireball);
                     this.game.addEntity(fireball);
@@ -631,39 +639,44 @@ class Wizard extends AbstractBoss {
 
     draw(ctx) {
         let TICK = this.game.clockTick;
-        // visuals of being hit
-        if (this.hit) {
-            ctx.filter = "brightness(150000%)";
+        if (this.dead) {
+            super.drawWithFadeOut(ctx, this.animations[this.state][this.direction]);
         }
-        // telport visuals
-        if (this.teleporting) {
-            this.ctx.filter = "brightness(150000%)";
-            if (this.disappearTime > 0 && this.disappearTime < 1) {
-                this.tWidth -= 4000 * TICK;
-                if (this.tWidth < 0) this.tWidth = 0;
-                this.tHeight += 4000 * TICK;
-                if (this.tHeight > 300 * this.scale) this.tHeight = 300 * this.scale;
-            }
-            else if (this.reappearTime > 0) {
-                this.tWidth += 4000 * TICK;
-                if (this.tWidth > 80 * this.scale) this.tWidth = 80 * this.scale;
-                this.tHeight -= 4000 * TICK;
-                if (this.tHeight < 80 * this.scale) this.tHeight = 80 * this.scale;
-            }
-            let w = 80 * this.scale - this.tWidth;
-            let h = 80 * this.scale - this.tHeight;
-
-            this.animations[this.state][this.direction].drawFrame(this.game.clockTick, this.ctx, 0, 0, 1);
-            ctx.drawImage(this.canvas, this.x - this.game.camera.x + w / 2, this.y - this.game.camera.y + h / 2, this.tWidth, this.tHeight);
-        }
-        // nonteleporting visuals
         else {
-            ctx.filter = this.aura;
-            this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
-            this.tWidth = 80 * this.scale;
-            this.tHeight = 80 * this.scale;
+            // visuals of being hit
+            if (this.hit) {
+                ctx.filter = "brightness(150000%)";
+            }
+            // telport visuals
+            if (this.teleporting) {
+                this.ctx.filter = "brightness(150000%)";
+                if (this.disappearTime > 0 && this.disappearTime < 1) {
+                    this.tWidth -= 4000 * TICK;
+                    if (this.tWidth < 0) this.tWidth = 0;
+                    this.tHeight += 4000 * TICK;
+                    if (this.tHeight > 300 * this.scale) this.tHeight = 300 * this.scale;
+                }
+                else if (this.reappearTime > 0) {
+                    this.tWidth += 4000 * TICK;
+                    if (this.tWidth > 80 * this.scale) this.tWidth = 80 * this.scale;
+                    this.tHeight -= 4000 * TICK;
+                    if (this.tHeight < 80 * this.scale) this.tHeight = 80 * this.scale;
+                }
+                let w = 80 * this.scale - this.tWidth;
+                let h = 80 * this.scale - this.tHeight;
+
+                this.animations[this.state][this.direction].drawFrame(this.game.clockTick, this.ctx, 0, 0, 1);
+                ctx.drawImage(this.canvas, this.x - this.game.camera.x + w / 2, this.y - this.game.camera.y + h / 2, this.tWidth, this.tHeight);
+            }
+            // nonteleporting visuals
+            else {
+                ctx.filter = this.aura;
+                this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
+                this.tWidth = 80 * this.scale;
+                this.tHeight = 80 * this.scale;
+            }
+            ctx.filter = "none";
         }
-        ctx.filter = "none";
     }
 
 

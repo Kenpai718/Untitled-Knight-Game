@@ -269,7 +269,7 @@ class DemonSlime extends AbstractBoss {
                 if (this.hp < (this.max_hp / 2)) this.hp = Math.round((this.max_hp / 2));
                 this.legendary_healed = true;
                 ASSET_MANAGER.playAsset(SFX.HEAL);
-                console.log((this.max_hp / 2) - this.legend_hp_start);
+                //console.log((this.max_hp / 2) - this.legend_hp_start);
                 this.game.addEntityToFront(new Score(this.game, this, (this.max_hp / 2) - this.legend_hp_start, PARAMS.HEAL_ID, false));
             }
 
@@ -732,7 +732,7 @@ class Slime extends DemonSlime {
         this.projectileTick += TICK;
 
         if (this.projectileTick > this.projectileSpawnTime) { //shoot a projectile every few seconds
-            console.log("slime projectile fired");
+            //console.log("slime projectile fired");
             this.projectileTick = 0;
             this.projectileSpawnTime = 2 + randomInt(4); //randomize the shooting interval from 2 to 5s
             if (this.direction == this.directions.right)
