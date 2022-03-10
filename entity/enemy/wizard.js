@@ -24,13 +24,13 @@ class Wizard extends AbstractBoss {
         // actions
         this.actions = {no_attack: 0, fire_ring: 1, arrow_rain: 2};
         this.action = this.actions.no_attack;
-        this.totalActions = 2;
+        this.totalActions = 3;
 
         // states/animation
         this.states = {
             idle1: 0, idleto2: 1, idle2: 2, idleto1: 3,
             stoptofly: 4, fly: 5, flytostop: 6, attack: 7, atoidle: 8, death: 9,
-            throw: 10, raise: 11, casting: 12, lower: 13,
+            throw: 10, raise: 11, casting: 12, lower: 13, stun: 14
         };
         this.state = this.states.idle1;
 
@@ -58,7 +58,7 @@ class Wizard extends AbstractBoss {
         // skeleton spawn logic
         this.skeletonVar = 1; // used to choose a random int between 0 and skeletonVar - 1
         this.skeletonBase = 1; // wizard will spawn at least skeletonBase skeletons
-        this.skeletonChance = 100; // percentage chance that the wizard will spawn skeletons (out of 100)
+        this.skeletonChance = 10; // percentage chance that the wizard will spawn skeletons (out of 100)
 
         /** constructing teleportation information */
 
@@ -105,20 +105,19 @@ class Wizard extends AbstractBoss {
     setDamagedState() {
         this.vulnerable = false;
         this.hit = true;
+        if (this.state != this.states.stun && (this.hp / this.max_hp < 0.75 && this.phase < this.phases.middle ||
+            this.hp / this.max_hp < 0.50 && this.phase < this.phases.desparate ||
+            this.hp / this.max_hp < 0.25 && this.phase < this.phases.final)) {
+            this.state = this.states.stun;
+            this.fireCircle.forEach(fireball => fireball.removeFromWorld = true);
+            this.stunned = 4;
+        }
+        if (this.state == this.states.stun) {
+            this.resetAnimationTimers(this.state);
+        }
         // allows teleport to activate upon hit
-        if (this.avoid) {
+        else if (this.avoid) {
             this.activateTeleport();
-        }
-        if (this.hp / this.max_hp < 0.75 && this.phase < this.phases.middle) {
-            this.phase = this.phases.middle;
-        }
-        else if (this.hp / this.max_hp < 0.50 && this.phase < this.phases.desparate) {
-            this.phase = this.phases.desparate;
-        }
-        else if (this.hp / this.max_hp < 0.25 && this.phase < this.phases.final) {
-            this.phase = this.phases.final;
-            this.activateTeleport();
-            this.disappearTime = 5;
         }
     }
 
@@ -129,12 +128,34 @@ class Wizard extends AbstractBoss {
         if (this.state == this.states.casting) {
             this.wait -= TICK;
         }
+        if (this.state == this.states.stun) {
+            this.stunned -= TICK;
+            if (this.stunned <= 0) {
+                this.resetAnimationTimers(this.state);
+                let random = randomInt(this.totalActions);
+                this.changeAction(random);
+
+                if (this.hp / this.max_hp < 0.75 && this.phase < this.phases.middle) {
+                    this.phase = this.phases.middle;
+                    this.activateTeleport();
+                }
+                else if (this.hp / this.max_hp < 0.50 && this.phase < this.phases.desparate) {
+                    this.phase = this.phases.desparate;
+                    this.activateTeleport();
+                }
+                else if (this.hp / this.max_hp < 0.25 && this.phase < this.phases.final) {
+                    this.phase = this.phases.final;
+                    this.activateTeleport();
+                    //this.disappearTime = 5;
+                }
+            }
+        }
         // action change
         if(this.actionCooldown <= 0 && !this.teleporting) {
             let random = randomInt(this.totalActions);
             this.changeAction(random);
         }
-        // wizard eye hit cooldown
+        // wizard hit cooldown
         if (!this.vulnerable) {
             this.damagedCooldown += TICK;
             this.hitCooldown += TICK;
@@ -210,7 +231,7 @@ class Wizard extends AbstractBoss {
     }
 
     loadAnimations() {
-        for (let i = 0; i < 14; i++) {
+        for (let i = 0; i < 15; i++) {
             this.animations.push([]);
             for (let j = 0; j < 2; j++) {
                 this.animations.push({});
@@ -260,6 +281,10 @@ class Wizard extends AbstractBoss {
         // lower amulet
         this.animations[13][0] = new Animator(this.spritesheet, 166, 1040, 80, 80, 2, 0.15, 0, false, false, false);
         this.animations[13][1] = new Animator(this.spritesheet, 0, 960, 80, 80, 2, 0.15, 0, true, false, false);
+
+        // stunned
+        this.animations[14][0] = new Animator(this.spritesheet, 6, 1200, 80, 80, 4, 0.15, 0, true, false, false);
+        this.animations[14][1] = new Animator(this.spritesheet, 0, 1120, 80, 80, 4, 0.15, 0, false, false, false);
     }
 
     update() {
@@ -268,6 +293,20 @@ class Wizard extends AbstractBoss {
             super.setDead();
             this.animations[this.state][this.direction].update(TICK);
             this.fireCircle = [];
+        }
+        else if (this.state == this.states.stun) {
+            this.velocity.y += this.fallAcc * TICK;
+            this.y += this.velocity.y * TICK;
+            this.updateBoxes();
+            let dist = { x: 0, y: 0 }; //the displacement needed between entities
+            dist = super.checkEnvironmentCollisions(dist); //check if colliding with environment and adjust entity accordingly
+            this.updatePositionAndVelocity(dist); //set where entity is based on interactions/collisions put on dist
+            this.checkEntityInteractions(dist, TICK);
+            this.checkCooldowns();
+            this.animations[this.state][this.direction].update(TICK);
+            if (this.animations[this.state][this.direction].currentFrame() > 3) {
+                this.animations[this.state][this.direction].elapsedTime -= .15;
+            }
         }
         else {
             this.checkCooldowns();
@@ -670,7 +709,7 @@ class Wizard extends AbstractBoss {
             }
             // nonteleporting visuals
             else {
-                ctx.filter = this.aura;
+                ctx.filter += this.aura;
                 this.animations[this.state][this.direction].drawFrame(this.game.clockTick, ctx, this.x - this.game.camera.x, this.y - this.game.camera.y, this.scale);
                 this.tWidth = 80 * this.scale;
                 this.tHeight = 80 * this.scale;
@@ -678,7 +717,5 @@ class Wizard extends AbstractBoss {
             ctx.filter = "none";
         }
     }
-
-
 
 }

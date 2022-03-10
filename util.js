@@ -143,7 +143,7 @@ const STATS = {
 
     WIZARD: {
         NAME: "Wizard",
-        MAX_HP: 500,
+        MAX_HP: 1000,
         SCALE: 3,
         WIDTH: 10,
         HEIGHT: 60,

@@ -40,6 +40,8 @@ class SceneManager {
         this.setupAllLevels();
         this.loadTitle();
         this.loadPaused();
+
+        this.newGame = false;
     };
 
     loadTitle() {
