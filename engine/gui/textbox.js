@@ -73,7 +73,7 @@ class TextBox {
         //if its one line build from a one line textbox
         if (totalLines <= 1) {
             let line = theText[0];
-            this.buildSingleLineBox(ctx, line);
+            this.buildSingleLineBox(canvas, ctx, line);
         } else { //build multiple line textbox
 
             for (let i = 0; i < totalLines; i++) {
@@ -127,18 +127,21 @@ class TextBox {
         let totalLines = 1;
 
         //make the text box
-
+        ctx.fillStyle = this.boxColor;
+        ctx.strokeStyle = this.borderColor;
 
         //draw the text box
         //width = line length, height = num lines
         let xBuffer = 30; //buffer between box width and text
-        let yBuffer = 14;
+        let yBuffer = this.fontSize / 2;
         let boxWidth = (this.fontSize * maxLen) + xBuffer;
         let boxHeight = ((this.fontSize + this.lineBuffer) * totalLines) + (yBuffer * 2);
         canvas.width = boxWidth+4;
         canvas.height = boxHeight+4;
+
         ctx.fillStyle = this.boxColor;
         ctx.strokeStyle = this.borderColor;
+
         //let myBoxX = (this.x - this.game.camera.x) - (boxWidth / 3);
         //let myBoxY = (this.y - this.game.camera.y) - (boxHeight * 1.5);
         ctx.globalAlpha = 0.5;
@@ -152,8 +155,9 @@ class TextBox {
         //write the text
         ctx.fillStyle = this.textColor;
         ctx.align = "center";
+        ctx.font = this.fontSize + 'px "Press Start 2P"';
         let textX = (xBuffer / 2);
-        let textY = (this.fontSize) + (boxHeight / 5) + (yBuffer / 2);
+        let textY = this.fontSize + (yBuffer * 2);
         ctx.fillText(theText, textX, textY);
         ctx.align = "left";
     }
