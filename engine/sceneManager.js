@@ -36,7 +36,7 @@ class SceneManager {
 
         //levels array to load levels by calling levels[0], levels[1], etc
         this.makeTextBox();
-        this.currentLevel = 1; // CHANGE TO 1 BEFORE SUBMISSION
+        this.currentLevel = 6; // CHANGE TO 1 BEFORE SUBMISSION
         this.setupAllLevels();
         this.loadTitle();
         this.loadPaused();
