@@ -174,6 +174,7 @@ class SceneManager {
 
     loadEndSequence() {
         this.cutScene2 = true;
+        this.game.click = false;
         let endScene1 =
             [
                 "This is the story all about",
@@ -779,6 +780,18 @@ class SceneManager {
                 }
                 this.game.click = false;
             }
+        } else if (this.cutScene2) {
+            if (this.game.click) {
+                ASSET_MANAGER.playAsset(SFX.SELECT);
+                if (this.endSequence.length > 0) {
+                    this.endSequence.splice(0, 1);
+                    if (this.endSequence == 0) {
+                        this.cutScene2 = false;
+                        this.loadTransition();
+                    }
+                }
+                this.game.click = false;
+            }
         }
     };
 
@@ -997,7 +1010,7 @@ class SceneManager {
     };
 
     drawGameplayGUI(ctx) {
-        if (!this.title && !this.transition && !this.cutScene1) {
+        if (!this.title && !this.transition && !this.cutScene1 && !this.cutScene2) {
             //current level
             ctx.font = PARAMS.BIG_FONT; //this is size 20 font
             ctx.fillStyle = "White";
@@ -1121,6 +1134,9 @@ class SceneManager {
         if (this.cutScene1 && this.beginSequence.length != 0) {
             this.beginSequence[0].show = true;
             this.beginSequence[0].draw(ctx);
+        } else if (this.cutScene2 && this.endSequence.length != 0) {
+            this.endSequence[0].show = true;
+            this.endSequence[0].draw(ctx);
         }
     }
 
