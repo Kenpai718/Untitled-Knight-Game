@@ -1929,6 +1929,8 @@ var levelBoss1 = {
     player: { x: 40, y: 1 },
     music: MUSIC.COUNTERATTACK,
 
+    portal: { x: 115, y: 4 },
+
     events: [
         {
             space: [
