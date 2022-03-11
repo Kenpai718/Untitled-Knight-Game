@@ -72,7 +72,7 @@ class SceneManager {
                 "SPACE: Jump",
                 "P/Left-Click: Melee Attack",
                 "O/Right-Click: Shoot Arrow",
-                "ESC: Pause Game",
+                "ESC: Pause/Unpause Game",
             ];
         let creditInfo =
             ["Developed by:",
@@ -1348,7 +1348,7 @@ class SceneManager {
         if (dict.npcs) {
             for (var i = 0; i < dict.npcs.length; i++) {
                 let npc = dict.npcs[i];
-                let e = new NPC(this.game, 0, 0);
+                let e = new NPC(this.game, 0, 0, npc.text);
                 this.positionEntity(e, npc.x, h - npc.y);
                 array.push(e);
             }

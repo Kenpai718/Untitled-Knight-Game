@@ -45,7 +45,7 @@ var testLevel = {
     ],
 
     npcs: [
-        { x: 3, y: 5 }
+        { x: 3, y: 5, text: "what da dog doin?" }
     ],
 
     signs: [
@@ -117,7 +117,7 @@ var testLevel = {
         { x: 15, y: 7, guard: true }
     ],
     moveable: [
-        { x: 10, y: 8, width: 3, height: 1},
+        { x: 10, y: 8, width: 3, height: 1 },
     ],
 }
 
@@ -193,7 +193,7 @@ var levelLoader = {
     ],
 
     npcs: [
-        { x: 0, y: 7 },
+        // x: 0, y: 7 },
     ],
 
     signs: [
@@ -367,12 +367,21 @@ var level1_1 = {
     ],
 
     npcs: [
-        { x: 55, y: 5 }
+        {
+            x: 5, y: 1, text: ["Great Hero, I have brought you here from another world.",
+                "Right now, this castle is under seige by monsters!",
+                "I need your help. Please save the castle!"]
+        },
+        {
+            x: 55, y: 5, text: ["Your journey will be arduous...",
+                "If you bring me the DIAMONDS that you find",
+                "and I can grant you more power."]
+        },
     ],
 
     signs: [
         {
-            x: 6, y: 2,
+            x: 16, y: 3,
             title: "[TUTORIAL: BASIC COMBAT/MOVEMENT]",
             text: [
                 "KEYBOARD CONTROLS:",
@@ -385,7 +394,7 @@ var level1_1 = {
                 "     *Hold [W] to shoot diagonally up or [S] down.",
                 "-[SHIFT] to roll and dodge attacks.",
                 " *Recommend to disable sticky keys!",
-                "-[ESC] to pause the game",
+                "-[ESC] to pause/unpause the game",
                 "",
                 "KEYBOARD + MOUSE CONTROLS:",
                 "*NOTE: Keep mouse cursor within game screen!",
@@ -408,17 +417,19 @@ var level1_1 = {
         },
 
         {
-            x: 53, y: 6,
+            x: 49, y: 6,
             title: "[TUTORIAL: HEALING/SHOP]",
             text: [
-                "HOW TO HEAL AND USE SHOP:",
+                "HOW TO HEAL:",
                 "-[E] to use a potion in your inventory.",
-                "-Potions will heal you for a set amount.",
+                "-Potions will heal you for a set 50 HP",
                 "-Potions are limited so use them sparingly.",
-                "-You can get more potions or other equipment by spending",
-                " DIAMONDS at the SHOP, which are found somewhere in each level.",
-                "-Get DIAMONDS from chests or from enemy drops."
-            ]
+                "",
+                "HOW TO SHOP:",
+                "-Stand next to the shopkeeper and tap [W] to shop",
+                "-The friendly shopkeeper will be your supporter on",
+                " this journey. Give him DIAMONDS to upgrade your tools.",
+                "-Use your mouse cursor to click the buttons in the shop."]
         },
 
         {
@@ -570,20 +581,20 @@ var level1_1 = {
         { x: 115, y: 12 }
     ],
     shrooms: [
-        { x: 16, y: 2, guard: false },
         { x: 62, y: 1, guard: false },
         { x: 72, y: 5, guard: false }
     ],
     goblins: [
-        { x: 105, y: 12, guard: true }
+        { x: 76, y: 8, guard: true },
+        { x: 105, y: 12, guard: true },
     ],
     skeletons: [
         { x: 47, y: 7, guard: true }
     ],
 
     slimes: [
-        {x: 97, y: 2, guard: false},
-        {x: 104, y: 2, guard: false},
+        { x: 97, y: 2, guard: false },
+        { x: 104, y: 2, guard: false },
 
     ]
 }
@@ -604,12 +615,12 @@ var level1_2 = {
         title: "[TUTORIAL: MORE COMBAT TIPS]",
         text: [
             "ADVANCED COMBAT TIPS:",
-            "-Each hit has a base 10% chance to CRIT and do x2 damage!",
             "-Cancel an attack animation with a roll.",
             " This lets you do damage while staying evasive.",
+            "-Each hit has a base 10% chance to CRIT and do x2 damage!",
+            "-If you shoot an arrow and it got stuck then you can retrieve it.",
             "-After an enemy spots you they will chase you down for a",
             " certain amount of time.",
-            "-If you shoot an arrow and it got stuck then you can retrieve it.",
         ],
     },
     {
@@ -652,8 +663,9 @@ var level1_2 = {
     ],
 
     npcs: [
-        { x: 7, y: 1 },
-        { x: 38, y: 21 }
+        { x: 7, y: 1 , text: ["I would read this sign if I knew how to read."]},
+        { x: 38, y: 21, text: ["Welcome to WizardMart.",
+                               "May I take your order?"] }
     ],
 
     ground: [
@@ -955,9 +967,11 @@ var level1_3 = {
 
     ],
     npcs: [
-        { x: 51, y: 10 },
-        { x: 10, y: 16 },
-        { x: 39, y: 35 },
+        { x: 10, y: 16, text: "Just uh dropping by..." },
+        { x: 51, y: 10, text: ["A little birdie told me that",
+                               "that this floor holds treasures",
+                               "beyond your wildest imagination..."] },
+        { x: 39, y: 35, text: "I can practically taste the treasure in here."},
 
     ],
 
@@ -981,7 +995,7 @@ var level1_3 = {
         { x: 16, y: 10, width: 3, type: 1 },
         //obelisk to right room
         { x: 68, y: 21, width: 2, type: 1 }, //chest on top
-        { x: 70, y: 25, width: 14, type: 1},
+        { x: 70, y: 25, width: 14, type: 1 },
         { x: 99, y: 22, width: 21, type: 1 },
 
     ],
@@ -1018,9 +1032,9 @@ var level1_3 = {
     ],
 
     slimes: [
-        {x:65, y:38, guard: true},
-        { x: 6, y: 37, guard: true}, //secret slime
-        { x: 7, y: 37, guard: true}, //secret slime
+        { x: 65, y: 38, guard: true },
+        { x: 6, y: 37, guard: true }, //secret slime
+        { x: 7, y: 37, guard: true }, //secret slime
     ],
 
     chests: [
@@ -1044,11 +1058,11 @@ var level1_3 = {
         { x: 6, y: 37 },
         { x: 12, y: 37 },
         { x: 18, y: 14 },
-        { x: 23, y: 5},
-        { x: 34, y: 5},
-        { x: 41, y: 10},
-        { x: 53, y: 7},
-        { x: 68, y: 25},
+        { x: 23, y: 5 },
+        { x: 34, y: 5 },
+        { x: 41, y: 10 },
+        { x: 53, y: 7 },
+        { x: 68, y: 25 },
         { x: 52.5, y: 27 }, //subtle hint to go left to find the treasure room                                                                                                        :c
         { x: 49, y: 30 },
         { x: 49, y: 14 },
@@ -1191,8 +1205,9 @@ var level1_4 = {
         { x: 6, y: 26, killQuota: 8, exitLocation: { x: 4, y: 1, levelNum: 6 }, transition: false }, //exit door
     ],
     npcs: [
-        { x: 5, y: 4 },
-        { x: 67, y: 35 },
+        { x: 5, y: 4, text: ["This castle could use some remodeling",
+                            "...and stairs."]},
+        { x: 67, y: 35, text: ["I sense danger ahead..."]},
     ],
     chests: [
         { x: 29, y: 1, direction: 0 },    //bottom floor
@@ -1339,7 +1354,7 @@ var level1_4 = {
         { x: 0, y: 9, width: 36 }, //bottom floor left
         { x: 48, y: 23, width: 22 }, //middle
         { x: 13, y: 45, width: 75 }, //top
-        {x: 1, y: 45, width: 10 }, //top floor left
+        { x: 1, y: 45, width: 10 }, //top floor left
     ],
 
     chains: [
@@ -1444,9 +1459,9 @@ var level1_4 = {
         { x: 12, y: 26, width: 2, height: 2 },
     ],
     slimes: [
-        {x: 29, y: 3, guard: true},
-        {x: 31, y: 36, guard: true},
-        {x: 41, y: 37, guard: true},
+        { x: 29, y: 3, guard: true },
+        { x: 31, y: 36, guard: true },
+        { x: 41, y: 37, guard: true },
 
     ],
     shrooms: [
@@ -1526,7 +1541,7 @@ var treasureroom = {
     player: { x: 40, y: 28 },
     music: MUSIC.SPLENDOUR,
 
-    npcs: [{ x: 37, y: 28 }],
+    npcs: [{ x: 37, y: 28, text: ["My brain is too small to figure out the secrets of this room..."] }],
 
     //quick access to all levels
     doors: [
@@ -1911,9 +1926,9 @@ var treasureroom = {
             x: 62, y: 42,
             title: "  Hear ye hear ye",
             text: ["Vasts amount of opportunities are open before you,",
-            "but let not your heart corrupt lest you lose your freedom,",
-            "for the pits of hell shall surely open and swallow the greedy,",
-            "thus, seize the moment to go above and beyond the fools that came before you..",
+                "but let not your heart corrupt lest you lose your freedom,",
+                "for the pits of hell shall surely open and swallow the greedy,",
+                "thus, seize the moment to go above and beyond the fools that came before you..",
             ],
 
         },

@@ -3,8 +3,8 @@
  */
 class NPC extends AbstractEntity {
 
-    constructor(game, x, y) {
-        super(game, x, y, "Shopkeeper NPC", 10, 88, 88, 2.5)
+    constructor(game, x, y, dialouge) {
+        super(game, x, y, "Shopkeeper", 10, 88, 88, 2.5)
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/wizard.png");
 
         // Mapping animations and mob states
@@ -34,6 +34,13 @@ class NPC extends AbstractEntity {
         this.updateBoxes();
         this.lastBB = this.BB;
         this.myHoverText = "Press \'W\' to shop";
+
+        //textbox that shows when player approaches
+        if (dialouge === null || dialouge === undefined) this.myMessage = "Browse my wares?" //default message
+        else this.myMessage = dialouge;
+        this.myTextBox = new TextBox(this.game, this.BB.x, this.BB.y, this.myMessage, 10);
+        this.game.addEntityToFront(this.myTextBox);
+        this.showTextBox = false;
     };
 
     activateShop() {
@@ -45,7 +52,7 @@ class NPC extends AbstractEntity {
     };
 
     deactivateShop() {
-        if(this.shopGUI) this.shopGUI.removeFromWorld = true;
+        if (this.shopGUI) this.shopGUI.removeFromWorld = true;
         SHOP_ACTIVE = false;
         this.shopGUI = null;
         this.showText = false;
@@ -67,7 +74,7 @@ class NPC extends AbstractEntity {
         if (!SHOP_ACTIVE && this.shopGUI != null) {
             this.deactivateShop();
         }
-        
+
         // Allows the npc to move onto active animation without needed player to collided with npc VB again
         if (this.animations[this.state][this.direction].isDone()) {
             this.state = this.states.active;
@@ -85,12 +92,13 @@ class NPC extends AbstractEntity {
                  * global. The vision box is big so we only want to control the shop with the one the
                  * player is close to!
                  * */
-                 let playerNear = entity.BB && self.VB.collide(entity.BB);
+                let playerNear = entity.BB && self.VB.collide(entity.BB);
+                self.showTextBox = playerNear && !SHOP_ACTIVE && self.state == self.states.active;
                 if (playerNear) {
-                    
+
                     if (self.state != self.states.awaking) {
 
-                        if(self.x + self.BB.width /2 > entity.BB.x  + entity.BB.width / 2)
+                        if (self.x + self.BB.width / 2 > entity.BB.x + entity.BB.width / 2)
                             self.direction = self.directions.left;
                         else self.direction = self.directions.right;
                     }
@@ -104,7 +112,7 @@ class NPC extends AbstractEntity {
                                 self.activateShop();
                             }
                         }
-                    } else if (SHOP_ACTIVE && entity.BB && !self.BB.collide(entity.BB)) { 
+                    } else if (SHOP_ACTIVE && entity.BB && !self.BB.collide(entity.BB)) {
                         ASSET_MANAGER.playAsset(SFX.CLICK);
                         self.deactivateShop();
                     }
@@ -125,6 +133,10 @@ class NPC extends AbstractEntity {
         super.updatePositionAndVelocity(dist);
         this.updateBoxes();
         this.animations[this.state][this.direction].update(TICK);
+
+        //update position of cords relative to the entity and enable drawing if textbox was set
+        this.myTextBox.updateCords(this.BB.x + (this.BB.width / 3), this.BB.y);
+        this.myTextBox.show = this.showTextBox;
     };
 
     loadAnimations() {
@@ -155,9 +167,9 @@ class NPC extends AbstractEntity {
 
     draw(ctx) {
         //text
-        if (!SHOP_ACTIVE && this.state != this.states.inactive) {
+        if (!SHOP_ACTIVE && this.state != this.states.inactive && !this.showTextBox) {
             ctx.fillStyle = "SpringGreen";
-            ctx.fillText(" " + this.name,
+            ctx.fillText("   " + this.name,
                 (this.BB.x) - this.game.camera.x,
                 (this.BB.y) - (this.fontSize * 1.5) - this.game.camera.y);
             ctx.fillText(this.myHoverText,
@@ -170,8 +182,8 @@ class NPC extends AbstractEntity {
     };
 
     updateBB() {
-        this.BB = new BoundingBox(this.x + this.xOffset, this.y + this.yOffset , this.width, this.height);
-        this.VB = new BoundingBox(this.x + 38 * this.scale - this.visionwidth / 2, this.y + this.yOffset, this.visionwidth, 80 * this.scale);
+        this.BB = new BoundingBox(this.x, this.y, this.width, this.height);
+        this.VB = new BoundingBox(this.x + 38 * this.scale - this.visionwidth / 2, this.y - (this.BB.height / 2), this.visionwidth, 160 * this.scale);
     };
 
     drawDebug(ctx) {

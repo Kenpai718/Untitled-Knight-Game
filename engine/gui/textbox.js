@@ -26,6 +26,11 @@ class TextBox {
         this.createTextBox(this.canvas, this.ctx, text);
     };
 
+    updateCords(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+
     update() {
 
     };
