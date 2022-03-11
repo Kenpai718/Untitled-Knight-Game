@@ -1927,7 +1927,7 @@ var levelBoss1 = {
     label: "Final Room",
     width: 120, height: 20,
     player: { x: 40, y: 1 },
-    music: MUSIC.BETWEEN_HEAVEN_AND_EARTH,
+    music: MUSIC.COUNTERATTACK,
 
     events: [
         {
