@@ -109,12 +109,12 @@ class GameEngine {
         //disable drags on the canvas
         this.ctx.canvas.addEventListener('dragstart', (e) => {
             if (this.options.prevent.dragging) {
-                e.preventDefault(); 
+                e.preventDefault();
             }
         })
         this.ctx.canvas.addEventListener('drop', (e) => {
             if (this.options.prevent.dropping) {
-                e.preventDefault(); 
+                e.preventDefault();
             }
         })
 
@@ -198,7 +198,7 @@ class GameEngine {
             e.preventDefault(); //prevent scrolling from pressing a key
             switch (e.code) {
                 case "Escape":
-                    if (!that.camera.title && !that.camera.cutscene) {
+                    if (!that.camera.title && !that.camera.cutScene1 && !that.camera.transition && !that.camera.cutScene2) {
                         PAUSED = !PAUSED;
                         ASSET_MANAGER.playAsset(SFX.CLICK);
                     }
