@@ -22,7 +22,7 @@ class Wizard extends AbstractBoss {
         this.phase = this.phases.initial;
 
         // actions
-        this.actions = {stunned: -1, fire_ring: 0, no_attack: 1, arrow_rain: 2, beam: 3};
+        this.actions = { stunned: -1, fire_ring: 0, no_attack: 1, arrow_rain: 2, beam: 3 };
         this.action = this.actions.no_attack;
         this.totalActions = 4;
 
@@ -86,14 +86,14 @@ class Wizard extends AbstractBoss {
         /** buff wizard based on the player */
         this.player = this.game.camera.player;
         let inventory = this.player.myInventory;
-        
-        
+
+
         // hp buff: base 1000, max 500
         this.max_hp += 125 * inventory.healthUpgrade;
 
         // fireball buff: base 5, max 8
         this.fireballDmg = 5 + inventory.attackUpgrade / 2;
-        
+
         // buff if player is fully upgraded
         // hp buff: max 2000
         // fireball buff: max 10
@@ -105,6 +105,12 @@ class Wizard extends AbstractBoss {
         }
 
         this.hp = this.max_hp;
+
+        //music
+        this.playMusic = true;
+        this.myBossMusic = MUSIC.FOG;
+        this.myEndMusic = MUSIC.MEMORIES; //Andre I hope you recognize this :)
+        //this.cueBossMusic(); //once it spawns in play the boss music
     }
 
     // use after any change to this.x or this.y
@@ -147,7 +153,7 @@ class Wizard extends AbstractBoss {
         this.actionCooldown -= TICK;
         this.ringWait -= TICK;
         // action change
-        if(this.actionCooldown <= 0 && !this.teleporting) {
+        if (this.actionCooldown <= 0 && !this.teleporting) {
             this.resetAnimationTimers(this.state);
             if (this.state == this.states.stun) {
                 if (this.hp / this.max_hp < 0.25 && this.phase < this.phases.final) {
@@ -169,7 +175,7 @@ class Wizard extends AbstractBoss {
                     this.activateTeleport();
                 }
             }
-            if (this.fireCircle.length == 0 ) {
+            if (this.fireCircle.length == 0) {
                 let random = randomInt(this.totalActions);
                 this.changeAction(random);
             }
@@ -177,7 +183,7 @@ class Wizard extends AbstractBoss {
                 this.changeAction(this.actions.fire_ring);
                 this.state = this.states.raise;
                 this.fireCircle.forEach(fireball => fireball.stay = true);
-                
+
             }
             else {
                 let random = randomInt(this.totalActions - 1) + 1;
@@ -317,6 +323,11 @@ class Wizard extends AbstractBoss {
     }
 
     update() {
+        //cue boss music if it hasn't played yet
+        if(this.playMusic) {
+            this.playMusic = false;
+            this.cueBossMusic();
+        }
         let TICK = this.game.clockTick;
         if (this.dead) {
             super.setDead();
@@ -324,6 +335,9 @@ class Wizard extends AbstractBoss {
             this.fireCircle.forEach(fireball => fireball.removeFromWorld = true);
             if (this.fireball)
                 this.fireball.removeFromWorld = true;
+            if (this.animations[this.state][this.direction].isDone()) {
+                this.playEndMusic();
+            }
         }
         else if (this.state == this.states.stun) {
             this.velocity.y += this.fallAcc * TICK;
@@ -345,20 +359,20 @@ class Wizard extends AbstractBoss {
             let self = this;
             dist = this.checkEntityInteractions(dist, TICK);
             if (this.state != this.states.stun) {
-            // if avoiding player teleport when player is too close, if not teleporting already
-            if (this.avoid && !this.teleporting) {
-                this.game.entities.forEach(function (entity) {
-                    if (entity instanceof AbstractPlayer) {
-                        let ex = entity.BB.left + entity.BB.width / 2;
-                        let ey = entity.BB.top + entity.BB.height / 2;
-                        let distx = ex - self.center.x;
-                        let disty = ey - self.center.y;
-                        let dist = Math.sqrt(distx * distx + disty * disty);
-                        if (dist < 60 * self.scale) {
-                            self.activateTeleport();
+                // if avoiding player teleport when player is too close, if not teleporting already
+                if (this.avoid && !this.teleporting) {
+                    this.game.entities.forEach(function (entity) {
+                        if (entity instanceof AbstractPlayer) {
+                            let ex = entity.BB.left + entity.BB.width / 2;
+                            let ey = entity.BB.top + entity.BB.height / 2;
+                            let distx = ex - self.center.x;
+                            let disty = ey - self.center.y;
+                            let dist = Math.sqrt(distx * distx + disty * disty);
+                            if (dist < 60 * self.scale) {
+                                self.activateTeleport();
+                            }
                         }
-                    }
-                });
+                    });
                 }
             }
 
@@ -551,7 +565,7 @@ class Wizard extends AbstractBoss {
                     if (this.phase >= this.phases.desparate)
                         this.fireball.blue = true;
                     this.fireball.state = this.fireball.states.ignite1;
-                        this.game.addEntityToFront(this.fireball);
+                    this.game.addEntityToFront(this.fireball);
                     if (this.phase == this.phases.final) {
                         let angle = 0;
                         for (var i = 0; i < max; i++) {
@@ -613,9 +627,9 @@ class Wizard extends AbstractBoss {
                             this.fireball.removeFromWorld = true;
                     }
                     if (this.direction == this.directions.left)
-                        fireball = new FireballCircular(this.game, this, 
-                            this.center.x - 10 * this.scale, 
-                            this.center.y - 4 * this.scale, 
+                        fireball = new FireballCircular(this.game, this,
+                            this.center.x - 10 * this.scale,
+                            this.center.y - 4 * this.scale,
                             this.scale, this.direction, false, this.fireballDmg);
                     else
                         fireball = new FireballCircular(this.game, this,
@@ -642,7 +656,7 @@ class Wizard extends AbstractBoss {
                 break;
             case states.raise:
                 if (isDone) {
-                    
+
                     this.resetAnimationTimers(this.state);
                     this.state = states.casting;
                     this.ringWait = .5;
@@ -848,16 +862,16 @@ class Wizard extends AbstractBoss {
         let speed = 1.0;              //speed multiplier based on phase
         let isDestroyable = true;     //if this projectile can be destroyed or not. Later phases it cant
         //set speed and damage based on the phase
-        if(this.phase > this.phases.initial) {
+        if (this.phase > this.phases.initial) {
             speed = speed + (this.phase / 10); //multiplier of the initial windball speed
 
             //hard phase: cant be destroyed and does more damage
-            if(this.phase >= this.phases.desparate) {
+            if (this.phase >= this.phases.desparate) {
                 damage *= 1.5;
                 isDestroyable = false;
             }
         }
-        
+
         if (this.direction == this.directions.right)
             this.game.addEntity(new WindBall(this.game, this.BB.right - this.BB.width, this.BB.top - 10, this.direction, 2, damage, isDestroyable, speed));
         else
@@ -913,7 +927,7 @@ class Wizard extends AbstractBoss {
         }
         else {
             // visuals of being hit
-            
+
             // telport visuals
             if (this.teleporting) {
                 this.ctx.filter = "brightness(150000%)";
@@ -947,6 +961,24 @@ class Wizard extends AbstractBoss {
             }
             ctx.filter = "none";
         }
+    }
+
+    /**
+    * Stop the current level music and play boss music
+    */
+    cueBossMusic() {
+        MUSIC_MANAGER.pauseBackgroundMusic(); //stop the background music for you know what :)
+        MUSIC_MANAGER.autoRepeat(this.myBossMusic); //OH LAWD HE COMIN
+        MUSIC_MANAGER.playAsset(this.myBossMusic);  //...why do I hear boss music?
+    }
+
+    /**
+    * Stop whatever background music is playing and play the ending music
+    */
+    playEndMusic() {
+        MUSIC_MANAGER.pauseBackgroundMusic();
+        MUSIC_MANAGER.autoRepeat(this.myEndMusic);
+        MUSIC_MANAGER.playAsset(this.myEndMusic);
     }
 
 }

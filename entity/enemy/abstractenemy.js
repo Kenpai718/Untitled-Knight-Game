@@ -249,7 +249,8 @@ class AbstractEnemy extends AbstractEntity {
             } else if (this instanceof DemonSlime) {
                 amount = 50 + randomInt(50); 
             } else if (this instanceof Wizard) {
-                amount = 100 + randomInt(50); 
+                //amount = 100 + randomInt(50);
+                amount = this.game.myReportCard.myDiamondsSpent + 1;
             } else {
                 amount = 4 + baseBonus; 
             }
