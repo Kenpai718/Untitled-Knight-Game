@@ -22,9 +22,9 @@ class Wizard extends AbstractBoss {
         this.phase = this.phases.initial;
 
         // actions
-        this.actions = { stunned: -1, fire_ring: 0, no_attack: 1, arrow_rain: 2, beam: 3 };
+        this.actions = { stunned: -1, fire_ring: 0, no_attack: 1, arrow_rain: 2, beam: 3, dash: 4 };
         this.action = this.actions.no_attack;
-        this.totalActions = 4;
+        this.totalActions = 5;
 
         // states/animation
         this.states = {
@@ -48,6 +48,8 @@ class Wizard extends AbstractBoss {
         this.fireball = null;
         this.fireCircle = [];
         this.beamDamage = 5; //initial beam damage. it ramps up with phases.
+        this.dashTimer = 0;
+        this.maxDashTime = 1;
 
         // timers for cooldown
         this.actionCooldown = 5;
@@ -123,6 +125,25 @@ class Wizard extends AbstractBoss {
     };
 
     getDamageValue() {
+        let damage = 0;
+        if (this.state == this.states.fly && this.action == this.actions.dash) {
+            damage = 15;
+        }
+
+        //damage multiplier
+        switch (this.phase) {
+            case this.phases.middle:
+                damage *= 1.1;
+                break;
+            case this.phases.desparate:
+                damage *= 1.2;
+                break;
+            case this.phases.final:
+                damage *= 1.3;
+                break;
+        }
+
+        return damage;
     }
 
     setDamagedState() {
@@ -189,6 +210,9 @@ class Wizard extends AbstractBoss {
                 let random = randomInt(this.totalActions - 1) + 1;
                 this.changeAction(random);
             }
+
+            //uncomment and put in an action number to overide and test attacks
+            //this.changeAction(4);
         }
         // wizard hit cooldown
         if (!this.vulnerable) {
@@ -265,66 +289,9 @@ class Wizard extends AbstractBoss {
         this.animations[action][1].elapsedTime = 0;
     }
 
-    loadAnimations() {
-        for (let i = 0; i < 15; i++) {
-            this.animations.push([]);
-            for (let j = 0; j < 2; j++) {
-                this.animations[i].push([]);
-            }
-        }
-
-        // idle
-        this.animations[0][0] = new Animator(this.spritesheet, 6, 0, 80, 80, 4, 0.15, 0, true, true, false);
-        this.animations[1][0] = new Animator(this.spritesheet, 326, 160, 80, 80, 5, 0.15, 0, true, false, false);
-        this.animations[2][0] = new Animator(this.spritesheet, 6, 160, 80, 80, 4, 0.15, 0, true, true, false);
-        this.animations[3][0] = new Animator(this.spritesheet, 326, 160, 80, 80, 5, 0.15, 0, false, false, false);
-        this.animations[0][1] = new Animator(this.spritesheet, 0, 80, 80, 80, 4, 0.15, 0, false, true, false);
-        this.animations[1][1] = new Animator(this.spritesheet, 80, 240, 80, 80, 5, 0.15, 0, false, false, false);
-        this.animations[2][1] = new Animator(this.spritesheet, 480, 240, 80, 80, 4, 0.15, 0, false, true, false);
-        this.animations[3][1] = new Animator(this.spritesheet, 80, 240, 80, 80, 5, 0.15, 0, true, false, false);
-
-        // fly forward
-        this.animations[4][0] = new Animator(this.spritesheet, 166, 320, 80, 80, 4, 0.15, 0, true, false, false);
-        this.animations[5][0] = new Animator(this.spritesheet, 6, 320, 80, 80, 3, 0.15, 0, false, true, false);
-        this.animations[6][0] = new Animator(this.spritesheet, 166, 320, 80, 80, 4, 0.15, 0, false, false, false);
-        this.animations[4][1] = new Animator(this.spritesheet, 0, 400, 80, 80, 4, 0.15, 0, false, false, false);
-        this.animations[5][1] = new Animator(this.spritesheet, 240, 400, 80, 80, 3, 0.15, 0, false, true, false);
-        this.animations[6][1] = new Animator(this.spritesheet, 0, 400, 80, 80, 4, 0.15, 0, true, false, false);
-
-        // attack
-        this.animations[7][0] = new Animator(this.spritesheet, 6, 480, 80, 80, 9, 0.15, 0, true, false, false);
-        this.animations[8][0] = new Animator(this.spritesheet, 326, 480, 80, 80, 4, 0.15, 0, false, false, false);
-        this.animations[7][1] = new Animator(this.spritesheet, 0, 560, 80, 80, 9, 0.15, 0, false, false, false);
-        this.animations[8][1] = new Animator(this.spritesheet, 0, 560, 80, 80, 4, 0.15, 0, true, false, false);
-
-        // death
-        this.animations[9][0] = new Animator(this.spritesheet, 6, 640, 80, 80, 10, 0.15, 0, true, false, false);
-        this.animations[9][1] = new Animator(this.spritesheet, 6, 720, 80, 80, 10, 0.15, 0, false, false, false);
-
-        // throw fireball
-        this.animations[10][0] = new Animator(this.spritesheet, 6, 800, 80, 80, 9, 0.07, 0, false, false, false);
-        this.animations[10][1] = new Animator(this.spritesheet, 0, 880, 80, 80, 9, 0.07, 0, true, false, false);
-
-        // raise amulet
-        this.animations[11][0] = new Animator(this.spritesheet, 246, 1040, 80, 80, 2, 0.15, 0, true, false, false);
-        this.animations[11][1] = new Animator(this.spritesheet, 0, 960, 80, 80, 2, 0.15, 0, false, false, false);
-
-        // casting
-        this.animations[12][0] = new Animator(this.spritesheet, 6, 1040, 80, 80, 3, 0.15, 0, true, true, false);
-        this.animations[12][1] = new Animator(this.spritesheet, 160, 960, 80, 80, 3, 0.15, 0, false, true, false);
-
-        // lower amulet
-        this.animations[13][0] = new Animator(this.spritesheet, 166, 1040, 80, 80, 2, 0.15, 0, false, false, false);
-        this.animations[13][1] = new Animator(this.spritesheet, 0, 960, 80, 80, 2, 0.15, 0, true, false, false);
-
-        // stunned
-        this.animations[14][0] = new Animator(this.spritesheet, 6, 1200, 80, 80, 4, 0.15, 0, true, false, false);
-        this.animations[14][1] = new Animator(this.spritesheet, 0, 1120, 80, 80, 4, 0.15, 0, false, false, false);
-    }
-
     update() {
         //cue boss music if it hasn't played yet
-        if(this.playMusic) {
+        if (this.playMusic) {
             this.playMusic = false;
             this.cueBossMusic();
         }
@@ -418,6 +385,9 @@ class Wizard extends AbstractBoss {
                     //beam is invincible once it reaches half hp phase
                     //phases are handled by shootWindblast() method
                     this.beam();
+                    break;
+                case actions.dash:
+                    this.dashAttack();
                     break;
             }
 
@@ -878,6 +848,102 @@ class Wizard extends AbstractBoss {
             this.game.addEntity(new WindBall(this.game, this.BB.left - this.BB.width * 2, this.BB.top - 10, this.direction, 2, damage, isDestroyable, speed));
     }
 
+    /**
+     * Charges at the player
+     */
+    dashAttack() {
+        let TICK = this.game.clockTick;
+        let states = this.states;
+        let dir = this.direction;
+        let animation = this.animations[this.state][this.direction];
+        let isDone = animation.isDone();
+        let frame = animation.currentFrame();
+        let self = this;
+
+        switch (this.state) {
+
+            //STARTUP PHASE: tracks player pos
+            case states.stoptofly:
+                this.tracking = true;
+                if (isDone && this.BB.bottom >= this.player.BB.top) {
+                    this.state = states.fly;
+                    this.tracking = false;
+                    this.resetAnimationTimers(states.stoptofly);
+                    this.resetAnimationTimers(states.flytostop);
+                    this.resetAnimationTimers(states.fly);
+                }
+                break;
+
+            //ATTACK PHASE: charges in player's direction
+            case states.fly:
+                this.dashTimer += TICK;
+
+                //set speed of the dash based on the phase
+                let speed = 800;
+                let scaler = 1;
+                //increase speed depending on the phase
+                switch (this.phase) {
+                    case this.phases.middle:
+                        scaler = 1.2;
+                        break;
+                    case this.phases.desparate:
+                        scaler = 1.3;
+                        break;
+                    case this.phases.final:
+                        scaler = 1.5;
+                        break;
+                }
+
+                //set velocity
+                speed *= scaler;
+                if (this.direction == this.directions.right) {
+                    if (this.velocity.x < 0) this.velocity.x = 0;
+                    this.velocity.x += speed;
+                } else {
+                    if (this.velocity.x > 0) this.velocity.x = 0;
+                    this.velocity.x -= speed;
+                }
+
+                //update the positioning based on velocity
+                this.x += this.velocity.x * TICK;
+                this.updateBoxes();
+                let dist = { x: 0, y: 0 }; //the displacement needed between entities
+                dist = super.checkEnvironmentCollisions(dist); //check if colliding with environment and adjust entity accordingly
+                this.updatePositionAndVelocity(dist); //set where entity is based on interactions/collisions put on dist
+                this.checkEntityInteractions(dist, TICK);
+
+                //max x velocity
+                if (this.velocity.x >= PLAYER_PHYSICS.MAX_RUN * scaler) this.velocity.x = PLAYER_PHYSICS.MAX_RUN * scaler;
+                if (this.velocity.x <= -PLAYER_PHYSICS.MAX_RUN * scaler) this.velocity.x = -PLAYER_PHYSICS.MAX_RUN * scaler;
+
+                //hitbox same as bounding box
+                this.HB = this.BB;
+                //stop dashing after a set amount of time and reset
+                if (this.dashTimer > this.maxDashTime) {
+                    this.dashTimer = 0;
+                    this.state = states.stoptofly;
+                    this.HB = null;
+                    this.velocity.x = 0;
+                    this.velocity.y = 0;
+                    this.resetAnimationTimers(states.stoptofly);
+                    this.resetAnimationTimers(states.flytostop);
+                }
+                break;
+            case states.stoptofly:
+                if (isDone) {
+                    this.activateTeleport();
+                    this.state = states.stoptofly;
+                    this.resetAnimationTimers(states.stoptofly);
+                    this.resetAnimationTimers(states.flytostop);
+                    this.resetAnimationTimers(states.fly);
+                }
+                break;
+
+
+        }
+    }
+
+
 
     /**
      * changes the type of attack being done and gives it the default values
@@ -890,6 +956,7 @@ class Wizard extends AbstractBoss {
         this.auraAmount = 1;
         this.aura = "none";
         this.tracking = false;
+        console.log(action);
         switch (action) {
             case actions.no_attack:
                 this.avoid = true;
@@ -915,6 +982,11 @@ class Wizard extends AbstractBoss {
                 this.avoid = false;
                 this.actionCooldown = 15;
                 this.state = this.states.attack;
+                break;
+            case actions.dash:
+                this.avoid = false;
+                this.actionCooldown = 8;
+                this.state = this.states.stoptofly;
                 break;
         }
 
@@ -979,6 +1051,63 @@ class Wizard extends AbstractBoss {
         MUSIC_MANAGER.pauseBackgroundMusic();
         MUSIC_MANAGER.autoRepeat(this.myEndMusic);
         MUSIC_MANAGER.playAsset(this.myEndMusic);
+    }
+
+    loadAnimations() {
+        for (let i = 0; i < 15; i++) {
+            this.animations.push([]);
+            for (let j = 0; j < 2; j++) {
+                this.animations[i].push([]);
+            }
+        }
+
+        // idle
+        this.animations[0][0] = new Animator(this.spritesheet, 6, 0, 80, 80, 4, 0.15, 0, true, true, false);
+        this.animations[1][0] = new Animator(this.spritesheet, 326, 160, 80, 80, 5, 0.15, 0, true, false, false);
+        this.animations[2][0] = new Animator(this.spritesheet, 6, 160, 80, 80, 4, 0.15, 0, true, true, false);
+        this.animations[3][0] = new Animator(this.spritesheet, 326, 160, 80, 80, 5, 0.15, 0, false, false, false);
+        this.animations[0][1] = new Animator(this.spritesheet, 0, 80, 80, 80, 4, 0.15, 0, false, true, false);
+        this.animations[1][1] = new Animator(this.spritesheet, 80, 240, 80, 80, 5, 0.15, 0, false, false, false);
+        this.animations[2][1] = new Animator(this.spritesheet, 480, 240, 80, 80, 4, 0.15, 0, false, true, false);
+        this.animations[3][1] = new Animator(this.spritesheet, 80, 240, 80, 80, 5, 0.15, 0, true, false, false);
+
+        // fly forward
+        this.animations[4][0] = new Animator(this.spritesheet, 166, 320, 80, 80, 4, 0.15, 0, true, false, false);
+        this.animations[5][0] = new Animator(this.spritesheet, 6, 320, 80, 80, 3, 0.15, 0, false, true, false);
+        this.animations[6][0] = new Animator(this.spritesheet, 166, 320, 80, 80, 4, 0.15, 0, false, false, false);
+        this.animations[4][1] = new Animator(this.spritesheet, 0, 400, 80, 80, 4, 0.15, 0, false, false, false);
+        this.animations[5][1] = new Animator(this.spritesheet, 240, 400, 80, 80, 3, 0.15, 0, false, true, false);
+        this.animations[6][1] = new Animator(this.spritesheet, 0, 400, 80, 80, 4, 0.15, 0, true, false, false);
+
+        // attack
+        this.animations[7][0] = new Animator(this.spritesheet, 6, 480, 80, 80, 9, 0.15, 0, true, false, false);
+        this.animations[8][0] = new Animator(this.spritesheet, 326, 480, 80, 80, 4, 0.15, 0, false, false, false);
+        this.animations[7][1] = new Animator(this.spritesheet, 0, 560, 80, 80, 9, 0.15, 0, false, false, false);
+        this.animations[8][1] = new Animator(this.spritesheet, 0, 560, 80, 80, 4, 0.15, 0, true, false, false);
+
+        // death
+        this.animations[9][0] = new Animator(this.spritesheet, 6, 640, 80, 80, 10, 0.15, 0, true, false, false);
+        this.animations[9][1] = new Animator(this.spritesheet, 6, 720, 80, 80, 10, 0.15, 0, false, false, false);
+
+        // throw fireball
+        this.animations[10][0] = new Animator(this.spritesheet, 6, 800, 80, 80, 9, 0.07, 0, false, false, false);
+        this.animations[10][1] = new Animator(this.spritesheet, 0, 880, 80, 80, 9, 0.07, 0, true, false, false);
+
+        // raise amulet
+        this.animations[11][0] = new Animator(this.spritesheet, 246, 1040, 80, 80, 2, 0.15, 0, true, false, false);
+        this.animations[11][1] = new Animator(this.spritesheet, 0, 960, 80, 80, 2, 0.15, 0, false, false, false);
+
+        // casting
+        this.animations[12][0] = new Animator(this.spritesheet, 6, 1040, 80, 80, 3, 0.15, 0, true, true, false);
+        this.animations[12][1] = new Animator(this.spritesheet, 160, 960, 80, 80, 3, 0.15, 0, false, true, false);
+
+        // lower amulet
+        this.animations[13][0] = new Animator(this.spritesheet, 166, 1040, 80, 80, 2, 0.15, 0, false, false, false);
+        this.animations[13][1] = new Animator(this.spritesheet, 0, 960, 80, 80, 2, 0.15, 0, true, false, false);
+
+        // stunned
+        this.animations[14][0] = new Animator(this.spritesheet, 6, 1200, 80, 80, 4, 0.15, 0, true, false, false);
+        this.animations[14][1] = new Animator(this.spritesheet, 0, 1120, 80, 80, 4, 0.15, 0, false, false, false);
     }
 
 }
