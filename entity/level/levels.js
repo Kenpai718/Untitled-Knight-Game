@@ -265,8 +265,6 @@ var titleScene = {
         { x: 17.5, y: 11 },
     ],
 
-    portal: { x: 5, y: 7 },
-
     banners: [
         { x: 4, y: 5 },
         { x: 20, y: 5 }
@@ -1931,20 +1929,22 @@ var levelBoss1 = {
     player: { x: 40, y: 1 },
     music: MUSIC.BETWEEN_HEAVEN_AND_EARTH,
 
-    events: [
-        {
-            space: [
-                { x: 62, y: 20, width: 39, height: 20 }
-            ],
-            walls: [
-                { x: 60, y: 5, height: 5, type: 2 },
-                { x: 102, y: 5, height: 5, type: 0 },
-                { x: 103, y: 5, height: 5, type: 2 },
-                { x: 59, y: 5, height: 5, type: 0 },
-            ],
-            wizard: { x: 75, y: 2, left: 61, right: 102, top: 6, bottom: 1 },
-        }
-    ],
+    portal: { x: 115, y: 4 },
+
+    // events: [
+    //     {
+    //         space: [
+    //             { x: 62, y: 20, width: 39, height: 20 }
+    //         ],
+    //         walls: [
+    //             { x: 60, y: 5, height: 5, type: 2 },
+    //             { x: 102, y: 5, height: 5, type: 0 },
+    //             { x: 103, y: 5, height: 5, type: 2 },
+    //             { x: 59, y: 5, height: 5, type: 0 },
+    //         ],
+    //         wizard: { x: 75, y: 2, left: 61, right: 102, top: 6, bottom: 1 },
+    //     }
+    // ],
     doors: [
         { x: 1, y: 3, killQuota: 0, exitLocation: { x: -2, y: 1, levelNum: 1 }, transition: true }, //door to level 1
     ],

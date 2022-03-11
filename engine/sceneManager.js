@@ -133,7 +133,7 @@ class SceneManager {
         this.returnMenuPauseBB = new BoundingBox(x, y, 40 * 9, -40);
     }
 
-    loadCutScene() {
+    loadBeginSequence() {
         let beginScene1 =
             [
                 "This is the story all about",
@@ -170,6 +170,48 @@ class SceneManager {
         let beginScene3TB = new SceneTextBox(this.game, x, y, beginScene3, 40, 50);
 
         this.beginSequence = [beginScene1TB, beginScene2TB, beginScene3TB];
+    }
+
+    loadEndSequence() {
+        this.cutScene2 = true;
+        let endScene1 =
+            [
+                "This is the story all about",
+                "that one time I got reincarnated",
+                "into a knight and had to save the",
+                "castle that was overrun by evil."
+            ];
+        let endScene2 =
+            [
+                "All I had to do was take down",
+                "the mastermind behind the operation."
+            ];
+        let endScene3 =
+            [
+                "Little did I know..."
+            ];
+
+        var maxLength = 0;
+        for (var i = 0; i < endScene1.length; i++) maxLength = Math.max(endScene1[i].length, maxLength);
+        var x = (this.game.surfaceWidth / 2) - ((40 * maxLength) / 2);
+        var y = (this.game.surfaceHeight / 2) - 90 * Math.ceil(endScene1.length / 2);
+        let endScene1TB = new SceneTextBox(this.game, x, y, endScene1, 40, 50);
+
+        maxLength = 0;
+        for (var i = 0; i < endScene2.length; i++) maxLength = Math.max(endScene2[i].length, maxLength);
+        x = (this.game.surfaceWidth / 2) - ((40 * maxLength) / 2);
+        y = (this.game.surfaceHeight / 2) - 90 * Math.ceil(endScene2.length / 2);
+        let endScene2TB = new SceneTextBox(this.game, x, y, endScene2, 40, 50);
+
+        maxLength = 0;
+        for (var i = 0; i < endScene3.length; i++) maxLength = Math.max(endScene3[i].length, maxLength);
+        x = (this.game.surfaceWidth / 2) - ((40 * maxLength) / 2);
+        y = (this.game.surfaceHeight / 2) - 90 * Math.ceil(endScene3.length / 2);
+        let endScene3TB = new SceneTextBox(this.game, x, y, endScene3, 40, 50);
+
+        this.endSequence = [endScene1TB, endScene2TB, endScene3TB];
+        this.clearEntities();
+        this.player.removeFromWorld = true;
     }
 
     /**
@@ -581,7 +623,7 @@ class SceneManager {
         this.updateCutScene();
 
         //update game timer
-        if (!this.transition && !this.title && !PAUSED && !this.cutscene) this.levelTimer += this.game.clockTick;
+        if (!this.transition && !this.title && !PAUSED && !this.cutScene1 && !this.cutScene2) this.levelTimer += this.game.clockTick;
         //debugging camera updates
         if (PARAMS.DEBUG) {
             /**
@@ -637,8 +679,8 @@ class SceneManager {
                     ASSET_MANAGER.playAsset(SFX.SELECT);
                     this.game.myReportCard.reset();
                     this.game.attack = false;
-                    this.cutscene = true;
-                    this.loadCutScene();
+                    this.cutScene1 = true;
+                    this.loadBeginSequence();
                     this.title = false;
                     this.clearEntities();
                     this.player.removeFromWorld = true;
@@ -722,13 +764,13 @@ class SceneManager {
     }
 
     updateCutScene() {
-        if (this.cutscene) {
+        if (this.cutScene1) {
             if (this.game.click) {
                 ASSET_MANAGER.playAsset(SFX.SELECT);
                 if (this.beginSequence.length > 0) {
                     this.beginSequence.splice(0, 1);
                     if (this.beginSequence == 0) {
-                        this.cutscene = false;
+                        this.cutScene1 = false;
                         this.title = true; // need this here because loadLevel needs this to be true to save the level state
                         this.player.removeFromWorld = false;
                         this.game.addEntity(this.player);
@@ -955,7 +997,7 @@ class SceneManager {
     };
 
     drawGameplayGUI(ctx) {
-        if (!this.title && !this.transition && !this.cutscene) {
+        if (!this.title && !this.transition && !this.cutScene1) {
             //current level
             ctx.font = PARAMS.BIG_FONT; //this is size 20 font
             ctx.fillStyle = "White";
@@ -1076,7 +1118,7 @@ class SceneManager {
     }
 
     drawCutsceneGUI(ctx) {
-        if (this.cutscene && this.beginSequence.length != 0) {
+        if (this.cutScene1 && this.beginSequence.length != 0) {
             this.beginSequence[0].show = true;
             this.beginSequence[0].draw(ctx);
         }
