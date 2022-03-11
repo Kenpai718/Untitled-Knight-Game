@@ -757,6 +757,8 @@ class SceneManager {
                     this.restartLevel();
                 } else if (this.returnToMenuBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     ASSET_MANAGER.playAsset(SFX.CLICK);
+                    this.spawnCheckpoint = null;
+                    this.game.myReportCard.reset();
                     this.returnToMenu();
                 }
                 this.game.click = null;
