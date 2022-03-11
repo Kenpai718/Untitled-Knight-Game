@@ -953,10 +953,7 @@ class Wizard extends AbstractBoss {
         let actions = this.actions;
         this.action = action;
         this.resetAnimationTimers(this.state);
-        this.auraAmount = 1;
-        this.aura = "none";
-        this.tracking = false;
-        console.log(action);
+        this.resetAction();
         switch (action) {
             case actions.no_attack:
                 this.avoid = true;
@@ -990,6 +987,17 @@ class Wizard extends AbstractBoss {
                 break;
         }
 
+    }
+
+    //reset to default state in terms of attack phases
+    resetAction() {
+        this.resetAnimationTimers(this.state);
+        this.auraAmount = 1;
+        this.aura = "none";
+        this.tracking = false;
+        this.velocity.x = 0;
+        this.velocity.y = 0;
+        this.HB = null;
     }
 
     draw(ctx) {
