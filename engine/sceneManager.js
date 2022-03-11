@@ -487,6 +487,9 @@ class SceneManager {
             if (interactable instanceof Diamond) {
                 newIntr = new Diamond(self.game, 0, 0);
             }
+            if (interactable instanceof Portal) {
+                newIntr = new Portal(self.game, 0, 0);
+            }
             if (newIntr) {
                 for (var i in interactable) {
                     newIntr[i] = interactable[i];
@@ -1328,6 +1331,11 @@ class SceneManager {
                 e.y = Math.ceil((h - diamond.y - 1) * PARAMS.BLOCKDIM - e.BB.bottom);
                 array.push(e);
             }
+        }
+        if (dict.portal) {
+            let portal = dict.portal;
+            let e = new Portal(this.game, portal.x, h - portal.y);
+            array.push(e);
         }
 
     }

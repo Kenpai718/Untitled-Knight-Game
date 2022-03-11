@@ -265,6 +265,8 @@ var titleScene = {
         { x: 17.5, y: 11 },
     ],
 
+    portal: { x: 5, y: 7 },
+
     banners: [
         { x: 4, y: 5 },
         { x: 20, y: 5 }
