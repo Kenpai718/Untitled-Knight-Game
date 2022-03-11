@@ -375,7 +375,7 @@ var level1_1 = {
         {
             x: 55, y: 5, text: ["Your journey will be arduous...",
                 "If you bring me the DIAMONDS that you find",
-                "and I can grant you more power."]
+                "then I can grant you more power."]
         },
     ],
 

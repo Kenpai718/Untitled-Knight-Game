@@ -295,7 +295,7 @@ class SceneManager {
             this.player.y = this.spawnCheckpoint.y - this.player.BB.bottom;
         }
         else {
-        //reposition the player
+            //reposition the player
             this.player.x = spawnX - this.player.BB.left;
             this.player.y = Math.ceil(spawnY - this.player.BB.bottom);
         }
@@ -433,7 +433,7 @@ class SceneManager {
         let enemies = [];
         let self = this;
         array.forEach(function (enemy) {
-            var newEnem = {name: enemy.name, x: enemy.x, y: enemy.y, hp: enemy.hp, max_hp: enemy.max_hp, direction: enemy.direction};
+            var newEnem = { name: enemy.name, x: enemy.x, y: enemy.y, hp: enemy.hp, max_hp: enemy.max_hp, direction: enemy.direction };
             if (enemy.name == "Wizard") {
                 newEnem.left = enemy.left;
                 newEnem.right = enemy.right;
@@ -481,7 +481,7 @@ class SceneManager {
     loadSavedEnemies(array) {
         let enemies = [];
         let self = this;
-        array.forEach(function(enemy) {
+        array.forEach(function (enemy) {
             var newEnem = null;
             if (enemy.name == "Mushroom")
                 newEnem = new Mushroom(self.game, enemy.x, enemy.y, false);
@@ -525,7 +525,7 @@ class SceneManager {
                 newIntr = new Chest(self.game, 0, 0);
             }
             if (interactable instanceof Door) {
-                newIntr = new Door(self.game, 0, 0, 0, {x:0, y:0, levelNum: 1});
+                newIntr = new Door(self.game, 0, 0, 0, { x: 0, y: 0, levelNum: 1 });
             }
             if (interactable instanceof Diamond) {
                 newIntr = new Diamond(self.game, 0, 0);
@@ -555,14 +555,14 @@ class SceneManager {
     saveEvents(array) {
         let events = [];
         let self = this;
-        array.forEach(function(event) {
+        array.forEach(function (event) {
             var newEvent = new Event(self.game, [], [], []);
             if (event instanceof Secret) {
                 var newEvent = new Secret(self.game, []);
             }
-            for(var i in event) {
+            for (var i in event) {
                 newEvent[i] = event[i];
-                if (event[i]  && event[i] == event.entities) {
+                if (event[i] && event[i] == event.entities) {
                     newEvent[i] = self.loadSavedEnemies(self.saveEnemies(event.entities));
                 }
             }
@@ -694,9 +694,12 @@ class SceneManager {
                     this.controls = false;
                     this.credits = !this.credits;
                 } else if (this.levelSelectBB.collideMouse(this.game.click.x, this.game.click.y)) {
-                    ASSET_MANAGER.playAsset(SFX.CLICK);
-                    ASSET_MANAGER.playAsset(SFX.SELECT);
-                    this.loadLevelSelect();
+                    if (!this.usingLevelSelect) {
+                        this.usingLevelSelect = true;
+                        ASSET_MANAGER.playAsset(SFX.CLICK);
+                        ASSET_MANAGER.playAsset(SFX.SELECT);
+                        this.loadLevelSelect();
+                    }
                 }
                 this.game.click = null;
             }
@@ -997,7 +1000,7 @@ class SceneManager {
         }
 
         //alert message that game lost focus
-        if(!this.game.inCanvas) {
+        if (!this.game.inCanvas) {
 
             let fontSize = 20;
             ctx.font = fontSize + 'px "Press Start 2P"';
@@ -1291,7 +1294,7 @@ class SceneManager {
                 console.log("Save level state");
                 this.lastInventoryPerm = new Inventory(this.game);
                 this.lastInventoryPerm.copyInventory(this.lastInventory);
-                this.spawnCheckpoint = {x: spawnX * PARAMS.BLOCKDIM, y: (h - spawnY) * PARAMS.BLOCKDIM};
+                this.spawnCheckpoint = { x: spawnX * PARAMS.BLOCKDIM, y: (h - spawnY) * PARAMS.BLOCKDIM };
             }
         }
     }
