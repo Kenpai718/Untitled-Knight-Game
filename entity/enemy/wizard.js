@@ -334,7 +334,7 @@ class Wizard extends AbstractBoss {
      * Starting cutscene where wizard says plans blah blah blah
      * You cant hit him until he is done talking because plot
      */
-     playInitialCutscene() {
+    playInitialCutscene() {
         if (!this.myInitialDialouge) this.setupDialouge();
         this.checkDirection();
         const TICK = this.game.clockTick;
