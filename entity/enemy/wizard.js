@@ -170,6 +170,8 @@ class Wizard extends AbstractBoss {
             this.hp / this.max_hp < 0.50 && this.phase < this.phases.desperate ||
             this.hp / this.max_hp < 0.25 && this.phase < this.phases.final)) {
             this.state = this.states.stun;
+            if (this.HB)
+                this.HB = null;
             this.fireCircle.forEach(fireball => fireball.removeFromWorld = true);
             this.fireCircle = [];
             this.actionCooldown = 4;
