@@ -1974,20 +1974,21 @@ var levelBoss1 = {
         { x: 11, y: 1, direction: 0 },
     ],
 
-    // events: [
-    //     {
-    //         space: [
-    //             { x: 62, y: 20, width: 39, height: 20 }
-    //         ],
-    //         walls: [
-    //             { x: 60, y: 5, height: 5, type: 2 },
-    //             { x: 102, y: 5, height: 5, type: 0 },
-    //             { x: 103, y: 5, height: 5, type: 2 },
-    //             { x: 59, y: 5, height: 5, type: 0 },
-    //         ],
-    //         wizard: { x: 75, y: 2, left: 61, right: 102, top: 6, bottom: 1 },
-    //     }
-    // ],
+    events: [
+        {
+            space: [
+                { x: 62, y: 20, width: 39, height: 20 }
+            ],
+            walls: [
+                { x: 60, y: 5, height: 5, type: 2 },
+                { x: 102, y: 5, height: 5, type: 0 },
+                { x: 103, y: 5, height: 5, type: 2 },
+                { x: 59, y: 5, height: 5, type: 0 },
+            ],
+            wizard: { x: 75, y: 2, left: 61, right: 102, top: 6, bottom: 1 },
+        }
+    ],
+
     doors: [
         { x: 1, y: 3, killQuota: 0, exitLocation: { x: 8, y: 24, levelNum: 4 }, transition: false }, //door to level 1
     ],
@@ -2029,6 +2030,9 @@ var levelBoss1 = {
         { x: 84, y: 9 },
         { x: 90, y: 9 },
         { x: 96, y: 9 },
+
+        { x: 114, y: 4 },
+        { x: 118, y: 4 },
     ],
     backgroundWalls: [
         { x: 0, y: 20, width: 120, height: 20 },
@@ -2079,6 +2083,10 @@ var levelBoss1 = {
         { x: 84, y: 8 },
         { x: 90, y: 8 },
         { x: 96, y: 8 },
+
+        //end room
+        { x: 114, y: 3 },
+        { x: 118, y: 3 }
     ],
 
 }

@@ -205,7 +205,7 @@ class SceneManager {
                 "-David Shcherbina",
                 "",
                 "Please share the game with",
-                "your friends if you enjoyed! :)"
+                "your friends if you enjoyed!"
             ];
 
         let endScene1TB = this.buildSequenceBox(endScene1);
