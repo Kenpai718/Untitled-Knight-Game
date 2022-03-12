@@ -22,7 +22,7 @@
  */
 
 //version of up to date info. Make sure to update with each public push!
-const SIGN_VERSION = { x: 20, y: 3, title: "    VERSION 1.0", text: "Last updated: 03/11/2022" }
+const SIGN_VERSION = { x: 20, y: 3, title: "    VERSION 1.0", text: "Last updated: 03/12/2022" }
 
 //spawn locations for using a door
 const DOOR_SPAWNS = {
