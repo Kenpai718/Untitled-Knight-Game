@@ -95,26 +95,8 @@ class Wizard extends AbstractBoss {
         this.myBossMusic = MUSIC.FOG;
         this.myEndMusic = MUSIC.MEMORIES; //Andre I hope you recognize this :)
         //this.cueBossMusic(); //once it spawns in play the boss music
-
-        this.myTextBox = new TextBox(this.game, this.BB.x, this.BB.y, "...", 8, "Crimson", true);
-        this.myPhaseMessages = [
-            ["Muhahaha. You fool!!!",
-                "I was just using you the whole time.",
-                "Those DIAMONDS you gave me?",
-                "They just made me stronger~",
-                "Now I will take over this world...,",
-                "and no-one can stand in my way!"], //start
-            ["Hm... well it seems you can put up a fight."], //middle
-            ["N-NO! I'm the strongest in the universe!", "You were made to die by my hand!"], //desperate
-            ["Tsk, I underestimated you...",
-                "But I've come too far to fall here, \'Hero\'!"] //final,
-        ]
-        this.game.addEntityToFront(this.myTextBox);
-        this.showTextBox = false;
-        this.myTextTimer = 0;
-        this.myShowTextTime = 10;
         this.activeBoss = false;
-        this.myCutsceneTimer = 0;
+
     }
 
     // use after any change to this.x or this.y
@@ -294,69 +276,109 @@ class Wizard extends AbstractBoss {
         this.animations[action][1].elapsedTime = 0;
     }
 
+    /**
+ * Setups all dialouge boxes for the cutscene and phases
+ * Make sure to call this method before starting the battle
+ */
+    setupDialouge() {
+
+        /**
+         * Text used for the initial dialouge cutscene
+         * put in a map: key = textbox #, value = array [0 = text, 1 = duration]
+         */
+        this.secretEnd = this.game.myReportCard.myDiamondsSpent <= 0;
+        this.myInitialDialouge = new Map();
+        if (this.secretEnd) { //secret if you dont give him any diamondsadd
+            this.myInitialDialouge.set(0, ["You didn't trust me from the start, did you?", 4]);
+            this.myInitialDialouge.set(1, [["You got " + this.game.myReportCard.myDiamondsEarned + " DIAMONDS", "and didn't give me a single one..."], 3]);
+            this.myInitialDialouge.set(2, ["No matter, I can defeat a worm like you in my sleep.", 3]);
+            this.myInitialDialouge.set(3, ["It's a beautiful day outside.", 2]);
+            this.myInitialDialouge.set(4, ["Birds are singing,", 1]);
+            this.myInitialDialouge.set(5, ["flowers are blooming...", 1]);
+            this.myInitialDialouge.set(6, ["on days like these, kids like you...", 2]);
+            this.myInitialDialouge.set(7, ["Should be burning in hell.", 2]);
+        } else { //default cutscene message
+            this.myInitialDialouge.set(0, ["Your next line is... where's the demon lord?", 4]);
+            this.myInitialDialouge.set(1, ["You idiot, it was me, Wizard!", 2.5]);
+            this.myInitialDialouge.set(2, ["You were just a pawn in my game this whole time.", 3]);
+            this.myInitialDialouge.set(3, ["Those " + this.game.myReportCard.myDiamondsSpent + " DIAMONDS you gave me?", 3]);
+            this.myInitialDialouge.set(4, ["They just made me stronger~ :)", 2]);
+            this.myInitialDialouge.set(5, ["Now I will take over the universe...", 2]);
+            this.myInitialDialouge.set(6, [["and after I defeat you", "I'll take your body for my own."], 3]);
+            this.myInitialDialouge.set(7, ["Then no-one can stand in my way!!", 2]);
+            this.myInitialDialouge.set(8, ["MUHAHAHAHAHA!!!", 2]);
+        }
+
+        //to keep track of textbox state changes
+        this.dialougeTimer = 0;
+        this.dialougeCount = 0;
+        this.dialougeSwitchTime = 0;
+
+
+        //phases messages
+        this.myTextBox = new TextBox(this.game, this.BB.x, this.BB.y, "...", 8, "Crimson", true);
+        this.myPhaseMessages = [
+            ["Think you can take me?"], //start
+            ["Hm... well it seems you can put up a fight."], //middle
+            ["N-NO! I'm the strongest in the universe!", "You were made to die by my hand!"], //desperate
+            ["Tsk, I underestimated you...",
+                "But I've come too far to fall here, \'Hero\'!"] //final,
+        ]
+        this.game.addEntityToFront(this.myTextBox);
+        this.showTextBox = false;
+        this.myTextTimer = 0;
+        this.myShowTextTime = 10;
+    }
 
     /**
      * Starting cutscene where wizard says plans blah blah blah
-     * You cant hit him for 10 seconds or so and then the battle begins
+     * You cant hit him until he is done talking because plot
      */
-    playInitialCutscene() {
+     playInitialCutscene() {
+        if (!this.myInitialDialouge) this.setupDialouge();
+        this.checkDirection();
         const TICK = this.game.clockTick;
+        const animation = this.animations[this.state][this.direction];
+        const isDone = animation.isDone();
         this.vulnerable = false;
-        let cutsceneTime;
-        this.game.myReportCard.myDiamondsEarned > 0 ? cutsceneTime = 10 : cutsceneTime = 13;
-        //set the textbox if its not there right now
-        if (!this.talking) {
-            this.talking = true;
-            //special message if player fights boss with no diamonds spent
-            if (this.game.myReportCard.myDiamondsSpent == 0) {
-                let diamondMsg;
-                this.game.myReportCard.myDiamondsEarned > 0 ? diamondMsg = "You got " + this.game.myReportCard.myDiamondsEarned + " DIAMONDS and didn't give me a single one..." : diamondMsg = "How could you be so greedy and not give me a single DIAMOND?";
-                let message = [
-                    "You didn't trust me from the start, did you?",
-                    diamondMsg,
-                    "So, you really think you can defeat me without any upgrades?!",
-                    "Hmph, I can defeat a weakling like you in my sleep.",
-                    "",
-                    "It's a beautiful day outside. birds are singing,",
-                    "flowers are blooming... on days like these, kids like you...",
-                    "Should be burning in hell."];
-                this.myTextBox.updateMessage(message, cutsceneTime);
 
-            } else { //default cutscene message
-                let message = ["Muhahaha. You fool!!!",
-                "I was just using you the whole time.",
-                "Those " + this.game.myReportCard.myDiamondsSpent + " DIAMONDS you gave me?",
-                "They just made me stronger~",
-                "Now I will take over this world...,",
-                "and no-one can stand in my way!"];
-                this.myTextBox.updateMessage(message, cutsceneTime);
+        this.dialougeTimer += TICK;
+        if (this.dialougeTimer >= this.dialougeSwitchTime) {
+            //switch the dialouge
+            if (this.dialougeCount != this.myInitialDialouge.size) {
+                let dialougeInfo = this.myInitialDialouge.get(this.dialougeCount);
+                let text = dialougeInfo[0];
+                let duration = dialougeInfo[1];
+
+                //update textbox with new info
+                this.myTextBox.updateMessage(text, duration + 0.5);
+                this.dialougeCount++;
+                this.dialougeSwitchTime = duration;
+                this.dialougeTimer = 0;
+
+                //prepare for fire ring cutscene
+                if (this.dialougeCount == this.myInitialDialouge.size - 4) {
+                    this.buffWizard();
+                    this.game.entities.forEach(entity =>{
+                        if (entity instanceof NPC) {
+                            entity.removeFromWorld = true;
+                        }
+                    })
+                    this.changeAction(this.actions.fire_ring);
+                } else if (this.dialougeCount == this.myInitialDialouge.size) {
+                    ASSET_MANAGER.playAsset(SFX.EVIL_LAUGH); //lol at em
+                }
+            } else {
+                //He's done talking for the whole anime season, start the fight!
+                this.ringWait = -1; //this triggers the wait is done shoot the fireball
+                this.activeBoss = true; //triggers the healthbar and starts the fight
+                this.vulnerable = true; //you can hit him now
             }
-
-        }
-        //transition to a raise after timer is over
-        this.myCutsceneTimer += TICK;
-        if (this.myCutsceneTimer > cutsceneTime) {
-            this.state = this.states.raise;
         }
 
-        //after raise teleport away and start the battle
-        if (this.state == this.states.raise) {
-            let animation = this.animations[this.state][this.direction];
-            let isDone = animation.isDone();
-            if (isDone) {
-                this.resetAnimationTimers(this.state);
-                this.state = this.states.idle1;
-                this.activeBoss = true;
-                this.myCutsceneTimer = 0;
-                this.talking = false;
-                this.vulnerable = true;
-                this.game.entities.forEach(entity => {
-                    if (entity instanceof NPC) 
-                        entity.removeFromWorld = true;
-                });
-                this.activateTeleport();
-                this.buffWizard();
-            }
+        //when he is almost done talking he taunts u with the fire ring
+        if (this.dialougeCount >= this.myInitialDialouge.size - 4) {
+            this.fireRing(10);
         }
 
         //update animation and textbox
@@ -379,6 +401,7 @@ class Wizard extends AbstractBoss {
             if (this.dead) {
                 super.setDead();
                 this.myTextBox.updateMessage("C-Curse you... I-I was so close...", 2);
+                this.myTextBox.updateCords(this.BB.mid - this.BB.width / 3, this.BB.top);
                 this.animations[this.state][this.direction].update(TICK);
                 this.fireCircle.forEach(fireball => fireball.removeFromWorld = true);
                 if (this.fireball)
