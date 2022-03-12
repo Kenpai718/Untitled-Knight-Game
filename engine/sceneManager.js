@@ -161,6 +161,7 @@ class SceneManager {
     loadEndSequence() {
         this.cutScene2 = true;
         this.game.click = false;
+        let hidden_end = this.game.myReportCard.myDiamondsSpent <= 0;
         let endScene1 =
             [
                 "This was the story all about",
@@ -168,16 +169,37 @@ class SceneManager {
                 "as an \'Untitled Knight\' to save the",
                 "castle that was overrun by evil."
             ];
-        let endScene2 =
-            [
-                "I thought the Wizard was my friend,",
-                "but in the end it was all a ruse...",
+        let endScene2;
+        if (hidden_end) {
+            endScene2 = [
+                "I knew that Wizard was a sussy baka",
+                "the moment I laid eyes on him.",
+                "",
                 "He tried to use me to gain the",
                 "power of the DIAMONDS,",
-                "and destroy the whole universe!"
+                "and destroy the whole universe!",
+                "",
+                "But even with " + this.game.myReportCard.myDiamondsEarned + " DIAMONDS.",
+                "I didn't give that sucker a single one!"
             ];
+        } else {
+
+            endScene2 = [
+                "I thought the Wizard was my friend.",
+                "But, in the end he betrayed me...",
+                "",
+                "He used me to gain the",
+                "power of the DIAMONDS,",
+                "and destroy the whole universe!",
+                "",
+                "I fell for his trap and gave him ",
+                this.game.myReportCard.myDiamondsSpent + " DIAMONDS..."]
+
+        }
+
         let endScene3 =
             [
+
                 "But, I stopped him before it was too late.",
             ];
         let endScene4 =
