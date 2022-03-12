@@ -79,12 +79,12 @@ class Arrow extends AbstractEntity {
                     let check2 = self.BB.right - entity.BB.right;
                     let check3 = self.BB.top - entity.BB.top;
                     let check4 = self.BB.bottom - entity.BB.bottom;
-                    if (check1 > 0 && check2 < 0 && check3 > 0 && check4 < 0) {
+                    if (check1 >= 0 && check2 <= 0 && check3 >= 0 && check4 <= 0) {
                         let x = 0;
                         let y = 0;
                         if (Math.abs(check1) < Math.abs(check2)) x = check1;
                         else x = check2;
-                        if (math.abs(check3) < Math.abs(check4)) y = check3;
+                        if (Math.abs(check3) < Math.abs(check4)) y = check3;
                         else y = check4;
                         let dist = 0;
                         if (Math.abs(x) < Math.abs(y)) {
