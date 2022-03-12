@@ -27,8 +27,8 @@ class GameEngine {
         //browser restrictions!
         this.userInteracted = false;
         this.inCanvas = true; //check if focused
-
         this.myReportCard = new ReportCard(this);
+        this.completed = false; //if player beat the game yet
 
         //controls
         this.left = null;   //A

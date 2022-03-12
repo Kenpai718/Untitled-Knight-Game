@@ -38,7 +38,7 @@ class NPC extends AbstractEntity {
         //textbox that shows when player approaches
         if (dialouge === null || dialouge === undefined) this.myMessage = "Browse my wares?" //default message
         else this.myMessage = dialouge;
-        this.myTextBox = new TextBox(this.game, this.BB.x, this.BB.y, this.myMessage, 10);
+        this.myTextBox = new TextBox(this.game, this.BB.x, this.BB.y, this.myMessage, 10, "CornflowerBlue");
         this.game.addEntityToFront(this.myTextBox);
         this.showTextBox = false;
     };
