@@ -319,16 +319,31 @@ class DemonSlime extends AbstractBoss {
             } else if (this.state == this.states.demonJump) {
                 if (this.attackFrame >= 12 && this.attackFrame <= 15) this.updateHB();
                 else this.HB = null;
+
+                //will switch directions if crossedup before the jump
+                if(this.attackFrame < 4) this.checkDirection(this.game.camera.player);
             } else if (this.state == this.states.demonSlash) {
                 if (this.attackFrame >= 9 && this.attackFrame <= 12) this.updateHB();
                 else this.HB = null;
+                
+                //if player crosses up before the blade is fully up then the demon
+                //will switch directions to maintain the attack
+                if(this.attackFrame < 7) this.checkDirection(this.game.camera.player);
             } else if (this.state == this.states.demonBreath) {
                 if (this.attackFrame >= 6 && this.attackFrame <= 16) this.updateHB();
                 else this.HB = null;
+
+                //if player crosses up before the breath is out then it
+                //will switch directions to maintain the attack
+                if(this.attackFrame < 5) this.checkDirection(this.game.camera.player);
             } else if (this.state == this.states.demonRebirth) {
                 if (this.attackFrame >= 9 && this.attackFrame <= 20) this.updateHB();
                 else this.HB = null;
-            } else if (this.state == this.states.demonSpawn || this.state == this.states.demonShoot) {
+            } else if (this.state == this.states.demonShoot) {
+                //hit every other frame
+                if (this.attackFrame >= 8) this.updateHB();
+                else this.HB = null;
+            } else if (this.state == this.states.demonSpawn) {
                 this.updateHB();
             }
         } else {
@@ -358,16 +373,16 @@ class DemonSlime extends AbstractBoss {
             else if (this.state == this.states.demonBreath) {
                 let x = this.BB.left;
                 let y = this.BB.top;
-                let width =  this.BB.right - (this.x + this.offsetX - (90 * this.scale));
+                let width = this.BB.width * 1.5;
                 let height = this.height / 2;
-                if(frame > 11) { //hit from above
+                if (frame > 11) { //hit from above
                     y += height;
                 }
 
-                if (this.direction == this.directions.left) this.HB  = new BoundingBox(x - (width / 2), y, width, height);
-                else this.HB  = new BoundingBox(x, y, width, height);
+                if (this.direction == this.directions.left) this.HB = new BoundingBox(x - (width) + (35 * this.scale), y, width, height);
+                else this.HB = new BoundingBox(x + (width / 2), y, width, height);
 
-                
+
             }
             else if (this.state == this.states.demonShoot) {
                 let xOffset = this.BB.width;
@@ -483,11 +498,21 @@ class DemonSlime extends AbstractBoss {
 
     /**
      * Checks position of player and checks direction to match
+     * Also start on the same frame after switching directions
      * @param {*} player 
      */
     checkDirection(player) {
-        if (player.BB.x > this.BB.x) this.direction = this.directions.right;
-        else this.direction = this.directions.left;
+        let temp;
+        if (player.BB.mid > this.BB.mid) {
+            temp = this.animations[this.state][this.direction].elapsedTime;
+            this.direction = this.directions.right;
+            this.animations[this.state][this.direction].elapsedTime = temp;
+
+        } else {
+            temp = this.animations[this.state][this.direction].elapsedTime;
+            this.direction = this.directions.left;
+            this.animations[this.state][this.direction].elapsedTime = temp;
+        }
     }
 
     /**
@@ -643,7 +668,7 @@ class DemonSlime extends AbstractBoss {
                 damage = 30;
                 break;
         }
-        if(this.phase == this.phases.legendary) damage *= this.legendaryMultiplier;
+        if (this.phase == this.phases.legendary) damage *= this.legendaryMultiplier;
         return damage;
     };
 };
