@@ -131,6 +131,9 @@ class SceneManager {
         x = (this.game.surfaceWidth / 2) - ((40 * 9) / 2);
         y = (this.game.surfaceHeight / 2) + 40 * 3;
         this.returnMenuPauseBB = new BoundingBox(x, y, 40 * 9, -40);
+        x = (this.game.surfaceWidth / 2) - ((40 * 9) / 2);
+        y = (this.game.surfaceHeight / 2) + 40 * 5;
+        this.unpauseBB = new BoundingBox(x, y, 40 * 9, -40);
     }
 
     loadBeginSequence() {
@@ -752,6 +755,7 @@ class SceneManager {
                 if (this.controlsPauseBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) this.textColor = 1;
                 else if (this.restartPauseBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) this.textColor = 2;
                 else if (this.returnMenuPauseBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) this.textColor = 3;
+                else if (this.unpauseBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) this.textColor = 4;
             }
             if (this.game.click) {
                 if (this.controlsPauseBB.collideMouse(this.game.click.x, this.game.click.y)) {
@@ -772,6 +776,8 @@ class SceneManager {
                     this.spawnCheckpoint = null;
                     this.game.myReportCard.reset();
                     this.returnToMenu();
+                } else if ((this.unpauseBB.collideMouse(this.game.click.x, this.game.click.y))) {
+                    PAUSED = false;
                 }
                 this.game.click = null;
             }
@@ -1044,10 +1050,18 @@ class SceneManager {
             let fontSize = 20;
             ctx.font = fontSize + 'px "Press Start 2P"';
             let msg = "Your cursor is not in the game screen! Please click within the game to regain control!";
-            ctx.fillStyle = "black";
-            ctx.fillText(msg, (this.game.surfaceWidth / 2) - ((fontSize) * msg.length / 2) + 2, fontSize * 4 + 2);
-            ctx.fillStyle = "red";
-            ctx.fillText(msg, (this.game.surfaceWidth / 2) - ((fontSize) * msg.length / 2), fontSize * 4);
+
+            if (this.title || this.transition || this.cutScene1 || this.cutScene2) {
+                ctx.fillStyle = "black";
+                ctx.fillText(msg, (this.game.surfaceWidth / 2) - ((fontSize) * msg.length / 2) + 2, fontSize * 4 + 2);
+                ctx.fillStyle = "red";
+                ctx.fillText(msg, (this.game.surfaceWidth / 2) - ((fontSize) * msg.length / 2), fontSize * 4);
+            } else {
+                ctx.fillStyle = "black";
+                ctx.fillText(msg, (this.game.surfaceWidth / 2) - ((fontSize) * msg.length / 2) + 2, fontSize * 15 + 2);
+                ctx.fillStyle = "red";
+                ctx.fillText(msg, (this.game.surfaceWidth / 2) - ((fontSize) * msg.length / 2), fontSize * 15);
+            }
 
         }
         //console.log(this.player.BB.left + " " + this.player.BB.bottom);
@@ -1092,6 +1106,7 @@ class SceneManager {
                 buildButton(ctx, "Controls", this.controlsPauseBB, this.textColor == 1 || this.controls);
                 buildButton(ctx, "Restart", this.restartPauseBB, this.textColor == 2);
                 buildButton(ctx, "Main Menu", this.returnMenuPauseBB, this.textColor == 3);
+                buildButton(ctx, " Unpause", this.unpauseBB, this.textColor == 4);
 
                 if (this.controls) {
                     this.myControlBox.show = true;
