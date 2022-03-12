@@ -20,6 +20,7 @@ class Wizard extends AbstractBoss {
 
         this.phases = { initial: 0, middle: 1, desperate: 2, final: 3 };
         this.phase = this.phases.initial;
+        this.lastPhase = this.phase;
 
         // actions
         this.actions = { stunned: -1, fire_ring: 0, no_attack: 1, arrow_rain: 2, beam: 3, dash: 4 };
@@ -114,7 +115,7 @@ class Wizard extends AbstractBoss {
         this.myEndMusic = MUSIC.MEMORIES; //Andre I hope you recognize this :)
         //this.cueBossMusic(); //once it spawns in play the boss music
 
-        this.myTextBox = new TextBox(this.game, this.BB.x, this.BB.y, "...", 10, "Crimson", true);
+        this.myTextBox = new TextBox(this.game, this.BB.x, this.BB.y, "...", 8, "Crimson", true);
         this.myPhaseMessages = [
             ["Muhahaha. You fool!!!",
                 "I was just using you the whole time.",
@@ -124,9 +125,8 @@ class Wizard extends AbstractBoss {
                 "and no-one can stand in my way!"], //start
             ["Hm... well it seems you can put up a fight."], //middle
             ["N-NO! I'm the strongest in the universe!", "You were made to die by my hand!"], //desperate
-            ["Tsk... I didn't expect you to be this strong.",
+            ["Tsk, I underestimated you...",
                 "But I've come to far to fall here, \'Great Hero\'!"] //final,
-            ["C-curse... y-you..."] //death
         ]
         this.game.addEntityToFront(this.myTextBox);
         this.showTextBox = false;
@@ -364,6 +364,7 @@ class Wizard extends AbstractBoss {
 
             if (this.dead) {
                 super.setDead();
+                this.myTextBox.updateMessage("C-Curse you... I-I was so close...", 2);
                 this.animations[this.state][this.direction].update(TICK);
                 this.fireCircle.forEach(fireball => fireball.removeFromWorld = true);
                 if (this.fireball)
@@ -489,7 +490,15 @@ class Wizard extends AbstractBoss {
             }
 
             this.lastBB = this.BB;
-            this.myTextBox.updateCords(this.BB.mid - this.BB.width / 3, this.BB.top);
+            //if the phase is different than the last phase then show a new message dependent on the phase
+            if(this.lastPhase != this.phase) {
+                let message;
+                (this.myPhaseMessages[this.phase] == null || this.myPhaseMessages[this.phase] == null) ? message = "...?!" : message = this.myPhaseMessages[this.phase];
+                this.myTextBox.updateMessage(message, 5);
+            }
+            if(this.myTextBox.show) this.myTextBox.updateCords(this.BB.mid - this.BB.width / 3, this.BB.top);
+            this.lastPhase = this.phase;
+
         }
     }
 
