@@ -117,6 +117,15 @@ class Wizard extends AbstractBoss {
         this.myCutsceneTimer = 0;
     }
 
+    // use after any change to this.x or this.y
+    updateBoxes() {
+        this.getOffsets();
+        this.AR = new BoundingBox(this.x + (40 * this.scale), this.y + this.offsetyBB, this.width - (80 * this.scale), this.heightBB);
+        this.VB = new BoundingBox(this.x - (80 * this.scale), this.y, this.width + (160 * this.scale), this.height);
+        this.BB = new BoundingBox(this.x + this.offsetxBB * this.scale, this.y + this.offsetyBB * this.scale, this.widthBB * this.scale, this.heightBB * this.scale);
+        this.center = { x: this.BB.left + this.BB.width / 2, y: this.BB.top + this.BB.height / 2 };
+    };
+
     buffWizard() {
         let inventory = this.player.myInventory;
 
@@ -146,15 +155,6 @@ class Wizard extends AbstractBoss {
 
         this.hp = this.max_hp;
     }
-
-    // use after any change to this.x or this.y
-    updateBoxes() {
-        this.getOffsets();
-        this.AR = new BoundingBox(this.x + (40 * this.scale), this.y + this.offsetyBB, this.width - (80 * this.scale), this.heightBB);
-        this.VB = new BoundingBox(this.x - (80 * this.scale), this.y, this.width + (160 * this.scale), this.height);
-        this.BB = new BoundingBox(this.x + this.offsetxBB * this.scale, this.y + this.offsetyBB * this.scale, this.widthBB * this.scale, this.heightBB * this.scale);
-        this.center = { x: this.BB.left + this.BB.width / 2, y: this.BB.top + this.BB.height / 2 };
-    };
 
     getDamageValue() {
         let damage = 0;
@@ -215,7 +215,6 @@ class Wizard extends AbstractBoss {
             if (this.state == this.states.stun) {
                 if (this.hp / this.max_hp < 0.25 && this.phase < this.phases.final) {
                     this.phase = this.phases.final;
-                    this.startFinal = true;
                     this.skeletonChance = 50;
                     this.skeletonBase = 1;
                     this.activateTeleport();
@@ -242,7 +241,6 @@ class Wizard extends AbstractBoss {
                 this.changeAction(this.actions.fire_ring);
                 this.state = this.states.raise;
                 this.fireCircle.forEach(fireball => fireball.stay = true);
-
             }
             else {
                 let random = randomInt(this.totalActions - 1) + 1;
@@ -593,10 +591,10 @@ class Wizard extends AbstractBoss {
             if (this.hp > this.max_hp * (.15 + .1 * inventory.armorUpgrade) && inventory.armorUpgrade == 0) 
                 heal = 0;
             this.hp += heal;
-            if (this.maxStats && this.hp > this.max_hp * .76) {
+            if (this.maxStats && this.hp > this.max_hp * .75) {
                 this.hp = this.max_hp * .75;
             }
-            else if (this.hp > this.max_hp * (.15 + .1 * inventory.armorUpgrade) && heal > 0) {
+            else if (!this.maxStats && this.hp > this.max_hp * (.15 + .1 * inventory.armorUpgrade) && heal > 0) {
                 this.hp = this.max_hp * (.15 + .1 * inventory.armorUpgrade);
             }
         }
