@@ -53,6 +53,7 @@ class Arrow extends AbstractEntity {
 
         //get direction of the arrow
         if (!this.stuck) this.facing = getFacing(this.velocity);
+        this.updateBB();
         this.handleCollisions();
 
 
@@ -75,11 +76,12 @@ class Arrow extends AbstractEntity {
                 hitWall = true;
                 if (!self.stuck) {
                     self.smooth = false;
-                    let check1 = self.BB.left - entity.BB.left;
-                    let check2 = self.BB.right - entity.BB.right;
-                    let check3 = self.BB.top - entity.BB.top;
-                    let check4 = self.BB.bottom - entity.BB.bottom;
-                    if (check1 >= 0 && check2 <= 0 && check3 >= 0 && check4 <= 0) {
+                    let check1 = entity.BB.left - self.BB.left;
+                    let check2 = entity.BB.right - self.BB.right;
+                    let check3 = entity.BB.top - self.BB.top;
+                    let check4 = entity.BB.bottom - self.BB.bottom;
+                    console.log(check1, check2, check3, check4)
+                    if (check1 >= 0 && check2 >= 0 && check3 >= 0 && check4 >= 0) {
                         let x = 0;
                         let y = 0;
                         if (Math.abs(check1) < Math.abs(check2)) x = check1;
@@ -87,16 +89,26 @@ class Arrow extends AbstractEntity {
                         if (Math.abs(check3) < Math.abs(check4)) y = check3;
                         else y = check4;
                         let dist = 0;
+                        let random = Math.random() / 2 + .5;
                         if (Math.abs(x) < Math.abs(y)) {
-                            if (x == check1) dist = entity.BB.left - self.BB.left + self.BB.width / 2;
-                            else dist = entity.BB.right - self.BB.right - self.BB.width / 2;
+                            if (x == check1) {
+                                dist = check1 + self.BB.width * random;
+                            }
+                            else {
+                                dist = check2 - self.BB.width * random;
+                            }
                         }
                         else {
-                            if (y == check3) dist = entity.BB.top - self.BB.top + self.BB.height / 2;
-                            else dist = entity.BB.bottom - self.BB.bottom - self.BB.height / 2;
+                            if (y == check3) {
+                                dist = check3 + self.BB.height * random;
+                            }
+                            else {
+                                dist = check4 - self.BB.height * random;
+                            }
                         }
-                        self.x += dist;
-                        self.y += dist;
+                        self.x -= dist;
+                        self.y -= dist;
+                        console.log(dist);
                     }
                     self.velocity.x = 0;
                     self.velocity.y = 0;
@@ -141,9 +153,6 @@ class Arrow extends AbstractEntity {
             //     }
             // });
         }
-
-
-
 
         this.updateBB();
     }
