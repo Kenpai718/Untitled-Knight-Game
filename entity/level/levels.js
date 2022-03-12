@@ -1956,7 +1956,7 @@ var levelBoss1 = {
     music: MUSIC.COUNTERATTACK,
 
     npcs: [
-        {x: 14, y: 2, text: [
+        {x: 14, y: 1, text: [
             "The demon lord is right ahead!",
             "You should prepare yourself...",
             "Good luck, hero."]

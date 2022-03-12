@@ -18,7 +18,7 @@ class Wizard extends AbstractBoss {
 
         /** battle phases */
 
-        this.phases = { initial: 0, middle: 1, desparate: 2, final: 3 };
+        this.phases = { initial: 0, middle: 1, desperate: 2, final: 3 };
         this.phase = this.phases.initial;
 
         // actions
@@ -113,6 +113,27 @@ class Wizard extends AbstractBoss {
         this.myBossMusic = MUSIC.FOG;
         this.myEndMusic = MUSIC.MEMORIES; //Andre I hope you recognize this :)
         //this.cueBossMusic(); //once it spawns in play the boss music
+
+        this.myTextBox = new TextBox(this.game, this.BB.x, this.BB.y, "...", 10, "Crimson", true);
+        this.myPhaseMessages = [
+            ["Muhahaha. You fool!!!",
+                "I was just using you the whole time.",
+                "Those DIAMONDS you gave me?",
+                "They just made me stronger~",
+                "Now I will take over this world...,",
+                "and no-one can stand in my way!"], //start
+            ["Hm... well it seems you can put up a fight."], //middle
+            ["N-NO! I'm the strongest in the universe!", "You were made to die by my hand!"], //desperate
+            ["Tsk... I didn't expect you to be this strong.",
+                "But I've come to far to fall here, \'Great Hero\'!"] //final,
+            ["C-curse... y-you..."] //death
+        ]
+        this.game.addEntityToFront(this.myTextBox);
+        this.showTextBox = false;
+        this.myTextTimer = 0;
+        this.myShowTextTime = 10;
+        this.activeBoss = false;
+        this.myCutsceneTimer = 0;
     }
 
     // use after any change to this.x or this.y
@@ -135,7 +156,7 @@ class Wizard extends AbstractBoss {
             case this.phases.middle:
                 damage *= 1.1;
                 break;
-            case this.phases.desparate:
+            case this.phases.desperate:
                 damage *= 1.2;
                 break;
             case this.phases.final:
@@ -150,7 +171,7 @@ class Wizard extends AbstractBoss {
         this.vulnerable = false;
         this.hit = true;
         if (this.state != this.states.stun && (this.hp / this.max_hp < 0.75 && this.phase < this.phases.middle ||
-            this.hp / this.max_hp < 0.50 && this.phase < this.phases.desparate ||
+            this.hp / this.max_hp < 0.50 && this.phase < this.phases.desperate ||
             this.hp / this.max_hp < 0.25 && this.phase < this.phases.final)) {
             this.state = this.states.stun;
             this.fireCircle.forEach(fireball => fireball.removeFromWorld = true);
@@ -184,8 +205,8 @@ class Wizard extends AbstractBoss {
                     this.activateTeleport();
                     //this.disappearTime = 5;
                 }
-                else if (this.hp / this.max_hp < 0.50 && this.phase < this.phases.desparate) {
-                    this.phase = this.phases.desparate;
+                else if (this.hp / this.max_hp < 0.50 && this.phase < this.phases.desperate) {
+                    this.phase = this.phases.desperate;
                     this.skeletonChance = 25;
                     this.activateTeleport();
                 }
@@ -200,7 +221,7 @@ class Wizard extends AbstractBoss {
                 let random = randomInt(this.totalActions);
                 this.changeAction(random);
             }
-            else if (this.phase >= this.phases.desparate && this.action != this.actions.fire_ring && this.fireCircle.length > 0 && this.ringWait <= 0) {
+            else if (this.phase >= this.phases.desperate && this.action != this.actions.fire_ring && this.fireCircle.length > 0 && this.ringWait <= 0) {
                 this.changeAction(this.actions.fire_ring);
                 this.state = this.states.raise;
                 this.fireCircle.forEach(fireball => fireball.stay = true);
@@ -289,140 +310,187 @@ class Wizard extends AbstractBoss {
         this.animations[action][1].elapsedTime = 0;
     }
 
+
+    /**
+     * Starting cutscene where wizard says plans blah blah blah
+     * You cant hit him for 10 seconds or so and then the battle begins
+     */
+    playInitialCutscene() {
+        const TICK = this.game.clockTick;
+        this.vulnerable = false;
+        let cutsceneTime = 10;
+        //set the textbox if its not there right now
+        if(!this.talking) {
+            this.talking = true;
+            this.myTextBox.updateMessage(this.myPhaseMessages[this.phase], cutsceneTime);
+        }
+        //transition to a raise after timer is over
+        this.myCutsceneTimer += TICK;
+        if(this.myCutsceneTimer > cutsceneTime) {
+            this.state = this.states.raise;
+        }
+
+        //after raise teleport away and start the battle
+        if(this.state == this.states.raise) {
+            let animation = this.animations[this.state][this.direction];
+            let isDone = animation.isDone();
+            if(isDone) {
+                this.resetAnimationTimers(this.state);
+                this.state = this.states.idle1;
+                this.activeBoss = true;
+                this.myCutsceneTimer = 0;
+                this.talking = false;
+                this.vulnerable = true;
+                this.activateTeleport();
+            }
+        }
+
+        //update animation and textbox
+        this.myTextBox.updateCords(this.BB.mid - this.BB.width / 3, this.BB.top);
+        this.animations[this.state][this.direction].update(TICK);
+    }
+
     update() {
+        const TICK = this.game.clockTick;
         //cue boss music if it hasn't played yet
-        if (this.playMusic) {
-            this.playMusic = false;
-            this.cueBossMusic();
-        }
-        let TICK = this.game.clockTick;
-        if (this.dead) {
-            super.setDead();
-            this.animations[this.state][this.direction].update(TICK);
-            this.fireCircle.forEach(fireball => fireball.removeFromWorld = true);
-            if (this.fireball)
-                this.fireball.removeFromWorld = true;
-            if (this.animations[this.state][this.direction].isDone()) {
-                this.playEndMusic();
+        if (!this.activeBoss) {
+            this.playInitialCutscene();
+        } else {
+            if (this.playMusic) {
+                this.playMusic = false;
+                this.cueBossMusic();
             }
-        }
-        else if (this.state == this.states.stun) {
-            this.velocity.y += this.fallAcc * TICK;
-            this.y += this.velocity.y * TICK;
-            this.updateBoxes();
-            let dist = { x: 0, y: 0 }; //the displacement needed between entities
-            dist = super.checkEnvironmentCollisions(dist); //check if colliding with environment and adjust entity accordingly
-            this.updatePositionAndVelocity(dist); //set where entity is based on interactions/collisions put on dist
-            this.checkEntityInteractions(dist, TICK);
-            this.checkCooldowns();
-            this.animations[this.state][this.direction].update(TICK);
-            if (this.animations[this.state][this.direction].currentFrame() > 3) {
-                this.animations[this.state][this.direction].elapsedTime -= .15;
-            }
-        }
-        else {
-            this.checkCooldowns();
-            let dist = { x: 0, y: 0 };
-            let self = this;
-            dist = this.checkEntityInteractions(dist, TICK);
-            if (this.state != this.states.stun) {
-                // if avoiding player teleport when player is too close, if not teleporting already
-                if (this.avoid && !this.teleporting) {
-                    this.game.entities.forEach(function (entity) {
-                        if (entity instanceof AbstractPlayer) {
-                            let ex = entity.BB.left + entity.BB.width / 2;
-                            let ey = entity.BB.top + entity.BB.height / 2;
-                            let distx = ex - self.center.x;
-                            let disty = ey - self.center.y;
-                            let dist = Math.sqrt(distx * distx + disty * disty);
-                            if (dist < 60 * self.scale) {
-                                self.activateTeleport();
-                            }
-                        }
-                    });
+
+
+            if (this.dead) {
+                super.setDead();
+                this.animations[this.state][this.direction].update(TICK);
+                this.fireCircle.forEach(fireball => fireball.removeFromWorld = true);
+                if (this.fireball)
+                    this.fireball.removeFromWorld = true;
+                if (this.animations[this.state][this.direction].isDone()) {
+                    this.playEndMusic();
                 }
             }
-
-            // define all of the actionss
-            let actions = this.actions;
-            let phases = this.phases;
-            switch (this.action) {
-                case actions.fire_ring:
-                    switch (this.phase) {
-                        //pass in how many fireballs per phase
-                        case phases.initial:
-                            this.fireRing(3);
-                            break;
-                        case phases.middle:
-                            this.fireRing(6);
-                            break;
-                        case phases.desparate:
-                            this.fireRing(9)
-                            break;
-                        case phases.final:
-                            this.fireRing(13);
-                            break;
+            else if (this.state == this.states.stun) {
+                this.velocity.y += this.fallAcc * TICK;
+                this.y += this.velocity.y * TICK;
+                this.updateBoxes();
+                let dist = { x: 0, y: 0 }; //the displacement needed between entities
+                dist = super.checkEnvironmentCollisions(dist); //check if colliding with environment and adjust entity accordingly
+                this.updatePositionAndVelocity(dist); //set where entity is based on interactions/collisions put on dist
+                this.checkEntityInteractions(dist, TICK);
+                this.checkCooldowns();
+                this.animations[this.state][this.direction].update(TICK);
+                if (this.animations[this.state][this.direction].currentFrame() > 3) {
+                    this.animations[this.state][this.direction].elapsedTime -= .15;
+                }
+            }
+            else {
+                this.checkCooldowns();
+                let dist = { x: 0, y: 0 };
+                let self = this;
+                dist = this.checkEntityInteractions(dist, TICK);
+                if (this.state != this.states.stun) {
+                    // if avoiding player teleport when player is too close, if not teleporting already
+                    if (this.avoid && !this.teleporting) {
+                        this.game.entities.forEach(function (entity) {
+                            if (entity instanceof AbstractPlayer) {
+                                let ex = entity.BB.left + entity.BB.width / 2;
+                                let ey = entity.BB.top + entity.BB.height / 2;
+                                let distx = ex - self.center.x;
+                                let disty = ey - self.center.y;
+                                let dist = Math.sqrt(distx * distx + disty * disty);
+                                if (dist < 60 * self.scale) {
+                                    self.activateTeleport();
+                                }
+                            }
+                        });
                     }
-                    break;
-                case actions.arrow_rain:
-                    switch (this.phase) {
-                        //pass in number of base arrows to spawn in
-                        case phases.initial:
-                            this.arrowRain(3);
-                            break;
-                        case phases.middle:
-                            this.arrowRain(4);
-                            break;
-                        case phases.desparate:
-                            this.arrowRain(5);
-                            break;
-                        case phases.final:
-                            this.arrowRain(7);
-                            break;
-                    }
-                    break;
-                case actions.beam:
-                    //beam is invincible once it reaches half hp phase
-                    //phases are handled by shootWindblast() method
-                    this.beam();
-                    break;
-                case actions.dash:
-                    this.dashAttack();
-                    break;
+                }
+
+                // define all of the actionss
+                let actions = this.actions;
+                let phases = this.phases;
+                switch (this.action) {
+                    case actions.fire_ring:
+                        switch (this.phase) {
+                            //pass in how many fireballs per phase
+                            case phases.initial:
+                                this.fireRing(3);
+                                break;
+                            case phases.middle:
+                                this.fireRing(6);
+                                break;
+                            case phases.desperate:
+                                this.fireRing(9)
+                                break;
+                            case phases.final:
+                                this.fireRing(13);
+                                break;
+                        }
+                        break;
+                    case actions.arrow_rain:
+                        switch (this.phase) {
+                            //pass in number of base arrows to spawn in
+                            case phases.initial:
+                                this.arrowRain(3);
+                                break;
+                            case phases.middle:
+                                this.arrowRain(4);
+                                break;
+                            case phases.desperate:
+                                this.arrowRain(5);
+                                break;
+                            case phases.final:
+                                this.arrowRain(7);
+                                break;
+                        }
+                        break;
+                    case actions.beam:
+                        //beam is invincible once it reaches half hp phase
+                        //phases are handled by shootWindblast() method
+                        this.beam();
+                        break;
+                    case actions.dash:
+                        this.dashAttack();
+                        break;
+                }
+
+                // allow teleport when activated
+                if (this.teleporting) {
+                    this.teleport();
+                }
+                else this.animations[this.state][this.direction].update(TICK);
+            }
+            // does not update animation if teleporting, which allows current frame to be the frame to use when teleporting
+
+            //vertically track the player
+            //used in the beam phase
+            if (this.tracking) {
+                let buffer = this.BB.height / 2;
+
+                if (this.BB.top + buffer > this.player.BB.top) {
+                    if (this.velocity.y > 0) this.velocity.y = 0;
+                    this.velocity.y -= (this.fallAcc) * TICK;
+                } else {
+                    if (this.velocity.y < 0) this.velocity.y = 0;
+                    this.velocity.y += (this.fallAcc) * TICK;
+                }
+
+                this.y += this.velocity.y * TICK;
+                this.updateBoxes();
+                let dist = { x: 0, y: 0 }; //the displacement needed between entities
+                dist = super.checkEnvironmentCollisions(dist); //check if colliding with environment and adjust entity accordingly
+                this.updatePositionAndVelocity(dist); //set where entity is based on interactions/collisions put on dist
+                this.checkEntityInteractions(dist, TICK);
+                this.checkCooldowns();
+                this.checkDirection();
             }
 
-            // allow teleport when activated
-            if (this.teleporting) {
-                this.teleport();
-            }
-            else this.animations[this.state][this.direction].update(TICK);
+            this.lastBB = this.BB;
+            this.myTextBox.updateCords(this.BB.mid - this.BB.width / 3, this.BB.top);
         }
-        // does not update animation if teleporting, which allows current frame to be the frame to use when teleporting
-
-        //vertically track the player
-        //used in the beam phase
-        if (this.tracking) {
-            let buffer = this.BB.height / 2;
-
-            if (this.BB.top + buffer > this.player.BB.top) {
-                if (this.velocity.y > 0) this.velocity.y = 0;
-                this.velocity.y -= (this.fallAcc) * TICK;
-            } else {
-                if (this.velocity.y < 0) this.velocity.y = 0;
-                this.velocity.y += (this.fallAcc) * TICK;
-            }
-
-            this.y += this.velocity.y * TICK;
-            this.updateBoxes();
-            let dist = { x: 0, y: 0 }; //the displacement needed between entities
-            dist = super.checkEnvironmentCollisions(dist); //check if colliding with environment and adjust entity accordingly
-            this.updatePositionAndVelocity(dist); //set where entity is based on interactions/collisions put on dist
-            this.checkEntityInteractions(dist, TICK);
-            this.checkCooldowns();
-            this.checkDirection();
-        }
-
-        this.lastBB = this.BB;
     }
 
     /**
@@ -532,7 +600,7 @@ class Wizard extends AbstractBoss {
                             this.center.x + 16 * this.scale,
                             this.center.y - 4 * this.scale,
                             this.scale, this.direction, false, this.fireballDmg);
-                    if (this.phase >= this.phases.desparate)
+                    if (this.phase >= this.phases.desperate)
                         this.fireball.blue = true;
                     this.fireball.state = this.fireball.states.ignite1;
                     this.game.addEntityToFront(this.fireball);
@@ -579,7 +647,7 @@ class Wizard extends AbstractBoss {
                     this.fire = false;
                     this.resetAnimationTimers(this.state);
                     if (this.fireCircle.length == max) {
-                        if (this.phase == this.phases.desparate) {
+                        if (this.phase == this.phases.desperate) {
                             let random = randomInt(this.totalActions - 1) + 1;
                             this.changeAction(random);
                             this.activateTeleport();
@@ -606,7 +674,7 @@ class Wizard extends AbstractBoss {
                             this.center.x + 10 * this.scale,
                             this.center.y - 4 * this.scale,
                             this.scale, this.direction, false, this.fireballDmg);
-                    if (this.phase >= this.phases.desparate)
+                    if (this.phase >= this.phases.desperate)
                         fireball.blue = true;
                     this.fireCircle.push(fireball);
                     this.game.addEntity(fireball);
@@ -818,7 +886,6 @@ class Wizard extends AbstractBoss {
                     this.resetAnimationTimers(states.atoidle);
                 }
                 break;
-
         }
     }
 
@@ -836,7 +903,7 @@ class Wizard extends AbstractBoss {
             speed = speed + (this.phase / 10); //multiplier of the initial windball speed
 
             //hard phase: cant be destroyed and does more damage
-            if (this.phase >= this.phases.desparate) {
+            if (this.phase >= this.phases.desperate) {
                 damage *= 1.5;
                 isDestroyable = false;
             }
@@ -886,7 +953,7 @@ class Wizard extends AbstractBoss {
                     case this.phases.middle:
                         scaler = 1.2;
                         break;
-                    case this.phases.desparate:
+                    case this.phases.desperate:
                         scaler = 1.3;
                         break;
                     case this.phases.final:
