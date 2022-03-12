@@ -388,7 +388,7 @@ class Wizard extends AbstractBoss {
 
         //when he is almost done talking he taunts u with the fire ring
         if (this.dialougeCount >= this.myInitialDialouge.size - 4) {
-            this.fireRing(8);
+            this.fireRing(10);
         }
 
         //update animation and textbox
