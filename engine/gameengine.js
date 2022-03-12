@@ -282,7 +282,7 @@ class GameEngine {
                 //console.log("focused lost")
                 that.inCanvas = false;
                 that.resetControls();
-                if (!that.camera.title)
+                if (!that.camera.title && !that.camera.cutScene1 && !that.camera.transition && !that.camera.cutScene2)
                     PAUSED = true;
             }
         }

@@ -131,6 +131,9 @@ class SceneManager {
         x = (this.game.surfaceWidth / 2) - ((40 * 9) / 2);
         y = (this.game.surfaceHeight / 2) + 40 * 3;
         this.returnMenuPauseBB = new BoundingBox(x, y, 40 * 9, -40);
+        x = (this.game.surfaceWidth / 2) - ((40 * 9) / 2);
+        y = (this.game.surfaceHeight / 2) + 40 * 5;
+        this.unpauseBB = new BoundingBox(x, y, 40 * 9, -40);
     }
 
     loadBeginSequence() {
@@ -161,6 +164,7 @@ class SceneManager {
     loadEndSequence() {
         this.cutScene2 = true;
         this.game.click = false;
+        let hidden_end = this.game.myReportCard.myDiamondsSpent <= 0;
         let endScene1 =
             [
                 "This was the story all about",
@@ -168,16 +172,37 @@ class SceneManager {
                 "as an \'Untitled Knight\' to save the",
                 "castle that was overrun by evil."
             ];
-        let endScene2 =
-            [
-                "I thought the Wizard was my friend,",
-                "but in the end it was all a ruse...",
+        let endScene2;
+        if (hidden_end) {
+            endScene2 = [
+                "I knew that Wizard was a sussy baka",
+                "the moment I laid eyes on him.",
+                "",
                 "He tried to use me to gain the",
                 "power of the DIAMONDS,",
-                "and destroy the whole universe!"
+                "and destroy the whole universe!",
+                "",
+                "But even with " + this.game.myReportCard.myDiamondsEarned + " DIAMONDS.",
+                "I didn't give that sucker a single one!"
             ];
+        } else {
+
+            endScene2 = [
+                "I thought the Wizard was my friend.",
+                "But, in the end he betrayed me...",
+                "",
+                "He used me to gain the",
+                "power of the DIAMONDS,",
+                "and destroy the whole universe!",
+                "",
+                "I fell for his trap and gave him ",
+                this.game.myReportCard.myDiamondsSpent + " DIAMONDS..."]
+
+        }
+
         let endScene3 =
             [
+
                 "But, I stopped him before it was too late.",
             ];
         let endScene4 =
@@ -244,6 +269,8 @@ class SceneManager {
         let levelFour = level1_4;
         let treasureRoom = treasureroom;
         let boss1 = levelBoss1;
+
+        //make sure the boss level is always the last one!
         this.levels = [levelZero, levelOne, levelTwo, levelThree, levelFour, treasureRoom, boss1];
     }
 
@@ -638,7 +665,7 @@ class SceneManager {
     }
 
     updateTitleScreen() {
-        if (this.title) {
+        if (this.title && !this.usingLevelSelect) {
             this.levelTimer = 0;
             //keep attemping to play title music until the user clicks
             if (!MUSIC_MANAGER.isPlaying(MUSIC.TITLE)) {
@@ -697,6 +724,7 @@ class SceneManager {
                 if (this.controlsPauseBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) this.textColor = 1;
                 else if (this.restartPauseBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) this.textColor = 2;
                 else if (this.returnMenuPauseBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) this.textColor = 3;
+                else if (this.unpauseBB.collideMouse(this.game.mouse.x, this.game.mouse.y)) this.textColor = 4;
             }
             if (this.game.click) {
                 if (this.controlsPauseBB.collideMouse(this.game.click.x, this.game.click.y)) {
@@ -717,6 +745,8 @@ class SceneManager {
                     this.spawnCheckpoint = null;
                     this.game.myReportCard.reset();
                     this.returnToMenu();
+                } else if ((this.unpauseBB.collideMouse(this.game.click.x, this.game.click.y))) {
+                    PAUSED = false;
                 }
                 this.game.click = null;
             }
@@ -769,6 +799,8 @@ class SceneManager {
                 }
                 this.game.click = false;
             }
+            //don't pause a cutscene because the game gets angry and freezes
+            if(PAUSED) PAUSED = false;
         } else if (this.cutScene2) {
             if (this.game.click) {
                 ASSET_MANAGER.playAsset(SFX.SELECT);
@@ -781,7 +813,10 @@ class SceneManager {
                 }
                 this.game.click = false;
             }
+
+            if(PAUSED) PAUSED = false;
         }
+
     };
 
     /**
@@ -989,10 +1024,18 @@ class SceneManager {
             let fontSize = 20;
             ctx.font = fontSize + 'px "Press Start 2P"';
             let msg = "Your cursor is not in the game screen! Please click within the game to regain control!";
-            ctx.fillStyle = "black";
-            ctx.fillText(msg, (this.game.surfaceWidth / 2) - ((fontSize) * msg.length / 2) + 2, fontSize * 4 + 2);
-            ctx.fillStyle = "red";
-            ctx.fillText(msg, (this.game.surfaceWidth / 2) - ((fontSize) * msg.length / 2), fontSize * 4);
+
+            if (this.title || this.transition || this.cutScene1 || this.cutScene2) {
+                ctx.fillStyle = "black";
+                ctx.fillText(msg, (this.game.surfaceWidth / 2) - ((fontSize) * msg.length / 2) + 2, fontSize * 4 + 2);
+                ctx.fillStyle = "red";
+                ctx.fillText(msg, (this.game.surfaceWidth / 2) - ((fontSize) * msg.length / 2), fontSize * 4);
+            } else {
+                ctx.fillStyle = "black";
+                ctx.fillText(msg, (this.game.surfaceWidth / 2) - ((fontSize) * msg.length / 2) + 2, fontSize * 15 + 2);
+                ctx.fillStyle = "red";
+                ctx.fillText(msg, (this.game.surfaceWidth / 2) - ((fontSize) * msg.length / 2), fontSize * 15);
+            }
 
         }
         //console.log(this.player.BB.left + " " + this.player.BB.bottom);
@@ -1037,6 +1080,7 @@ class SceneManager {
                 buildButton(ctx, "Controls", this.controlsPauseBB, this.textColor == 1 || this.controls);
                 buildButton(ctx, "Restart", this.restartPauseBB, this.textColor == 2);
                 buildButton(ctx, "Main Menu", this.returnMenuPauseBB, this.textColor == 3);
+                buildButton(ctx, " Unpause", this.unpauseBB, this.textColor == 4);
 
                 if (this.controls) {
                     this.myControlBox.show = true;
@@ -1055,7 +1099,7 @@ class SceneManager {
     }
 
     drawTitleGUI(ctx) {
-        if (this.title) {
+        if (this.title && !this.usingLevelSelect) {
             var fontSize = 60;
             var titleFont = fontSize + 'px "Press Start 2P"';
             ctx.font = "Bold" + titleFont;
