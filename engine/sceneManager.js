@@ -269,6 +269,8 @@ class SceneManager {
         let levelFour = level1_4;
         let treasureRoom = treasureroom;
         let boss1 = levelBoss1;
+
+        //make sure the boss level is always the last one!
         this.levels = [levelZero, levelOne, levelTwo, levelThree, levelFour, treasureRoom, boss1];
     }
 
@@ -696,7 +698,7 @@ class SceneManager {
     }
 
     updateTitleScreen() {
-        if (this.title) {
+        if (this.title && !this.usingLevelSelect) {
             this.levelTimer = 0;
             //keep attemping to play title music until the user clicks
             if (!MUSIC_MANAGER.isPlaying(MUSIC.TITLE)) {
@@ -830,6 +832,8 @@ class SceneManager {
                 }
                 this.game.click = false;
             }
+            //don't pause a cutscene because the game gets angry and freezes
+            if(PAUSED) PAUSED = false;
         } else if (this.cutScene2) {
             if (this.game.click) {
                 ASSET_MANAGER.playAsset(SFX.SELECT);
@@ -842,7 +846,10 @@ class SceneManager {
                 }
                 this.game.click = false;
             }
+
+            if(PAUSED) PAUSED = false;
         }
+
     };
 
     /**
@@ -1125,7 +1132,7 @@ class SceneManager {
     }
 
     drawTitleGUI(ctx) {
-        if (this.title) {
+        if (this.title && !this.usingLevelSelect) {
             var fontSize = 60;
             var titleFont = fontSize + 'px "Press Start 2P"';
             ctx.font = "Bold" + titleFont;
