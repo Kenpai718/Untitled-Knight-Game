@@ -21,6 +21,26 @@
  * doors must be in the format of door: { x : 1, y : 3 , killQuota : x,  exitLocation: {x: 1, y: 1, levelNum: 1}},
  */
 
+//spawn locations for using a door
+const DOOR_SPAWNS = {
+    //entrances of a level
+    enter_to_level0 : { x: 2, y: 1, levelNum: 0 },
+    enter_to_level1: { x: 2, y: 1, levelNum: 1 },
+    enter_to_level2: { x: 1, y: 1, levelNum: 2 },
+    enter_to_level3: { x: 1, y: 1, levelNum: 3 },
+    enter_to_level4: { x: 3, y: 5, levelNum: 4 },
+    enter_to_treasure: { x: 41, y: 26, levelNum: 5 },
+    enter_to_final: { x: 4, y: 1, levelNum: 6 },
+
+    //exits of a level
+    exit_to_level1: { x: 114, y: 10, levelNum: 1 },
+    exit_to_level2: { x: 114, y: 1, levelNum: 2 },
+    exit_to_level3: { x: 115, y: 23, levelNum: 3 }, 
+    exit_to_level3top: { x: 34, y: 33, levelNum: 3},
+    exit_to_level4: { x: 8, y: 24, levelNum: 4 }
+    
+}
+
 /**TEST LEVEL = Debugging/testing rom aka LEVEL 0 */
 var testLevel = {
     ID: 0,
@@ -32,14 +52,14 @@ var testLevel = {
     //quick access to all levels
     doors: [
 
-        { x: 0, y: 3, killQuota: 0, exitLocation: { x: 5, y: 2, levelNum: 1 }, transition: false }, //door to level 1
-        { x: 6, y: 3, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition: false }, //door to level 2
-        { x: 9, y: 3, killQuota: 0, exitLocation: { x: 4, y: 1, levelNum: 3 }, transition: false }, //door to level 3
+        { x: 0, y: 3, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level1, transition: false }, //door to level 1
+        { x: 6, y: 3, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level2, transition: false }, //door to level 2
+        { x: 9, y: 3, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level3, transition: false }, //door to level 3
 
-        { x: 12, y: 3, killQuota: 0, exitLocation: { x: 10, y: 4, levelNum: 4 }, transition: false }, //door to level 4
-        { x: 24, y: 3, killQuota: 0, exitLocation: { x: 41, y: 26, levelNum: 5 }, transition: false }, //door to treasure room
+        { x: 12, y: 3, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level4, transition: false }, //door to level 4
+        { x: 24, y: 3, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_treasure, transition: false }, //door to treasure room
         //{ x: -1.9, y: 9, killQuota: 0, exitLocation: { x: 2, y: 1, levelNum: 6 }, transition: false }, //door to level 4
-        { x: -1.9, y: 9, killQuota: 0, exitLocation: { x: 40, y: 1, levelNum: 6 }, transition: false }, //door to level 4
+        { x: -1.9, y: 9, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_final, transition: false }, //door to final
 
     ],
 
@@ -134,11 +154,11 @@ var levelLoader = {
 
     //quick access to all levels
     doors: [
-        { x: 0.5, y: 4, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 0 }, transition: false }, //door to level 0 (DEVELOPER ROOM)
-        { x: 7, y: 4, killQuota: 0, exitLocation: { x: 2, y: 1, levelNum: 1 }, transition: false }, //door to level 1
-        { x: 10, y: 4, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition: false }, //door to level 2
-        { x: 13, y: 4, killQuota: 0, exitLocation: { x: 4, y: 1, levelNum: 3 }, transition: false }, //door to level 3
-        { x: 16, y: 4, killQuota: 0, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: false }, //door to level 4
+        { x: 0.5, y: 4, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level0, transition: false }, //door to level 0 (DEVELOPER ROOM)
+        { x: 7, y: 4, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level1, transition: false }, //door to level 1
+        { x: 10, y: 4, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level2, transition: false }, //door to level 2
+        { x: 13, y: 4, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level3, transition: false }, //door to level 3
+        { x: 16, y: 4, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level4, transition: false }, //door to level 4
     ],
 
     torches: [
@@ -305,7 +325,7 @@ var titleScene = {
     ],
 
     signs: [
-        { x: 22, y: 3, title: "VERSION 1.0 (BETA)", text: "" }
+        { x: 22, y: 3, title: "    VERSION 1.0", text: "How did you even get here???" }
     ],
 
     backgroundWalls: [
@@ -363,7 +383,7 @@ var level1_1 = {
     player: { x: 2, y: 1 },
     music: MUSIC.FODLAN_WINDS,
     doors: [
-        { x: 116, y: 12, killQuota: 3, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition: false }, //door to level 2
+        { x: 116, y: 12, killQuota: 3, exitLocation: DOOR_SPAWNS.enter_to_level2, transition: false }, //door to level 2
         //{ x: 2, y: 3, killQuota: 0, exitLocation: { x: 1, y: 1, levelNum: 0 }, transition : false } //debugging room, DELETE THIS BEFORE SUBMISSION!
     ],
 
@@ -607,8 +627,8 @@ var level1_2 = {
     player: { x: 1, y: 1 },
     music: MUSIC.CHASING_DAYBREAK,
     doors: [
-        { x: 116, y: 3, killQuota: 7, exitLocation: { x: 4, y: 3, levelNum: 3 }, transition: false }, //next level to 3
-        { x: 0, y: 3, killQuota: 0, exitLocation: { x: 114, y: 10, levelNum: 1 }, transition: false } //go back to level 1
+        { x: 116, y: 3, killQuota: 7, exitLocation: DOOR_SPAWNS.enter_to_level3, transition: false }, //next level to 3
+        { x: 0, y: 3, killQuota: 0, exitLocation: DOOR_SPAWNS.exit_to_level1, transition: false } //go back to level 1
     ],
 
     signs: [{
@@ -992,9 +1012,9 @@ var level1_3 = {
     ],
 
     doors: [
-        { x: 1, y: 3, killQuota: 0, exitLocation: { x: 114, y: 1, levelNum: 2 }, transition: false }, //go back to level 2
-        { x: 117, y: 25, killQuota: 8, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: false }, // change to level 4 once theres a level 4
-        { x: 34, y: 35, killQuota: 0, exitLocation: { x: 41, y: 26, levelNum: 5 }, transition: false } // change to treasure room
+        { x: 1, y: 3, killQuota: 0, exitLocation: DOOR_SPAWNS.exit_to_level2, transition: false }, //go back to level 2
+        { x: 117, y: 25, killQuota: 8, exitLocation: DOOR_SPAWNS.enter_to_level4, transition: false }, // change to level 4 once theres a level 4
+        { x: 34, y: 35, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_treasure, transition: false } // change to treasure room
     ],
     ground: [
         { x: 0, y: 0, width: 10, type: 1 },
@@ -1015,7 +1035,7 @@ var level1_3 = {
     ],
     shrooms: [
         { x: 107, y: 32, guard: false },
-        { x: 36, y: 35, guard: false },
+        //{ x: 36, y: 35, guard: false },
         { x: 61, y: 9, guard: false }
     ],
     goblins: [
@@ -1207,8 +1227,8 @@ var level1_4 = {
         },
     ],
     doors: [
-        { x: 3, y: 6, killQuota: 0, exitLocation: { x: 115, y: 23, levelNum: 3 }, transition: false }, //starting door
-        { x: 6, y: 26, killQuota: 8, exitLocation: { x: 4, y: 1, levelNum: 6 }, transition: false }, //exit door
+        { x: 3, y: 6, killQuota: 0, exitLocation: DOOR_SPAWNS.exit_to_level3, transition: false }, //starting door
+        { x: 6, y: 26, killQuota: 8, exitLocation: DOOR_SPAWNS.enter_to_final, transition: false }, //exit door
     ],
     npcs: [
         {
@@ -1559,7 +1579,7 @@ var treasureroom = {
     //quick access to all levels
     doors: [
 
-        { x: 41, y: 28, killQuota: 0, exitLocation: { x: 34, y: 33, levelNum: 3 }, transition: false }, //door to level 1
+        { x: 41, y: 28, killQuota: 0, exitLocation: DOOR_SPAWNS.exit_to_level3top, transition: false }, //door to level 3 top
 
     ],
 
@@ -1990,7 +2010,7 @@ var levelBoss1 = {
     ],
 
     doors: [
-        { x: 1, y: 3, killQuota: 0, exitLocation: { x: 8, y: 24, levelNum: 4 }, transition: false }, //door to level 1
+        { x: 1, y: 3, killQuota: 0, exitLocation: DOOR_SPAWNS.exit_to_level4, transition: false }, //door to level 1
     ],
 
     signs: [
