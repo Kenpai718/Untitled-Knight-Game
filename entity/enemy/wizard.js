@@ -326,7 +326,7 @@ class Wizard extends AbstractBoss {
             //special message if player fights boss with no diamonds spent
             if (this.game.myReportCard.myDiamondsSpent == 0) {
                 let diamondMsg;
-                this.game.myReportCard.myDiamondsEarned > 0 ? diamondMsg = "You got " + this.game.myReportCard.myDiamondsEarned + " DIAMONDs and didn't give me a single one..." : diamondMsg = "How could you be so greedy and not give me a single DIAMOND?";
+                this.game.myReportCard.myDiamondsEarned > 0 ? diamondMsg = "You got " + this.game.myReportCard.myDiamondsEarned + " DIAMONDS and didn't give me a single one..." : diamondMsg = "How could you be so greedy and not give me a single DIAMOND?";
                 let message = [
                     "You didn't trust me from the start, did you?",
                     diamondMsg,
@@ -339,7 +339,13 @@ class Wizard extends AbstractBoss {
                 this.myTextBox.updateMessage(message, cutsceneTime);
 
             } else { //default cutscene message
-                this.myTextBox.updateMessage(this.myPhaseMessages[this.phase], cutsceneTime);
+                let message = ["Muhahaha. You fool!!!",
+                "I was just using you the whole time.",
+                "Those " + this.game.myReportCard.myDiamondsSpent + " DIAMONDS you gave me?",
+                "They just made me stronger~",
+                "Now I will take over this world...,",
+                "and no-one can stand in my way!"];
+                this.myTextBox.updateMessage(message, cutsceneTime);
             }
 
         }
@@ -513,7 +519,7 @@ class Wizard extends AbstractBoss {
                 if (this.lastPhase != this.phase) {
                     let message;
                     (this.myPhaseMessages[this.phase] == null || this.myPhaseMessages[this.phase] == null) ? message = "...?!" : message = this.myPhaseMessages[this.phase];
-                    this.myTextBox.updateMessage(message, 5);
+                    this.myTextBox.updateMessage(message, 8);
                 }
                 this.myTextBox.updateCords(this.BB.mid - this.BB.width / 3, this.BB.top);
                 this.lastPhase = this.phase;
@@ -1016,7 +1022,7 @@ class Wizard extends AbstractBoss {
                 if (this.velocity.x <= -PLAYER_PHYSICS.MAX_RUN * scaler) this.velocity.x = -PLAYER_PHYSICS.MAX_RUN * scaler;
 
                 //hitbox same as bounding box
-                this.HB = this.BB;
+                this.HB = new BoundingBox(this.BB.x, this.BB.y + (this.BB.height / 4), this.BB.width, this.BB.height / 2);
                 //stop dashing after a set amount of time and reset
                 if (this.dashTimer > this.maxDashTime) {
                     this.dashTimer = 0;
