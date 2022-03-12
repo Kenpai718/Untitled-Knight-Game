@@ -95,6 +95,13 @@ class NPC extends AbstractEntity {
                 let playerNear = entity.BB && self.VB.collide(entity.BB);
                 self.showTextBox = playerNear && !SHOP_ACTIVE && self.state == self.states.active;
                 if (playerNear) {
+                    //special message from NPC if you died and respawned from checkpoint
+                    if(entity.respawn) {
+                        let deathMsg = [
+                            "Hey you. You're finally awake.",
+                        ]
+                        self.myTextBox.updateMessage(deathMsg, 0);
+                    }
 
                     if (self.state != self.states.awaking) {
 
