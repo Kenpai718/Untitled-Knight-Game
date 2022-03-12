@@ -178,7 +178,7 @@ class Wizard extends AbstractBoss {
     }
 
     recoverDamage(damage) {
-        if (damage > 0 && this.player.vulnerable) Math.floor(this.healSelf(damage * this.player.getDefenseBonus() * this.recoverDamagePrcnt / 100));
+        if (damage > 0 && this.player.vulnerable) this.healSelf(Math.floor(damage * this.player.getDefenseBonus() * this.recoverDamagePrcnt / 100));
     }
 
     setDamagedState() {
