@@ -166,7 +166,7 @@ class AbstractPlayer extends AbstractEntity {
         if (this.canTakeDamage()) {
             isCritical ? ASSET_MANAGER.playAsset(SFX.CRITICAL) : ASSET_MANAGER.playAsset(SFX.DAMAGED);
             this.takeKnockback();
-            dmg = damage * this.getDefenseBonus()
+            dmg = Math.round(damage * this.getDefenseBonus());
             this.hp -= dmg;
             this.vulnerable = false;
 

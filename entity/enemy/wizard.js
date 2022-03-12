@@ -138,7 +138,7 @@ class Wizard extends AbstractBoss {
         this.dashDamage = 15 + Math.ceil(inventory.attackUpgrade/4) + inventory.attackUpgrade;
 
         // buff from armor upgrade
-        this.recoverDamagePrcnt = 20 + 20 * inventory.armorUpgrade;
+        this.recoverDamagePrcnt = 20 + 10 * inventory.armorUpgrade;
 
         // buff if player is fully upgraded
         // hp buff: 2000
@@ -150,7 +150,7 @@ class Wizard extends AbstractBoss {
             this.fireballDmg = 15;
             this.beamDamage = 15;
             this.dashDamage = 25;
-            this.recoverDamagePrcnt = 125;
+            this.recoverDamagePrcnt = 75;
         }
 
         this.hp = this.max_hp;
@@ -174,12 +174,11 @@ class Wizard extends AbstractBoss {
                 damage *= 1.3;
                 break;
         }
-        if (this.player.action != this.player.states.roll) this.recoverDamage(damage);
         return damage;
     }
 
     recoverDamage(damage) {
-        if (damage > 0 && this.player.vulnerable) this.healSelf(damage * this.player.getDefenseBonus() * this.recoverDamagePrcnt / 100);
+        if (damage > 0 && this.player.vulnerable) Math.floor(this.healSelf(damage * this.player.getDefenseBonus() * this.recoverDamagePrcnt / 100));
     }
 
     setDamagedState() {
@@ -587,14 +586,14 @@ class Wizard extends AbstractBoss {
         else if (this.reappearWaitTime > 0){
             this.reappearWaitTime -= TICK;
             let inventory = this.player.myInventory;
-            let heal = 4 + 4 * inventory.armorUpgrade;
-            if (this.hp > this.max_hp * (.15 + .1 * inventory.armorUpgrade) && inventory.armorUpgrade == 0) 
+            let heal = 4;
+            if (this.hp > this.max_hp * (.15 +.1 * inventory.armorUpgrade)) 
                 heal = 0;
             this.hp += heal;
-            if (this.maxStats && this.hp > this.max_hp * .75) {
-                this.hp = this.max_hp * .75;
+            if (this.maxStats && this.hp > this.max_hp * .4) {
+                this.hp = this.max_hp * .4;
             }
-            else if (!this.maxStats && this.hp > this.max_hp * (.15 + .1 * inventory.armorUpgrade) && heal > 0) {
+            else if (!this.maxStats && this.hp > this.max_hp * (.15 + .05 * inventory.armorUpgrade) && heal > 0) {
                 this.hp = this.max_hp * (.15 + .1 * inventory.armorUpgrade);
             }
         }
