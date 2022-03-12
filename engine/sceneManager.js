@@ -138,7 +138,7 @@ class SceneManager {
             [
                 "This is the story all about",
                 "that one time I got reincarnated",
-                "into a knight and had to save the",
+                "as a knight and had to save the",
                 "castle that was overrun by evil."
             ];
         let beginScene2 =
@@ -151,23 +151,9 @@ class SceneManager {
                 "Little did I know..."
             ];
 
-        var maxLength = 0;
-        for (var i = 0; i < beginScene1.length; i++) maxLength = Math.max(beginScene1[i].length, maxLength);
-        var x = (this.game.surfaceWidth / 2) - ((40 * maxLength) / 2);
-        var y = (this.game.surfaceHeight / 2) - 90 * Math.ceil(beginScene1.length / 2);
-        let beginScene1TB = new SceneTextBox(this.game, x, y, beginScene1, 40, 50);
-
-        maxLength = 0;
-        for (var i = 0; i < beginScene2.length; i++) maxLength = Math.max(beginScene2[i].length, maxLength);
-        x = (this.game.surfaceWidth / 2) - ((40 * maxLength) / 2);
-        y = (this.game.surfaceHeight / 2) - 90 * Math.ceil(beginScene2.length / 2);
-        let beginScene2TB = new SceneTextBox(this.game, x, y, beginScene2, 40, 50);
-
-        maxLength = 0;
-        for (var i = 0; i < beginScene3.length; i++) maxLength = Math.max(beginScene3[i].length, maxLength);
-        x = (this.game.surfaceWidth / 2) - ((40 * maxLength) / 2);
-        y = (this.game.surfaceHeight / 2) - 90 * Math.ceil(beginScene3.length / 2);
-        let beginScene3TB = new SceneTextBox(this.game, x, y, beginScene3, 40, 50);
+        let beginScene1TB = this.buildSequenceBox(beginScene1);
+        let beginScene2TB = this.buildSequenceBox(beginScene2);
+        let beginScene3TB = this.buildSequenceBox(beginScene3);
 
         this.beginSequence = [beginScene1TB, beginScene2TB, beginScene3TB];
     }
@@ -177,42 +163,73 @@ class SceneManager {
         this.game.click = false;
         let endScene1 =
             [
-                "This is the story all about",
+                "This was the story all about",
                 "that one time I got reincarnated",
-                "into a knight and had to save the",
+                "as an \'Untitled Knight\' to save the",
                 "castle that was overrun by evil."
             ];
         let endScene2 =
             [
-                "All I had to do was take down",
-                "the mastermind behind the operation."
+                "I thought the Wizard was my friend,",
+                "but in the end it was all a ruse...",
+                "He tried to use me to gain the",
+                "power of the DIAMONDS,",
+                "and destroy the whole universe!"
             ];
         let endScene3 =
             [
-                "Little did I know..."
+                "But, I stopped him before it was too late.",
+            ];
+        let endScene4 =
+            [
+                "And with that my story comes to close.",
+                "The story of how I became a..."
             ];
 
-        var maxLength = 0;
-        for (var i = 0; i < endScene1.length; i++) maxLength = Math.max(endScene1[i].length, maxLength);
-        var x = (this.game.surfaceWidth / 2) - ((40 * maxLength) / 2);
-        var y = (this.game.surfaceHeight / 2) - 90 * Math.ceil(endScene1.length / 2);
-        let endScene1TB = new SceneTextBox(this.game, x, y, endScene1, 40, 50);
+        let endScene5 =
+            [
+                "\'Titled Knight\'."
+            ];
 
-        maxLength = 0;
-        for (var i = 0; i < endScene2.length; i++) maxLength = Math.max(endScene2[i].length, maxLength);
-        x = (this.game.surfaceWidth / 2) - ((40 * maxLength) / 2);
-        y = (this.game.surfaceHeight / 2) - 90 * Math.ceil(endScene2.length / 2);
-        let endScene2TB = new SceneTextBox(this.game, x, y, endScene2, 40, 50);
+        let endScene6 =
+            [
+                "The End.",
+            ];
 
-        maxLength = 0;
-        for (var i = 0; i < endScene3.length; i++) maxLength = Math.max(endScene3[i].length, maxLength);
-        x = (this.game.surfaceWidth / 2) - ((40 * maxLength) / 2);
-        y = (this.game.surfaceHeight / 2) - 90 * Math.ceil(endScene3.length / 2);
-        let endScene3TB = new SceneTextBox(this.game, x, y, endScene3, 40, 50);
+        let endScene7 =
+            [
+                "This game was developed by:",
+                "-Kenneth Ahrens",
+                "-Embert Pezalli",
+                "-Andre Larson",
+                "-David Shcherbina",
+                "",
+                "Please share the game with",
+                "your friends if you enjoyed! :)"
+            ];
 
-        this.endSequence = [endScene1TB, endScene2TB, endScene3TB];
+        let endScene1TB = this.buildSequenceBox(endScene1);
+        let endScene2TB = this.buildSequenceBox(endScene2);
+        let endScene3TB = this.buildSequenceBox(endScene3);
+        let endScene4TB = this.buildSequenceBox(endScene4);
+        let endScene5TB = this.buildSequenceBox(endScene5);
+        let endScene6TB = this.buildSequenceBox(endScene6);
+        let endScene7TB = this.buildSequenceBox(endScene7);
+
+        this.endSequence = [endScene1TB, endScene2TB, endScene3TB, endScene4TB, endScene5TB, endScene6TB, endScene7TB];
         this.clearEntities();
         this.player.removeFromWorld = true;
+
+        //set finished game flag
+        this.game.completed = true;
+    }
+
+    buildSequenceBox(sequence) {
+        var maxLength = 0;
+        for (var i = 0; i < sequence.length; i++) maxLength = Math.max(sequence[i].length, maxLength);
+        var x = (this.game.surfaceWidth / 2) - ((40 * maxLength) / 2);
+        var y = (this.game.surfaceHeight / 2) - 90 * Math.ceil(sequence.length / 2);
+        return new SceneTextBox(this.game, x, y, sequence, 40, 50);
     }
 
     /**
@@ -1076,13 +1093,24 @@ class SceneManager {
             var titleFont = fontSize + 'px "Press Start 2P"';
             ctx.font = "Bold" + titleFont;
             ctx.fillStyle = "White";
-            let gameTitle = "Untitled Knight Game";
+            let gameTitle;
 
-            ctx.font = titleFont;
-            ctx.fillStyle = "Orchid";
-            ctx.fillText(gameTitle, (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2) + 5, fontSize * 3 + 5);
-            ctx.fillStyle = "GhostWhite";
-            ctx.fillText(gameTitle, (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 3);
+            if (this.game.completed) {
+                gameTitle = "Titled Knight Game"
+                ctx.font = titleFont;
+                ctx.fillStyle = "GhostWhite";
+                ctx.fillText(gameTitle, (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2) + 5, fontSize * 3 + 5);
+                ctx.fillStyle = "LightSteelBlue";
+                ctx.fillText(gameTitle, (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 3);
+            } else {
+                gameTitle = "Untitled Knight Game";
+                ctx.font = titleFont;
+                ctx.fillStyle = "Orchid";
+                ctx.fillText(gameTitle, (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2) + 5, fontSize * 3 + 5);
+                ctx.fillStyle = "GhostWhite";
+                ctx.fillText(gameTitle, (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 3);
+            }
+
             if (!this.usingLevelSelect) buildTextButton(ctx, "Start Game", this.startGameBB, this.textColor == 1, "DeepPink");
             buildTextButton(ctx, "Controls", this.controlsBB, this.textColor == 2 || this.controls, "DeepSkyBlue");
             buildTextButton(ctx, "Credits", this.creditsBB, this.textColor == 3 || this.credits, "DeepSkyBlue");
@@ -1139,10 +1167,32 @@ class SceneManager {
         if (this.cutScene1 && this.beginSequence.length != 0) {
             this.beginSequence[0].show = true;
             this.beginSequence[0].draw(ctx);
+
+            ctx.font = PARAMS.BIG_FONT; //this is size 20 font
+
+            let label = "Click to continue";
+            let offset = getRightTextOffset(label, 20);
+            let yOffset = this.game.surfaceHeight - 35;
+
+            ctx.fillStyle = "White";
+            ctx.fillText(label, this.game.surfaceWidth - offset + 1, yOffset + 1);
+            ctx.fillStyle = "BlueViolet";
+            ctx.fillText(label, this.game.surfaceWidth - offset, yOffset);
         } else if (this.cutScene2 && this.endSequence.length != 0) {
             this.endSequence[0].show = true;
             this.endSequence[0].draw(ctx);
+
+            ctx.font = PARAMS.BIG_FONT; //this is size 20 font
+            let label = "Click to continue.";
+            let offset = getRightTextOffset(label, 20);
+            let yOffset = this.game.surfaceHeight - 35;
+            ctx.fillStyle = "White";
+            ctx.fillText(label, this.game.surfaceWidth - offset + 1, yOffset + 1);
+            ctx.fillStyle = "BlueViolet";
+            ctx.fillText(label, this.game.surfaceWidth - offset, yOffset);
         }
+
+
     }
 
     /**

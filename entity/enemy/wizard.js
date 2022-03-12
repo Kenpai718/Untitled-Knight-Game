@@ -126,7 +126,7 @@ class Wizard extends AbstractBoss {
             ["Hm... well it seems you can put up a fight."], //middle
             ["N-NO! I'm the strongest in the universe!", "You were made to die by my hand!"], //desperate
             ["Tsk, I underestimated you...",
-                "But I've come to far to fall here, \'Great Hero\'!"] //final,
+                "But I've come too far to fall here, \'Hero\'!"] //final,
         ]
         this.game.addEntityToFront(this.myTextBox);
         this.showTextBox = false;
@@ -318,23 +318,42 @@ class Wizard extends AbstractBoss {
     playInitialCutscene() {
         const TICK = this.game.clockTick;
         this.vulnerable = false;
-        let cutsceneTime = 10;
+        let cutsceneTime;
+        this.game.myReportCard.myDiamondsEarned > 0 ? cutsceneTime = 10 : cutsceneTime = 13;
         //set the textbox if its not there right now
-        if(!this.talking) {
+        if (!this.talking) {
             this.talking = true;
-            this.myTextBox.updateMessage(this.myPhaseMessages[this.phase], cutsceneTime);
+            //special message if player fights boss with no diamonds spent
+            if (this.game.myReportCard.myDiamondsSpent == 0) {
+                let diamondMsg;
+                this.game.myReportCard.myDiamondsEarned > 0 ? diamondMsg = "You got " + this.game.myReportCard.myDiamondsEarned + " DIAMONDs and didn't give me a single one..." : diamondMsg = "How could you be so greedy and not give me a single DIAMOND?";
+                let message = [
+                    "You didn't trust me from the start, did you?",
+                    diamondMsg,
+                    "So, you really think you can defeat me without any upgrades?!",
+                    "Hmph, I can defeat a weakling like you in my sleep.",
+                    "",
+                    "It's a beautiful day outside. birds are singing,",
+                    "flowers are blooming... on days like these, kids like you...",
+                    "Should be burning in hell."];
+                this.myTextBox.updateMessage(message, cutsceneTime);
+
+            } else { //default cutscene message
+                this.myTextBox.updateMessage(this.myPhaseMessages[this.phase], cutsceneTime);
+            }
+
         }
         //transition to a raise after timer is over
         this.myCutsceneTimer += TICK;
-        if(this.myCutsceneTimer > cutsceneTime) {
+        if (this.myCutsceneTimer > cutsceneTime) {
             this.state = this.states.raise;
         }
 
         //after raise teleport away and start the battle
-        if(this.state == this.states.raise) {
+        if (this.state == this.states.raise) {
             let animation = this.animations[this.state][this.direction];
             let isDone = animation.isDone();
-            if(isDone) {
+            if (isDone) {
                 this.resetAnimationTimers(this.state);
                 this.state = this.states.idle1;
                 this.activeBoss = true;
@@ -463,41 +482,45 @@ class Wizard extends AbstractBoss {
                     this.teleport();
                 }
                 else this.animations[this.state][this.direction].update(TICK);
-            }
-            // does not update animation if teleporting, which allows current frame to be the frame to use when teleporting
 
-            //vertically track the player
-            //used in the beam phase
-            if (this.tracking) {
-                let buffer = this.BB.height / 2;
+                // does not update animation if teleporting, which allows current frame to be the frame to use when teleporting
 
-                if (this.BB.top + buffer > this.player.BB.top) {
-                    if (this.velocity.y > 0) this.velocity.y = 0;
-                    this.velocity.y -= (this.fallAcc) * TICK;
-                } else {
-                    if (this.velocity.y < 0) this.velocity.y = 0;
-                    this.velocity.y += (this.fallAcc) * TICK;
+                //vertically track the player
+                //used in the beam phase
+                if (this.tracking) {
+                    let buffer = this.BB.height / 2;
+
+                    if (this.BB.top + buffer > this.player.BB.top) {
+                        if (this.velocity.y > 0) this.velocity.y = 0;
+                        this.velocity.y -= (this.fallAcc) * TICK;
+                    } else {
+                        if (this.velocity.y < 0) this.velocity.y = 0;
+                        this.velocity.y += (this.fallAcc) * TICK;
+                    }
+
+                    this.y += this.velocity.y * TICK;
+                    this.updateBoxes();
+                    let dist = { x: 0, y: 0 }; //the displacement needed between entities
+                    dist = super.checkEnvironmentCollisions(dist); //check if colliding with environment and adjust entity accordingly
+                    this.updatePositionAndVelocity(dist); //set where entity is based on interactions/collisions put on dist
+                    this.checkEntityInteractions(dist, TICK);
+                    this.checkCooldowns();
+                    this.checkDirection();
                 }
 
-                this.y += this.velocity.y * TICK;
-                this.updateBoxes();
-                let dist = { x: 0, y: 0 }; //the displacement needed between entities
-                dist = super.checkEnvironmentCollisions(dist); //check if colliding with environment and adjust entity accordingly
-                this.updatePositionAndVelocity(dist); //set where entity is based on interactions/collisions put on dist
-                this.checkEntityInteractions(dist, TICK);
-                this.checkCooldowns();
-                this.checkDirection();
-            }
+                this.lastBB = this.BB;
+                //if the phase is different than the last phase then show a new message dependent on the phase
+                if (this.lastPhase != this.phase) {
+                    let message;
+                    (this.myPhaseMessages[this.phase] == null || this.myPhaseMessages[this.phase] == null) ? message = "...?!" : message = this.myPhaseMessages[this.phase];
+                    this.myTextBox.updateMessage(message, 5);
+                }
+                this.myTextBox.updateCords(this.BB.mid - this.BB.width / 3, this.BB.top);
+                this.lastPhase = this.phase;
 
-            this.lastBB = this.BB;
-            //if the phase is different than the last phase then show a new message dependent on the phase
-            if(this.lastPhase != this.phase) {
-                let message;
-                (this.myPhaseMessages[this.phase] == null || this.myPhaseMessages[this.phase] == null) ? message = "...?!" : message = this.myPhaseMessages[this.phase];
-                this.myTextBox.updateMessage(message, 5);
+                //message change if player dead
+                if (this.player.dead) this.myTextBox.updateMessage("How pathetic.", 5);
             }
-            if(this.myTextBox.show) this.myTextBox.updateCords(this.BB.mid - this.BB.width / 3, this.BB.top);
-            this.lastPhase = this.phase;
 
         }
     }

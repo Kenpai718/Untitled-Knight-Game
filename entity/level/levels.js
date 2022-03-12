@@ -1549,10 +1549,12 @@ var treasureroom = {
     player: { x: 40, y: 28 },
     music: MUSIC.SPLENDOUR,
 
-    npcs: [{ x: 37, y: 28, text: [
-                                  "Treasure lurks in every corner...",
-                                  "Take to the skies, hero,",
-                                  "but don't allow greed to consume you."] }],
+    npcs: [{
+        x: 37, y: 28, text: [
+            "Treasure lurks in every corner...",
+            "Take to the skies, hero,",
+            "but don't allow greed to consume you."]
+    }],
 
     //quick access to all levels
     doors: [
@@ -1956,38 +1958,47 @@ var levelBoss1 = {
     music: MUSIC.COUNTERATTACK,
 
     npcs: [
-        {x: 14, y: 1, text: [
-            "The demon lord is right ahead!",
-            "You should prepare yourself...",
-            "Good luck, hero."]
+        {
+            x: 14, y: 1, text: [
+                "The demon lord is right ahead!",
+                "You should prepare yourself...",
+                "Good luck, hero."]
         },
     ],
 
     portal: { x: 115, y: 4 },
 
     chests: [
-        { x: 7, y: 1, direction: 0},
+        { x: 7, y: 1, direction: 0 },
         { x: 9, y: 1, direction: 0 },
         { x: 11, y: 1, direction: 0 },
     ],
 
-    events: [
-        {
-            space: [
-                { x: 62, y: 20, width: 39, height: 20 }
-            ],
-            walls: [
-                { x: 60, y: 5, height: 5, type: 2 },
-                { x: 102, y: 5, height: 5, type: 0 },
-                { x: 103, y: 5, height: 5, type: 2 },
-                { x: 59, y: 5, height: 5, type: 0 },
-            ],
-            wizard: { x: 75, y: 2, left: 61, right: 102, top: 6, bottom: 1 },
-        }
-    ],
+    // events: [
+    //     {
+    //         space: [
+    //             { x: 62, y: 20, width: 39, height: 20 }
+    //         ],
+    //         walls: [
+    //             { x: 60, y: 5, height: 5, type: 2 },
+    //             { x: 102, y: 5, height: 5, type: 0 },
+    //             { x: 103, y: 5, height: 5, type: 2 },
+    //             { x: 59, y: 5, height: 5, type: 0 },
+    //         ],
+    //         wizard: { x: 75, y: 2, left: 61, right: 102, top: 6, bottom: 1 },
+    //     }
+    // ],
     doors: [
         { x: 1, y: 3, killQuota: 0, exitLocation: { x: 8, y: 24, levelNum: 4 }, transition: false }, //door to level 1
     ],
+
+    signs: [
+        {
+            x: 112, y: 2, title: "    The End", text: ["This is the end of the game, hero. Your job here is done.",
+                "Enter this portal with [W] and return to your homeworld."]
+        },
+    ],
+
     ground: [
         { x: 0, y: 0, width: 120, height: 1, type: 1 },
     ],
