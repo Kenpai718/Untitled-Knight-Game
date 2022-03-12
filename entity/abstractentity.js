@@ -84,13 +84,17 @@ class AbstractEntity {
     doDamage(entity) {
         //only do damage if the entity can be damaged
         //make sure the entity has this
+        var dmg = 0;
         if (entity.canTakeDamage()) {
-            var dmg = this.getDamageValue();
+            dmg = this.getDamageValue();
             if (dmg > 0) {
-                entity.takeDamage(dmg);
+                dmg = entity.takeDamage(dmg);
             }
         }
+        return dmg;
     }
+
+    
 
     /**
      * Entity takes damages
@@ -110,6 +114,7 @@ class AbstractEntity {
 
             this.game.addEntityToFront(new Score(this.game, this, damage, PARAMS.DMG_ID, isCritical));
         }
+        return damage;
     }
 
     /**

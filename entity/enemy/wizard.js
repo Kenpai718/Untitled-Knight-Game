@@ -3,7 +3,7 @@ class Wizard extends AbstractBoss {
         // basic boss setup
         super(game, x, y, false, STATS.WIZARD.NAME, STATS.WIZARD.MAX_HP, STATS.WIZARD.WIDTH, STATS.WIZARD.HEIGHT, STATS.WIZARD.SCALE, STATS.WIZARD.PHYSICS);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/wizard.png");
-        this.activeBoss = true;
+        this.activeBoss = false;
         this.animations = [];
         this.loadAnimations();
         this.updateBoxes();
@@ -48,7 +48,6 @@ class Wizard extends AbstractBoss {
         // spawned attacks
         this.fireball = null;
         this.fireCircle = [];
-        this.beamDamage = 5; //initial beam damage. it ramps up with phases.
         this.dashTimer = 0;
         this.maxDashTime = 1;
 
@@ -58,6 +57,7 @@ class Wizard extends AbstractBoss {
         this.telportTimer = 0;
         this.appearTime = 0;
         this.disappearTime = 0;
+        this.reappearWaitTime = 0;
         this.ringWait = 0;
         this.arrowTimer = 0;
         this.aura = "none";
@@ -86,28 +86,9 @@ class Wizard extends AbstractBoss {
         this.top = top;
         this.bottom = bottom;
 
+
         /** buff wizard based on the player */
         this.player = this.game.camera.player;
-        let inventory = this.player.myInventory;
-
-
-        // hp buff: base 1000, max 500
-        this.max_hp += 125 * inventory.healthUpgrade;
-
-        // fireball buff: base 5, max 8
-        this.fireballDmg = 5 + inventory.attackUpgrade / 2;
-
-        // buff if player is fully upgraded
-        // hp buff: max 2000
-        // fireball buff: max 10
-        //
-        this.maxStats = inventory.healthUpgrade >= 4 && inventory.attackUpgrade >= 4 && inventory.arrowUpgrade >= 4 && inventory.armorUpgrade >= 3;
-        if (this.maxStats) {
-            this.max_hp += 200;
-            this.fireballDmg += 2;
-        }
-
-        this.hp = this.max_hp;
 
         //music
         this.playMusic = true;
@@ -136,6 +117,36 @@ class Wizard extends AbstractBoss {
         this.myCutsceneTimer = 0;
     }
 
+    buffWizard() {
+        let inventory = this.player.myInventory;
+
+        // buff from health upgrade
+        this.max_hp = 1000 + 50 * inventory.healthUpgrade;
+
+        // buff from attack upgrade
+        this.fireballDmg = 5 + inventory.attackUpgrade + inventory.arrowUpgrade / 2;
+        this.beamDamage = 5 + inventory.attackUpgrade / 2 + inventory.arrowUpgrade; //initial beam damage. it ramps up with phases.
+        this.dashDamage = 15 + Math.ceil(inventory.attackUpgrade/4) + inventory.attackUpgrade;
+
+        // buff from armor upgrade
+        this.recoverDamagePrcnt = 20 + 20 * inventory.armorUpgrade;
+
+        // buff if player is fully upgraded
+        // hp buff: 2000
+        // fireball buff: 10
+        // beam buff: 10
+        this.maxStats = inventory.healthUpgrade >= 4 && inventory.attackUpgrade >= 4 && inventory.arrowUpgrade >= 4 && inventory.armorUpgrade >= 3;
+        if (this.maxStats) {
+            this.max_hp = 2000;
+            this.fireballDmg = 15;
+            this.beamDamage = 15;
+            this.dashDamage = 25;
+            this.recoverDamagePrcnt = 125;
+        }
+
+        this.hp = this.max_hp;
+    }
+
     // use after any change to this.x or this.y
     updateBoxes() {
         this.getOffsets();
@@ -148,7 +159,7 @@ class Wizard extends AbstractBoss {
     getDamageValue() {
         let damage = 0;
         if (this.state == this.states.fly && this.action == this.actions.dash) {
-            damage = 15;
+            damage = this.dashDamage;
         }
 
         //damage multiplier
@@ -163,8 +174,12 @@ class Wizard extends AbstractBoss {
                 damage *= 1.3;
                 break;
         }
-
+        if (this.player.action != this.player.states.roll) this.recoverDamage(damage);
         return damage;
+    }
+
+    recoverDamage(damage) {
+        if (damage > 0 && this.player.vulnerable) this.healSelf(damage * this.player.getDefenseBonus() * this.recoverDamagePrcnt / 100);
     }
 
     setDamagedState() {
@@ -200,20 +215,22 @@ class Wizard extends AbstractBoss {
             if (this.state == this.states.stun) {
                 if (this.hp / this.max_hp < 0.25 && this.phase < this.phases.final) {
                     this.phase = this.phases.final;
-                    this.skeletonChance = 30;
-                    this.skeletonBase = 2;
+                    this.startFinal = true;
+                    this.skeletonChance = 50;
+                    this.skeletonBase = 1;
                     this.activateTeleport();
-                    //this.disappearTime = 5;
+                    this.reappearWaitTime = 5;
                 }
                 else if (this.hp / this.max_hp < 0.50 && this.phase < this.phases.desperate) {
                     this.phase = this.phases.desperate;
-                    this.skeletonChance = 25;
+                    this.skeletonChance = 35;
+                    this.skeletonVar = 1;
                     this.activateTeleport();
                 }
                 else if (this.hp / this.max_hp < 0.75 && this.phase < this.phases.middle) {
                     this.phase = this.phases.middle;
                     this.skeletonChance = 20;
-                    this.skeletonVar = 3;
+                    this.skeletonVar = 2;
                     this.activateTeleport();
                 }
             }
@@ -265,36 +282,6 @@ class Wizard extends AbstractBoss {
         this.game.entities.forEach(function (entity) {
             let states = [];
             if (entity instanceof AbstractPlayer) {
-                /*
-                const dest = { x: entity.BB.left + entity.BB.width / 2, y: entity.BB.top + entity.BB.height / 2 };
-                const init = { x: self.BB.left + self.BB.width / 2, y: self.BB.top + self.BB.height / 2 };
-                const distX = dest.x - init.x;
-                const distY = dest.y - init.y;
-                const dist = Math.sqrt(distX * distX + distY * distY);
-                if (self.state == self.states.idle) {
-
-                }
-                if (states.length > 1 && Math.random() > 0.25) {
-                    //states.pop();
-                }
-                if (states.length > 0) {
-                    //let state = states.pop();
-                    //self.state = state;
-                }
-                let playerInVB = entity.BB && self.VB.collide(entity.BB);
-                let playerAtkInVB = entity.HB != null && self.VB.collide(entity.HB);
-                if (playerInVB || playerAtkInVB || self.aggro) {
-                }*/
-                //else {
-                /*if (self.state == self.state.attack1) {
-                    self.velocity.x = 0;
-                    self.velocity.y = 0;
-                }
-
-                if (self.state != self.states.idle1)
-                    self.resetAnimationTimers(self.state);
-                self.state = self.states.idle1;*/
-                //}
                 if (entity.HB && self.BB.collide(entity.HB)) {
                     self.setDamagedState();
                 }
@@ -366,7 +353,12 @@ class Wizard extends AbstractBoss {
                 this.myCutsceneTimer = 0;
                 this.talking = false;
                 this.vulnerable = true;
+                this.game.entities.forEach(entity => {
+                    if (entity instanceof NPC) 
+                        entity.removeFromWorld = true;
+                });
                 this.activateTeleport();
+                this.buffWizard();
             }
         }
 
@@ -394,6 +386,7 @@ class Wizard extends AbstractBoss {
                 this.fireCircle.forEach(fireball => fireball.removeFromWorld = true);
                 if (this.fireball)
                     this.fireball.removeFromWorld = true;
+                this.game.enemies.forEach(enemy => enemy.dead = true);
                 if (this.animations[this.state][this.direction].isDone()) {
                     this.playEndMusic();
                 }
@@ -592,6 +585,20 @@ class Wizard extends AbstractBoss {
             this.BB = BB;
             this.reappearTime = .3;
             this.disappearTime = 100;
+        }
+        else if (this.reappearWaitTime > 0){
+            this.reappearWaitTime -= TICK;
+            let inventory = this.player.myInventory;
+            let heal = 4 + 4 * inventory.armorUpgrade;
+            if (this.hp > this.max_hp * (.15 + .1 * inventory.armorUpgrade) && inventory.armorUpgrade == 0) 
+                heal = 0;
+            this.hp += heal;
+            if (this.maxStats && this.hp > this.max_hp * .76) {
+                this.hp = this.max_hp * .75;
+            }
+            else if (this.hp > this.max_hp * (.15 + .1 * inventory.armorUpgrade) && heal > 0) {
+                this.hp = this.max_hp * (.15 + .1 * inventory.armorUpgrade);
+            }
         }
         // appear where disappear determined
         else if (this.reappearTime > 0) {
@@ -948,9 +955,9 @@ class Wizard extends AbstractBoss {
         }
 
         if (this.direction == this.directions.right)
-            this.game.addEntity(new WindBall(this.game, this.BB.right - this.BB.width, this.BB.top - 10, this.direction, 2, damage, isDestroyable, speed));
+            this.game.addEntity(new WindBall(this.game, this.BB.right - this.BB.width, this.BB.top - 10, this.direction, 2, this, damage, isDestroyable, speed));
         else
-            this.game.addEntity(new WindBall(this.game, this.BB.left - this.BB.width * 2, this.BB.top - 10, this.direction, 2, damage, isDestroyable, speed));
+            this.game.addEntity(new WindBall(this.game, this.BB.left - this.BB.width * 2, this.BB.top - 10, this.direction, 2, this, damage, isDestroyable, speed));
     }
 
     /**
@@ -1122,7 +1129,7 @@ class Wizard extends AbstractBoss {
                     this.tHeight += 4000 * TICK;
                     if (this.tHeight > 300 * this.scale) this.tHeight = 300 * this.scale;
                 }
-                else if (this.reappearTime > 0) {
+                else if (this.reappearTime > 0 && this.reappearWaitTime <= 0) {
                     this.tWidth += 4000 * TICK;
                     if (this.tWidth > 80 * this.scale) this.tWidth = 80 * this.scale;
                     this.tHeight -= 4000 * TICK;

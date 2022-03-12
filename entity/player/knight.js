@@ -833,6 +833,7 @@ class Knight extends AbstractPlayer {
             //disable attack so the player isn't buffered into an attack during the roll
             this.game.attack = false;
             this.game.shoot = false;
+            this.arrow = false;
             this.resetCombo();
             this.HB = null;
 
@@ -841,7 +842,10 @@ class Knight extends AbstractPlayer {
                 else this.facing = this.dir.left;
             }
             //set roll behavior
-            this.action = this.states.roll; //roll
+            if (this.action != this.states.roll) {
+                this.resetAnimationTimers(this.action);
+                this.action = this.states.roll; //roll
+            }
             this.velocity.x += (this.facing == this.dir.left) ? -1 * (PLAYER_PHYSICS.ROLL_SPD) : (PLAYER_PHYSICS.ROLL_SPD); //movement speed boost
             if (this.vulnerable) {
                 ASSET_MANAGER.playAsset(SFX.DODGE);
