@@ -149,12 +149,14 @@ class Arrow extends AbstractEntity {
     }
 
     doArrowHit(entity) {
-        if (entity.canTakeDamage()) this.game.myReportCard.myDamageDealt += this.getDamageValue();
-        ASSET_MANAGER.playAsset(SFX.ARROW_HIT);
-        this.removeFromWorld = true;
-        this.hit = true;
-        entity.takeDamage(this.getDamageValue(), this.critical);
-        entity.setDamagedState();
+        if (entity.canTakeDamage()) {
+            this.game.myReportCard.myDamageDealt += this.getDamageValue();
+            ASSET_MANAGER.playAsset(SFX.ARROW_HIT);
+            this.removeFromWorld = true;
+            this.hit = true;
+            entity.takeDamage(this.getDamageValue(), this.critical);
+            entity.setDamagedState();
+        }
     }
 
     updateBB() {
