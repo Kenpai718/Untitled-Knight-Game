@@ -173,6 +173,10 @@ class Wizard extends AbstractBoss {
             if (this.HB)
                 this.HB = null;
             this.fireCircle.forEach(fireball => fireball.removeFromWorld = true);
+            this.game.enemies.forEach(enemy =>{
+                if (!(enemy instanceof Wizard))
+                    enemy.dead = true;
+            })
             this.fireCircle = [];
             this.actionCooldown = 4;
             this.action = this.actions.stunned;
