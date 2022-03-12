@@ -441,39 +441,6 @@ class SceneManager {
                 newEnem.bottom = enemy.bottom;
             }
             enemies.push(newEnem);
-
-
-            /* older saving codem ay discard when confirmed to work well.
-            var newEnem = null;
-            if (enemy instanceof Mushroom)
-                newEnem = new Mushroom(self.game, 0, 0, false);
-            else if (enemy instanceof Skeleton)
-                newEnem = new Skeleton(self.game, 0, 0, false);
-            else if (enemy instanceof Goblin)
-                newEnem = new Goblin(self.game, 0, 0, false);
-            else if (enemy instanceof FlyingEye)
-                newEnem = new FlyingEye(self.game, 0, 0, false);
-            else if (enemy instanceof Slime)
-                newEnem = new Slime(self.game, 0, 0, false);
-            else if (enemy instanceof DemonSlime)
-                newEnem = new DemonSlime(self.game, 0, 0, false);
-            else if (enemy instanceof Wizard) {
-                newEnem = new Wizard(self.game, 0, 0, false);
-                //for (var i in enemy)
-                //    newEnem[i] = enemy[i];
-            }
-            if (newEnem) {
-                newEnem.x = enemy.x;
-                newEnem.y = enemy.y;
-                newEnem.max_hp = enemy.max_hp;
-                newEnem.hp = enemy.hp;
-                if (enemy.direction)
-                    newEnem.direction = enemy.direction;
-                enemies.push(newEnem);
-            }
-            else
-                throw new Error("Enemy type not accounted for: " + enemy.constructor.name);*/
-
         });
         return enemies;
     }
@@ -1949,9 +1916,3 @@ class Minimap {
 
     };
 };
-
-class Something {
-    constructor(game) {
-        this.game = game;
-    }
-}
