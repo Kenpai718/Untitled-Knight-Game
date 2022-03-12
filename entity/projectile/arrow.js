@@ -43,6 +43,10 @@ class Arrow extends AbstractEntity {
                 this.velocity.y += this.fallAcc * this.game.clockTick;
             }
         }
+        else {
+            this.stuckTimer -= this.game.clockTick;
+            if (this.stuckTimer <= 0) this.removeFromWorld = true;
+        }
 
         this.x += (this.velocity.x * this.game.clockTick);
         this.y += (this.velocity.y * this.game.clockTick);
@@ -71,9 +75,33 @@ class Arrow extends AbstractEntity {
                 hitWall = true;
                 if (!self.stuck) {
                     self.smooth = false;
+                    let check1 = self.BB.left - entity.BB.left;
+                    let check2 = self.BB.right - entity.BB.right;
+                    let check3 = self.BB.top - entity.BB.top;
+                    let check4 = self.BB.bottom - entity.BB.bottom;
+                    if (check1 >= 0 && check2 <= 0 && check3 >= 0 && check4 <= 0) {
+                        let x = 0;
+                        let y = 0;
+                        if (Math.abs(check1) < Math.abs(check2)) x = check1;
+                        else x = check2;
+                        if (Math.abs(check3) < Math.abs(check4)) y = check3;
+                        else y = check4;
+                        let dist = 0;
+                        if (Math.abs(x) < Math.abs(y)) {
+                            if (x == check1) dist = entity.BB.left - self.BB.left + self.BB.width / 2;
+                            else dist = entity.BB.right - self.BB.right - self.BB.width / 2;
+                        }
+                        else {
+                            if (y == check3) dist = entity.BB.top - self.BB.top + self.BB.height / 2;
+                            else dist = entity.BB.bottom - self.BB.bottom - self.BB.height / 2;
+                        }
+                        self.x += dist;
+                        self.y += dist;
+                    }
                     self.velocity.x = 0;
                     self.velocity.y = 0;
                     self.stuck = true;
+                    self.stuckTimer = 15;
                     ASSET_MANAGER.playAsset(SFX.ARROW_STICK);
                 }
             }
