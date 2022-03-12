@@ -174,9 +174,9 @@ class SlimeProjectile extends FlyingEyeProjectile {
 }
 
 class WindBall extends FlyingEyeProjectile {
-    constructor(game, x, y, dir, newScale, newDmg, canDestroy, speedMultiplier) {
+    constructor(game, x, y, dir, newScale, source, newDmg, canDestroy, speedMultiplier) {
         super(game, x, y, dir, newScale);
-
+        this.source = source;
         this.scale = this.scale * newScale;
         this.width = this.width * newScale;
         this.height = this.height * newScale;
@@ -189,6 +189,12 @@ class WindBall extends FlyingEyeProjectile {
 
         this.canDestroy = canDestroy;
         this.velocity = this.velocity * this.speedMultiplier;
+    }
+
+    getDamageValue() {
+        let damage = super.getDamageValue();
+        this.source.recoverDamage(damage);
+        return damage;
     }
 
     draw(ctx) {
@@ -260,6 +266,7 @@ class Fireball extends AbstractEntity {
         if (this.isCriticalHit()) {
             dmg = dmg * PARAMS.CRITICAL_BONUS;
         }
+        this.source.recoverDamage(dmg);
         return dmg;
     }
 
