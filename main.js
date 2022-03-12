@@ -96,6 +96,7 @@ ASSET_MANAGER.queueDownload(SFX.BERSERK_ACTIVATE);
 ASSET_MANAGER.queueDownload(SFX.RESPAWN);
 ASSET_MANAGER.queueDownload(SFX.COMPLETE);
 ASSET_MANAGER.queueDownload(SFX.TRIGGER);
+ASSET_MANAGER.queueDownload(SFX.EVIL_LAUGH);
 //ASSET_MANAGER.queueDownload(SFX.CHECKPOINT);
 
 // Leave this SFX to suffer at the bottom >:D
