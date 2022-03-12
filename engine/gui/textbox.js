@@ -5,12 +5,13 @@
  * each index is a new line string.
  */
 class TextBox {
-    constructor(game, x, y, text, lineBuffer = 5) {
+    constructor(game, x, y, text, lineBuffer = 5, theBoxColor) {
         Object.assign(this, { game, x, y, text, lineBuffer });
         this.fontSize = 15;
 
 
-        this.boxColor = "BlueViolet";
+        if(theBoxColor === undefined || theBoxColor === null) this.boxColor = "BlueViolet";
+        else this.boxColor = theBoxColor;
         this.borderColor = "Azure";
         this.textColor = "GhostWhite";
 

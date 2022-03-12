@@ -37,12 +37,13 @@ var testLevel = {
         { x: 9, y: 3, killQuota: 0, exitLocation: { x: 4, y: 1, levelNum: 3 }, transition: false }, //door to level 3
 
         { x: 12, y: 3, killQuota: 0, exitLocation: { x: 10, y: 4, levelNum: 4 }, transition: false }, //door to level 4
-        { x: 20, y: 3, killQuota: 0, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: true }, //door to level 4
-        { x: 24, y: 3, killQuota: 0, exitLocation: { x: 41, y: 24, levelNum: 5 }, transition: false }, //door to level 4
+        { x: 24, y: 3, killQuota: 0, exitLocation: { x: 41, y: 26, levelNum: 5 }, transition: false }, //door to treasure room
         //{ x: -1.9, y: 9, killQuota: 0, exitLocation: { x: 2, y: 1, levelNum: 6 }, transition: false }, //door to level 4
         { x: -1.9, y: 9, killQuota: 0, exitLocation: { x: 40, y: 1, levelNum: 6 }, transition: false }, //door to level 4
 
     ],
+
+    portal: { x: 20, y: 4 },
 
     npcs: [
         { x: 3, y: 5, text: "what da dog doin?" }
@@ -663,9 +664,11 @@ var level1_2 = {
     ],
 
     npcs: [
-        { x: 7, y: 1 , text: ["I would read this sign if I knew how to read."]},
-        { x: 38, y: 21, text: ["Welcome to WizardMart.",
-                               "May I take your order?"] }
+        { x: 7, y: 1, text: ["I would read this sign if I knew how to read."] },
+        {
+            x: 38, y: 21, text: ["Welcome to WizardMart.",
+                "May I take your order?"]
+        }
     ],
 
     ground: [
@@ -927,7 +930,8 @@ var level1_3 = {
                 "-To activate: hit them with your SWORD or ARROW!",
                 " ...or you could press \'W'\ next to it, but that's boring.",
                 "-Some obelisk puzzles can only be solved by hitting them",
-                " from afar with your bow and arrow!"
+                " from afar with your bow and arrow!",
+                "-Some obelisks can repeatedly toggled on and off"
             ]
         },
         {
@@ -968,10 +972,12 @@ var level1_3 = {
     ],
     npcs: [
         { x: 10, y: 16, text: "Just uh dropping by..." },
-        { x: 51, y: 10, text: ["A little birdie told me that",
-                               "that this floor holds treasures",
-                               "beyond your wildest imagination..."] },
-        { x: 39, y: 35, text: "I can practically taste the treasure in here."},
+        {
+            x: 51, y: 10, text: ["A little birdie told me that",
+                "that this floor holds treasures",
+                "beyond your wildest imagination..."]
+        },
+        { x: 39, y: 35, text: "I can practically taste the treasure in here." },
 
     ],
 
@@ -1205,9 +1211,11 @@ var level1_4 = {
         { x: 6, y: 26, killQuota: 8, exitLocation: { x: 4, y: 1, levelNum: 6 }, transition: false }, //exit door
     ],
     npcs: [
-        { x: 5, y: 4, text: ["This castle could use some remodeling",
-                            "...and stairs."]},
-        { x: 67, y: 35, text: ["I sense danger ahead..."]},
+        {
+            x: 5, y: 4, text: ["This castle could use some remodeling",
+                "...and stairs."]
+        },
+        { x: 67, y: 35, text: ["I sense danger ahead..."] },
     ],
     chests: [
         { x: 29, y: 1, direction: 0 },    //bottom floor
@@ -1541,7 +1549,10 @@ var treasureroom = {
     player: { x: 40, y: 28 },
     music: MUSIC.SPLENDOUR,
 
-    npcs: [{ x: 37, y: 28, text: ["My brain is too small to figure out the secrets of this room..."] }],
+    npcs: [{ x: 37, y: 28, text: [
+                                  "Treasure lurks in every corner...",
+                                  "Take to the skies, hero,",
+                                  "but don't allow greed to consume you."] }],
 
     //quick access to all levels
     doors: [
@@ -1569,10 +1580,10 @@ var treasureroom = {
         { x: 1, y: 12, width: 78, height: 13 }, // Underground
     ],
     obelisks: [
-        { x: 67, y: 45, brickX: 24, brickY: 25, brickWidth: 5, brickHeight: 1 }, //unlock bottom floor
-        { x: 67, y: 45, brickX: 55, brickY: 25, brickWidth: 5, brickHeight: 1 },
-        { x: 41, y: 19, brickX: 29, brickY: 21, brickWidth: 4, brickHeight: 1 }, // escape
-        { x: 16, y: 22, brickX: 30, brickY: 40, brickWidth: 1, brickHeight: 1 },
+        { x: 67, y: 45, brickX: 24, brickY: 25, brickWidth: 5, brickHeight: 1, initial: true, repeat: true }, //unlock bottom floor
+        { x: 67, y: 45, brickX: 55, brickY: 25, brickWidth: 5, brickHeight: 1, initial: true, repeat: true },
+        { x: 41, y: 19, brickX: 29, brickY: 21, brickWidth: 4, brickHeight: 1, initial: true, repeat: true }, // escape
+        { x: 16, y: 22, brickX: 30, brickY: 40, brickWidth: 1, brickHeight: 1, initial: true, repeat: true },
     ],
 
     platforms: [
@@ -1941,10 +1952,24 @@ var levelBoss1 = {
     ID: 100,
     label: "Final Room",
     width: 120, height: 20,
-    player: { x: 40, y: 1 },
+    player: { x: 3, y: 1 },
     music: MUSIC.COUNTERATTACK,
 
+    npcs: [
+        {x: 14, y: 2, text: [
+            "The demon lord is right ahead!",
+            "You should prepare yourself...",
+            "Good luck, hero."]
+        },
+    ],
+
     portal: { x: 115, y: 4 },
+
+    chests: [
+        { x: 7, y: 1, direction: 0},
+        { x: 9, y: 1, direction: 0 },
+        { x: 11, y: 1, direction: 0 },
+    ],
 
     events: [
         {
