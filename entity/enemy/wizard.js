@@ -352,7 +352,7 @@ class Wizard extends AbstractBoss {
      */
     playInitialCutscene() {
         if (!this.myInitialDialouge) this.setupDialouge();
-
+        this.checkDirection();
         const TICK = this.game.clockTick;
         const animation = this.animations[this.state][this.direction];
         const isDone = animation.isDone();
