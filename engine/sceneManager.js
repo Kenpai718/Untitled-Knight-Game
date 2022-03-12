@@ -178,12 +178,13 @@ class SceneManager {
                 "I knew that Wizard was a sussy baka",
                 "the moment I laid eyes on him.",
                 "",
-                "He tried to use me to gain the",
-                "power of the DIAMONDS,",
-                "and destroy the whole universe!",
+                "Even with " + this.game.myReportCard.myDiamondsEarned + " DIAMONDS...",
+                "I didn't give that sucker a single one!",
                 "",
-                "But even with " + this.game.myReportCard.myDiamondsEarned + " DIAMONDS.",
-                "I didn't give that sucker a single one!"
+                "He tried to make me gather them.",
+                "So he could harnest the power of DIAMOND",
+                "and destroy the whole universe!",
+
             ];
         } else {
 
@@ -191,19 +192,20 @@ class SceneManager {
                 "I thought the Wizard was my friend.",
                 "But, in the end he betrayed me...",
                 "",
-                "He used me to gain the",
-                "power of the DIAMONDS,",
-                "and destroy the whole universe!",
-                "",
                 "I fell for his trap and gave him ",
-                this.game.myReportCard.myDiamondsSpent + " DIAMONDS..."]
+                this.game.myReportCard.myDiamondsSpent + " DIAMONDS...",
+                "",
+                "He made me gather them",
+                "so he could harnest the power of DIAMOND",
+                "and destroy the whole universe!",
+            ]
 
         }
 
         let endScene3 =
             [
-
-                "But, I stopped him before it was too late.",
+                "It was a tough battle. However,",
+                "I stopped him before it was too late!",
             ];
         let endScene4 =
             [
@@ -213,7 +215,7 @@ class SceneManager {
 
         let endScene5 =
             [
-                "\'Titled Knight\'."
+                "\'Titled Knight\'"
             ];
 
         let endScene6 =
@@ -800,7 +802,7 @@ class SceneManager {
                 this.game.click = false;
             }
             //don't pause a cutscene because the game gets angry and freezes
-            if(PAUSED) PAUSED = false;
+            if (PAUSED) PAUSED = false;
         } else if (this.cutScene2) {
             if (this.game.click) {
                 ASSET_MANAGER.playAsset(SFX.SELECT);
@@ -814,7 +816,7 @@ class SceneManager {
                 this.game.click = false;
             }
 
-            if(PAUSED) PAUSED = false;
+            if (PAUSED) PAUSED = false;
         }
 
     };
@@ -1109,9 +1111,11 @@ class SceneManager {
             if (this.game.completed) {
                 gameTitle = "Titled Knight Game"
                 ctx.font = titleFont;
-                ctx.fillStyle = "GhostWhite";
+                ctx.fillStyle = rgb(195, 153, 66); //knight orange
+                ctx.fillText(gameTitle, (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2) + 8, fontSize * 3 + 8);
+                ctx.fillStyle = rgb(172, 8, 8); //knight red
                 ctx.fillText(gameTitle, (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2) + 5, fontSize * 3 + 5);
-                ctx.fillStyle = "LightSteelBlue";
+                ctx.fillStyle = "GhostWhite";
                 ctx.fillText(gameTitle, (this.game.surfaceWidth / 2) - ((fontSize * gameTitle.length) / 2), fontSize * 3);
             } else {
                 gameTitle = "Untitled Knight Game";
