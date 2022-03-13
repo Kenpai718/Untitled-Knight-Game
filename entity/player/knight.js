@@ -709,7 +709,7 @@ class Knight extends AbstractPlayer {
         let action = this.action;
         //attack logic (melee/ranged)
         if (this.game.attack) {
-            if (this.crouch) { //crouch attack
+            if (this.crouch && !this.inAir) { //crouch attack
                 this.action = this.states.crouch_atk;
             } else { //standing or jumping attack
                 //set action based on combo counter.
@@ -759,7 +759,7 @@ class Knight extends AbstractPlayer {
 
         } else if (!this.game.attack && this.game.shoot && !this.game.roll) { //only shoot an arrow when not attacking
             if (this.myInventory.arrows > 0 || this.myInventory.arrows == 0 && this.arrow) {
-                if (this.crouch)
+                if (this.crouch && !this.inAir)
                     this.action = this.states.crouch_shoot;
                 else this.action = this.states.shoot;
             }
