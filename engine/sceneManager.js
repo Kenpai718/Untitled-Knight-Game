@@ -269,11 +269,11 @@ class SceneManager {
         let levelTwo = level1_2;
         let levelThree = level1_3;
         let levelFour = level1_4;
+        let levelFive = level1_5;
+        //let levelSix = level_extra;
         let treasureRoom = treasureroom;
-        let boss1 = levelBoss1;
-
-        //make sure the boss level is always the last one!
-        this.levels = [levelZero, levelOne, levelTwo, levelThree, levelFour, treasureRoom, boss1];
+        let boss1 = levelBoss1; //make sure this is last in the list!!!
+        this.levels = [levelZero, levelOne, levelTwo, levelThree, levelFour, levelFive, treasureRoom, boss1];
     }
 
     /**
@@ -1051,7 +1051,7 @@ class SceneManager {
 
             //labels on top right
             //level label
-            let levelLabel = "Level:" + this.level.label;
+            let levelLabel = this.level.label;
             let offset = getRightTextOffset(levelLabel, 20);
             let yOffset = 35;
             ctx.fillText(levelLabel, this.game.surfaceWidth - offset, yOffset);

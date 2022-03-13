@@ -88,10 +88,10 @@ class Door extends AbstractInteractable {
             ctx.fillText("FINISH LEVEL", theX + 15, theY - 50);
         } else if (this.exitLocation.levelNum == this.game.camera.levels.length - 1) {
             ctx.fillText("THE FINAL FLOOR", theX - 5, theY - 50);
-        } else if (this.exitLocation.levelNum == 5) {
-            ctx.fillText("TREASURE ROOM", theX, theY - 50);
         } else if (this.exitLocation.levelNum) {
-            ctx.fillText("To Level " + this.nextLevelLabel, theX + 20, theY - 50);
+            let offset = 40;
+            if(this.nextLevelLabel.length > 8) offset = 5;
+            ctx.fillText(this.nextLevelLabel, theX + offset, theY - 50);
         } else if (this.exitLocation.levelNum == 0) {
             ctx.fillText("DEBUG/TESTING ROOM", theX - 10, theY - 50);
         }
@@ -106,6 +106,7 @@ class Door extends AbstractInteractable {
 
         ctx.fillStyle = "GhostWhite";
         ctx.font = PARAMS.DEFAULT_FONT;
-        ctx.fillText("Can enter Lv" + this.exitLocation.levelNum + ": " + this.canEnter, theX, theY - 30);
+        ctx.fillText("Spawn= (x:" + this.exitLocation.x + " ,y:" + this.exitLocation.y + ")", theX, theY - 30);
+        ctx.fillText("Can enter Lv" + this.exitLocation.levelNum + "= " + this.canEnter, theX, theY - 15);
     };
 };
