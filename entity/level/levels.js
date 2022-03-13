@@ -1653,8 +1653,9 @@ var level1_3 = {
         { x: 84, y: 22, width: 1, height: 1 },
     ],
     platforms: [
-        { x: 22, y: 2, width: 2, height: 1 },
-        { x: 23, y: 7, width: 1, height: 1 },
+        { x: 23, y: 7, width: 1, height: 1},
+        { x: 29, y: 7, width: 2, height: 1},
+        
         //middle parkour left
         { x: 17, y: 16, width: 4, height: 1 },
         { x: 23, y: 20, width: 2, height: 1 },
@@ -1663,7 +1664,6 @@ var level1_3 = {
         { x: 22, y: 38, width: 1, height: 1 },
 
         //middle parkour right
-        { x: 29, y: 7, width: 2, height: 1 },
         { x: 28, y: 12, width: 1, height: 1 },
         { x: 33, y: 18, width: 1, height: 1 },
         { x: 31, y: 23, width: 1, height: 1 },
@@ -1671,10 +1671,8 @@ var level1_3 = {
         //obelisk to treasure room
 
         { x: 50, y: 34, width: 3, height: 1 },
-        { x: 57, y: 35, width: 3, height: 1 },
         { x: 64, y: 35, width: 5, height: 1 }, //chest on top
 
-        { x: 40, y: 7, width: 2, height: 1 },
         { x: 49, y: 12, width: 2, height: 1 },
         { x: 59, y: 22, width: 5, height: 1 },
         { x: 69, y: 12, width: 8, height: 1 },
@@ -1682,8 +1680,25 @@ var level1_3 = {
         { x: 95, y: 21, width: 1, height: 1 },
         { x: 45, y: 30, width: 2, height: 1 },
         { x: 51, y: 4, width: 5, height: 1 },
-        { x: 60, y: 8, width: 3, height: 1 }
     ],
+
+    moveable: [
+
+        //{ x: 23, y: 4, width: 1, height: 1, directionList: [2], distanceList: [6], velocity: 1  },
+        { x: 16, y: 2, width: 2, height: 1, directionList: [1], distanceList: [10], velocity: 1 },
+
+        //middle parkour right
+        //{ x: 29, y: 7, width: 2, height: 1, directionList: [1], distanceList: [7], velocity: 1  },
+
+        //obelisk to treasure room
+        { x: 40, y: 7, width: 2, height: 1, directionList: [1, 3], distanceList: [9,3], velocity: 1.5   },
+        { x: 47, y: 12, width: 2, height: 1, directionList: [1], distanceList: [7], velocity: 1   },
+
+        { x: 50, y: 34, width: 3, height: 1 },
+
+        { x: 60, y: 8, width: 3, height: 1, directionList: [2], distanceList: [2], velocity: 0.5   }
+    ],
+
     walls: [
         { x: 16, y: 40, height: 3, type: 0 }, //secret room cover
         { x: 57, y: 22, height: 8, type: 0 },
@@ -2366,14 +2381,14 @@ var treasureroom = {
         { x: 24, y: 22 },
         { x: 59, y: 22 },
 
-        { x: 61.8, y: 12 },
-        { x: 70.8, y: 12 },
+        { x: 62, y: 12 },
+        { x: 71, y: 12 },
 
-        { x: 53.8, y: 39 },
+        { x: 53, y: 39 },
 
-        { x: 1.8, y: 36 },
-        { x: 2.8, y: 24 },
-        { x: 0.8, y: 12 },
+        { x: 2, y: 36 },
+        { x: 3, y: 24 },
+        { x: 1, y: 12 },
         { x: 65, y: 3 },
         { x: 68, y: 3 },
     ],
@@ -2395,7 +2410,7 @@ var treasureroom = {
         { x: 20, y: 24, height: 1.5 },
 
         { x: 22, y: 50, height: 1 },
-        { x: 20, y: 50, height: 1.5 },
+        { x: 18, y: 50, height: 1 },
 
         { x: 1, y: 50, height: 2 },
         { x: 4, y: 50, height: 1.5 },

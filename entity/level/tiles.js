@@ -357,7 +357,7 @@ class Brick extends AbstractBarrier {
     };
 };
 
-class Block extends AbstractBarrier{
+class Block extends AbstractBarrier {
     constructor(game, x, y, w, h) {
         super(game, x, y, w, h, 16, 16);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
@@ -473,60 +473,88 @@ class MoveableBlocks extends Platform {
 
         const TICK = this.game.clockTick;
 
-        if(!this.reverseLists){
+        if(!this.reverseLists){     // moves in forward order
             if(this.directionList[this.index] == this.directions.right) {
-                if(this.targetX > this.x) this.x += this.velocity * TICK;
+                if(this.targetX > this.x) {
+                    this.x += this.velocity * TICK;
+                    /*
+                    let self = this;
+                    this.game.entities.forEach(function (entity) {
+                        if (entity instanceof AbstractPlayer) { // touchFloor()
+                            if (entity.BB && self.BB.collide(entity.BB) ) {
+                                entity.velocity.x -= self.velocity;
+                                console.log("true!");
+                            }
+                        }
+                    });
+                    */
+                    
+                }
                 else {
                     this.index += 1;
                     this.setTarget();
                 }
             }
-            if(this.directionList[this.index] == this.directions.left) {
-                if(this.targetX < this.x) this.x -= this.velocity * TICK;
+            else if(this.directionList[this.index] == this.directions.left) {
+                if(this.targetX < this.x) {
+                    this.x -= this.velocity * TICK;
+                }
                     else {
                         this.index += 1;
                         this.setTarget();
                     }
             }
-            if(this.directionList[this.index] == this.directions.up) {
-                if(this.targetY < this.y) this.y -= this.velocity * TICK;
+            else if(this.directionList[this.index] == this.directions.up) {
+                if(this.targetY < this.y) {
+                    this.y -= this.velocity * TICK;
+                }
                 else {
                     this.index += 1;
                     this.setTarget();
                 }
             }
-            if(this.directionList[this.index] == this.directions.down) {
-                if(this.targetY > this.y) this.y += this.velocity * TICK;
+            else if(this.directionList[this.index] == this.directions.down) {
+                if(this.targetY > this.y) {
+                    this.y += this.velocity * TICK;
+                }
                 else {
                     this.index += 1;
                     this.setTarget();
                 }
             }
         }
-        else if(this.reverseLists){ // Reverses direction
+        else if(this.reverseLists){ // moves in reverse order
             if(this.directionList[this.index] == this.directions.left) {
-                if(this.targetX > this.x) this.x += this.velocity * TICK;
+                if(this.targetX > this.x) {
+                    this.x += this.velocity * TICK;
+                }
                 else {
                     this.index -= 1;
                     this.setRevTarget();
                 }
             }
-            if(this.directionList[this.index] == this.directions.right) {
-                if(this.targetX < this.x) this.x -= this.velocity * TICK;
+            else if(this.directionList[this.index] == this.directions.right) {
+                if(this.targetX < this.x) {
+                    this.x -= this.velocity * TICK;
+                }
                 else {
                     this.index -= 1;
                     this.setRevTarget();
                 }
             }
-            if(this.directionList[this.index] == this.directions.down) {
-                if(this.targetY < this.y) this.y -= this.velocity * TICK;
+            else if(this.directionList[this.index] == this.directions.down) {
+                if(this.targetY < this.y) {
+                    this.y -= this.velocity * TICK;
+                }
                 else {
                     this.index -= 1;
                     this.setRevTarget();
                 }
             }
-            if(this.directionList[this.index] == this.directions.up) {
-                if(this.targetY > this.y) this.y += this.velocity * TICK;
+            else if(this.directionList[this.index] == this.directions.up) {
+                if(this.targetY > this.y) {
+                    this.y += this.velocity * TICK;
+                }
                 else {
                     this.index -= 1;
                     this.setRevTarget();
@@ -534,7 +562,7 @@ class MoveableBlocks extends Platform {
             }
         }
 
-        if(this.index > this.directionList.length -1){
+        if(this.index > this.directionList.length -1){ // Detects when Platform as finish the array of inputs, then reverses flow
             //console.log("Reversing");
             this.index -= 1;
             this.setRevTarget();
