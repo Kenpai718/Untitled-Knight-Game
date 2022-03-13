@@ -88,8 +88,6 @@ class Door extends AbstractInteractable {
             ctx.fillText("FINISH LEVEL", theX + 15, theY - 50);
         } else if (this.exitLocation.levelNum == this.game.camera.levels.length - 1) {
             ctx.fillText("THE FINAL FLOOR", theX - 5, theY - 50);
-        } else if (this.exitLocation.levelNum == 5) {
-            ctx.fillText("TREASURE ROOM", theX, theY - 50);
         } else if (this.exitLocation.levelNum) {
             ctx.fillText("To Level " + this.nextLevelLabel, theX + 20, theY - 50);
         } else if (this.exitLocation.levelNum == 0) {

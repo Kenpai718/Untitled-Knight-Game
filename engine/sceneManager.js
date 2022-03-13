@@ -270,10 +270,10 @@ class SceneManager {
         let levelThree = level1_3;
         let levelFour = level1_4;
         let levelFive = level1_5;
-        let levelSix = level1_6;
+        //let levelSix = level_extra;
         let treasureRoom = treasureroom;
         let boss1 = levelBoss1;
-        this.levels = [levelZero, levelOne, levelTwo, levelThree, levelFour, levelFive, levelSix, treasureRoom, boss1];
+        this.levels = [levelZero, levelOne, levelTwo, levelThree, levelFour, levelFive, treasureRoom, boss1];
     }
 
     /**
