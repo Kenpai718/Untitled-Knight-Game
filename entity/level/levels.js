@@ -27,7 +27,7 @@ const SIGN_VERSION = { x: 20, y: 3, title: "    VERSION 1.0", text: "Last update
 //spawn locations for using a door
 const DOOR_SPAWNS = {
     //entrances of a level
-    enter_to_level0 : { x: 2, y: 1, levelNum: 0 },
+    enter_to_level0: { x: 2, y: 1, levelNum: 0 },
     enter_to_level1: { x: 2, y: 1, levelNum: 1 },
     enter_to_level2: { x: 1, y: 1, levelNum: 2 },
     enter_to_level3: { x: 1, y: 1, levelNum: 3 },
@@ -38,8 +38,8 @@ const DOOR_SPAWNS = {
     //exits of a level
     exit_to_level1: { x: 114, y: 10, levelNum: 1 },
     exit_to_level2: { x: 114, y: 1, levelNum: 2 },
-    exit_to_level3: { x: 115, y: 23, levelNum: 3 }, 
-    exit_to_level3top: { x: 34, y: 33, levelNum: 3},
+    exit_to_level3: { x: 115, y: 23, levelNum: 3 },
+    exit_to_level3top: { x: 34, y: 33, levelNum: 3 },
     exit_to_level4: { x: 8, y: 24, levelNum: 4 }
 }
 
@@ -162,6 +162,7 @@ var levelLoader = {
         { x: 13, y: 4, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level3, transition: false }, //door to level 3
         { x: 16, y: 4, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level4, transition: false }, //door to level 4
         { x: 11, y: 12, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_final, transition: false }, //door to boss
+        { x: 22, y: 4, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_treasure, transition: false },
     ],
 
     torches: [
@@ -1571,14 +1572,19 @@ var treasureroom = {
     label: "Treasure Room",
     width: 80, height: 52,
     player: { x: 40, y: 28 },
+    //player: { x: 53, y: 11 }, //down below
     music: MUSIC.SPLENDOUR,
 
     npcs: [{
         x: 37, y: 28, text: [
-            "Treasure lurks in every corner...",
-            "Take to the skies, hero,",
-            "but don't allow greed to consume you."]
-    }],
+            "A birdie told me treasure lurks in every corner...",
+            "Take to the skies, hero, and following your guiding light.",]
+    },
+    {
+        x: 76, y: 11, text: [
+            "They really need to invest in an elevator."]
+    }
+    ],
 
     //quick access to all levels
     doors: [
@@ -1592,6 +1598,7 @@ var treasureroom = {
         { x: 19, y: 44, height: 20, type: 2 }, // Support Wall
         { x: 64, y: 44, height: 6, type: 2 },
         { x: 64, y: 37, height: 13, type: 2 },
+        { x: 30, y: 40, height: 1, type: 2 }, //left jump
     ],
 
     backgroundWalls: [
@@ -1609,7 +1616,7 @@ var treasureroom = {
         { x: 67, y: 45, brickX: 24, brickY: 25, brickWidth: 5, brickHeight: 1, initial: true, repeat: true }, //unlock bottom floor
         { x: 67, y: 45, brickX: 55, brickY: 25, brickWidth: 5, brickHeight: 1, initial: true, repeat: true },
         { x: 41, y: 19, brickX: 29, brickY: 21, brickWidth: 4, brickHeight: 1, initial: true, repeat: true }, // escape
-        { x: 16, y: 22, brickX: 30, brickY: 40, brickWidth: 1, brickHeight: 1, initial: true, repeat: true },
+        { x: 16, y: 22, brickX: 5, brickY: 50, brickWidth: 1, brickHeight: 1, initial: true, repeat: true }, //opens top left secret corner
     ],
 
     platforms: [
@@ -1670,7 +1677,8 @@ var treasureroom = {
         { x: 0, y: 51, width: 25, height: 1, type: 0 },
 
         //Roof
-        { x: 15, y: 49, width: 9, height: 1, type: 0 },
+        //{ x: 15, y: 49, width: 9, height: 1, type: 0 }, //old roof by david
+        { x: 15, y: 49, width: 8, height: 1, type: 0 },  //new roof by ken makes the jump a bit easier to secret
         { x: 25, y: 51, width: 54, height: 3, type: 0 },
 
 
@@ -1758,7 +1766,7 @@ var treasureroom = {
         { x: 42, y: 36, direction: 1 },
 
         //Top Right
-        { x: 15, y: 45, direction: 1 },
+        { x: 17, y: 45, direction: 1 },
 
         // Underground secret
         { x: 42.5, y: 19, direction: 1 },
@@ -1772,28 +1780,41 @@ var treasureroom = {
 
         { x: 43, y: 22, direction: 1 },
         { x: 39.5, y: 22, direction: 0 },
+
+        //bottom floor chests
+        { x: 56, y: 9, direction: 0 },
+        { x: 72, y: 38, direction: 1 },
     ],
 
     shrooms: [
         { x: 35, y: 3, guard: true },
         { x: 48, y: 3, guard: true },
     ],
+
+    slimes: [
+        { x: 16, y: 50, guard: false },
+        { x: 13, y: 50, guard: false },
+        { x: 10, y: 50, guard: false },
+        { x: 46, y: 14, guard: true },
+        { x: 49, y: 14, guard: true },
+
+    ],
     goblins: [
         { x: 15, y: 11, guard: true },
-        { x: 64, y: 3, guard: false },
-        { x: 69, y: 3, guard: false },
+        //{ x: 64, y: 3, guard: false },
+        //{ x: 69, y: 3, guard: false },
     ],
     skeletons: [
         { x: 6, y: 11, guard: true },
-        { x: 75, y: 7, guard: true },
-        { x: 59, y: 7, guard: true },
+        //{ x: 75, y: 7, guard: true },
+        //{ x: 59, y: 7, guard: true },
     ],
     flyingeyes: [
         { x: 30, y: 35, guard: false },
         { x: 50, y: 43, guard: false },
-        { x: 64, y: 12, guard: true },
-        { x: 69, y: 10, guard: true },
-        { x: 67, y: 8, guard: true },
+        //{ x: 64, y: 12, guard: true },
+        //{ x: 69, y: 10, guard: true },
+        //{ x: 67, y: 8, guard: true },
 
         { x: 4, y: 7, guard: true },
 
@@ -1820,6 +1841,7 @@ var treasureroom = {
         { x: 6, y: 11 },
         { x: 10, y: 11 },
 
+
         { x: 25, y: 11 },
         { x: 29, y: 11 },
 
@@ -1830,6 +1852,11 @@ var treasureroom = {
         { x: 61, y: 43 },
 
         { x: 30, y: 42 },
+        { x: 20, y: 47 },
+
+        { x: 41.5, y: 38 },
+        { x: 56, y: 11 },
+
     ],
 
     banners: [
@@ -1919,42 +1946,93 @@ var treasureroom = {
         { x: 66, y: 39, width: 2, height: 2 },
     ],
 
-    secrets: [
-        {
-            indicate: true,
-            bricks: [
-                { x: 5, y: 50, width: 20, height: 1 }, //hide top path
-                { x: 24, y: 49, width: 1, height: 1 }, //hide path entrance
-                { x: 1, y: 50, width: 4, height: 38 }, //hide drop down
-                { x: 75, y: 39, width: 4, height: 27 },
-                { x: 1, y: 12, width: 28, height: 4 }, // undergrounds
-                { x: 65, y: 39, width: 10, height: 2 },
-                { x: 29, y: 12, width: 50, height: 12 },
-                //{ x: 33, y: 4, width: 16, height: 4 },
-
-            ]
-        },
-        {
-            indicate: false,
-            bricks: [
-                { x: 47, y: 18, width: 1, height: 4 }, //hide top path
-                { x: 47, y: 14, width: 16, height: 1 }, //hide path entrance
-                { x: 62, y: 13, width: 1, height: 1 },
-
-            ]
-        }
-    ],
-
     signs: [
         {
-            x: 66.5, y: 2,
-            title: "  Encrypted Message",
+            x: 16, y: 46,
+            title: "    Need a hint?",
             text: [
-                "4576656E206D7920636C6F736573742066726965",
-                "6E642077686F6D204920747275737465642C2074",
-                "6865206F6E652077686F20617465206D79206272",
-                "6561642C20686173206C69667465642068697320",
-                "6865656C20616761696E7374206D652E - 5073616C6D732034313A39",
+                "To infinity and beyond!",
+            ],
+
+        },
+
+        {
+            x: 3, y: 2,
+            title: "   haha gotcha!!",
+            text: [
+                "Bad things come to those who are greedy.",
+                "Welcome to the pits of hell >:)",
+                "-Sincerly,",
+                " David and Ken",
+                "",
+                " P.S: yes you can still get back up if ur gud",
+            ],
+
+        },
+
+        {
+            x: 45, y: 27,
+            title: "    One Piece",
+            text: [
+                "Wealth, fame, power. Gold Roger, the King of the Pirates,",
+                "attained everything this world has to offer.",
+                "And so, many men head for the Grand Line to find",
+                "the great treasure he left behind, the One Piece.",
+                "",
+                "\"My wealth and treasures? If you want it,",
+                "you can have it! Search for it!\"",
+                "-Gold Roger",
+            ],
+
+        },
+
+        {
+            x: 69, y: 39,
+            title: "Where could it be?",
+            text: [
+                "Did you find the treasure room?",
+                "Did you give up? It's ok, diamonds are temporary.",
+                "You are free to sever the chains of fate that bind you.",
+                "Maybe you'll find it one day when slimes fly!"
+            ],
+
+        },
+
+        {
+            x: 41.5, y: 23,
+            title: "Can you make it here?",
+            text: [
+                "Your brain is simply too big.",
+                "The treasure is yours.",
+                "You earned it.",
+                "",
+                "-David and Ken"
+            ],
+
+        },
+
+        // {
+        //     x: 66.5, y: 2,
+        //     title: "41:9",
+        //     text: [
+        //         "4576656E206D7920636C6F736573742066726965",
+        //         "6E642077686F6D204920747275737465642C2074",
+        //         "6865206F6E652077686F20617465206D79206272",
+        //         "6561642C20686173206C69667465642068697320",
+        //         "6865656C20616761696E7374206D652E - 5073616C6D732034313A39",
+        //     ],
+
+        // },
+
+        {
+
+            x: 66.5, y: 2,
+            title: "      41:9",
+            text: [
+                "Even my closest friend whom I trusted,",
+                "the one who ate my bread,",
+                "has lifted his heel against me.",
+                "-Psalms 41:9"
             ],
 
         },
@@ -1965,10 +2043,70 @@ var treasureroom = {
             text: ["Vasts amount of opportunities are open before you,",
                 "but let not your heart corrupt lest you lose your freedom,",
                 "for the pits of hell shall surely open and swallow the greedy,",
-                "thus, seize the moment to go above and beyond the fools that came before you..",
+                "thus, seize the moment to go above and beyond the fools that came before you.",
+                "May the light be your guide on this journey.",
             ],
 
         },
+    ],
+
+    secrets: [
+        {
+            indicate: true,
+            bricks: [
+                { x: 5, y: 50, width: 20, height: 1 }, //hide top path
+                { x: 23, y: 49, width: 2, height: 1 }, //hide path entrance
+                { x: 1, y: 50, width: 4, height: 38 }, //hide drop down
+                { x: 75, y: 39, width: 4, height: 27 },
+                { x: 1, y: 12, width: 28, height: 4 }, // undergrounds
+                { x: 65, y: 39, width: 10, height: 2 },
+                { x: 29, y: 12, width: 50, height: 12 },
+                { x: 33, y: 4, width: 16, height: 4 },
+
+            ]
+        },
+        {
+            indicate: true,
+            bricks: [
+                { x: 47, y: 18, width: 1, height: 4 }, //hide top path
+                { x: 47, y: 14, width: 16, height: 1 }, //hide path entrance
+                { x: 62, y: 13, width: 1, height: 1 },
+
+            ]
+        }
+    ],
+
+    events: [
+        {
+            space: [
+                { x: 56, y: 13, width: 2, height: 10 }
+            ],
+            bricks:
+                [
+                    { x: 51, y: 8, width: 5, height: 2, type: 2 },
+                    { x: 76, y: 12, width: 5, height: 5, type: 2 },
+                    { x: 75, y: 13, width: 5, height: 1, type: 2 },
+
+                ],
+
+            slimes: [
+                { x: 62, y: 14, guard: true },
+                { x: 62, y: 13, guard: true },
+            ],
+            goblins: [
+                { x: 64, y: 3, guard: false },
+                { x: 69, y: 3, guard: false },
+            ],
+            skeletons: [
+                { x: 70, y: 7, guard: true },
+                { x: 59, y: 7, guard: true },
+            ],
+            flyingeyes: [
+                { x: 70, y: 12, guard: true },
+                { x: 71, y: 10, guard: true },
+            ],
+
+        }
     ]
 
 
