@@ -22,7 +22,7 @@
  */
 
 //version of up to date info. Make sure to update with each public push!
-const SIGN_VERSION = { x: 20, y: 3, title: "    VERSION 1.0", text: "Last updated: 03/12/2022" }
+const SIGN_VERSION = { x: 20, y: 3, title: "    VERSION 1.1", text: "Last updated: 03/13/2022" }
 
 //spawn locations for using a door
 const DOOR_SPAWNS = {
@@ -32,7 +32,7 @@ const DOOR_SPAWNS = {
     enter_to_level2: { x: 1, y: 1, levelNum: 2 },
     enter_to_level3: { x: 1, y: 1, levelNum: 3 },
     enter_to_level4: { x: 3, y: 5, levelNum: 4 },
-    enter_to_level5: { x: 1, y: 6, levelNum: 5},
+    enter_to_level5: { x: 1, y: 6, levelNum: 5 },
     enter_to_treasure: { x: 41, y: 26, levelNum: 6 },
     enter_to_final: { x: 4, y: 1, levelNum: 7 },
 
@@ -51,16 +51,15 @@ var level1_5 = {
     label: "5",
     width: 88, height: 80,
     player: { x: 1, y: 6 },
-    music: MUSIC.FODLAN_WINDS,
-
+    music: MUSIC.VEILED_IN_BLACK,
 
     backgroundWalls: [
         { x: 0, y: 20, width: 100, height: 21 },
         { x: 66, y: 63, width: 22, height: 45 },
         { x: 64, y: 46, width: 2, height: 2 },
         { x: 37, y: 46, width: 2, height: 2 },
-        { x: 64-39, y: 46, width: 2, height: 2 },
-        { x: 37-34, y: 46, width: 2, height: 2 },
+        { x: 64 - 39, y: 46, width: 2, height: 2 },
+        { x: 37 - 34, y: 46, width: 2, height: 2 },
         { x: 27, y: 58, width: 10, height: 14 },
         { x: 0, y: 51, width: 3, height: 3 },
         { x: 27, y: 37, width: 9, height: 3 },
@@ -76,10 +75,10 @@ var level1_5 = {
         { x: 71, y: 60, width: 14, height: 1, type: 1 },
         { x: 69, y: 54, width: 4, height: 1, type: 1 },
         // 3:1
-        { x: 0,  y: 48, width: 3, type: 0 },
+        { x: 0, y: 48, width: 3, type: 0 },
     ],
 
-    
+
     doors: [
 
         { x: 0, y: 51, killQuota: 15, exitLocation: DOOR_SPAWNS.enter_to_final, transition: false }, // exit door
@@ -110,7 +109,7 @@ var level1_5 = {
         // 1:3
         { x: 52, y: 1, width: 36, height: 2, type: 0 }, // spike floor
         { x: 44, y: 11, width: 9, height: 4, type: 0 }, // door floor
-        { x: 50, y: 13, width: 3, height: 2, type: 0 }, 
+        { x: 50, y: 13, width: 3, height: 2, type: 0 },
 
         // 1:4
         { x: 66, y: 20, width: 16, height: 3, type: 0 }, // Roof fill
@@ -154,20 +153,20 @@ var level1_5 = {
 
 
         // 3:1
-        { x: 59-39, y: 48, width: 7, height: 2, type: 0 }, // bridge right
-        { x: 60-39, y: 46, width: 2, height: 1, type: 0 },//
-        { x: 62-39, y: 46, width: 2, height: 2, type: 0 },//
-        { x: 63-39, y: 44, width: 1, height: 1, type: 0 },//
-        { x: 64-39, y: 45, width: 1, height: 1, type: 0 },//
-        { x: 64-39, y: 44, width: 2, height: 2, type: 0 },//
-        { x: 65-39, y: 42, width: 1, height: 2, type: 0 },
-        { x: 37-34, y: 48, width: 7, height: 2, type: 0 }, // bridge left
-        { x: 41-34, y: 46, width: 2, height: 1, type: 0 },//
-        { x: 39-34, y: 46, width: 2, height: 2, type: 0 },//
-        { x: 39-34, y: 44, width: 1, height: 1, type: 0 },//
-        { x: 38-34, y: 45, width: 1, height: 1, type: 0 },//
-        { x: 37-34, y: 44, width: 2, height: 2, type: 0 },//
-        { x: 37-34, y: 42, width: 1, height: 2, type: 0 },
+        { x: 59 - 39, y: 48, width: 7, height: 2, type: 0 }, // bridge right
+        { x: 60 - 39, y: 46, width: 2, height: 1, type: 0 },//
+        { x: 62 - 39, y: 46, width: 2, height: 2, type: 0 },//
+        { x: 63 - 39, y: 44, width: 1, height: 1, type: 0 },//
+        { x: 64 - 39, y: 45, width: 1, height: 1, type: 0 },//
+        { x: 64 - 39, y: 44, width: 2, height: 2, type: 0 },//
+        { x: 65 - 39, y: 42, width: 1, height: 2, type: 0 },
+        { x: 37 - 34, y: 48, width: 7, height: 2, type: 0 }, // bridge left
+        { x: 41 - 34, y: 46, width: 2, height: 1, type: 0 },//
+        { x: 39 - 34, y: 46, width: 2, height: 2, type: 0 },//
+        { x: 39 - 34, y: 44, width: 1, height: 1, type: 0 },//
+        { x: 38 - 34, y: 45, width: 1, height: 1, type: 0 },//
+        { x: 37 - 34, y: 44, width: 2, height: 2, type: 0 },//
+        { x: 37 - 34, y: 42, width: 1, height: 2, type: 0 },
 
         // 3:2
         { x: 28, y: 54, width: 1, height: 4, type: 0 }, // Left Tops
@@ -189,10 +188,10 @@ var level1_5 = {
 
         // 3:1
         { x: 27, y: 48, width: 10, height: 8, type: 0 },
-        { x: 2,  y: 47, width: 1,  height: 7, type: 0 }, // Behind wall
-        { x: 0,  y: 47, width: 2,  height: 17, type: 0 },
+        { x: 2, y: 47, width: 1, height: 7, type: 0 }, // Behind wall
+        { x: 0, y: 47, width: 2, height: 17, type: 0 },
 
-        { x: 0, y: 59, width: 2,   height: 8, type: 0 }, // top
+        { x: 0, y: 59, width: 2, height: 8, type: 0 }, // top
 
         { x: 0, y: 30, width: 27, height: 7, type: 0 }, // Spike floor
 
@@ -205,7 +204,7 @@ var level1_5 = {
         { x: 22, y: 4, height: 5, type: 2 }, // floor left
         { x: 22, y: 11, height: 4, type: 2 }, // Left
         { x: 27, y: 17, height: 5, type: 0 }, // mini cave
-        { x: 24, y: 17, height: 7, type: 0 }, 
+        { x: 24, y: 17, height: 7, type: 0 },
         // 1:3
         { x: 52, y: 4, height: 3, type: 0 }, // Left
         // 1:4
@@ -230,8 +229,8 @@ var level1_5 = {
         { x: 27, y: 54, height: 4, type: 0 }, // lower tops
         { x: 36, y: 54, height: 4, type: 0 },
 
-        { x: 25, y: 56,  height: 2, type: 0 },
-        { x: 38, y: 56,  height: 2, type: 0 },
+        { x: 25, y: 56, height: 2, type: 0 },
+        { x: 38, y: 56, height: 2, type: 0 },
 
         { x: 37, y: 54, height: 1, type: 0 },
         { x: 26, y: 54, height: 1, type: 0 },
@@ -245,14 +244,14 @@ var level1_5 = {
         { x: 2, y: 40, height: 10, type: 0 }, //lower
 
 
-        
-        
+
+
     ],
     obelisks: [
         { x: 22, y: 12, brickX: 22, brickY: 7, brickWidth: 2, brickHeight: 2, initial: true, repeat: true },
         { x: 22, y: 12, brickX: 24, brickY: 17, brickWidth: 4, brickHeight: 5, initial: false, repeat: true },
         { x: 22, y: 12, brickX: 10, brickY: 5, brickWidth: 12, brickHeight: 1, initial: false, repeat: true },
-        
+
         { x: 70, y: 49, brickX: 66, brickY: 51, brickWidth: 3, brickHeight: 3, initial: true, repeat: true },
         { x: 70, y: 49, brickX: 44, brickY: 48, brickWidth: 15, brickHeight: 2, initial: true, repeat: true },
         { x: 34, y: 35, brickX: 20, brickY: 39, brickWidth: 2, brickHeight: 2, initial: false, repeat: true },
@@ -277,8 +276,8 @@ var level1_5 = {
     ],
 
     platforms: [
-        {x: 75, y: 52, width: 2, height: 1},
-        { x: 58, y: 10, width: 4, height: 1},
+        { x: 75, y: 52, width: 2, height: 1 },
+        { x: 58, y: 10, width: 4, height: 1 },
     ],
 
     chests: [
@@ -346,15 +345,16 @@ var level1_5 = {
 
     slimes: [
         // 1:2
-        {x: 32, y: 18, guard: false},
-        {x: 35, y: 18, guard: false},
+        { x: 32, y: 18, guard: false },
+        { x: 35, y: 18, guard: false },
         // 3:4
-        {x: 70, y: 56, guard: true},
-        {x: 77, y: 52, guard: false},
-        
+        { x: 70, y: 56, guard: true },
+        { x: 77, y: 52, guard: false },
+
     ],
 
     npcs: [
+        { x: 6, y: 7 },
         { x: 74.7, y: 54 },
     ],
 
@@ -380,14 +380,14 @@ var level1_5 = {
         { x: 74, y: 26 },
         { x: 85, y: 26 },
         // 2:4
-        {x: 81, y: 41},
-        {x: 86, y: 41},
+        { x: 81, y: 41 },
+        { x: 86, y: 41 },
         // 3:2
-        {x: 30, y: 50},
-        {x: 33, y: 50},
+        { x: 30, y: 50 },
+        { x: 33, y: 50 },
         // 3:4
-        {x: 70, y: 51},
-        {x: 77, y: 51},
+        { x: 70, y: 51 },
+        { x: 77, y: 51 },
 
     ],
 
@@ -406,7 +406,7 @@ var level1_5 = {
         { x: 74, y: 43 },
         //{ x: 84, y: 43 },
         // 3:4
-        {x: 72, y: 53},
+        { x: 72, y: 53 },
     ],
 
     ceilingChains: [
@@ -420,7 +420,7 @@ var level1_5 = {
         { x: 74, y: 17, height: 6 },
         { x: 76, y: 4, height: 1 },
         // 2:4
-        {x: 73, y: 43, height: 9},
+        { x: 73, y: 43, height: 9 },
         // 3:4
         { x: 69, y: 62, height: 3 },
         { x: 78, y: 57, height: 2 },
@@ -492,22 +492,22 @@ var testLevel = {
         { x: 9, y: 3, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level3, transition: false }, //door to level 3
         { x: 12, y: 3, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level4, transition: false }, //door to level 4
         { x: 10, y: 8, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level5, transition: false }, //door to level 5
-        { x: 13 , y: 8, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_final, transition: false }, //door to final boss
+        { x: 13, y: 8, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_final, transition: false }, //door to final boss
 
         //exit right
-        { x: 20, y: 3, killQuota: 0, exitLocation: DOOR_SPAWNS.exit_to_level1, transition: false},
-        { x: 24, y: 3, killQuota: 0, exitLocation: DOOR_SPAWNS.exit_to_level2, transition: false},
-        { x: 28, y: 3, killQuota: 0, exitLocation: DOOR_SPAWNS.exit_to_level3, transition: false},
-        { x: 32, y: 3, killQuota: 0, exitLocation: DOOR_SPAWNS.exit_to_level4, transition: false},
-        { x: 36, y: 3, killQuota: 0, exitLocation: DOOR_SPAWNS.exit_to_level5, transition: false},
-        { x: 40, y: 3, killQuota: 0, exitLocation: DOOR_SPAWNS.exit_to_final, transition: false},
+        { x: 20, y: 3, killQuota: 0, exitLocation: DOOR_SPAWNS.exit_to_level1, transition: false },
+        { x: 24, y: 3, killQuota: 0, exitLocation: DOOR_SPAWNS.exit_to_level2, transition: false },
+        { x: 28, y: 3, killQuota: 0, exitLocation: DOOR_SPAWNS.exit_to_level3, transition: false },
+        { x: 32, y: 3, killQuota: 0, exitLocation: DOOR_SPAWNS.exit_to_level4, transition: false },
+        { x: 36, y: 3, killQuota: 0, exitLocation: DOOR_SPAWNS.exit_to_level5, transition: false },
+        { x: 40, y: 3, killQuota: 0, exitLocation: DOOR_SPAWNS.exit_to_final, transition: false },
 
         //top right special
         { x: 28, y: 9, killQuota: 0, exitLocation: { x: 10, y: 45, levelNum: 4 }, transition: false }, //door to level 4 miniboss
         { x: 32, y: 9, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_treasure, transition: false }, //treasure top
         { x: 36, y: 9, killQuota: 0, exitLocation: { x: 53, y: 1, levelNum: 6 }, transition: false }, //treasure bottom
         //{ x: 4, y: 3, killQuota: 0, exitLocation: { x: 14, y: 78, levelNum: 5 }, transition: false },
-        
+
 
     ],
 
@@ -558,7 +558,7 @@ var testLevel = {
             x: 26, y: 8,
             title: "    MINIBOSS #1",
             text: ["Enter here if you want to fight the miniboss",
-                    "Go right from spawn to activate the fight."
+                "Go right from spawn to activate the fight."
             ]
         },
 
@@ -566,7 +566,7 @@ var testLevel = {
             x: 34.5, y: 8,
             title: "   Treasure Room",
             text: ["Left treasure door for start",
-                    "Right treasure door for bottom"
+                "Right treasure door for bottom"
             ]
         },
 
@@ -574,11 +574,11 @@ var testLevel = {
             x: 18, y: 2,
             title: "    Exits",
             text: ["The bottom floor doors are the exit locations of the levels",
-                  ["Top right is special locations to test"]
+                ["Top right is special locations to test"]
             ]
         },
 
-        
+
     ],
 
     backgroundWalls: [
@@ -613,7 +613,7 @@ var testLevel = {
         { x: 4.5, y: 1, brickX: 5, brickY: 12, brickWidth: 1, brickHeight: 5, initial: false, repeat: true }
     ],
     moveable: [
-        { x: 1, y: 10, width: 3, height: 1, directionList: [1], distanceList: [5], velocity: 0.1},
+        { x: 1, y: 10, width: 3, height: 1, directionList: [1], distanceList: [5], velocity: 0.1 },
     ],
 
     shrooms: [
@@ -629,7 +629,7 @@ var testLevel = {
         { x: 11, y: 12, guard: true },
     ],
     slimes: [
-        {x:1, y: 11, guard: false}
+        { x: 1, y: 11, guard: false }
     ]
 }
 
@@ -651,7 +651,7 @@ var levelLoader = {
         { x: 10, y: 4, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level2, transition: false }, //door to level 2
         { x: 13, y: 4, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level3, transition: false }, //door to level 3
         { x: 16, y: 4, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level4, transition: false }, //door to level 4
-        { x: 3, y: 12,  killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level5, transition: false },
+        { x: 3, y: 12, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level5, transition: false },
         { x: 11, y: 12, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_final, transition: false }, //door to boss
         { x: 22, y: 4, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_treasure, transition: false },
     ],
@@ -874,7 +874,7 @@ var titleScene = {
  */
 var level1_1 = {
     ID: 1,
-    label: "1",
+    label: "Level 1",
     width: 120, height: 15,
     player: { x: 2, y: 1 },
     music: MUSIC.FODLAN_WINDS,
@@ -1118,7 +1118,7 @@ var level1_1 = {
 
 var level1_2 = {
     ID: 2,
-    label: "2",
+    label: "Level 2",
     width: 120, height: 36,
     player: { x: 1, y: 1 },
     music: MUSIC.CHASING_DAYBREAK,
@@ -1432,7 +1432,7 @@ var level1_2 = {
 
 var level1_3 = {
     ID: 3,
-    label: "3",
+    label: "Level 3",
     width: 120, height: 42,
     player: { x: 1, y: 1 },
     music: MUSIC.BETWEEN_HEAVEN_AND_EARTH,
@@ -1704,7 +1704,7 @@ var level1_3 = {
 
 var level1_4 = {
     ID: 4,
-    label: "4",
+    label: "Level 4",
     width: 75, height: 50,
     player: { x: 3, y: 5 }, //regular spawn
     //player: { x: 65, y: 45 }, //top right spawn
@@ -2403,7 +2403,7 @@ var treasureroom = {
         { x: 62, y: 39, height: 2 },
         { x: 63, y: 39, height: 1 },
 
-        
+
 
     ],
 
@@ -2749,8 +2749,8 @@ var levelBoss1 = {
 
 //bonus level made by david's brother
 var level_extra = {
-    ID: 5,
-    label: "5", 
+    ID: 6,
+    label: "Lv 3 but on steroids to the nth degree",
     width: 140, height: 100,
     player: { x: 14, y: 80 },
     music: MUSIC.SPLENDOUR,
@@ -2759,7 +2759,7 @@ var level_extra = {
         { x: 11, y: 74, width: 10, height: 1, type: 1 },
         { x: 20, y: 18, width: 41, height: 1, type: 1 },
 
-        
+
     ],
 
 
@@ -2772,7 +2772,7 @@ var level_extra = {
         { x: 21, y: 55, width: 1, height: 1 },
         { x: 24, y: 55, width: 1, height: 1 },
         { x: 21, y: 47, width: 3, height: 1 },
-        { x: 22, y: 39, width: 3, height: 1 }, 
+        { x: 22, y: 39, width: 3, height: 1 },
         { x: 21, y: 30, width: 2, height: 1 },
         { x: 39, y: 72, width: 2, height: 1 },
         { x: 41, y: 71, width: 2, height: 1 },
@@ -2816,7 +2816,7 @@ var level_extra = {
         { x: 102, y: 19, width: 2, height: 1 },
 
     ],
-    
+
     walls: [
         { x: 11, y: 83, height: 10, type: 2 },
         { x: 20, y: 74, height: 56, type: 2 },
@@ -2828,7 +2828,7 @@ var level_extra = {
         { x: 108, y: 30, height: 24, type: 2 },
         { x: 106, y: 35, height: 12, type: 2 },
         { x: 97, y: 23, height: 5, type: 2 },
-        
+
     ],
 
     spikes: [
@@ -2837,7 +2837,7 @@ var level_extra = {
         { x: 23, y: 65, width: 2 },
         { x: 21, y: 56, width: 1 },
         { x: 24, y: 56, width: 1 },
-        { x: 21, y: 48, width: 3 }, 
+        { x: 21, y: 48, width: 3 },
         { x: 22, y: 40, width: 3 },
         { x: 44, y: 44, width: 1 },
         { x: 39, y: 50, width: 1 },
@@ -2853,8 +2853,8 @@ var level_extra = {
     npcs: [
         { x: 16, y: 75 },
         { x: 65, y: 8 },
-    ], 
- 
+    ],
+
     flyingeyes: [
         { x: 25, y: 26, guard: false },
         { x: 36, y: 26, guard: false },
@@ -2879,18 +2879,18 @@ var level_extra = {
         { x: 65, y: 26, guard: true },
         { x: 24, y: 23, guard: true },
         { x: 42, y: 27, guard: true },
-        
+
 
 
     ],
- 
+
     doors: [
 
-        { x: 1, y: 1, killQuota: 0, exitLocation: { x: 1, y: 1, levelNum: 8 }, transition: false }, 
-        { x: 1, y: 1, killQuota: 10, exitLocation: { x: 1, y: 1, levelNum: 4 }, transition: false }, 
+        { x: 1, y: 1, killQuota: 0, exitLocation: { x: 1, y: 1, levelNum: 8 }, transition: false },
+        { x: 1, y: 1, killQuota: 10, exitLocation: { x: 1, y: 1, levelNum: 4 }, transition: false },
     ],
-     
-    
+
+
     signs: [
         {
             x: 114, y: 32,
@@ -2898,7 +2898,7 @@ var level_extra = {
             text: ["console.log(\'here\'):",
                 "Is this the end?",
                 "I feel like My mind is playing tricks on me",
-                
+
             ]
 
         },

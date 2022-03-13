@@ -251,6 +251,7 @@ const MUSIC = {
     COUNTERATTACK: "./sound/music/OnePiece_Begin_Counterattack.mp3",
     MEMORIES: "./sound/music/OnePiece_Memories_ED.mp3",
     FOG: "./sound/music/P4_Fog.mp3",
+    VEILED_IN_BLACK: "./sound/music/FFXV_Veiled_In_Black_Arrangement.mp3",
 }
 
 /** HELPER FUNCTIONS */
