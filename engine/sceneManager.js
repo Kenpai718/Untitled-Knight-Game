@@ -1382,7 +1382,7 @@ class SceneManager {
         if (dict.moveable) {
             for (var i = 0; i < dict.moveable.length; i++) {
                 let moveable = dict.moveable[i];
-                array.push(new MoveableBlocks(this.game, moveable.x, h - moveable.y - 1, moveable.width, moveable.height));
+                array.push(new MoveableBlocks(this.game, moveable.x, h - moveable.y - 1, moveable.width, moveable.height, moveable.directionList, moveable.distanceList, moveable.velocity,));
             }
         }
         if (dict.bricks) {

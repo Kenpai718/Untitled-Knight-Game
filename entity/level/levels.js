@@ -111,6 +111,7 @@ var level1_5 = {
         { x: 44, y: 11, width: 9, height: 4, type: 0 }, // door floor
         { x: 50, y: 13, width: 3, height: 2, type: 0 },
 
+
         // 1:4
         { x: 66, y: 20, width: 16, height: 3, type: 0 }, // Roof fill
         { x: 66, y: 16, width: 5, height: 15, type: 0 }, // Wall fill 
@@ -276,8 +277,12 @@ var level1_5 = {
     ],
 
     platforms: [
-        { x: 75, y: 52, width: 2, height: 1 },
-        { x: 58, y: 10, width: 4, height: 1 },
+        //{ x: 75, y: 52, width: 2, height: 1 },
+        //{ x: 58, y: 10, width: 4, height: 1 },
+    ],
+    moveable: [
+        { x: 58, y: 4, width: 4, height: 1, directionList: [2], distanceList: [10], velocity: 1.5 },
+        { x: 78, y: 52, width: 2, height: 1, directionList: [3], distanceList: [5], velocity: 1 },
     ],
 
     chests: [
@@ -535,7 +540,7 @@ var testLevel = {
         },
 
         {
-            x: 8, y: 7,
+            x: 8.5, y: 7,
             title: "IMPORTANT DISCLOSURE",
             text: ["According to all known laws of aviation",
                 "there is no way a bee should be able to fly.",
@@ -594,7 +599,7 @@ var testLevel = {
         { x: 18, y: 6, width: 25, height: 1, type: 1 }
     ],
     trap: [
-        { x: 6, y: 5, width: 4, height: 1, type: 1, percent: 0.2, rate: 200 }
+        { x: 6, y: 5, width: 4, height: 1, type: 1, percent: 0.1, rate: 20 }
     ],
     chests: [
         //{ x: 3, y: 1, direction : 1},
@@ -610,10 +615,10 @@ var testLevel = {
     ],
     obelisks: [
         { x: 4.5, y: 1, brickX: 15, brickY: 1, brickWidth: 1, brickHeight: 1, initial: true, repeat: true },
-        { x: 4.5, y: 1, brickX: 5, brickY: 12, brickWidth: 1, brickHeight: 5, initial: false, repeat: true }
+        { x: 4.5, y: 1, brickX: 7, brickY: 12, brickWidth: 1, brickHeight: 3, initial: false, repeat: true }
     ],
     moveable: [
-        { x: 1, y: 10, width: 3, height: 1, directionList: [1], distanceList: [5], velocity: 0.1 },
+        { x: 1, y: 10, width: 3, height: 1, directionList: [3,1], distanceList: [6,2], velocity: 1 },
     ],
 
     shrooms: [

@@ -476,47 +476,74 @@ class MoveableBlocks extends Platform {
         if(!this.reverseLists){
             if(this.directionList[this.index] == this.directions.right) {
                 if(this.targetX > this.x) this.x += this.velocity * TICK;
-                    else this.index += 1;
+                else {
+                    this.index += 1;
+                    this.setTarget();
+                }
             }
             if(this.directionList[this.index] == this.directions.left) {
                 if(this.targetX < this.x) this.x -= this.velocity * TICK;
-                    else this.index += 1;
+                    else {
+                        this.index += 1;
+                        this.setTarget();
+                    }
             }
             if(this.directionList[this.index] == this.directions.up) {
-                if(this.targetY > this.x) this.y += this.velocity * TICK;
-                else this.index += 1;
+                if(this.targetY < this.y) this.y -= this.velocity * TICK;
+                else {
+                    this.index += 1;
+                    this.setTarget();
+                }
             }
             if(this.directionList[this.index] == this.directions.down) {
-                if(this.targetY < this.x) this.y -= this.velocity * TICK;
-                else this.index += 1;
+                if(this.targetY > this.y) this.y += this.velocity * TICK;
+                else {
+                    this.index += 1;
+                    this.setTarget();
+                }
             }
         }
         else if(this.reverseLists){ // Reverses direction
             if(this.directionList[this.index] == this.directions.left) {
                 if(this.targetX > this.x) this.x += this.velocity * TICK;
-                    else this.index -= 1;
+                else {
+                    this.index -= 1;
+                    this.setRevTarget();
+                }
             }
             if(this.directionList[this.index] == this.directions.right) {
                 if(this.targetX < this.x) this.x -= this.velocity * TICK;
-                    else this.index -= 1;
+                else {
+                    this.index -= 1;
+                    this.setRevTarget();
+                }
             }
             if(this.directionList[this.index] == this.directions.down) {
-                if(this.targetY > this.x) this.y += this.velocity * TICK;
-                else this.index -= 1;
+                if(this.targetY < this.y) this.y -= this.velocity * TICK;
+                else {
+                    this.index -= 1;
+                    this.setRevTarget();
+                }
             }
             if(this.directionList[this.index] == this.directions.up) {
-                if(this.targetY < this.x) this.y -= this.velocity * TICK;
-                else this.index -= 1;
+                if(this.targetY > this.y) this.y += this.velocity * TICK;
+                else {
+                    this.index -= 1;
+                    this.setRevTarget();
+                }
             }
         }
-        
-        if(this.index > this.directionList.length){
-            console.log("Reversing to normal!");
+
+        if(this.index > this.directionList.length -1){
+            //console.log("Reversing");
             this.index -= 1;
+            this.setRevTarget();
             this.reverseLists = true;
         }
         else if(this.index < 0) {
+            //console.log("Starting over");
             this.index += 1;
+            this.setTarget();
             this.reverseLists = false;
         }
             
@@ -525,10 +552,17 @@ class MoveableBlocks extends Platform {
     }
 
     setTarget() {
-        if(this.directionList[this.index] == this.directions.right) this.targetX += this.distanceList[this.index];
-        else if(this.directionList[this.index] == this.directions.left) this.targetX -= this.distanceList[this.index]; 
-        else if(this.directionList[this.index] == this.directions.up) this.targetY += this.distanceList[this.index];
-        else if(this.directionList[this.index] == this.directions.down) this.targetY -= this.distanceList[this.index];
+        if(this.directionList[this.index] == this.directions.right) this.targetX = this.x + this.distanceList[this.index];
+        else if(this.directionList[this.index] == this.directions.left) this.targetX = this.x - this.distanceList[this.index]; 
+        else if(this.directionList[this.index] == this.directions.up) this.targetY = this.y - this.distanceList[this.index];
+        else if(this.directionList[this.index] == this.directions.down) this.targetY = this.y + this.distanceList[this.index];
+    }
+
+    setRevTarget() {
+        if(this.directionList[this.index] == this.directions.right) this.targetX =  this.x - this.distanceList[this.index];
+        else if(this.directionList[this.index] == this.directions.left) this.targetX = this.x + this.distanceList[this.index]; 
+        else if(this.directionList[this.index] == this.directions.up) this.targetY = this.y + this.distanceList[this.index];
+        else if(this.directionList[this.index] == this.directions.down) this.targetY = this.y - this.distanceList[this.index];
     }
 
 };
