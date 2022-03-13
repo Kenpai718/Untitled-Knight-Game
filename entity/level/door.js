@@ -106,12 +106,6 @@ class Door extends AbstractInteractable {
 
         ctx.fillStyle = "GhostWhite";
         ctx.font = PARAMS.DEFAULT_FONT;
-        if (this.exitLocation.levelNum) {
-            ctx.fillText("To Level " + this.nextLevelLabel, theX + 15, theY - 50);
-        } else {
-            ctx.fillText("ENTER DEBUG/TESTING ROOM", theX - 35, theY - 50);
-        }
-        (this.canEnter) ? ctx.fillStyle = "GhostWhite" : ctx.fillStyle = "DimGray";
-        ctx.fillText("Can enter: " + this.canEnter, theX, theY - 30);
+        ctx.fillText("Can enter Lv" + this.exitLocation.levelNum + ": " + this.canEnter, theX, theY - 30);
     };
 };
