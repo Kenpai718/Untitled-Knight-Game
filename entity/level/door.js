@@ -86,10 +86,14 @@ class Door extends AbstractInteractable {
 
         if (this.transition) {
             ctx.fillText("FINISH LEVEL", theX + 15, theY - 50);
-         } else if (this.exitLocation.levelNum) {
-            ctx.fillText("To Level " + this.nextLevelLabel, theX + 15, theY - 50);
-        } else {
-            ctx.fillText("ENTER DEBUG/TESTING ROOM", theX - 35, theY - 50);
+        } else if (this.exitLocation.levelNum == this.game.camera.levels.length - 1) {
+            ctx.fillText("THE FINAL FLOOR", theX - 5, theY - 50);
+        } else if (this.exitLocation.levelNum == 5) {
+            ctx.fillText("TREASURE ROOM", theX, theY - 50);
+        } else if (this.exitLocation.levelNum) {
+            ctx.fillText("To Level " + this.nextLevelLabel, theX + 20, theY - 50);
+        } else if (this.exitLocation.levelNum == 0) {
+            ctx.fillText("DEBUG/TESTING ROOM", theX - 10, theY - 50);
         }
     };
 
@@ -102,12 +106,6 @@ class Door extends AbstractInteractable {
 
         ctx.fillStyle = "GhostWhite";
         ctx.font = PARAMS.DEFAULT_FONT;
-        if (this.exitLocation.levelNum) {
-            ctx.fillText("To Level " + this.nextLevelLabel, theX + 15, theY - 50);
-        } else {
-            ctx.fillText("ENTER DEBUG/TESTING ROOM", theX - 35, theY - 50);
-        }
-        (this.canEnter) ? ctx.fillStyle = "GhostWhite" : ctx.fillStyle = "DimGray";
-        ctx.fillText("Can enter: " + this.canEnter, theX, theY - 30);
+        ctx.fillText("Can enter Lv" + this.exitLocation.levelNum + ": " + this.canEnter, theX, theY - 30);
     };
 };

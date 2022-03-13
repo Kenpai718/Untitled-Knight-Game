@@ -709,7 +709,7 @@ class Knight extends AbstractPlayer {
         let action = this.action;
         //attack logic (melee/ranged)
         if (this.game.attack) {
-            if (this.crouch) { //crouch attack
+            if (this.crouch && !this.inAir) { //crouch attack
                 this.action = this.states.crouch_atk;
             } else { //standing or jumping attack
                 //set action based on combo counter.
@@ -759,7 +759,7 @@ class Knight extends AbstractPlayer {
 
         } else if (!this.game.attack && this.game.shoot && !this.game.roll) { //only shoot an arrow when not attacking
             if (this.myInventory.arrows > 0 || this.myInventory.arrows == 0 && this.arrow) {
-                if (this.crouch)
+                if (this.crouch && !this.inAir)
                     this.action = this.states.crouch_shoot;
                 else this.action = this.states.shoot;
             }
@@ -833,6 +833,7 @@ class Knight extends AbstractPlayer {
             //disable attack so the player isn't buffered into an attack during the roll
             this.game.attack = false;
             this.game.shoot = false;
+            this.arrow = false;
             this.resetCombo();
             this.HB = null;
 
@@ -841,7 +842,10 @@ class Knight extends AbstractPlayer {
                 else this.facing = this.dir.left;
             }
             //set roll behavior
-            this.action = this.states.roll; //roll
+            if (this.action != this.states.roll) {
+                this.resetAnimationTimers(this.action);
+                this.action = this.states.roll; //roll
+            }
             this.velocity.x += (this.facing == this.dir.left) ? -1 * (PLAYER_PHYSICS.ROLL_SPD) : (PLAYER_PHYSICS.ROLL_SPD); //movement speed boost
             if (this.vulnerable) {
                 ASSET_MANAGER.playAsset(SFX.DODGE);

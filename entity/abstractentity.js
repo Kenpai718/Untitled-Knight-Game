@@ -84,13 +84,17 @@ class AbstractEntity {
     doDamage(entity) {
         //only do damage if the entity can be damaged
         //make sure the entity has this
+        var dmg = 0;
         if (entity.canTakeDamage()) {
-            var dmg = this.getDamageValue();
+            dmg = this.getDamageValue();
             if (dmg > 0) {
-                entity.takeDamage(dmg);
+                dmg = entity.takeDamage(dmg);
             }
         }
+        return dmg;
     }
+
+    
 
     /**
      * Entity takes damages
@@ -110,6 +114,7 @@ class AbstractEntity {
 
             this.game.addEntityToFront(new Score(this.game, this, damage, PARAMS.DMG_ID, isCritical));
         }
+        return damage;
     }
 
     /**
@@ -164,10 +169,14 @@ class AbstractEntity {
     * Dead if too far below the initial level height
     */
     checkInDeathZone() {
-        let lvlHeight = this.game.camera.levelH * PARAMS.BLOCKDIM;
-        if (this.y >= (lvlHeight + this.game.surfaceHeight / 2)) {
+        if (this.isDeathZone()) {
             this.takeDamage(this.max_hp, false);
         }
+    }
+
+    isDeathZone() {
+        let lvlHeight = this.game.camera.levelH * PARAMS.BLOCKDIM;
+        return (this.y >= (lvlHeight + this.game.surfaceHeight / 2));
     }
 
     /**

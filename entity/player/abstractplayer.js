@@ -162,10 +162,12 @@ class AbstractPlayer extends AbstractEntity {
         //close the shop if player took damage
         SHOP_ACTIVE = false;
 
+        let dmg = 0
         if (this.canTakeDamage()) {
             isCritical ? ASSET_MANAGER.playAsset(SFX.CRITICAL) : ASSET_MANAGER.playAsset(SFX.DAMAGED);
             this.takeKnockback();
-            this.hp -= damage;
+            dmg = Math.round(damage * this.getDefenseBonus());
+            this.hp -= dmg;
             this.vulnerable = false;
 
             if (this.hp <= 0) {
@@ -179,8 +181,9 @@ class AbstractPlayer extends AbstractEntity {
                 ASSET_MANAGER.playAsset(grunt);
             }
 
-            this.game.addEntityToFront(new Score(this.game, this, damage, PARAMS.DMG_ID, isCritical));
+            this.game.addEntityToFront(new Score(this.game, this, dmg, PARAMS.DMG_ID, isCritical));
         }
+        return dmg;
     }
 
     /**
@@ -223,7 +226,7 @@ class AbstractPlayer extends AbstractEntity {
      */
     respawnPlayer() {
         // remove the current level from the level states if no checkpoint
-        if(this.myCheckpoint == null) if (this.game.camera.levelState[this.game.camera.currentLevel]) this.game.camera.levelState.splice(this.game.camera.levelState.indexOf(this.game.camera.currentLevel, 1));
+        //if(this.myCheckpoint == null) if (this.game.camera.levelState[this.game.camera.currentLevel]) this.game.camera.levelState.splice(this.game.camera.levelState.indexOf(this.game.camera.currentLevel, 1));
         // set restart flag to true so self the state isn't saved
         this.game.camera.restart = true;
         this.game.camera.loadLevel(this.game.camera.currentLevel);
@@ -433,10 +436,13 @@ class AbstractPlayer extends AbstractEntity {
                 //attacked by an enemy
                 if (entity.HB && self.BB.collide(entity.HB)) {
                     //console.log("knight hit by enemy");
-                    let dmg = entity.getDamageValue() * self.getDefenseBonus();
-                    dmg = Math.round(100 * dmg) / 100; // Insures values to nearest hundredth 
+                    let dmg = entity.getDamageValue();
+                    //dmg = Math.round(100 * dmg) / 100; // Insures values to nearest hundredth 
                     if (self.canTakeDamage()) self.game.myReportCard.myDamageTaken += dmg;
-                    self.takeDamage(dmg, false);
+                    dmg = self.takeDamage(dmg, false);
+                    if (entity instanceof Wizard) {
+                        entity.recoverDamage(dmg);
+                    }
 
                 }
 

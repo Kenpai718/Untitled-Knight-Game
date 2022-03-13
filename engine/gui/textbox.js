@@ -5,14 +5,20 @@
  * each index is a new line string.
  */
 class TextBox {
-    constructor(game, x, y, text, lineBuffer = 5) {
+    constructor(game, x, y, text, lineBuffer = 5, theBoxColor, useTimer, timerDuration = 8) {
         Object.assign(this, { game, x, y, text, lineBuffer });
         this.fontSize = 15;
 
 
-        this.boxColor = "BlueViolet";
+        if (theBoxColor === undefined || theBoxColor === null) this.boxColor = "BlueViolet"; //default box color
+        else this.boxColor = theBoxColor; //passed in box color
         this.borderColor = "Azure";
         this.textColor = "GhostWhite";
+
+        //time based showing
+        (useTimer === undefined || useTimer === null) ? this.useTimer = false : this.useTimer = useTimer;
+        (timerDuration === undefined || timerDuration === null) ? this.myMaxTime = 0 : this.myMaxTime = timerDuration;
+        this.myTimer = 0;
 
         //field to draw the textbox or not. It should be set by the class using the textbox
         this.show = false;
@@ -26,9 +32,39 @@ class TextBox {
         this.createTextBox(this.canvas, this.ctx, text);
     };
 
-    update() {
+    updateCords(x, y) {
+        this.x = x;
+        this.y = y;
+    }
 
+    update() {
+        if (this.useTimer && this.show) {
+            const TICK = this.game.clockTick;
+            this.myTimer += TICK;
+
+            if (this.myTimer >= this.myMaxTime) {
+                this.show = false;
+            }
+        }
     };
+
+    /**
+     * Sets a new message to be shown
+     * Sets the duration of how long to show the message for
+     * Note: this.useTimer has to be true for the in-class text timer
+     * @param {} theNewMsg 
+     * @param {*} theShowDuration 
+     */
+    updateMessage(theNewMsg, theShowDuration) {
+
+        if (theNewMsg != this.text) {
+            this.text = theNewMsg;
+            this.show = true;
+            this.myTimer = 0;
+            this.myMaxTime = theShowDuration;
+            this.createTextBox(this.canvas, this.ctx, this.text);
+        }
+    }
 
     draw(ctx) {
         if (this.show) {
@@ -73,7 +109,7 @@ class TextBox {
         //if its one line build from a one line textbox
         if (totalLines <= 1) {
             let line = theText[0];
-            this.buildSingleLineBox(ctx, line);
+            this.buildSingleLineBox(canvas, ctx, line);
         } else { //build multiple line textbox
 
             for (let i = 0; i < totalLines; i++) {
@@ -91,8 +127,8 @@ class TextBox {
             let yBuffer = this.fontSize / 2;
             let boxWidth = (this.fontSize * maxLen) + xBuffer;
             let boxHeight = ((this.fontSize + this.lineBuffer) * totalLines) + (yBuffer * 2);
-            canvas.width = boxWidth+4;
-            canvas.height = boxHeight+4;
+            canvas.width = boxWidth + 4;
+            canvas.height = boxHeight + 4;
 
             ctx.fillStyle = this.boxColor;
             ctx.strokeStyle = this.borderColor;
@@ -127,18 +163,21 @@ class TextBox {
         let totalLines = 1;
 
         //make the text box
-
+        ctx.fillStyle = this.boxColor;
+        ctx.strokeStyle = this.borderColor;
 
         //draw the text box
         //width = line length, height = num lines
         let xBuffer = 30; //buffer between box width and text
-        let yBuffer = 14;
+        let yBuffer = this.fontSize / 2;
         let boxWidth = (this.fontSize * maxLen) + xBuffer;
         let boxHeight = ((this.fontSize + this.lineBuffer) * totalLines) + (yBuffer * 2);
-        canvas.width = boxWidth+4;
-        canvas.height = boxHeight+4;
+        canvas.width = boxWidth + 4;
+        canvas.height = boxHeight + 4;
+
         ctx.fillStyle = this.boxColor;
         ctx.strokeStyle = this.borderColor;
+
         //let myBoxX = (this.x - this.game.camera.x) - (boxWidth / 3);
         //let myBoxY = (this.y - this.game.camera.y) - (boxHeight * 1.5);
         ctx.globalAlpha = 0.5;
@@ -147,13 +186,14 @@ class TextBox {
         ctx.strokeRect(1, 1, boxWidth, boxHeight);
 
         // console.log("is a string", maxLen, totalLines);
-       //console.log(myBoxX, myBoxY, boxWidth, boxHeight);
+        //console.log(myBoxX, myBoxY, boxWidth, boxHeight);
 
         //write the text
         ctx.fillStyle = this.textColor;
         ctx.align = "center";
+        ctx.font = this.fontSize + 'px "Press Start 2P"';
         let textX = (xBuffer / 2);
-        let textY = (this.fontSize) + (boxHeight / 5) + (yBuffer / 2);
+        let textY = this.fontSize + (yBuffer * 2);
         ctx.fillText(theText, textX, textY);
         ctx.align = "left";
     }

@@ -32,6 +32,7 @@ ASSET_MANAGER.queueDownload("./sprites/environment/dark_castle_tileset.png");
 ASSET_MANAGER.queueDownload("./sprites/environment/moonlit_sky.png");
 ASSET_MANAGER.queueDownload("./sprites/environment/Obelisk_full.png");
 ASSET_MANAGER.queueDownload("./sprites/environment/distraction.png");
+ASSET_MANAGER.queueDownload("./sprites/environment/portal.png");
 ASSET_MANAGER.queueDownload("./sprites/environment/sign.png");
 
 //other
@@ -50,9 +51,13 @@ MUSIC_MANAGER.queueDownload(MUSIC.FODLAN_WINDS);
 MUSIC_MANAGER.queueDownload(MUSIC.BETWEEN_HEAVEN_AND_EARTH);
 MUSIC_MANAGER.queueDownload(MUSIC.LONG_WAY);
 MUSIC_MANAGER.queueDownload(MUSIC.TITLE);
-
 MUSIC_MANAGER.queueDownload(MUSIC.SPLENDOUR);
 MUSIC_MANAGER.queueDownload(MUSIC.SIGNORA);
+MUSIC_MANAGER.queueDownload(MUSIC.COUNTERATTACK);
+MUSIC_MANAGER.queueDownload(MUSIC.MEMORIES);
+MUSIC_MANAGER.queueDownload(MUSIC.FOG);
+
+
 
 
 //sfx
@@ -91,6 +96,7 @@ ASSET_MANAGER.queueDownload(SFX.BERSERK_ACTIVATE);
 ASSET_MANAGER.queueDownload(SFX.RESPAWN);
 ASSET_MANAGER.queueDownload(SFX.COMPLETE);
 ASSET_MANAGER.queueDownload(SFX.TRIGGER);
+ASSET_MANAGER.queueDownload(SFX.EVIL_LAUGH);
 //ASSET_MANAGER.queueDownload(SFX.CHECKPOINT);
 
 // Leave this SFX to suffer at the bottom >:D

@@ -43,12 +43,17 @@ class Arrow extends AbstractEntity {
                 this.velocity.y += this.fallAcc * this.game.clockTick;
             }
         }
+        else {
+            this.stuckTimer -= this.game.clockTick;
+            if (this.stuckTimer <= 0) this.removeFromWorld = true;
+        }
 
         this.x += (this.velocity.x * this.game.clockTick);
         this.y += (this.velocity.y * this.game.clockTick);
 
         //get direction of the arrow
         if (!this.stuck) this.facing = getFacing(this.velocity);
+        this.updateBB();
         this.handleCollisions();
 
 
@@ -71,9 +76,44 @@ class Arrow extends AbstractEntity {
                 hitWall = true;
                 if (!self.stuck) {
                     self.smooth = false;
+                    let check1 = entity.BB.left - self.BB.left;
+                    let check2 = entity.BB.right - self.BB.right;
+                    let check3 = entity.BB.top - self.BB.top;
+                    let check4 = entity.BB.bottom - self.BB.bottom;
+                    console.log(check1, check2, check3, check4)
+                    if (check1 >= 0 && check2 >= 0 && check3 >= 0 && check4 >= 0) {
+                        let x = 0;
+                        let y = 0;
+                        if (Math.abs(check1) < Math.abs(check2)) x = check1;
+                        else x = check2;
+                        if (Math.abs(check3) < Math.abs(check4)) y = check3;
+                        else y = check4;
+                        let dist = 0;
+                        let random = Math.random() / 2 + .5;
+                        if (Math.abs(x) < Math.abs(y)) {
+                            if (x == check1) {
+                                dist = check1 + self.BB.width * random;
+                            }
+                            else {
+                                dist = check2 - self.BB.width * random;
+                            }
+                        }
+                        else {
+                            if (y == check3) {
+                                dist = check3 + self.BB.height * random;
+                            }
+                            else {
+                                dist = check4 - self.BB.height * random;
+                            }
+                        }
+                        self.x -= dist;
+                        self.y -= dist;
+                        console.log(dist);
+                    }
                     self.velocity.x = 0;
                     self.velocity.y = 0;
                     self.stuck = true;
+                    self.stuckTimer = 15;
                     ASSET_MANAGER.playAsset(SFX.ARROW_STICK);
                 }
             }
@@ -82,38 +122,50 @@ class Arrow extends AbstractEntity {
         //unstick arrow if the wall that it hit is no longer there (like through an obelisk)
         if (this.stuck && !hitWall) this.stuck = false;
 
-        //hit an entity
-        this.game.enemies.forEach(function (entity) {
-            if (entity.BB && self.BB.collide(entity.BB)) {
-                //do damage to enemy hit by player arrow
-                if (entity instanceof AbstractEnemy && self.playerTeam) {
-                    if (!self.hit && !self.stuck && !entity.dead) {
-                        //log to report card
-                        if (entity.canTakeDamage()) self.game.myReportCard.myDamageDealt += self.getDamageValue();
-                        ASSET_MANAGER.playAsset(SFX.ARROW_HIT);
-                        self.removeFromWorld = true;
-                        self.hit = true;
-                        entity.takeDamage(self.getDamageValue(), self.critical);
-                        entity.setDamagedState();
-                        if (!entity.aggro) entity.aggro = true;
-
+        //player's arrow try to do damage to enemy
+        if (this.playerTeam) {
+            this.game.enemies.forEach(function (entity) {
+                if (entity.BB && self.BB.collide(entity.BB)) {
+                    //do damage to enemy hit by player arrow
+                    if (entity instanceof AbstractEnemy) {
+                        if (!self.hit && !self.stuck && !entity.dead) {
+                            self.doArrowHit(entity);
+                            if (!entity.aggro) entity.aggro = true;
+                        }
                     }
-                } else if (entity instanceof AbstractPlayer && !self.playerTeam) {
-                    if (!self.hit && !self.stuck && !entity.dead) {
-                        //do damage to player from enemy arrow
-                        //log to report card
-                        if (entity.canTakeDamage()) self.game.myReportCard.myDamageTaken += self.getDamageValue();
-                        ASSET_MANAGER.playAsset(SFX.ARROW_HIT);
-                        self.removeFromWorld = true;
-                        self.hit = true;
-                        entity.takeDamage(self.getDamageValue(), self.critical);
-                    }
-
+                }
+            });
+        } else { //enemy arrow try to hit the player
+            let player = this.game.camera.player;
+            if (player.BB && self.BB.collide(player.BB)) {
+                if (!self.hit && !self.stuck && !player.dead) {
+                    if (player.vulnerable) self.doArrowHit(player);
                 }
             }
-        });
+            // this.game.entities.forEach(function (entity) {
+            //     if (entity.BB && self.BB.collide(entity.BB)) {
+            //         //do damage to enemy hit by player arrow
+            //         if (entity instanceof AbstractPlayer) {
+            //             if (!self.hit && !self.stuck && !entity.dead) {
+            //                 if (entity.vulnerable) self.doArrowHit(entity);
+            //             }
+            //         }
+            //     }
+            // });
+        }
 
         this.updateBB();
+    }
+
+    doArrowHit(entity) {
+        if (entity.canTakeDamage()) {
+            this.game.myReportCard.myDamageDealt += this.getDamageValue();
+            ASSET_MANAGER.playAsset(SFX.ARROW_HIT);
+            this.removeFromWorld = true;
+            this.hit = true;
+            entity.takeDamage(this.getDamageValue(), this.critical);
+            entity.setDamagedState();
+        }
     }
 
     updateBB() {

@@ -21,6 +21,30 @@
  * doors must be in the format of door: { x : 1, y : 3 , killQuota : x,  exitLocation: {x: 1, y: 1, levelNum: 1}},
  */
 
+//version of up to date info. Make sure to update with each public push!
+const SIGN_VERSION = { x: 20, y: 3, title: "    VERSION 1.0", text: "Last updated: 03/12/2022" }
+
+//spawn locations for using a door
+const DOOR_SPAWNS = {
+    //entrances of a level
+    enter_to_level0: { x: 2, y: 1, levelNum: 0 },
+    enter_to_level1: { x: 2, y: 1, levelNum: 1 },
+    enter_to_level2: { x: 1, y: 1, levelNum: 2 },
+    enter_to_level3: { x: 1, y: 1, levelNum: 3 },
+    enter_to_level4: { x: 3, y: 5, levelNum: 4 },
+    //currently skipping level 5
+    enter_to_level6: { x: 1, y: 6, levelNum: 6},
+    enter_to_treasure: { x: 41, y: 26, levelNum: 7 },
+    enter_to_final: { x: 4, y: 1, levelNum: 8 },
+
+    //exits of a level
+    exit_to_level1: { x: 114, y: 10, levelNum: 1 },
+    exit_to_level2: { x: 114, y: 1, levelNum: 2 },
+    exit_to_level3: { x: 115, y: 23, levelNum: 3 },
+    exit_to_level3top: { x: 34, y: 33, levelNum: 3 },
+    exit_to_level4: { x: 8, y: 24, levelNum: 4 }
+}
+
 /**TEST LEVEL = Debugging/testing rom aka LEVEL 0 */
 
 var level1_5 = {
@@ -626,9 +650,9 @@ var testLevel = {
     //quick access to all levels
     doors: [
 
-        { x: 0, y: 3, killQuota: 0, exitLocation: { x: 5, y: 2, levelNum: 1 }, transition: false }, //door to level 1
-        { x: 6, y: 3, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition: false }, //door to level 2
-        { x: 9, y: 3, killQuota: 0, exitLocation: { x: 4, y: 1, levelNum: 3 }, transition: false }, //door to level 3
+        { x: 0, y: 3, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level1, transition: false }, //door to level 1
+        { x: 6, y: 3, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level2, transition: false }, //door to level 2
+        { x: 9, y: 3, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level3, transition: false }, //door to level 3
 
         { x: 12, y: 3, killQuota: 0, exitLocation: { x: 10, y: 45, levelNum: 4 }, transition: false }, //door to level 4
         { x: 20, y: 3, killQuota: 0, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: true }, //door to level 4
@@ -639,8 +663,10 @@ var testLevel = {
 
     ],
 
+    portal: { x: 20, y: 4 },
+
     npcs: [
-        { x: 3, y: 5 }
+        { x: 3, y: 5, text: "what da dog doin?" }
     ],
 
     signs: [
@@ -728,13 +754,13 @@ var levelLoader = {
 
     //quick access to all levels
     doors: [
-        { x: 0.5, y: 4, killQuota: 0, exitLocation: { x: 22, y: 50, levelNum: 5 }, transition: false }, //door to level 0 (DEVELOPER ROOM)
-        //{ x: 0.5, y: 4, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 0 }, transition: false }, //door to level 0 (DEVELOPER ROOM)
-        { x: 7, y: 4, killQuota: 0, exitLocation: { x: 2, y: 1, levelNum: 0 }, transition: false }, //door to level 1
-        //{ x: 7, y: 4, killQuota: 0, exitLocation: { x: 3, y:  1, levelNum: 1 }, transition: false }, //door to level 1
-        { x: 10, y: 4, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition: false }, //door to level 2
-        { x: 13, y: 4, killQuota: 0, exitLocation: { x: 4, y: 1, levelNum: 3 }, transition: false }, //door to level 3
-        { x: 16, y: 4, killQuota: 0, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: false }, //door to level 4
+        { x: 0.5, y: 4, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level0, transition: false }, //door to level 0 (DEVELOPER ROOM)
+        { x: 7, y: 4, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level1, transition: false }, //door to level 1
+        { x: 10, y: 4, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level2, transition: false }, //door to level 2
+        { x: 13, y: 4, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level3, transition: false }, //door to level 3
+        { x: 16, y: 4, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level4, transition: false }, //door to level 4
+        { x: 11, y: 12, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_final, transition: false }, //door to boss
+        { x: 22, y: 4, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_treasure, transition: false },
     ],
 
     torches: [
@@ -761,14 +787,14 @@ var levelLoader = {
     ],
 
     chains: [
-        { x: 8, y: 7 },
+        { x: 8.5, y: 7 },
         { x: 15.5, y: 7 },
     ],
 
     supports: [
         { x: 0, y: 13, width: 25 },
         { x: 0, y: 6, width: 3 },
-        { x: 0, y: 8, width: 25 }
+        { x: 1, y: 8, width: 22 }
     ],
 
     columns: [
@@ -782,7 +808,7 @@ var levelLoader = {
         { x: 0, y: 12, width: 2, height: 3 },
         { x: 3, y: 12, width: 2, height: 3 },
         { x: 7, y: 12, width: 2, height: 3 },
-        { x: 11, y: 12, width: 2, height: 3 },
+        //{ x: 11, y: 12, width: 2, height: 3 },
         { x: 15, y: 12, width: 2, height: 3 },
         { x: 19, y: 12, width: 2, height: 3 },
         { x: 22, y: 12, width: 2, height: 3 },
@@ -790,7 +816,7 @@ var levelLoader = {
     ],
 
     npcs: [
-        { x: 0, y: 7 },
+        // x: 0, y: 7 },
     ],
 
     signs: [
@@ -800,6 +826,7 @@ var levelLoader = {
             text: ["-Stand next to the door of the level",
                 " you want to enter and press W!"]
         },
+        SIGN_VERSION
     ],
 
     backgroundWalls: [
@@ -807,12 +834,12 @@ var levelLoader = {
     ],
     ground: [
         { x: 0, y: 1, width: 30, height: 1, type: 1 },
-        { x: 0, y: 9, width: 25, height: 1, type: 1 }
     ],
     platforms: [
         //{x: 4, y: 10.8, width: 16, height: 0.5}
         { x: 0, y: 6, width: 3, height: 1, type: 0 },
-        { x: 21, y: 6, width: 3, height: 1, type: 2 },
+        { x: 21, y: 6, width: 3, height: 1, type: 0 },
+        { x: 1, y: 9, width: 22, height: 1, type: 0 },
     ],
     walls: [
         { x: -1, y: 14, height: 14, type: 2 },
@@ -868,7 +895,7 @@ var titleScene = {
     ],
 
     chains: [
-        { x: 8, y: 7 },
+        { x: 8.5, y: 7 },
         { x: 15.5, y: 7 },
     ],
 
@@ -901,7 +928,7 @@ var titleScene = {
     ],
 
     signs: [
-        { x: 22, y: 3, title: "VERSION 1.0 (BETA)", text: "" }
+        SIGN_VERSION
     ],
 
     backgroundWalls: [
@@ -930,7 +957,7 @@ var titleScene = {
     ],
 
     skeletons: [
-        { x: 2, y: 7, guard: true }
+        { x: 2, y: 7, guard: true, initialState: 6 }
     ],
 
     shrooms: [
@@ -942,7 +969,7 @@ var titleScene = {
     ],
 
     flyingeyes: [
-        { x: 20, y: 3, guard: true }
+        { x: 20, y: 4, guard: true }
     ],
 
 }
@@ -959,17 +986,26 @@ var level1_1 = {
     player: { x: 2, y: 1 },
     music: MUSIC.FODLAN_WINDS,
     doors: [
-        { x: 116, y: 12, killQuota: 3, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition: false }, //door to level 2
+        { x: 116, y: 12, killQuota: 3, exitLocation: DOOR_SPAWNS.enter_to_level2, transition: false }, //door to level 2
         //{ x: 2, y: 3, killQuota: 0, exitLocation: { x: 1, y: 1, levelNum: 0 }, transition : false } //debugging room, DELETE THIS BEFORE SUBMISSION!
     ],
 
     npcs: [
-        { x: 55, y: 5 }
+        {
+            x: 5, y: 1, text: ["Great Hero, I have brought you here from another world.",
+                "Right now, this castle is under seige by monsters!",
+                "I need your help. Please save the castle!"]
+        },
+        {
+            x: 55, y: 5, text: ["Your journey will be arduous...",
+                "If you bring me the DIAMONDS that you find",
+                "then I can grant you more power."]
+        },
     ],
 
     signs: [
         {
-            x: 6, y: 2,
+            x: 16, y: 3,
             title: "[TUTORIAL: BASIC COMBAT/MOVEMENT]",
             text: [
                 "KEYBOARD CONTROLS:",
@@ -982,7 +1018,7 @@ var level1_1 = {
                 "     *Hold [W] to shoot diagonally up or [S] down.",
                 "-[SHIFT] to roll and dodge attacks.",
                 " *Recommend to disable sticky keys!",
-                "-[ESC] to pause the game",
+                "-[ESC] to pause/unpause the game",
                 "",
                 "KEYBOARD + MOUSE CONTROLS:",
                 "*NOTE: Keep mouse cursor within game screen!",
@@ -1005,17 +1041,19 @@ var level1_1 = {
         },
 
         {
-            x: 53, y: 6,
+            x: 49, y: 6,
             title: "[TUTORIAL: HEALING/SHOP]",
             text: [
-                "HOW TO HEAL AND USE SHOP:",
+                "HOW TO HEAL:",
                 "-[E] to use a potion in your inventory.",
-                "-Potions will heal you for a set amount.",
+                "-Potions will heal you for a set 50 HP",
                 "-Potions are limited so use them sparingly.",
-                "-You can get more potions or other equipment by spending",
-                " DIAMONDS at the SHOP, which are found somewhere in each level.",
-                "-Get DIAMONDS from chests or from enemy drops."
-            ]
+                "",
+                "HOW TO SHOP:",
+                "-Stand next to the shopkeeper and tap [W] to shop",
+                "-The friendly shopkeeper will be your supporter on",
+                " this journey. Give him DIAMONDS to upgrade your tools.",
+                "-Use your mouse cursor to click the buttons in the shop."]
         },
 
         {
@@ -1167,20 +1205,20 @@ var level1_1 = {
         { x: 115, y: 12 }
     ],
     shrooms: [
-        { x: 16, y: 2, guard: false },
         { x: 62, y: 1, guard: false },
         { x: 72, y: 5, guard: false }
     ],
     goblins: [
-        { x: 105, y: 12, guard: true }
+        { x: 76, y: 8, guard: true },
+        { x: 105, y: 12, guard: true },
     ],
     skeletons: [
         { x: 47, y: 7, guard: true }
     ],
-    
+
     slimes: [
-        {x: 97, y: 2, guard: false},
-        {x: 104, y: 2, guard: false},
+        { x: 97, y: 2, guard: false },
+        { x: 104, y: 2, guard: false },
 
     ]
 }
@@ -1192,8 +1230,8 @@ var level1_2 = {
     player: { x: 1, y: 1 },
     music: MUSIC.CHASING_DAYBREAK,
     doors: [
-        { x: 116, y: 3, killQuota: 7, exitLocation: { x: 4, y: 3, levelNum: 3 }, transition: false }, //next level to 3
-        { x: 0, y: 3, killQuota: 0, exitLocation: { x: 114, y: 10, levelNum: 1 }, transition: false } //go back to level 1
+        { x: 116, y: 3, killQuota: 7, exitLocation: DOOR_SPAWNS.enter_to_level3, transition: false }, //next level to 3
+        { x: 0, y: 3, killQuota: 0, exitLocation: DOOR_SPAWNS.exit_to_level1, transition: false } //go back to level 1
     ],
 
     signs: [{
@@ -1201,12 +1239,12 @@ var level1_2 = {
         title: "[TUTORIAL: MORE COMBAT TIPS]",
         text: [
             "ADVANCED COMBAT TIPS:",
-            "-Each hit has a base 10% chance to CRIT and do x2 damage!",
             "-Cancel an attack animation with a roll.",
             " This lets you do damage while staying evasive.",
+            "-Each hit has a base 10% chance to CRIT and do x2 damage!",
+            "-If you shoot an arrow and it got stuck then you can retrieve it.",
             "-After an enemy spots you they will chase you down for a",
             " certain amount of time.",
-            "-If you shoot an arrow and it got stuck then you can retrieve it.",
         ],
     },
     {
@@ -1241,7 +1279,7 @@ var level1_2 = {
         { x: 2, y: 25, direction: 1 },
         //{ x: 50, y: 7, direction: 0 },
         { x: 82, y: 19, direction: 0 },
-        { x: 58, y: 1, direction: 1 }, //secret 
+        { x: 58, y: 1, direction: 1 }, //secret
         { x: 58, y: 4, direction: 1 },
         { x: 52, y: 1, direction: 1 },
         { x: 117, y: 8, direction: 0 },
@@ -1249,8 +1287,11 @@ var level1_2 = {
     ],
 
     npcs: [
-        { x: 7, y: 1 },
-        { x: 38, y: 21 }
+        { x: 7, y: 1, text: ["I would read this sign if I knew how to read."] },
+        {
+            x: 38, y: 21, text: ["Welcome to WizardMart.",
+                "May I take your order?"]
+        }
     ],
 
     ground: [
@@ -1379,7 +1420,7 @@ var level1_2 = {
         { x: 28, y: 27, guard: true },
         { x: 102, y: 9, guard: true },
         { x: 91, y: 9, guard: true },
-        
+
     ],
     windows: [
         { x: 2, y: 9, width: 1, height: 1.5 },
@@ -1512,7 +1553,8 @@ var level1_3 = {
                 "-To activate: hit them with your SWORD or ARROW!",
                 " ...or you could press \'W'\ next to it, but that's boring.",
                 "-Some obelisk puzzles can only be solved by hitting them",
-                " from afar with your bow and arrow!"
+                " from afar with your bow and arrow!",
+                "-Some obelisks can repeatedly toggled on and off"
             ]
         },
         {
@@ -1552,9 +1594,13 @@ var level1_3 = {
 
     ],
     npcs: [
-        { x: 51, y: 10 },
-        { x: 10, y: 16 },
-        { x: 39, y: 35 },
+        { x: 10, y: 16, text: "Just uh dropping by..." },
+        {
+            x: 51, y: 10, text: ["A little birdie told me that",
+                "that this floor holds treasures",
+                "beyond your wildest imagination..."]
+        },
+        { x: 39, y: 35, text: "I can practically taste the treasure in here." },
 
     ],
 
@@ -1569,15 +1615,17 @@ var level1_3 = {
     ],
 
     doors: [
-        { x: 1, y: 3, killQuota: 0, exitLocation: { x: 114, y: 1, levelNum: 2 }, transition: false }, //go back to level 2
-        { x: 117, y: 25, killQuota: 8, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: false }, // change to level 4 once theres a level 4
-        { x: 34, y: 35, killQuota: 0, exitLocation: { x: 41, y: 29, levelNum: 5 }, transition: false } // change to treasure room
+        { x: 1, y: 3, killQuota: 0, exitLocation: DOOR_SPAWNS.exit_to_level2, transition: false }, //go back to level 2
+        { x: 117, y: 25, killQuota: 8, exitLocation: DOOR_SPAWNS.enter_to_level4, transition: false }, // change to level 4 once theres a level 4
+        { x: 34, y: 35, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_treasure, transition: false } // change to treasure room
     ],
     ground: [
         { x: 0, y: 0, width: 10, type: 1 },
         { x: 16, y: 10, width: 3, type: 1 },
         //obelisk to right room
         { x: 68, y: 21, width: 2, type: 1 }, //chest on top
+        { x: 70, y: 25, width: 14, type: 1 },
+        { x: 99, y: 22, width: 21, type: 1 },
 
     ],
     obelisks: [
@@ -1585,12 +1633,12 @@ var level1_3 = {
         { x: 79, y: 15, brickX: 81, brickY: 17, brickWidth: 3, brickHeight: 3 },
         { x: 100, y: 23, brickX: 105, brickY: 30, brickWidth: 11, brickHeight: 8 },
         { x: 17, y: 11, brickX: 19, brickY: 15, brickWidth: 6, brickHeight: 3 },
-        { x: 50, y: 35.5, brickX: 42, brickY: 37, brickWidth: 1, brickHeight: 5 },
-        { x: 68, y: 22.5, brickX: 70, brickY: 30, brickWidth: 2, brickHeight: 17 },
+        { x: 67, y: 36.5, brickX: 42, brickY: 37, brickWidth: 1, brickHeight: 5 },
+        { x: 68, y: 22.5, brickX: 70, brickY: 30, brickWidth: 2, brickHeight: 18 },
     ],
     shrooms: [
         { x: 107, y: 32, guard: false },
-        { x: 36, y: 35, guard: false },
+        //{ x: 36, y: 35, guard: false },
         { x: 61, y: 9, guard: false }
     ],
     goblins: [
@@ -1613,9 +1661,9 @@ var level1_3 = {
     ],
 
     slimes: [
-        {x:65, y:38, guard: true},
-        { x: 6, y: 37, guard: true}, //secret slime
-        { x: 7, y: 37, guard: true}, //secret slime
+        { x: 65, y: 38, guard: true },
+        { x: 6, y: 37, guard: true }, //secret slime
+        { x: 7, y: 37, guard: true }, //secret slime
     ],
 
     chests: [
@@ -1625,6 +1673,7 @@ var level1_3 = {
         { x: 9, y: 36, direction: 1 },
         { x: 10.5, y: 36, direction: 1 },
 
+        { x: 75, y: 13, direction: 0 },
         { x: 77, y: 15, direction: 0 },
         { x: 54, y: 5, directon: 0 },
         { x: 29, y: 28, directon: 0 },
@@ -1634,11 +1683,18 @@ var level1_3 = {
         { x: 65, y: 36, direction: 0 }, //chest on top
     ],
     torches: [
+        { x: 4, y: 3 },
         { x: 6, y: 37 },
         { x: 12, y: 37 },
         { x: 18, y: 14 },
-        { x: 52, y: 26 }, //subtle hint to go left to find the treasure room                                                                                                        :c
-        { x: 49, y: 27 },
+        { x: 23, y: 5 },
+        { x: 34, y: 5 },
+        { x: 41, y: 10 },
+        { x: 53, y: 7 },
+        { x: 68, y: 25 },
+        { x: 52.5, y: 27 }, //subtle hint to go left to find the treasure room                                                                                                        :c
+        { x: 49, y: 30 },
+        { x: 49, y: 14 },
 
         { x: 116, y: 24 },
         { x: 119, y: 24 },
@@ -1654,11 +1710,11 @@ var level1_3 = {
         { x: 36, y: 0, width: 48, height: 1 },
         { x: 17, y: 42, width: 6, height: 2 },
         { x: 77, y: 14, width: 7, height: 14 },
-        { x: 71, y: 25, width: 13, height: 8 },
+        { x: 71, y: 24, width: 13, height: 7 },
         { x: 71, y: 17, width: 2, height: 1 },
         { x: 71, y: 16, width: 1, height: 1 },
         { x: 84, y: 12, width: 15, height: 13 },
-        { x: 99, y: 22, width: 21, height: 23 },
+        { x: 99, y: 21, width: 21, height: 22 },
         { x: 30, y: 32, width: 13, height: 2 },
         { x: 28, y: 42, width: 2, height: 12 },
         { x: 30, y: 42, width: 13, height: 5 },
@@ -1716,12 +1772,12 @@ var level1_3 = {
 
         { x: 50, y: 34, width: 3, height: 1 },
         { x: 57, y: 35, width: 3, height: 1 },
-        { x: 64, y: 35, width: 3, height: 1 }, //chest on top
+        { x: 64, y: 35, width: 5, height: 1 }, //chest on top
 
         { x: 40, y: 7, width: 2, height: 1 },
         { x: 49, y: 12, width: 2, height: 1 },
         { x: 59, y: 22, width: 5, height: 1 },
-        { x: 69, y: 12, width: 5, height: 1 },
+        { x: 69, y: 12, width: 8, height: 1 },
         { x: 89, y: 17, width: 3, height: 1 },
         { x: 95, y: 21, width: 1, height: 1 },
         { x: 45, y: 30, width: 2, height: 1 },
@@ -1732,7 +1788,7 @@ var level1_3 = {
         { x: 16, y: 40, height: 3, type: 0 }, //secret room cover
         { x: 57, y: 22, height: 8, type: 0 },
         { x: 53, y: 25, height: 8, type: 2 },
-        { x: 70, y: 25, height: 12, type: 0 },
+        { x: 70, y: 24, height: 11, type: 0 },
         { x: 19, y: 11, height: 2, type: 2 },
         { x: 22, y: 26, height: 4, type: 2 },
         { x: 20, y: 40, height: 5, type: 2 },
@@ -1774,16 +1830,19 @@ var level1_4 = {
         },
     ],
     doors: [
-        { x: 3, y: 6, killQuota: 0, exitLocation: { x: 115, y: 23, levelNum: 3 }, transition: false }, //starting door
-        { x: 6, y: 26, killQuota: 8, exitLocation: { x: 1, y: 7, levelNum: 6 }, transition: false }, //exit door
+        { x: 3, y: 6, killQuota: 0, exitLocation: DOOR_SPAWNS.exit_to_level3, transition: false }, //starting door
+        { x: 6, y: 26, killQuota: 8, exitLocation: DOOR_SPAWNS.enter_to_final, transition: false }, //exit door
     ],
     npcs: [
-        { x: 5, y: 4 },
-        { x: 67, y: 35 },
+        {
+            x: 5, y: 4, text: ["This castle could use some remodeling",
+                "...and stairs."]
+        },
+        { x: 67, y: 35, text: ["I sense danger ahead..."] },
     ],
     chests: [
         { x: 29, y: 1, direction: 0 },    //bottom floor
-        { x: 37, y: 12, direction: 1 },   //secret room 
+        { x: 37, y: 12, direction: 1 },   //secret room
         { x: 38.5, y: 12, direction: 1 }, //secret room
         { x: 40, y: 12, direction: 1 }, //secret room
         { x: 52, y: 12, direction: 1 },   //middle floor
@@ -1863,7 +1922,7 @@ var level1_4 = {
         { x: 48, y: 36, width: 1, height: 6, type: 0 }, //top floor spikes right wall (bottom)
         { x: 48, y: 45, width: 1, height: 3, type: 0 }, //top floor spikes right wall (TOP)
         { x: 45, y: 43, width: 1, height: 13, type: 0 }, //top floor spikes left wall
-        { x: 42, y: 45, width: 1, height: 7, type: 0 }, //top floor spikes right wall (TOP) 2 
+        { x: 42, y: 45, width: 1, height: 7, type: 0 }, //top floor spikes right wall (TOP) 2
         { x: 38, y: 42, width: 1, height: 5, type: 0 }, //top floor spikes left wall (TOP) 2
         { x: 38, y: 45, width: 1, height: 1, type: 0 }, //top floor spikes left wall (TOP) 2
         { x: 35, y: 37, width: 1, height: 7, type: 0 }, //top floor spikes left (TOP) 3
@@ -1926,7 +1985,7 @@ var level1_4 = {
         { x: 0, y: 9, width: 36 }, //bottom floor left
         { x: 48, y: 23, width: 22 }, //middle
         { x: 13, y: 45, width: 75 }, //top
-        {x: 1, y: 45, width: 10 }, //top floor left
+        { x: 1, y: 45, width: 10 }, //top floor left
     ],
 
     chains: [
@@ -2031,10 +2090,10 @@ var level1_4 = {
         { x: 12, y: 26, width: 2, height: 2 },
     ],
     slimes: [
-        {x: 29, y: 3, guard: true},
-        {x: 31, y: 36, guard: true},
-        {x: 41, y: 37, guard: true},
-        
+        { x: 29, y: 3, guard: true },
+        { x: 31, y: 36, guard: true },
+        { x: 41, y: 37, guard: true },
+
     ],
     shrooms: [
         { x: 72, y: 24, guard: false },
@@ -2099,7 +2158,7 @@ var level1_4 = {
                 { x: 14, y: 38, guard: false },
                 { x: 16, y: 38, guard: false },
             ]
-            
+
         }
     ]
 
@@ -2111,14 +2170,24 @@ var treasureroom = {
     label: "Treasure Room",
     width: 80, height: 52,
     player: { x: 40, y: 28 },
+    //player: { x: 53, y: 11 }, //down below
     music: MUSIC.SPLENDOUR,
 
-    npcs: [{ x: 37, y: 28 }],
+    npcs: [{
+        x: 37, y: 28, text: [
+            "A birdie told me treasure lurks in every corner...",
+            "Take to the skies, hero, and following your guiding light.",]
+    },
+    {
+        x: 76, y: 11, text: [
+            "They really need to invest in an elevator."]
+    }
+    ],
 
     //quick access to all levels
     doors: [
 
-        { x: 41, y: 28, killQuota: 0, exitLocation: { x: 34, y: 33, levelNum: 3 }, transition: false }, //door to level 1
+        { x: 41, y: 28, killQuota: 0, exitLocation: DOOR_SPAWNS.exit_to_level3top, transition: false }, //door to level 3 top
 
     ],
 
@@ -2127,6 +2196,7 @@ var treasureroom = {
         { x: 19, y: 44, height: 20, type: 2 }, // Support Wall
         { x: 64, y: 44, height: 6, type: 2 },
         { x: 64, y: 37, height: 13, type: 2 },
+        { x: 30, y: 40, height: 1, type: 2 }, //left jump
     ],
 
     backgroundWalls: [
@@ -2141,10 +2211,10 @@ var treasureroom = {
         { x: 1, y: 12, width: 78, height: 13 }, // Underground
     ],
     obelisks: [
-        { x: 67, y: 45, brickX: 24, brickY: 25, brickWidth: 5, brickHeight: 1 }, //unlock bottom floor
-        { x: 67, y: 45, brickX: 55, brickY: 25, brickWidth: 5, brickHeight: 1 },
-        { x: 41, y: 19, brickX: 29, brickY: 21, brickWidth: 4, brickHeight: 1 }, // escape
-        { x: 16, y: 22, brickX: 30, brickY: 40, brickWidth: 1, brickHeight: 1 },
+        { x: 67, y: 45, brickX: 24, brickY: 25, brickWidth: 5, brickHeight: 1, initial: true, repeat: true }, //unlock bottom floor
+        { x: 67, y: 45, brickX: 55, brickY: 25, brickWidth: 5, brickHeight: 1, initial: true, repeat: true },
+        { x: 41, y: 19, brickX: 29, brickY: 21, brickWidth: 4, brickHeight: 1, initial: true, repeat: true }, // escape
+        { x: 16, y: 22, brickX: 5, brickY: 50, brickWidth: 1, brickHeight: 1, initial: true, repeat: true }, //opens top left secret corner
     ],
 
     platforms: [
@@ -2205,7 +2275,8 @@ var treasureroom = {
         { x: 0, y: 51, width: 25, height: 1, type: 0 },
 
         //Roof
-        { x: 15, y: 49, width: 9, height: 1, type: 0 },
+        //{ x: 15, y: 49, width: 9, height: 1, type: 0 }, //old roof by david
+        { x: 15, y: 49, width: 8, height: 1, type: 0 },  //new roof by ken makes the jump a bit easier to secret
         { x: 25, y: 51, width: 54, height: 3, type: 0 },
 
 
@@ -2249,7 +2320,7 @@ var treasureroom = {
 
         { x: 20, y: 15, width: 9, height: 3, type: 1 }, // Spike floors
         { x: 55, y: 15, width: 9, height: 1, type: 1 },
-        { x: 1, y: 0, width: 6, height: 1, type: 1 }, // Spike floor 
+        { x: 1, y: 0, width: 6, height: 1, type: 1 }, // Spike floor
 
 
         //Fall down spikes
@@ -2293,7 +2364,7 @@ var treasureroom = {
         { x: 42, y: 36, direction: 1 },
 
         //Top Right
-        { x: 15, y: 45, direction: 1 },
+        { x: 17, y: 45, direction: 1 },
 
         // Underground secret
         { x: 42.5, y: 19, direction: 1 },
@@ -2307,28 +2378,41 @@ var treasureroom = {
 
         { x: 43, y: 22, direction: 1 },
         { x: 39.5, y: 22, direction: 0 },
+
+        //bottom floor chests
+        { x: 56, y: 9, direction: 0 },
+        { x: 72, y: 38, direction: 1 },
     ],
 
     shrooms: [
         { x: 35, y: 3, guard: true },
         { x: 48, y: 3, guard: true },
     ],
+
+    slimes: [
+        { x: 16, y: 50, guard: false },
+        { x: 13, y: 50, guard: false },
+        { x: 10, y: 50, guard: false },
+        { x: 46, y: 14, guard: true },
+        { x: 49, y: 14, guard: true },
+
+    ],
     goblins: [
         { x: 15, y: 11, guard: true },
-        { x: 64, y: 3, guard: false },
-        { x: 69, y: 3, guard: false },
+        //{ x: 64, y: 3, guard: false },
+        //{ x: 69, y: 3, guard: false },
     ],
     skeletons: [
         { x: 6, y: 11, guard: true },
-        { x: 75, y: 7, guard: true },
-        { x: 59, y: 7, guard: true },
+        //{ x: 75, y: 7, guard: true },
+        //{ x: 59, y: 7, guard: true },
     ],
     flyingeyes: [
         { x: 30, y: 35, guard: false },
         { x: 50, y: 43, guard: false },
-        { x: 64, y: 12, guard: true },
-        { x: 69, y: 10, guard: true },
-        { x: 67, y: 8, guard: true },
+        //{ x: 64, y: 12, guard: true },
+        //{ x: 69, y: 10, guard: true },
+        //{ x: 67, y: 8, guard: true },
 
         { x: 4, y: 7, guard: true },
 
@@ -2355,6 +2439,7 @@ var treasureroom = {
         { x: 6, y: 11 },
         { x: 10, y: 11 },
 
+
         { x: 25, y: 11 },
         { x: 29, y: 11 },
 
@@ -2365,6 +2450,11 @@ var treasureroom = {
         { x: 61, y: 43 },
 
         { x: 30, y: 42 },
+        { x: 20, y: 47 },
+
+        { x: 41.5, y: 38 },
+        { x: 56, y: 11 },
+
     ],
 
     banners: [
@@ -2456,23 +2546,127 @@ var treasureroom = {
         { x: 66, y: 39, width: 2, height: 2 },
     ],
 
+    signs: [
+        {
+            x: 16, y: 46,
+            title: "    Need a hint?",
+            text: [
+                "To infinity and beyond!",
+            ],
+
+        },
+
+        {
+            x: 3, y: 2,
+            title: "   haha gotcha!!",
+            text: [
+                "Bad things come to those who are greedy.",
+                "Welcome to the pits of hell >:)",
+                "-Sincerly,",
+                " David and Ken",
+                "",
+                " P.S: yes you can still get back up if ur gud",
+            ],
+
+        },
+
+        {
+            x: 45, y: 27,
+            title: "    One Piece",
+            text: [
+                "Wealth, fame, power. Gold Roger, the King of the Pirates,",
+                "attained everything this world has to offer.",
+                "And so, many men head for the Grand Line to find",
+                "the great treasure he left behind, the One Piece.",
+                "",
+                "\"My wealth and treasures? If you want it,",
+                "you can have it! Search for it!\"",
+                "-Gold Roger",
+            ],
+
+        },
+
+        {
+            x: 69, y: 39,
+            title: "Where could it be?",
+            text: [
+                "Did you find the treasure room?",
+                "Did you give up? It's ok, diamonds are temporary.",
+                "You are free to sever the chains of fate that bind you.",
+                "Maybe you'll find it one day when slimes fly!"
+            ],
+
+        },
+
+        {
+            x: 41.5, y: 23,
+            title: "Can you make it here?",
+            text: [
+                "Your brain is simply too big.",
+                "The treasure is yours.",
+                "You earned it.",
+                "",
+                "-David and Ken"
+            ],
+
+        },
+
+        // {
+        //     x: 66.5, y: 2,
+        //     title: "41:9",
+        //     text: [
+        //         "4576656E206D7920636C6F736573742066726965",
+        //         "6E642077686F6D204920747275737465642C2074",
+        //         "6865206F6E652077686F20617465206D79206272",
+        //         "6561642C20686173206C69667465642068697320",
+        //         "6865656C20616761696E7374206D652E - 5073616C6D732034313A39",
+        //     ],
+
+        // },
+
+        {
+
+            x: 66.5, y: 2,
+            title: "      41:9",
+            text: [
+                "Even my closest friend whom I trusted,",
+                "the one who ate my bread,",
+                "has lifted his heel against me.",
+                "-Psalms 41:9"
+            ],
+
+        },
+
+        {
+            x: 62, y: 42,
+            title: "  Hear ye hear ye",
+            text: ["Vasts amount of opportunities are open before you,",
+                "but let not your heart corrupt lest you lose your freedom,",
+                "for the pits of hell shall surely open and swallow the greedy,",
+                "thus, seize the moment to go above and beyond the fools that came before you.",
+                "May the light be your guide on this journey.",
+            ],
+
+        },
+    ],
+
     secrets: [
         {
             indicate: true,
             bricks: [
                 { x: 5, y: 50, width: 20, height: 1 }, //hide top path
-                { x: 24, y: 49, width: 1, height: 1 }, //hide path entrance 
+                { x: 23, y: 49, width: 2, height: 1 }, //hide path entrance
                 { x: 1, y: 50, width: 4, height: 38 }, //hide drop down
                 { x: 75, y: 39, width: 4, height: 27 },
                 { x: 1, y: 12, width: 28, height: 4 }, // undergrounds
                 { x: 65, y: 39, width: 10, height: 2 },
                 { x: 29, y: 12, width: 50, height: 12 },
-                //{ x: 33, y: 4, width: 16, height: 4 }, 
+                { x: 33, y: 4, width: 16, height: 4 },
 
             ]
         },
         {
-            indicate: false,
+            indicate: true,
             bricks: [
                 { x: 47, y: 18, width: 1, height: 4 }, //hide top path
                 { x: 47, y: 14, width: 16, height: 1 }, //hide path entrance
@@ -2482,30 +2676,37 @@ var treasureroom = {
         }
     ],
 
-    signs: [
+    events: [
         {
-            x: 66.5, y: 2,
-            title: "  Encrypted Message",
-            text: [
-                "4576656E206D7920636C6F736573742066726965",
-                "6E642077686F6D204920747275737465642C2074",
-                "6865206F6E652077686F20617465206D79206272",
-                "6561642C20686173206C69667465642068697320",
-                "6865656C20616761696E7374206D652E - 5073616C6D732034313A39",
+            space: [
+                { x: 56, y: 13, width: 2, height: 10 }
+            ],
+            bricks:
+                [
+                    { x: 51, y: 8, width: 5, height: 2, type: 2 },
+                    { x: 76, y: 12, width: 5, height: 5, type: 2 },
+                    { x: 75, y: 13, width: 5, height: 1, type: 2 },
+
+                ],
+
+            slimes: [
+                { x: 62, y: 14, guard: true },
+                { x: 62, y: 13, guard: true },
+            ],
+            goblins: [
+                { x: 64, y: 3, guard: false },
+                { x: 69, y: 3, guard: false },
+            ],
+            skeletons: [
+                { x: 70, y: 7, guard: true },
+                { x: 59, y: 7, guard: true },
+            ],
+            flyingeyes: [
+                { x: 70, y: 12, guard: true },
+                { x: 71, y: 10, guard: true },
             ],
 
-        },
-
-        {
-            x: 62, y: 42,
-            title: "  Hear ye hear ye",
-            text: ["Vasts amount of opportunities are open before you,",
-            "but let not your heart corrupt lest you lose your freedom,",
-            "for the pits of hell shall surely open and swallow the greedy,",
-            "thus, seize the moment to go above and beyond the fools that came before you..",
-            ],
-
-        },
+        }
     ]
 
 
@@ -2515,8 +2716,25 @@ var levelBoss1 = {
     ID: 100,
     label: "Final Room",
     width: 120, height: 20,
-    player: { x: 40, y: 1 },
-    music: MUSIC.BETWEEN_HEAVEN_AND_EARTH,
+    player: { x: 3, y: 1 },
+    music: MUSIC.COUNTERATTACK,
+
+    npcs: [
+        {
+            x: 14, y: 1, text: [
+                "The demon lord is right ahead!",
+                "You should prepare yourself...",
+                "Good luck, hero."]
+        },
+    ],
+
+    portal: { x: 115, y: 4 },
+
+    chests: [
+        { x: 7, y: 1, direction: 0 },
+        { x: 9, y: 1, direction: 0 },
+        { x: 11, y: 1, direction: 0 },
+    ],
 
     events: [
         {
@@ -2532,9 +2750,18 @@ var levelBoss1 = {
             wizard: { x: 75, y: 2, left: 61, right: 102, top: 6, bottom: 1 },
         }
     ],
+
     doors: [
-        { x: 1, y: 3, killQuota: 0, exitLocation: { x: -2, y: 1, levelNum: 1 }, transition: true }, //door to level 1
+        { x: 1, y: 3, killQuota: 0, exitLocation: DOOR_SPAWNS.exit_to_level4, transition: false }, //door to level 1
     ],
+
+    signs: [
+        {
+            x: 112, y: 2, title: "    The End", text: ["This is the end of the game, hero. Your job here is done.",
+                "Enter this portal with [W] and return to your homeworld."]
+        },
+    ],
+
     ground: [
         { x: 0, y: 0, width: 120, height: 1, type: 1 },
     ],
@@ -2565,6 +2792,9 @@ var levelBoss1 = {
         { x: 84, y: 9 },
         { x: 90, y: 9 },
         { x: 96, y: 9 },
+
+        { x: 114, y: 4 },
+        { x: 118, y: 4 },
     ],
     backgroundWalls: [
         { x: 0, y: 20, width: 120, height: 20 },
@@ -2615,6 +2845,10 @@ var levelBoss1 = {
         { x: 84, y: 8 },
         { x: 90, y: 8 },
         { x: 96, y: 8 },
+
+        //end room
+        { x: 114, y: 3 },
+        { x: 118, y: 3 }
     ],
 
 }

@@ -143,7 +143,7 @@ const STATS = {
 
     WIZARD: {
         NAME: "Wizard",
-        MAX_HP: 500,
+        MAX_HP: 1000,
         SCALE: 3,
         WIDTH: 10,
         HEIGHT: 60,
@@ -234,6 +234,7 @@ const SFX = {
     COMPLETE: "./sound/sfx/finished.mp3",
     CHECKPOINT: "./sound/sfx/checkpoint.wav",
     TRIGGER: "./sound/sfx/event_trigger.mp3",
+    EVIL_LAUGH: "./sound/sfx/evil_laugh.mp3",
 
 
 };
@@ -246,7 +247,10 @@ const MUSIC = {
     LONG_WAY: "./sound/music/P4_Long_Way.mp3",
     TITLE: "./sound/music/Runescape_Main.mp3",
     SPLENDOUR: "./sound/music/OSRS_splendour.mp3",
-    SIGNORA: "./sound/music/Genshin_Signora_Phase_2.mp3"
+    SIGNORA: "./sound/music/Genshin_Signora_Phase_2.mp3",
+    COUNTERATTACK: "./sound/music/OnePiece_Begin_Counterattack.mp3",
+    MEMORIES: "./sound/music/OnePiece_Memories_ED.mp3",
+    FOG: "./sound/music/P4_Fog.mp3",
 }
 
 /** HELPER FUNCTIONS */
