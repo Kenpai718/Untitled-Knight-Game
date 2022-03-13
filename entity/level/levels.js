@@ -48,7 +48,7 @@ const DOOR_SPAWNS = {
 
 var level1_5 = {
     ID: 5,
-    label: "5",
+    label: "Level 5",
     width: 88, height: 80,
     player: { x: 1, y: 6 },
     music: MUSIC.VEILED_IN_BLACK,
@@ -503,7 +503,7 @@ var testLevel = {
         { x: 40, y: 3, killQuota: 0, exitLocation: DOOR_SPAWNS.exit_to_final, transition: false },
 
         //top right special
-        { x: 28, y: 9, killQuota: 0, exitLocation: { x: 10, y: 45, levelNum: 4 }, transition: false }, //door to level 4 miniboss
+        { x: 28, y: 9, killQuota: 0, exitLocation: { x: 22, y: 40, levelNum: 4 }, transition: false }, //door to level 4 miniboss
         { x: 32, y: 9, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_treasure, transition: false }, //treasure top
         { x: 36, y: 9, killQuota: 0, exitLocation: { x: 53, y: 1, levelNum: 6 }, transition: false }, //treasure bottom
         //{ x: 4, y: 3, killQuota: 0, exitLocation: { x: 14, y: 78, levelNum: 5 }, transition: false },
@@ -572,7 +572,7 @@ var testLevel = {
 
         {
             x: 18, y: 2,
-            title: "    Exits",
+            title: "     Exits",
             text: ["The bottom floor doors are the exit locations of the levels",
                 ["Top right is special locations to test"]
             ]
@@ -591,7 +591,7 @@ var testLevel = {
         { x: 8, y: 10, width: 7, height: 1, type: 1 },
 
         //right side
-        { x: 17, y: 6, width: 25, height: 1, type: 1 }
+        { x: 18, y: 6, width: 25, height: 1, type: 1 }
     ],
     trap: [
         { x: 6, y: 5, width: 4, height: 1, type: 1, percent: 0.2, rate: 200 }
@@ -651,9 +651,11 @@ var levelLoader = {
         { x: 10, y: 4, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level2, transition: false }, //door to level 2
         { x: 13, y: 4, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level3, transition: false }, //door to level 3
         { x: 16, y: 4, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level4, transition: false }, //door to level 4
-        { x: 3, y: 12, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level5, transition: false },
+        { x: 22, y: 4, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level5, transition: false }, //door to level 5
+        //{ x: 22, y: 4, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_treasure, transition: false }, //treasure
+
+        //{ x: 3, y: 12, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_level5, transition: false }, //door to level 5
         { x: 11, y: 12, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_final, transition: false }, //door to boss
-        { x: 22, y: 4, killQuota: 0, exitLocation: DOOR_SPAWNS.enter_to_treasure, transition: false },
     ],
 
     torches: [
@@ -703,7 +705,7 @@ var levelLoader = {
         { x: 7, y: 12, width: 2, height: 3 },
         //{ x: 11, y: 12, width: 2, height: 3 },
         { x: 15, y: 12, width: 2, height: 3 },
-        { x: 19, y: 12, width: 2, height: 3 },
+        //{ x: 19, y: 12, width: 2, height: 3 },
         //{ x: 22, y: 12, width: 2, height: 3 },
 
     ],
