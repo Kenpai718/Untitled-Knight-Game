@@ -159,7 +159,25 @@ var level1_5 = {
 
     ],
  
+    doors: [
+
+        { x: 1, y: 1, killQuota: 0, exitLocation: { x: 1, y: 1, levelNum: 8 }, transition: false }, 
+        { x: 1, y: 1, killQuota: 10, exitLocation: { x: 1, y: 1, levelNum: 4 }, transition: false }, 
+    ],
+     
     
+    signs: [
+        {
+            x: 114, y: 32,
+            title: "is this over yet?",
+            text: ["console.log(\'here\'):",
+                "Is this the end?",
+                "I feel like My mind is playing tricks on me",
+                
+            ]
+
+        },
+    ],
 }
 
 
@@ -694,7 +712,7 @@ var testLevel = {
         { x: 15, y: 7, guard: true }
     ],
     moveable: [
-        { x: 10, y: 8, width: 3, height: 1},
+        { x: 10, y: 8, width: 3, height: 1, directionList: [1], distanceList: [5], velocity: 0.1},
     ],
 }
 
@@ -710,8 +728,10 @@ var levelLoader = {
 
     //quick access to all levels
     doors: [
-        { x: 0.5, y: 4, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 0 }, transition: false }, //door to level 0 (DEVELOPER ROOM)
-        { x: 7, y: 4, killQuota: 0, exitLocation: { x: 2, y: 1, levelNum: 1 }, transition: false }, //door to level 1
+        { x: 0.5, y: 4, killQuota: 0, exitLocation: { x: 22, y: 50, levelNum: 5 }, transition: false }, //door to level 0 (DEVELOPER ROOM)
+        //{ x: 0.5, y: 4, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 0 }, transition: false }, //door to level 0 (DEVELOPER ROOM)
+        { x: 7, y: 4, killQuota: 0, exitLocation: { x: 2, y: 1, levelNum: 0 }, transition: false }, //door to level 1
+        //{ x: 7, y: 4, killQuota: 0, exitLocation: { x: 3, y:  1, levelNum: 1 }, transition: false }, //door to level 1
         { x: 10, y: 4, killQuota: 0, exitLocation: { x: 3, y: 1, levelNum: 2 }, transition: false }, //door to level 2
         { x: 13, y: 4, killQuota: 0, exitLocation: { x: 4, y: 1, levelNum: 3 }, transition: false }, //door to level 3
         { x: 16, y: 4, killQuota: 0, exitLocation: { x: 3.5, y: 4, levelNum: 4 }, transition: false }, //door to level 4

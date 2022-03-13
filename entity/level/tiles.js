@@ -452,35 +452,85 @@ class Platform extends AbstractBarrier {
 
 class MoveableBlocks extends Platform {
 
-   constructor(game, x, y, w, h){
+    constructor(game, x, y, w, h, directionList = [1], distanceList = [5], velocity = 0.1){
     super(game, x, y, w, h);
-    this.time = 10;
-    this.timer = 0;
+    this.directionList = directionList;
+    this.distanceList = distanceList;
+    this.velocity = velocity;
+
     this.directions = {left: 0, right: 1, up: 2, down: 3};
-    this.direction = this.directions.left;
-    this.velocity = 0.1;
-   }
+    this.direction = this.directionList[0];
+    this.targetX = this.x;
+    this.targetY = this.y;
+    this.index = 0;
 
-   update(){
+    this.reverseLists = false;
 
-    const TICK = this.game.clockTick;
+    this.setTarget();
+    }
 
-    this.timer += TICK;
+    update(){
 
-    if(this.timer < this.time){
-        this.x -= 1 * TICK;
+        const TICK = this.game.clockTick;
+
+        if(!this.reverseLists){
+            if(this.directionList[this.index] == this.directions.right) {
+                if(this.targetX > this.x) this.x += this.velocity * TICK;
+                    else this.index += 1;
+            }
+            if(this.directionList[this.index] == this.directions.left) {
+                if(this.targetX < this.x) this.x -= this.velocity * TICK;
+                    else this.index += 1;
+            }
+            if(this.directionList[this.index] == this.directions.up) {
+                if(this.targetY > this.x) this.y += this.velocity * TICK;
+                else this.index += 1;
+            }
+            if(this.directionList[this.index] == this.directions.down) {
+                if(this.targetY < this.x) this.y -= this.velocity * TICK;
+                else this.index += 1;
+            }
+        }
+        else if(this.reverseLists){ // Reverses direction
+            if(this.directionList[this.index] == this.directions.left) {
+                if(this.targetX > this.x) this.x += this.velocity * TICK;
+                    else this.index -= 1;
+            }
+            if(this.directionList[this.index] == this.directions.right) {
+                if(this.targetX < this.x) this.x -= this.velocity * TICK;
+                    else this.index -= 1;
+            }
+            if(this.directionList[this.index] == this.directions.down) {
+                if(this.targetY > this.x) this.y += this.velocity * TICK;
+                else this.index -= 1;
+            }
+            if(this.directionList[this.index] == this.directions.up) {
+                if(this.targetY < this.x) this.y -= this.velocity * TICK;
+                else this.index -= 1;
+            }
+        }
         
-        if(this.direction == this.directions.left) this.x -= this.velocity * TICK;
-        if(this.direction == this.directions.right) this.x += this.velocity * TICK;
-        if(this.direction == this.directions.up) this.y -= this.velocity * TICK;
-        if(this.direction == this.directions.down) this.y += this.velocity * TICK;
-        
-        
-        this.updateBB();
+        if(this.index > this.directionList.length){
+            console.log("Reversing to normal!");
+            this.index -= 1;
+            this.reverseLists = true;
+        }
+        else if(this.index < 0) {
+            this.index += 1;
+            this.reverseLists = false;
+        }
+            
+            this.updateBB();
 
     }
 
-   }
+    setTarget() {
+        if(this.directionList[this.index] == this.directions.right) this.targetX += this.distanceList[this.index];
+        else if(this.directionList[this.index] == this.directions.left) this.targetX -= this.distanceList[this.index]; 
+        else if(this.directionList[this.index] == this.directions.up) this.targetY += this.distanceList[this.index];
+        else if(this.directionList[this.index] == this.directions.down) this.targetY -= this.distanceList[this.index];
+    }
+
 };
 
 class BackgroundWalls {
