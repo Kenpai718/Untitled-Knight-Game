@@ -45,16 +45,16 @@ class Shop {
         // this.armor = [];
         // this.armorCost = [60, 90, 120, "MAX"];
         //economy inflation
-        this.potionCost = 25;
+        this.potionCost = 20;
         this.health = [];
-        this.healthCost = [25, 50, 100, 150, "MAX"];
+        this.healthCost = [25, 50, 75, 100, "MAX"];
         this.attack = [];
         this.attackCost = [75, 125, 175, 325, "MAX"];
         this.arrow = [];
         this.arrowCost = [50, 100, 150, 300, "MAX"];
         this.arrowPackCost = [10, 10, 10, 10, 10];
         this.armor = [];
-        this.armorCost = [75, 125, 250, "MAX"];
+        this.armorCost = [75, 125, 200, "MAX"];
 
         // animations speeds
         this.timer = 0;
@@ -189,7 +189,7 @@ class Shop {
                         self.highlightB4 = true;
 
                         if (self.game.click) {
-                            let cost = self.armorCost[entity.myInventory.armorUpgrade];
+                            let cost = self.attackCost[entity.myInventory.attackUpgrade];
                             self.doTransaction(cost);
                             entity.myInventory.attackUpgrade += 1;
                             ASSET_MANAGER.playAsset(SFX.ENCHANTMENT);
