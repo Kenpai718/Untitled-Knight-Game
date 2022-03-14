@@ -2505,8 +2505,9 @@ var treasureroom = {
             text: [
                 "Bad things come to those who are greedy.",
                 "Welcome to the pits of hell >:)",
-                
-                "-sincerely,",
+
+
+                "-Sincerely,",
                 " David and Ken",
 
                 "",
