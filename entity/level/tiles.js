@@ -574,8 +574,8 @@ class MoveableBlocks extends Platform {
             this.setTarget();
             this.reverseLists = false;
         }
-            
-            this.updateBB();
+        this.direction = this.directionList[this.index];
+        this.updateBB();
 
     }
 

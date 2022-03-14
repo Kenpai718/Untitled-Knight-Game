@@ -550,7 +550,7 @@ var level1_1 = {
                 " tap [SPACE] to walljump in the other direction.",
                 " Chain together walljumps to scale vertical heights!",
                 "-If hanging on a ledge press [W] to get up",
-                " or [S] to slide down",
+                " or [S] to slide down or [SPACE] to jump from ledge",
             ]
         },
 
@@ -707,7 +707,7 @@ var level1_2 = {
         title: "[TUTORIAL: MORE COMBAT TIPS]",
         text: [
             "ADVANCED COMBAT TIPS:",
-            "-Cancel an attack animation with a roll.",
+            "-Cancel your attack animations with a roll [SHIFT].",
             " This lets you do damage while staying evasive.",
             "-Each hit has a base 10% chance to CRIT and do x2 damage!",
             "-If you shoot an arrow and it got stuck then you can retrieve it.",
@@ -1020,9 +1020,10 @@ var level1_3 = {
                 "-These strange devices can unlock inaccessible/secret areas!",
                 "-To activate: hit them with your SWORD or ARROW!",
                 " ...or you could press \'W'\ next to it, but that's boring.",
+                "-[OFF-STATE] = Blue, [ON STATE] = Orange",
                 "-Some obelisk puzzles can only be solved by hitting them",
                 " from afar with your bow and arrow!",
-                "-Some obelisks can repeatedly toggled on and off"
+                "-Some obelisks can repeatedly toggled on and off",
             ]
         },
         {
@@ -1032,7 +1033,7 @@ var level1_3 = {
                 "PLATFORMING TIPS:",
                 "-Delay your second jump to cover more distance.",
                 "-If you are running and THEN jump your momentum",
-                " will be carried over and you will go farther.",
+                " will be carried over so you will go farther.",
                 "-Wait until you're at the peak of your first jump",
                 " before doing your double jump to go higher.",
                 "-While in air, hold the opposite direction and double ",
@@ -2119,8 +2120,10 @@ var treasureroom = {
             "Take to the skies, hero, and following your guiding light.",]
     },
     {
-        x: 76, y: 11, text: [
-            "They really need to invest in an elevator."]
+        x: 41, y: 1, text: [
+            "The greatest treasure",
+            "are those invisible to the eye",
+            "but found by the heart."]
     }
     ],
 
@@ -2502,8 +2505,10 @@ var treasureroom = {
             text: [
                 "Bad things come to those who are greedy.",
                 "Welcome to the pits of hell >:)",
+                
                 "-sincerely,",
                 " David and Ken",
+
                 "",
                 " P.S: yes you can still get back up if ur gud",
             ],
@@ -2512,7 +2517,7 @@ var treasureroom = {
 
         {
             x: 45, y: 27,
-            title: "    One Piece",
+            title: "      ???",
             text: [
                 "Wealth, fame, power. Gold Roger, the King of the Pirates,",
                 "attained everything this world has to offer.",
@@ -2531,7 +2536,7 @@ var treasureroom = {
             title: "Where could it be?",
             text: [
                 "Did you find the treasure room?",
-                "Did you give up? It's ok, diamonds are temporary.",
+                "No...? It's ok, diamonds are temporary.",
                 "You are free to sever the chains of fate that bind you.",
                 "Maybe you'll find it one day when slimes fly!"
             ],
@@ -2542,9 +2547,9 @@ var treasureroom = {
             x: 41.5, y: 23,
             title: "Can you make it here?",
             text: [
-                "Your brain is simply too big.",
+                "Wow, your brain is simply too big.",
                 "The treasure is yours.",
-                "You earned it.",
+                "You earned it :D",
                 "",
                 "-David and Ken"
             ],
@@ -2583,8 +2588,8 @@ var treasureroom = {
             text: ["Vasts amount of opportunities are open before you,",
                 "but let not your heart corrupt lest you lose your freedom,",
                 "for the pits of hell shall surely open and swallow the greedy,",
-                "thus, seize the moment to go above and beyond the fools that came before you.",
-                "May the light be your guide on this journey.",
+                "thus, seize the moment to go above and beyond",
+                "the fools that came before you.",
             ],
 
         },
@@ -2662,7 +2667,7 @@ var levelBoss1 = {
     npcs: [
         {
             x: 14, y: 1, text: [
-                "The demon lord is right ahead!",
+                "The Demon Lord is right ahead!",
                 "You should prepare yourself...",
                 "Good luck, hero."]
         },
