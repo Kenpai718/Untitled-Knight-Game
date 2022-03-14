@@ -2819,8 +2819,14 @@ var levelBoss1 = {
 
     signs: [
         {
-            x: 112, y: 2, title: "    The End", text: ["This is the end of the game, hero. Your job here is done.",
-                "Enter this portal with [W] and return to your homeworld."]
+            x: 112, y: 2, title: "    The End", text: [
+                "Hero, this is the end of the game.", 
+                "Your job here is finally done.",
+                "Enter this portal with [W] and return to your homeworld!",
+                "",
+                "P.S: Did you know there are 3 different endings?",
+                "     Can you find them all?",
+                "     Hint: They are based on your purchases/upgrades :)"]
         },
     ],
 
