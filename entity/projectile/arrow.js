@@ -18,7 +18,7 @@ class Arrow extends AbstractEntity {
 
         //gravity
         this.fallAcc = 1000;    //gravity
-        this.timeToFall = 0.65;  //after this amount of seconds apply gravity
+        this.timeToFall = 0.75;  //after this amount of seconds apply gravity
         this.elapsedTime = 0;
 
         this.cache = [];
