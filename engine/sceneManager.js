@@ -263,14 +263,14 @@ class SceneManager {
             ];
 
         if(maxed_end) {
-            endScene9.push("[Ending #3: Peak Potential!]")
-            endScene9.push("[True Ending]")
+            endScene9.push("[Ending #3: True Ending- Unlimited Power!]")
+            endScene9.push("[Achievement: MAX Upgrades]")
         }else if (hidden_end) {
-            endScene9.push("[Ending #2: No Upgrades]");
-            endScene9.push("[Epic Gamer Ending]");
+            endScene9.push("[Ending #2: Cheapskate]");
+            endScene9.push("[Achievement: No Purchases]");
          } else {
              endScene9.push("[Ending #1: Betrayal]");
-             endScene9.push("[Default Ending]");
+             endScene9.push("[Achievement: Default Ending]");
          } 
 
         let endScene10 =
