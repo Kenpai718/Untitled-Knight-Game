@@ -31,6 +31,7 @@ ASSET_MANAGER.queueDownload("./sprites/enemy/demon_slime.png");
 //environment
 ASSET_MANAGER.queueDownload("./sprites/environment/dark_castle_tileset.png");
 ASSET_MANAGER.queueDownload("./sprites/environment/moonlit_sky.png");
+ASSET_MANAGER.queueDownload("./sprites/environment/moonlit_sky_2.png");
 ASSET_MANAGER.queueDownload("./sprites/environment/Obelisk_full.png");
 ASSET_MANAGER.queueDownload("./sprites/environment/distraction.png");
 ASSET_MANAGER.queueDownload("./sprites/environment/portal.png");
