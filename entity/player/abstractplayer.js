@@ -269,6 +269,7 @@ class AbstractPlayer extends AbstractEntity {
         };
         let dist = { x: 0, y: 0 };
         this.diffy = { hi: 0, lo: 0 };
+        let bottom = null;
         let high = 100000 * this.scale;
 
         let self = this;
@@ -301,6 +302,11 @@ class AbstractPlayer extends AbstractEntity {
                             self.collisions.floor_left = true;
                             if (Math.abs(entity.BB.top - self.BB.bottom) > Math.abs(dist.y) || dist.y > 0)
                                 dist.y = entity.BB.top - self.BB.bottom;
+                            if (bottom && !self.collisions.floor) {
+                                if (entity.BB.right - self.BB.left > self.BB.right - bottom.BB.left)
+                                    bottom = entity;
+                            }
+                            else bottom = entity;
                         }
                     }
                     else if (coll.right && !coll.left && xR < w / 2) { // somewhere right
@@ -312,12 +318,18 @@ class AbstractPlayer extends AbstractEntity {
                             self.collisions.floor_right = true;
                             if (Math.abs(entity.BB.top - self.BB.bottom) > Math.abs(dist.y) || dist.y > 0)
                                 dist.y = entity.BB.top - self.BB.bottom;
+                            if (bottom && !self.collisions.floor) {
+                                if (self.BB.right - entity.BB.left > bottom.BB.right - self.BB.left)
+                                    bottom = entity;
+                            }
+                            else bottom = entity;
                         }
                     }
                     else { // certaintly below
                         self.collisions.floor = true;
                         if (Math.abs(entity.BB.top - self.BB.bottom) > Math.abs(dist.y) || dist.y > 0)
                             dist.y = entity.BB.top - self.BB.bottom;
+                        bottom = entity;
                     }
                 }
                 else if (coll.ceil && !coll.floor) { // somewhere above
@@ -334,6 +346,9 @@ class AbstractPlayer extends AbstractEntity {
                             self.collisions.ceil_left = true;
                             if (Math.abs(entity.BB.bottom - self.BB.top && !self.collisions.floor) > Math.abs(dist.y));
                         }
+                        if ((self.action == self.states.wall_climb || self.action == self.states.wall_hang || self.action == self.states.wall_slide) 
+                        && !self.touchFloor())
+                            bottom = entity;
                     }
                     else if (coll.right && !coll.left && xR < w / 2) { // somewhere right
                         if (xR <= y) { // certaintly right
@@ -369,6 +384,9 @@ class AbstractPlayer extends AbstractEntity {
                 }
             }
         });
+        if (this.action == this.states.wall_hang && (this.touchFloor() || !(this.collisions.hi_left || this.collisions.hi_right)))
+            this.action = this.states.idle;
+        
 
         this.diffy.hi = high - this.BB.top;
 
@@ -377,6 +395,37 @@ class AbstractPlayer extends AbstractEntity {
         if (this.touchFloor && this.touchHole() || this.action == this.states.wall_climb) {
             if (!this.collisions.lo_right && !this.collisions.lo_left)
                 dist.x = 0;
+        }
+
+        if (bottom && bottom.velocity) {
+            const temp = bottom.velocity * PARAMS.BLOCKDIM * TICK;
+            if (bottom.direction == bottom.directions.left) {
+                if (!bottom.reverseLists)
+                    dist.x -= temp;
+                else
+                    dist.x += temp;
+            }
+            else if (bottom.direction == bottom.directions.right) {
+                if (!bottom.reverseLists)
+                    dist.x += temp;
+                else
+                    dist.x -= temp;
+            }
+            if (bottom.direction == bottom.directions.up) {
+                if (!bottom.reverseLists)
+                    dist.y -= temp;
+                else
+                    dist.y += temp;
+            }
+            else if (bottom.direction == bottom.directions.down) {
+                if (!bottom.reverseLists)
+                    dist.y += temp;
+                else
+                    dist.y -= temp;
+            }
+            //console.log(bottom.velocity);
+            //console.log(bottom.velocity);
+            console.log(bottom.direction);
         }
 
         // update position as a result of collision
