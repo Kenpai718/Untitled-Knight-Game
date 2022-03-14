@@ -41,6 +41,7 @@ class NPC extends AbstractEntity {
         this.myTextBox = new TextBox(this.game, this.BB.x, this.BB.y, this.myMessage, 10, "CornflowerBlue");
         this.game.addEntityToFront(this.myTextBox);
         this.showTextBox = false;
+        this.messageTimer = 0;
     };
 
     activateShop() {
@@ -65,6 +66,16 @@ class NPC extends AbstractEntity {
     update() {
         const TICK = this.game.clockTick;
 
+        // have a kill quota message flag in both the door and scenemanager so that all doors in a level dont execute this code
+        if (this.EnemyNearbyMessage) {
+            this.messageTimer += TICK;
+            //display message for 4 seconds
+            if (this.messageTimer >= 4) {
+                this.messageTimer = 0;
+                this.setEnemyMessage(false);
+            }
+        }
+
         // Checks status of global SHOP_ACTIVE to determine whether to open instance of shop
         // if (SHOP_ACTIVE && this.shopGUI == null) {
         //     this.activateShop();
@@ -82,6 +93,8 @@ class NPC extends AbstractEntity {
         }
 
         let self = this;
+        let enemiesNearby = this.enemiesNearby();
+        
         //interactions with entities like player
         this.game.entities.forEach(function (entity) {
 
@@ -109,14 +122,22 @@ class NPC extends AbstractEntity {
                             self.direction = self.directions.left;
                         else self.direction = self.directions.right;
                     }
-                    if (self.state == self.states.inactive) { // If inactive (idle) and player is in vision range, awake
+                    if (self.state == self.states.inactive && !enemiesNearby) { // If inactive (idle) and player is in vision range, awake
+                        
                         self.state = self.states.awaking;
                     }
                     if (self.state == self.states.active && !SHOP_ACTIVE) { // Activates shop once player in range, NPC is active and player click w key
                         if (entity.BB && self.BB.collide(entity.BB)) {
                             if (self.game.up) {
-                                ASSET_MANAGER.playAsset(SFX.SELECT);
-                                self.activateShop();
+                                if(entity.action == entity.states.idle) {
+                                    if (enemiesNearby) {
+                                        self.setEnemyMessage(true);
+                                    }
+                                    else {
+                                        ASSET_MANAGER.playAsset(SFX.SELECT);
+                                        self.activateShop();
+                                    }
+                                }
                             }
                         }
                     } else if (SHOP_ACTIVE && entity.BB && !self.BB.collide(entity.BB)) {
@@ -127,6 +148,7 @@ class NPC extends AbstractEntity {
                 }
             }
         });
+        
 
         //constant falling velocity
         this.velocity.y += this.fallAcc * TICK;
@@ -145,6 +167,31 @@ class NPC extends AbstractEntity {
         this.myTextBox.updateCords(this.BB.x + (this.BB.width / 3), this.BB.y);
         this.myTextBox.show = this.showTextBox;
     };
+
+    enemiesNearby() {
+        let self = this;
+        let bool = false;
+        this.game.enemies.forEach(enemy => {
+            if (enemy.BB && self.VB.collide(enemy.BB)) {
+                bool = true;
+            }
+        });
+        return bool;
+    }
+
+    setEnemyMessage(isOn) {
+        if (isOn) {
+            let scene = this.game.camera;
+            this.EnemyNearbyMessage = true;
+            let message = "Enemies nearby: Can't use shop";
+            scene.myTextBox.setMessage(message, true);
+            scene.myTextBox.centerTop();
+        } else {
+            let scene = this.game.camera;
+            this.EnemyNearbyMessage = false;
+            scene.myTextBox.show = false;
+        }
+    }
 
     loadAnimations() {
 
@@ -190,7 +237,7 @@ class NPC extends AbstractEntity {
 
     updateBB() {
         this.BB = new BoundingBox(this.x, this.y, this.width, this.height);
-        this.VB = new BoundingBox(this.x + 38 * this.scale - this.visionwidth / 2, this.y - (this.BB.height / 2), this.visionwidth, 160 * this.scale);
+        this.VB = new BoundingBox(this.x + 38 * this.scale - this.visionwidth / 2, this.y - (this.BB.height ), this.visionwidth, 200 * this.scale);
     };
 
     drawDebug(ctx) {
