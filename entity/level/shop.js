@@ -48,12 +48,12 @@ class Shop {
         this.health = [];
         this.healthCost = [25, 50, 75, 100, "MAX"];
         this.attack = [];
-        this.attackCost = [75, 125, 175, 225, "MAX"];
+        this.attackCost = [75, 125, 175, 325, "MAX"];
         this.arrow = [];
-        this.arrowCost = [50, 100, 150, 210, "MAX"];
+        this.arrowCost = [50, 100, 150, 300, "MAX"];
         this.arrowPackCost = [10, 10, 10, 10, 10];
         this.armor = [];
-        this.armorCost = [75, 125, 200, "MAX"];
+        this.armorCost = [75, 125, 250, "MAX"];
 
         // animations speeds
         this.timer = 0;
