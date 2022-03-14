@@ -1658,6 +1658,7 @@ var level1_5 = {
     width: 88, height: 80,
     player: { x: 1, y: 6 },
     music: MUSIC.VEILED_IN_BLACK,
+    background: {type: 1},
 
     backgroundWalls: [
         { x: 0, y: 20, width: 100, height: 21 },
@@ -2004,7 +2005,7 @@ var level1_5 = {
                 // "YES, At last! The Aether is fina.. err.. I mean dinner time.. ",
                 // "I must leave soon.. lucifer has sent his biddings..",
                 // "~ Give the goblins afar my falling regards ~",
-                "“Doesn’t matter what you did,",
+                "Doesn’t matter what you did,",
                 "or what you were.",
                 "If you go out there, you fight,",
                 "and you fight to kill."

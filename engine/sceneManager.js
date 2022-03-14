@@ -1292,7 +1292,14 @@ class SceneManager {
         this.levelH = scene.height;
         this.levelW = scene.width;
         let h = scene.height;
-        this.game.addEntity(new Background(this.game));
+
+        //assign the background of the level
+        if(this.level.background) {
+            this.game.addEntity(new Background(this.game, this.level.background.type));
+        } else { //default
+            this.game.addEntity(new Background(this.game, 0));
+        }
+        
         this.makePlayer(spawnX, h - spawnY);
 
         //turn off textbox and only set it up when needed

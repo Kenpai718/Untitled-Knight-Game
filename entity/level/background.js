@@ -1,9 +1,17 @@
-class Background { 
-    constructor(game) {
-        Object.assign(this, { game});
+//source #1: https://arludus.itch.io/2d-pixel-art-medieval-backgrounds-pack
+//source #2: https://www.deviantart.com/mokazar/art/Purple-Sky-and-cloud-PixelArt-681115409
 
-        //source: https://www.artstation.com/artwork/nY2VbE
-        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/moonlit_sky.png");
+class Background {
+    constructor(game, type) {
+        Object.assign(this, { game });
+        this.backgrounds = [ASSET_MANAGER.getAsset("./sprites/environment/moonlit_sky.png"), ASSET_MANAGER.getAsset("./sprites/environment/moonlit_sky_2.png")];
+
+        if(type > this.backgrounds.length - 1 || type < 0 || type == undefined || type == null) {
+            this.spritesheet = this.backgrounds[0]; //default background if not defined properly
+        } else { //assign the background spritesheet
+            this.type = type;
+            this.spritesheet = this.backgrounds[type];
+        }
     };
 
     update() {
