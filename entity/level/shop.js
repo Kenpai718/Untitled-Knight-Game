@@ -45,13 +45,13 @@ class Shop {
         // this.armor = [];
         // this.armorCost = [60, 90, 120, "MAX"];
         //economy inflation
-        this.potionCost = 20;
         this.health = [];
         this.healthCost = [25, 50, 75, 100, "MAX"];
+        this.potionCost = 15;
         this.attack = [];
-        this.attackCost = [75, 125, 175, 325, "MAX"];
+        this.attackCost = [75, 125, 175, 275, "MAX"];
         this.arrow = [];
-        this.arrowCost = [50, 100, 150, 300, "MAX"];
+        this.arrowCost = [50, 100, 150, 250, "MAX"];
         this.arrowPackCost = [10, 10, 10, 10, 10];
         this.armor = [];
         this.armorCost = [75, 125, 200, "MAX"];

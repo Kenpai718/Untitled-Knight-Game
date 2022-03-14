@@ -22,6 +22,7 @@
 
     drawReportCard(ctx) {
         if(!this.myTotalChests) this.myTotalChests = this.countChests();
+        if(!this.myTotalSecrets) this.myTotalSecrets = this.countSecrets();
         // let fontSize = 40;
         // let theLevelTime = this.game.camera.levelTimer;
 
@@ -34,9 +35,9 @@
             Math.round(this.myDamageDealt) + " damage dealt",
             this.myDiamondsEarned + " diamonds earned",
             this.myDiamondsSpent + " diamonds spent",
-            this.mySecretsFound + " secrets found",
             this.myDeathes + " times died",
             this.myChestsOpened + "/" + this.myTotalChests + " chests found",
+            this.mySecretsFound + "/" + this.myTotalSecrets + "  secrets found",
         ];
 
         this.myReportBox.setMessage(labels, true);
@@ -52,6 +53,20 @@
             let level = levels[i];
             if (level.chests) {
                 for (var j = 0; j < level.chests.length; j++) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    countSecrets() {
+        let count = 0;
+        let levels = this.game.camera.levels;
+        for (let i = 0; i < levels.length; i++) {
+            let level = levels[i];
+            if (level.secrets) {
+                for (var j = 0; j < level.secrets.length; j++) {
                     count++;
                 }
             }

@@ -270,6 +270,7 @@ class SceneManager {
             endScene9.push("[Epic Gamer Ending]");
          } else {
              endScene9.push("[Ending #1: Betrayal]");
+             endScene9.push("[Default Ending]");
          } 
 
         let endScene10 =

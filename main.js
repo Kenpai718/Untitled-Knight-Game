@@ -100,6 +100,7 @@ ASSET_MANAGER.queueDownload(SFX.COMPLETE);
 ASSET_MANAGER.queueDownload(SFX.TRIGGER);
 ASSET_MANAGER.queueDownload(SFX.EVIL_LAUGH);
 ASSET_MANAGER.queueDownload(SFX.SUPER_SAIYAN);
+ASSET_MANAGER.queueDownload(SFX.COMPLETION);
 //ASSET_MANAGER.queueDownload(SFX.CHECKPOINT);
 
 // Leave this SFX to suffer at the bottom >:D

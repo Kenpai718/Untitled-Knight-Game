@@ -236,6 +236,7 @@ const SFX = {
     TRIGGER: "./sound/sfx/event_trigger.mp3",
     EVIL_LAUGH: "./sound/sfx/evil_laugh.mp3",
     SUPER_SAIYAN: "./sound/sfx/super_saiyan.mp3",
+    COMPLETION: "./sound/sfx/zelda-botw-first-contact.mp3",
 
 
 };
