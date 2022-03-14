@@ -311,7 +311,7 @@ class Wizard extends AbstractBoss {
             this.myInitialDialouge.set(2, ["You were just a pawn in my game this whole time.", 3]);
             this.myInitialDialouge.set(3, ["Those " + this.game.myReportCard.myDiamondsSpent + " DIAMONDS you gave me?", 3]);
             this.myInitialDialouge.set(4, ["They just made me stronger~ :)", 2]);
-            this.myInitialDialouge.set(5, ["Now I will take over the universe...", 2]);
+            this.myInitialDialouge.set(5, ["I will rule this universe.", 2]);
             //easter egg message if maxxed
             if (this.player.myInventory.maxxed) {
                 //console.log("player fighting at max potential!");
@@ -337,8 +337,9 @@ class Wizard extends AbstractBoss {
         //phases messages
         this.myTextBox = new TextBox(this.game, this.BB.x, this.BB.y, "...", 8, "Crimson", true);
         this.myPhaseMessages = [
+            //most of these are literally Freiza quotes lol
             ["Think you can take me?"], //start
-            ["Hm... well it seems you can put up a fight."], //middle
+            ["I'll shut you up for good!"], //middle
             ["N-NO! I'm the strongest in the universe!", "You were made to die by my hand!"], //desperate
             ["Tsk, I underestimated you...",
                 "But I've come too far to fall here, \'Hero\'!"] //final,

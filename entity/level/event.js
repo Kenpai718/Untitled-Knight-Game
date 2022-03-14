@@ -64,6 +64,11 @@ class Event {
             }
         }
         if (this.finished) {
+            
+            if(!(this instanceof Secret)) {
+                //sfx for finishing an event fight
+                ASSET_MANAGER.playAsset(SFX.COMPLETION);
+            }
             if (this.blocks) {
                 this.blocks.forEach(function (block) {
                     block.removeFromWorld = true;
