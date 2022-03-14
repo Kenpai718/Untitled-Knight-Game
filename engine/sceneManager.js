@@ -172,62 +172,87 @@ class SceneManager {
                 "as an \'Untitled Knight\' to save the",
                 "castle that was overrun by evil."
             ];
-        let endScene2;
+
+        let endScene2 = [
+            "This castle contained a dark secret.",
+            "The \'diamonds\' were no ordinary gem.",
+            "They are an unholy artifact of long ago",
+            "known as a \'CHAOS DIAMOND\'.",
+            "",
+            "When many are brought together",
+            "the CHAOS DIAMOND can grant",
+            "the wielder unimaginable power!",
+        ]
+
+        let endScene3 = [
+            "The CHAOS DIAMONDS were simply",
+            "too powerful and taboo.",
+            "So they were sealed",
+            "away in this castle,",
+            "and laced with many traps",
+            "to ward off thieves...",
+        ]
+
+        let endScene4 = [
+            "But even so, such obstacles",
+            "are no match for me!",
+            "The evil Wizard knew I could handle it,",
+            "So he tried to use me to do his dirty work.",
+        ]
+
+        let endScene5;
         if (hidden_end) {
-            endScene2 = [
-                "I knew that Wizard was a sussy baka",
+            endScene5 = [
+                "Through the power of the Chaos Diamond",
+                "he planned to take over the whole universe!",
+                "",
+                "But, I knew that Wizard was a sussy baka",
                 "the moment I laid eyes on him.",
                 "",
                 "Even with " + this.game.myReportCard.myDiamondsEarned + " DIAMONDS...",
                 "I didn't give that sucker a single one!",
-                "",
-                "He tried to make me gather them.",
-                "So he could harnest the power of DIAMOND",
-                "and destroy the whole universe!",
-
             ];
         } else {
 
-            endScene2 = [
+            endScene5 = [
+                "Through the power of the Chaos Diamond",
+                "he planned to take over the whole universe!",
+                "",
                 "I thought the Wizard was my friend.",
-                "But, in the end he betrayed me...",
+                "But, in the very end he betrayed me...",
                 "",
                 "I fell for his trap and gave him ",
                 this.game.myReportCard.myDiamondsSpent + " DIAMONDS...",
-                "",
-                "He made me gather them",
-                "so he could harnest the power of DIAMOND",
-                "and destroy the whole universe!",
             ]
 
         }
 
-        let endScene3 =
+        let endScene6 =
             [
                 "It was a tough battle. However,",
                 "I stopped him before it was too late!",
             ];
-        let endScene4 =
+        let endScene7 =
             [
                 "And with that my story comes to close.",
                 "The story of how I became a..."
             ];
 
-        let endScene5 =
+        let endScene8 =
             [
                 "\'Titled Knight\'"
             ];
 
-        let endScene6 =
+        let endScene9 =
             [
                 "The End.",
             ];
 
-        let endScene7 =
+        let endScene10 =
             [
                 "This game was developed by:",
                 "-Kenneth Ahrens",
-                "-Embert Pezalli",
+                "-Embert Pezzali",
                 "-Andre Larson",
                 "-David Shcherbina",
                 "",
@@ -242,8 +267,11 @@ class SceneManager {
         let endScene5TB = this.buildSequenceBox(endScene5);
         let endScene6TB = this.buildSequenceBox(endScene6);
         let endScene7TB = this.buildSequenceBox(endScene7);
+        let endScene8TB = this.buildSequenceBox(endScene8);
+        let endScene9TB = this.buildSequenceBox(endScene9);
+        let endScene10TB = this.buildSequenceBox(endScene10);
 
-        this.endSequence = [endScene1TB, endScene2TB, endScene3TB, endScene4TB, endScene5TB, endScene6TB, endScene7TB];
+        this.endSequence = [endScene1TB, endScene2TB, endScene3TB, endScene4TB, endScene5TB, endScene6TB, endScene7TB, endScene8TB, endScene9TB, endScene10TB];
         this.clearEntities();
         this.player.removeFromWorld = true;
 

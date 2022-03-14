@@ -336,6 +336,7 @@ class AbstractEntity {
      * @returns dist 
      */
     checkEnvironmentCollisions(dist) {
+        let TICK = this.game.clockTick;
         //do collisions detection here
         let lastBB = this.lastBB;
         this.collisions = {
@@ -345,6 +346,7 @@ class AbstractEntity {
         };
         const w = this.BB.right - this.BB.left;
         const h = this.BB.bottom - this.BB.top;
+        let bottom = null;
         const BB = {
             top: new BoundingBox(this.BB.left, this.BB.top, w, h / 2),
             bottom: new BoundingBox(this.BB.left, this.BB.top + h / 2, w, h / 2),
@@ -378,6 +380,11 @@ class AbstractEntity {
                             that.collisions.floor_left = true;
                             if (Math.abs(entity.BB.top - that.BB.bottom) > Math.abs(dist.y) || dist.y > 0)
                                 dist.y = entity.BB.top - that.BB.bottom;
+                            if (bottom && !that.collisions.floor) {
+                                if (entity.BB.right - that.BB.left > that.BB.right - bottom.BB.left)
+                                    bottom = entity;
+                            }
+                            else bottom = entity;
                         }
                     }
                     else if (coll.right && !coll.left && xR < w / 2) { // somewhere right
@@ -389,12 +396,18 @@ class AbstractEntity {
                             that.collisions.floor_right = true;
                             if (Math.abs(entity.BB.top - that.BB.bottom) > Math.abs(dist.y) || dist.y > 0)
                                 dist.y = entity.BB.top - that.BB.bottom;
+                            if (bottom && !that.collisions.floor) {
+                                if (that.BB.right - entity.BB.left > bottom.BB.right - that.BB.left)
+                                    bottom = entity;
+                            }
+                            else bottom = entity;
                         }
                     }
                     else { // certaintly below
                         that.collisions.floor = true;
                         if (Math.abs(entity.BB.top - that.BB.bottom) > Math.abs(dist.y) || dist.y > 0)
                             dist.y = entity.BB.top - that.BB.bottom;
+                        bottom = entity;
                     }
                 }
                 else if (coll.ceil && !coll.floor) { // somewhere above
@@ -444,10 +457,40 @@ class AbstractEntity {
             that.updateBoxes();
 
         });
+
+        if (bottom && bottom.velocity) {
+            const temp = bottom.velocity * PARAMS.BLOCKDIM * TICK;
+            if (bottom.direction == bottom.directions.left) {
+                if (!bottom.reverseLists)
+                    dist.x -= temp;
+                else
+                    dist.x += temp;
+            }
+            else if (bottom.direction == bottom.directions.right) {
+                if (!bottom.reverseLists)
+                    dist.x += temp;
+                else
+                    dist.x -= temp;
+            }
+            if (bottom.direction == bottom.directions.up) {
+                if (!bottom.reverseLists)
+                    dist.y -= temp;
+                else
+                    dist.y += temp;
+            }
+            else if (bottom.direction == bottom.directions.down) {
+                if (!bottom.reverseLists)
+                    dist.y += temp;
+                else
+                    dist.y -= temp;
+            }
+        }
+
         this.lastBB = this.BB;
         return dist;
     }
 
+    
     /**Collision helper methods */
 
     touchFloor() {
