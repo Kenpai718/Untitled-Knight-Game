@@ -60,6 +60,7 @@ class Inventory {
     };
 
     copyInventory(inventory) {
+        this.maxxed = inventory.maxxed;
         this.maxStack = inventory.maxStack;
         this.maxUpgrade = inventory.maxUpgrade;
         this.arrows = inventory.arrows;

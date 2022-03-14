@@ -201,6 +201,7 @@ class SceneManager {
             "So he tried to use me to do his dirty work.",
         ]
 
+        //hidden ending if no upgrade
         let endScene5;
         if (hidden_end) {
             endScene5 = [
@@ -214,7 +215,6 @@ class SceneManager {
                 "I didn't give that sucker a single one!",
             ];
         } else {
-
             endScene5 = [
                 "Through the power of the Chaos Diamond",
                 "he planned to take over the whole universe!",
@@ -228,11 +228,23 @@ class SceneManager {
 
         }
 
-        let endScene6 =
+        //hidden ending 2 is fully upgraded
+        let endScene6;
+        if(this.player.myInventory.maxxed) {
+            endScene6 =
+            [
+                "Both our power levels were over 9000...",
+                "But, I was simply built different,",
+                "and defeated him with ease.",
+            ];
+        } else {
+            endScene6 =
             [
                 "It was a tough battle. However,",
                 "I stopped him before it was too late!",
             ];
+        }
+
         let endScene7 =
             [
                 "And with that my story comes to close.",
