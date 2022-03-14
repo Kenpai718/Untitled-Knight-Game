@@ -646,15 +646,15 @@ class Wizard extends AbstractBoss {
 
             this.hp += heal; //set hp
 
-            if (this.maxStats && this.hp > this.max_hp * .4) { //healing
-                this.hp = this.max_hp * .4;
+            if (this.maxStats && this.hp > this.max_hp * .5) { //healing
+                this.hp = this.max_hp * .5;
                 if (!this.potionSFX) { //wizard can drink potions too you know!
                     this.potionSFX = true;
                     ASSET_MANAGER.playAsset(SFX.DRINK);
                 }
             }
-            else if (!this.maxStats && this.hp > this.max_hp * (.15 + .05 * inventory.armorUpgrade) && heal > 0) {
-                this.hp = this.max_hp * (.15 + .1 * inventory.armorUpgrade);
+            else if (!this.maxStats && this.hp > this.max_hp * (.25 + .05 * inventory.armorUpgrade) && heal > 0) {
+                this.hp = this.max_hp * (.25 + .05 * inventory.armorUpgrade);
             }
         }
         // appear where disappear determined
