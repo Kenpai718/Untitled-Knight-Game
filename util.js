@@ -235,6 +235,7 @@ const SFX = {
     CHECKPOINT: "./sound/sfx/checkpoint.wav",
     TRIGGER: "./sound/sfx/event_trigger.mp3",
     EVIL_LAUGH: "./sound/sfx/evil_laugh.mp3",
+    SUPER_SAIYAN: "./sound/sfx/super_saiyan.mp3",
 
 
 };

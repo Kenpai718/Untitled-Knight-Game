@@ -21,6 +21,7 @@ ASSET_MANAGER.queueDownload("./sprites/projectile/bladeBeam.png");
 
 //enemies
 ASSET_MANAGER.queueDownload("./sprites/enemy/wizard.png");
+ASSET_MANAGER.queueDownload("./sprites/enemy/ascended_wizard.png");
 ASSET_MANAGER.queueDownload("./sprites/enemy/skeleton.png");
 ASSET_MANAGER.queueDownload("./sprites/enemy/goblin.png");
 ASSET_MANAGER.queueDownload("./sprites/enemy/mushroom.png");
@@ -98,6 +99,7 @@ ASSET_MANAGER.queueDownload(SFX.RESPAWN);
 ASSET_MANAGER.queueDownload(SFX.COMPLETE);
 ASSET_MANAGER.queueDownload(SFX.TRIGGER);
 ASSET_MANAGER.queueDownload(SFX.EVIL_LAUGH);
+ASSET_MANAGER.queueDownload(SFX.SUPER_SAIYAN);
 //ASSET_MANAGER.queueDownload(SFX.CHECKPOINT);
 
 // Leave this SFX to suffer at the bottom >:D
