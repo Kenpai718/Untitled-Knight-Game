@@ -171,7 +171,7 @@ var testLevel = {
     ],
     chests: [
         //{ x: 3, y: 1, direction : 1},
-        { x: 16, y: 1, direction: 0 }
+        //{ x: 16, y: 1, direction: 0 }
     ],
     bricks: [
         //{ x: 10, y: 7, width: 1, height: 1 },
@@ -1164,6 +1164,7 @@ var level1_3 = {
         { x: 52.5, y: 27 }, //subtle hint to go left to find the treasure room                                                                                                        :c
         { x: 49, y: 30 },
         { x: 49, y: 14 },
+        { x: 50, y: 35},
 
         { x: 116, y: 24 },
         { x: 119, y: 24 },
@@ -1239,10 +1240,10 @@ var level1_3 = {
         { x: 28, y: 27, width: 3, height: 1 },
         //obelisk to treasure room
 
-        { x: 50, y: 34, width: 3, height: 1 },
+        //{ x: 50, y: 34, width: 3, height: 1 },
         { x: 64, y: 35, width: 5, height: 1 }, //chest on top
 
-        { x: 49, y: 12, width: 2, height: 1 },
+        //{ x: 49, y: 12, width: 2, height: 1 },
         { x: 59, y: 22, width: 5, height: 1 },
         { x: 69, y: 12, width: 8, height: 1 },
         { x: 89, y: 17, width: 3, height: 1 },
@@ -1261,9 +1262,9 @@ var level1_3 = {
 
         //obelisk to treasure room
         { x: 40, y: 7, width: 2, height: 1, directionList: [1, 3], distanceList: [9,3], velocity: 1.5   },
-        { x: 47, y: 12, width: 2, height: 1, directionList: [1], distanceList: [7], velocity: 1   },
+        { x: 47, y: 12, width: 2, height: 1, directionList: [1], distanceList: [7], velocity: 1},
 
-        { x: 50, y: 34, width: 3, height: 1 },
+        { x: 50, y: 33, width: 3, height: 1, directionList: [1], distanceList: [7], velocity: 1.5 }, //travel to the top right obelisk
 
         { x: 60, y: 8, width: 3, height: 1, directionList: [2], distanceList: [2], velocity: 0.5   }
     ],
@@ -1897,6 +1898,7 @@ var level1_5 = {
         { x: 29, y: 53, direction: 1 },
         { x: 33.5, y: 53, direction: 0 },
         { x: 35.5, y: 55, direction: 0 },
+        { x: 44, y: 12, direction: 1 },
     ],
 
     shrooms: [
@@ -2660,7 +2662,7 @@ var treasureroom = {
 
 var levelBoss1 = {
     ID: 100,
-    label: "Final Room",
+    label: "The Final Room",
     width: 120, height: 20,
     player: { x: 3, y: 1 },
     music: MUSIC.COUNTERATTACK,

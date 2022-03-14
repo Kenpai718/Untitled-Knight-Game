@@ -23,9 +23,11 @@
         this.myDiamondsEarned = 0;
         this.myDiamondsSpent = 0;
         this.mySecretsFound = 0;
+        this.myChestsOpened = 0;
     }
 
     drawReportCard(ctx) {
+        if(!this.myTotalChests) this.myTotalChests = this.countChests();
         let fontSize = 40;
 
         let theLevelTime = this.game.camera.levelTimer;
@@ -40,6 +42,7 @@
             this.myDiamondsEarned + " diamonds earned",
             this.myDiamondsSpent + " diamonds spent",
             this.mySecretsFound + " secrets found",
+            this.myChestsOpened + "/" + this.myTotalChests + " chests found",
             this.myDeathes + " times died",
         ];
 
@@ -47,6 +50,20 @@
         this.myReportBox.centerBottomMulti();
         this.myReportBox.draw(ctx);
 
+    }
+
+    countChests() {
+        let count = 0;
+        let levels = this.game.camera.levels;
+        for (let i = 0; i < levels.length; i++) {
+            let level = levels[i];
+            if (level.chests) {
+                for (var j = 0; j < level.chests.length; j++) {
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 
 }
