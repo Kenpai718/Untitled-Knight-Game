@@ -1960,12 +1960,17 @@ var level1_5 = {
         { x: 53, y: 53, guard: true },
 
         //3:1
-        { x: 4, y: 53, guard: true },
-        { x: 6, y: 51, guard: true },
-        { x: 17, y: 51, guard: true },
-        { x: 19, y: 51, guard: true },
-        { x: 21, y: 43, guard: true },
+        //bridge left
+        { x: 4, y: 54, guard: true },
+        { x: 9, y: 52, guard: true },
+        { x: 15, y: 52, guard: true },
+        { x: 19, y: 53, guard: true },
+        { x: 24, y: 43, guard: true },
         { x: 11, y: 41, guard: true },
+
+        //bridge right
+        { x: 50, y: 54, guard: true },
+        { x: 48, y: 52, guard: true },
     ],
 
     slimes: [
@@ -1981,7 +1986,7 @@ var level1_5 = {
     npcs: [
         {
             x: 6, y: 7, text: [
-                "Friend, come...",
+                "Friend, we are almost at the finish line.",
                 "I am more in need of the bread of your labor.",
             ]
         },
