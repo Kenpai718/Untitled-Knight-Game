@@ -1,6 +1,12 @@
 class Event {
-    constructor(game, space, blocks, entities, activated, finished) {
+    constructor(game, space, blocks, entities, activated, finished, finishedSFX) {
         Object.assign(this, {game, space, blocks, entities, activated, finished});
+        if(finishedSFX == null || finishedSFX == undefined) {
+            this.finishedSFX = true; //enabled sound by default if not defined
+        } else {
+            //set whether or not to play this sfx when the event finishes
+            this.finishedSFX = this.finishedSFX;
+        }
         this.scale = PARAMS.BLOCKDIM;
         this.lower = {x: Number.MAX_VALUE, y: Number.MAX_VALUE};
         this.upper = {x: Number.MIN_VALUE, y: Number.MIN_VALUE};
@@ -65,7 +71,7 @@ class Event {
         }
         if (this.finished) {
             
-            if(!(this instanceof Secret)) {
+            if(!(this instanceof Secret) && this.finishedSFX) {
                 //sfx for finishing an event fight
                 ASSET_MANAGER.playAsset(SFX.COMPLETION);
             }

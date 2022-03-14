@@ -52,7 +52,7 @@ class DemonSlime extends AbstractBoss {
             enemy.aggro = true;
             enemies.push(enemy);
         }
-        this.event = new Event(this.game, [], [], enemies, true, false);
+        this.event = new Event(this.game, [], [], enemies, true, false, false);
         this.game.addEntity(this.event);
     };
 
