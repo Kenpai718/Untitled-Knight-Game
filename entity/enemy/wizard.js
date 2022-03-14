@@ -97,6 +97,7 @@ class Wizard extends AbstractBoss {
         //this.cueBossMusic(); //once it spawns in play the boss music
         this.activeBoss = false;
 
+
     }
 
     // use after any change to this.x or this.y
@@ -117,7 +118,7 @@ class Wizard extends AbstractBoss {
         // buff from attack upgrade
         this.fireballDmg = 5 + inventory.attackUpgrade + inventory.arrowUpgrade / 2;
         this.beamDamage = 5 + inventory.attackUpgrade / 2 + inventory.arrowUpgrade; //initial beam damage. it ramps up with phases.
-        this.dashDamage = 15 + Math.ceil(inventory.attackUpgrade/4) + inventory.attackUpgrade;
+        this.dashDamage = 15 + Math.ceil(inventory.attackUpgrade / 4) + inventory.attackUpgrade;
 
         // buff from armor upgrade
         this.recoverDamagePrcnt = 20 + 10 * inventory.armorUpgrade;
@@ -173,7 +174,7 @@ class Wizard extends AbstractBoss {
             if (this.HB)
                 this.HB = null;
             this.fireCircle.forEach(fireball => fireball.removeFromWorld = true);
-            this.game.enemies.forEach(enemy =>{
+            this.game.enemies.forEach(enemy => {
                 if (!(enemy instanceof Wizard))
                     enemy.dead = true;
             })
@@ -365,7 +366,7 @@ class Wizard extends AbstractBoss {
                 //prepare for fire ring cutscene
                 if (this.dialougeCount == this.myInitialDialouge.size - 4) {
                     this.buffWizard();
-                    this.game.entities.forEach(entity =>{
+                    this.game.entities.forEach(entity => {
                         if (entity instanceof NPC) {
                             entity.removeFromWorld = true;
                         }
@@ -612,15 +613,26 @@ class Wizard extends AbstractBoss {
             this.reappearTime = .3;
             this.disappearTime = 100;
         }
-        else if (this.reappearWaitTime > 0){
+        //phase where it disappears to heal up at low hp and player has upgrades
+        else if (this.reappearWaitTime > 0) {
             this.reappearWaitTime -= TICK;
             let inventory = this.player.myInventory;
             let heal = 4;
-            if (this.hp > this.max_hp * (.15 +.1 * inventory.armorUpgrade)) 
+            console.log("wizard healing phase");
+
+            if (this.hp > this.max_hp * (.15 + .1 * inventory.armorUpgrade)) {
+                //done healing
                 heal = 0;
-            this.hp += heal;
-            if (this.maxStats && this.hp > this.max_hp * .4) {
+            }
+
+            this.hp += heal; //set hp
+
+            if (this.maxStats && this.hp > this.max_hp * .4) { //healing
                 this.hp = this.max_hp * .4;
+                if (!this.potionSFX) { //wizard can drink potions too you know!
+                    this.potionSFX = true;
+                    ASSET_MANAGER.playAsset(SFX.DRINK);
+                }
             }
             else if (!this.maxStats && this.hp > this.max_hp * (.15 + .05 * inventory.armorUpgrade) && heal > 0) {
                 this.hp = this.max_hp * (.15 + .1 * inventory.armorUpgrade);

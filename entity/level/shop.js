@@ -45,6 +45,7 @@ class Shop {
         // this.armor = [];
         // this.armorCost = [60, 90, 120, "MAX"];
         //economy inflation
+        this.potionCost = 25;
         this.health = [];
         this.healthCost = [25, 50, 100, 150, "MAX"];
         this.attack = [];
@@ -143,11 +144,11 @@ class Shop {
                 else if (mouseBB.collide(self.ButtonBB2)) {
                     //console.log("Button 2 : Health Potion");
 
-                    if (entity.myInventory.diamonds >= 10) {
+                    if (entity.myInventory.diamonds >= self.potionCost) {
                         self.highlightB2 = true;
 
                         if (self.game.click) {
-                            let cost = 25;
+                            let cost = self.potionCost;
                             self.doTransaction(cost);
 
                             entity.myInventory.potions += 1;
@@ -602,7 +603,7 @@ class Shop {
 
                 if (entity.myInventory.diamonds >= self.arrowPackCost[entity.myInventory.arrowUpgrade])  // Arrow pack
                     item1 = true;
-                if (entity.myInventory.diamonds >= 10)                                                   // Health potion
+                if (entity.myInventory.diamonds >= self.potionCost)                                                   // Health potion
                     item2 = true;
                 if (entity.myInventory.diamonds >= self.healthCost[entity.myInventory.healthUpgrade])  // Max Health potion
                     item3 = true;
@@ -660,7 +661,7 @@ class Shop {
                 // Shop Icons
                 ctx.font = ctx.font.replace(/\d+px/, "25px");
                 ctx.fillText("󠀠󠀠󠀠  x" + self.arrowPackCost[entity.myInventory.arrowUpgrade], self.x + self.width / 6 * 5 - 24, self.y + self.height / 7 * 1.63 + self.customPurchaseHeight);
-                ctx.fillText("󠀠󠀠󠀠  x" + 10, self.x + self.width / 6 * 5 - 24, self.y + self.height / 7 * 2.63 + self.customPurchaseHeight);
+                ctx.fillText("󠀠󠀠󠀠  x" + self.potionCost, self.x + self.width / 6 * 5 - 24, self.y + self.height / 7 * 2.63 + self.customPurchaseHeight);
                 ctx.fillText("󠀠󠀠󠀠  x" + self.healthCost[entity.myInventory.healthUpgrade], self.x + self.width / 6 * 5 - 24, self.y + self.height / 7 * 3.63 + self.customPurchaseHeight);
                 ctx.fillText("󠀠󠀠󠀠  x" + self.attackCost[entity.myInventory.attackUpgrade], self.x + self.width / 6 * 5 - 24, self.y + self.height / 7 * 4.63 + self.customPurchaseHeight);
                 ctx.fillText("󠀠󠀠󠀠  x" + self.arrowCost[entity.myInventory.arrowUpgrade], self.x + self.width / 6 * 5 - 24, self.y + self.height / 7 * 5.63 + self.customPurchaseHeight);
