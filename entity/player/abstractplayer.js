@@ -423,9 +423,6 @@ class AbstractPlayer extends AbstractEntity {
                 else
                     dist.y -= temp;
             }
-            //console.log(bottom.velocity);
-            //console.log(bottom.velocity);
-            console.log(bottom.direction);
         }
 
         // update position as a result of collision
