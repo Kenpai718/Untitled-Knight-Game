@@ -305,14 +305,23 @@ class Wizard extends AbstractBoss {
             this.myInitialDialouge.set(6, ["on days like these, kids like you...", 2]);
             this.myInitialDialouge.set(7, ["Should be burning in hell.", 2]);
         } else { //default cutscene message
-            this.myInitialDialouge.set(0, ["Your next line is... where's the demon lord?", 4]);
+            this.myInitialDialouge.set(0, ["Your next line is... where's the Demon Lord?", 4]);
             this.myInitialDialouge.set(1, ["You idiot, it was me, Wizard!", 2.5]);
             this.myInitialDialouge.set(2, ["You were just a pawn in my game this whole time.", 3]);
             this.myInitialDialouge.set(3, ["Those " + this.game.myReportCard.myDiamondsSpent + " DIAMONDS you gave me?", 3]);
             this.myInitialDialouge.set(4, ["They just made me stronger~ :)", 2]);
             this.myInitialDialouge.set(5, ["Now I will take over the universe...", 2]);
-            this.myInitialDialouge.set(6, [["and after I defeat you", "I'll take your body for my own."], 3]);
-            this.myInitialDialouge.set(7, ["Then no-one can stand in my way!!", 2]);
+            //easter egg message if maxxed
+            if (this.player.myInventory.maxxed) {
+                console.log("player fighting at max potential!");
+                this.myInitialDialouge.set(6, [["This is the ideal male body."], 2])
+                this.myInitialDialouge.set(7, [["You may not like it,",
+                    "but this is what",
+                    "peak performance looks like."], 3]);
+            } else {
+                this.myInitialDialouge.set(6, [["and after I defeat you", "I'll take your body for my own."], 3]);
+                this.myInitialDialouge.set(7, ["Then no-one can stand in my way!!", 2]);
+            }
             this.myInitialDialouge.set(8, ["MUHAHAHAHAHA!!!", 2]);
         }
 
@@ -618,7 +627,7 @@ class Wizard extends AbstractBoss {
             this.reappearWaitTime -= TICK;
             let inventory = this.player.myInventory;
             let heal = 4;
-            console.log("wizard healing phase");
+            //console.log("wizard healing phase");
 
             if (this.hp > this.max_hp * (.15 + .1 * inventory.armorUpgrade)) {
                 //done healing
