@@ -32,7 +32,8 @@ const DOOR_SPAWNS = {
     enter_to_level2: { x: 1, y: 1, levelNum: 2 },
     enter_to_level3: { x: 1, y: 1, levelNum: 3 },
     enter_to_level4: { x: 3, y: 5, levelNum: 4 },
-    enter_to_level5: { x: 1, y: 6, levelNum: 5 },
+    enter_to_level5: { x: 1, y: 6, levelNum: 5 }, 
+    //enter_to_level5: { x: 83, y: 4, levelNum: 5 },//to elevator of death
     enter_to_treasure: { x: 41, y: 26, levelNum: 6 },
     enter_to_final: { x: 4, y: 1, levelNum: 7 },
 
@@ -171,7 +172,7 @@ var testLevel = {
     ],
     chests: [
         //{ x: 3, y: 1, direction : 1},
-        { x: 16, y: 1, direction: 0 }
+        //{ x: 16, y: 1, direction: 0 }
     ],
     bricks: [
         //{ x: 10, y: 7, width: 1, height: 1 },
@@ -186,7 +187,7 @@ var testLevel = {
         { x: 4.5, y: 1, brickX: 7, brickY: 12, brickWidth: 1, brickHeight: 3, initial: false, repeat: true }
     ],
     moveable: [
-        { x: 1, y: 10, width: 3, height: 1, directionList: [3,1], distanceList: [6,2], velocity: 1 },
+        { x: 1, y: 10, width: 3, height: 1, directionList: [3, 1], distanceList: [6, 2], velocity: 1 },
     ],
 
     shrooms: [
@@ -1164,6 +1165,7 @@ var level1_3 = {
         { x: 52.5, y: 27 }, //subtle hint to go left to find the treasure room                                                                                                        :c
         { x: 49, y: 30 },
         { x: 49, y: 14 },
+        { x: 50, y: 35 },
 
         { x: 116, y: 24 },
         { x: 119, y: 24 },
@@ -1222,9 +1224,9 @@ var level1_3 = {
         { x: 84, y: 22, width: 1, height: 1 },
     ],
     platforms: [
-        { x: 23, y: 7, width: 1, height: 1},
-        { x: 29, y: 7, width: 2, height: 1},
-        
+        { x: 23, y: 7, width: 1, height: 1 },
+        { x: 29, y: 7, width: 2, height: 1 },
+
         //middle parkour left
         { x: 17, y: 16, width: 4, height: 1 },
         { x: 23, y: 20, width: 2, height: 1 },
@@ -1239,10 +1241,10 @@ var level1_3 = {
         { x: 28, y: 27, width: 3, height: 1 },
         //obelisk to treasure room
 
-        { x: 50, y: 34, width: 3, height: 1 },
+        //{ x: 50, y: 34, width: 3, height: 1 },
         { x: 64, y: 35, width: 5, height: 1 }, //chest on top
 
-        { x: 49, y: 12, width: 2, height: 1 },
+        //{ x: 49, y: 12, width: 2, height: 1 },
         { x: 59, y: 22, width: 5, height: 1 },
         { x: 69, y: 12, width: 8, height: 1 },
         { x: 89, y: 17, width: 3, height: 1 },
@@ -1260,12 +1262,12 @@ var level1_3 = {
         //{ x: 29, y: 7, width: 2, height: 1, directionList: [1], distanceList: [7], velocity: 1  },
 
         //obelisk to treasure room
-        { x: 40, y: 7, width: 2, height: 1, directionList: [1, 3], distanceList: [9,3], velocity: 1.5   },
-        { x: 47, y: 12, width: 2, height: 1, directionList: [1], distanceList: [7], velocity: 1   },
+        { x: 40, y: 7, width: 2, height: 1, directionList: [1, 3], distanceList: [9, 3], velocity: 1.5 },
+        { x: 47, y: 12, width: 2, height: 1, directionList: [1], distanceList: [7], velocity: 1 },
 
-        { x: 50, y: 34, width: 3, height: 1 },
+        { x: 50, y: 33, width: 3, height: 1, directionList: [1], distanceList: [7], velocity: 1.5 }, //travel to the top right obelisk
 
-        { x: 60, y: 8, width: 3, height: 1, directionList: [2], distanceList: [2], velocity: 0.5   }
+        { x: 60, y: 8, width: 3, height: 1, directionList: [2], distanceList: [2], velocity: 0.5 }
     ],
 
     walls: [
@@ -1673,7 +1675,7 @@ var level1_5 = {
         // 1:2
         { x: 22, y: 5, width: 31, height: 1, type: 1 },
         // 2:4
-        { x: 73, y: 24, width: 10, height: 1, type: 1 },
+        { x: 73, y: 24, width: 8, height: 1, type: 1 },
         // 3:4
         { x: 71, y: 60, width: 14, height: 1, type: 1 },
         { x: 69, y: 54, width: 4, height: 1, type: 1 },
@@ -1697,7 +1699,7 @@ var level1_5 = {
         { x: 9, y: 0, width: 14, height: 1, type: 0 }, // spike floor
         { x: 0, y: 12, width: 8, height: 2, type: 0 }, //Roof
         { x: 0, y: 20, width: 22, height: 8, type: 0 }, //Roof Main
-        { x: 0, y: 23, width: 82, height: 3, type: 0 }, //Roof Main
+        { x: 0, y: 23, width: 80, height: 3, type: 0 }, //Roof Main
         { x: 8, y: 12, width: 2, height: 1, type: 0 }, //Roof M1
         // 1:2
         { x: 23, y: 8, width: 12, height: 1, type: 0 }, //Roof
@@ -1716,10 +1718,10 @@ var level1_5 = {
 
 
         // 1:4
-        { x: 66, y: 20, width: 16, height: 3, type: 0 }, // Roof fill
+        { x: 66, y: 20, width: 14, height: 3, type: 0 }, // Roof fill
         { x: 66, y: 16, width: 5, height: 15, type: 0 }, // Wall fill 
         { x: 71, y: 3, width: 17, height: 2, type: 0 }, // Floor
-        { x: 77, y: 17, width: 5, height: 13, type: 0 }, // M wall fill
+        { x: 77, y: 17, width: 3, height: 12, type: 0 }, // M wall fill
         // 2:4
         { x: 76, y: 40, width: 2, height: 13, type: 0 }, // left wall fill
         { x: 78, y: 38, width: 10, height: 11, type: 0 }, // right wall fill////////
@@ -1815,8 +1817,8 @@ var level1_5 = {
         { x: 65, y: 16, height: 15, type: 0 }, // Left
         { x: 65, y: 20, height: 3, type: 0 }, // Left
         { x: 71, y: 16, height: 13, type: 0 }, // Right
-        { x: 76, y: 17, height: 13, type: 0 }, // M Left
-        { x: 82, y: 23, height: 19, type: 0 }, // M Right
+        { x: 76, y: 17, height: 12, type: 0 }, // M Left
+        { x: 80, y: 23, height: 18, type: 0 }, // M Right
         { x: 87, y: 27, height: 24, type: 0 }, // R Right
         // 2:4
         { x: 72, y: 43, height: 20, type: 0 }, // Right
@@ -1846,6 +1848,18 @@ var level1_5 = {
         // 3:1
         { x: 2, y: 59, height: 9, type: 0 }, // top
         { x: 2, y: 40, height: 10, type: 0 }, //lower
+
+        //elevator of death edges
+        { x: 81, y: 7, width: 1, height: 1, type: 2 },
+        { x: 86, y: 7, width: 1, height: 1, type: 2 },
+        { x: 81, y: 11, width: 1, height: 1, type: 2 },
+        { x: 86, y: 11, width: 1, height: 1, type: 2 },
+        { x: 81, y: 15, width: 1, height: 1, type: 2 },
+        { x: 86, y: 15, width: 1, height: 1, type: 2 },
+        { x: 81, y: 19, width: 1, height: 1, type: 2 },
+        { x: 86, y: 19, width: 1, height: 1, type: 2 },
+        { x: 81, y: 23, width: 1, height: 1, type: 2 },
+        { x: 86, y: 23, width: 1, height: 1, type: 2 },
 
 
 
@@ -1884,8 +1898,9 @@ var level1_5 = {
         //{ x: 58, y: 10, width: 4, height: 1 },
     ],
     moveable: [
-        { x: 58, y: 4, width: 4, height: 1, directionList: [2], distanceList: [10], velocity: 1.5 },
+        { x: 58, y: 4, width: 4, height: 1, directionList: [2], distanceList: [10], velocity: 2 },
         { x: 73, y: 49, width: 2, height: 1, directionList: [2], distanceList: [5], velocity: 1 },
+        { x: 82, y: 3, width: 4, height: 1, directionList: [2], distanceList: [18], velocity: 1 }, //elevator of death
     ],
 
     chests: [
@@ -1897,6 +1912,7 @@ var level1_5 = {
         { x: 29, y: 53, direction: 1 },
         { x: 33.5, y: 53, direction: 0 },
         { x: 35.5, y: 55, direction: 0 },
+        { x: 44, y: 12, direction: 1 },
     ],
 
     shrooms: [
@@ -1935,9 +1951,9 @@ var level1_5 = {
         { x: 55, y: 15, guard: true },
         { x: 62, y: 20, guard: false },
         // 1:4
-        { x: 84, y: 8, guard: false },
-        { x: 85, y: 15, guard: false },
-        { x: 86, y: 18, guard: false },
+        // { x: 84, y: 8, guard: false },
+        // { x: 85, y: 15, guard: false },
+        // { x: 86, y: 18, guard: false },
         // 3:3
         { x: 43, y: 52, guard: true },
         { x: 53, y: 53, guard: true },
@@ -1964,31 +1980,42 @@ var level1_5 = {
     npcs: [
         {
             x: 6, y: 7, text: [
-                "Friend, come..",
+                "Friend, come...",
                 "I am more in need of the bread of your labor.",
-                "Great power is upon us!",
             ]
         },
-        
+
         {
-        x: 72, y: 54, text: [
-                "YES, At last! The Aether is fina.. err.. I mean dinner time.. ",
-                "I must leave soon.. lucifer has sent his biddings..",
-                "~ Give the goblins afar my falling regards ~",
+            x: 77, y: 4, text: [
+                "Why is the elevator always sick?",
+                "It keeps coming down with something!",
+                "hehehe~"
             ]
-    },
+        },
+
+        {
+            x: 72, y: 54, text: [
+                // "YES, At last! The Aether is fina.. err.. I mean dinner time.. ",
+                // "I must leave soon.. lucifer has sent his biddings..",
+                // "~ Give the goblins afar my falling regards ~",
+                "“Doesn’t matter what you did, or what you were.",
+                "If you go out there, you fight,",
+                "and you fight to kill."
+            ]
+        },
     ],
 
-        /*
-            Friend, come.
-            I am more in need of the bread of your labor.
-            I must leave soon.. lucifer has sent his biddings..
+    /*
+        Friend, come.
+        I am more in need of the bread of your labor.
+        I must leave soon.. lucifer has sent his biddings..
 
-            ~Give the goblins afar my regards~
-        */
+        ~Give the goblins afar my regards~
+    */
 
 
     torches: [
+        { x: 4, y: 8 },
         // 1:2
         { x: 30, y: 19 },
         { x: 37, y: 19 },
@@ -2005,10 +2032,21 @@ var level1_5 = {
         { x: 39, y: 7 },
 
         //1:4
-        { x: 83, y: 12 },
-        { x: 86, y: 12 },
+        //evil torches that spawn events
+        { x: 81, y: 6 },
+        { x: 86, y: 6 },
+        { x: 81, y: 10 },
+        { x: 86, y: 10 },
+        { x: 81, y: 14 }, //wave two
+        { x: 86, y: 14 },
+        { x: 81, y: 18 }, //wave two
+        { x: 86, y: 18 },
+        { x: 81, y: 22 }, //wave three
+        { x: 86, y: 22 },
+
         { x: 74, y: 26 },
         { x: 85, y: 26 },
+
         // 2:4
         { x: 81, y: 41 },
         { x: 86, y: 41 },
@@ -2104,6 +2142,77 @@ var level1_5 = {
             ]
         }
     ],
+
+
+    events: [
+        //elevator of death
+        //wave 1
+        {
+            space: [
+                { x: 81, y: 14, width: 6, height: 1 }, //wave one
+            ],
+            bricks:
+                [
+                    //block path
+                    { x: 81, y: 24, width: 7, height: 2, type: 2 },
+                    { x: 81, y: 6, width: 7, height: 1, type: 2 },
+                ],
+
+            //fall from the skies
+            goblins: [
+                { x: 85, y: 20, guard: true },
+                { x: 82, y: 20, guard: true },
+            ],
+            skeletons: [
+                { x: 82, y: 20, guard: true },
+                //{ x: 83, y: 22, guard: true }
+            ],
+
+        },
+
+        //wave 2
+        {
+            space: [
+                { x: 81, y: 18, width: 6, height: 1 }, //wave one
+            ],
+            bricks:
+                [
+                    { x: 81, y: 24, width: 7, height: 1, type: 2 },
+                    { x: 81, y: 6, width: 7, height: 1, type: 2 },
+
+                ],
+
+            //fall from the skies
+            slimes: [
+                { x: 82, y: 20, guard: true },
+                { x: 83, y: 20, guard: true },
+            ],
+            goblins: [
+                { x: 84, y: 21, guard: true },
+                //{ x: 85, y: 22, guard: true },
+            ],
+
+        },
+        // wave 3
+        {
+            space: [
+                { x: 81, y: 21, width: 6, height: 1 }, //wave one
+            ],
+            bricks:
+                [
+                    { x: 81, y: 24, width: 7, height: 1, type: 2 },
+                    { x: 81, y: 6, width: 7, height: 1, type: 2 },
+                ],
+
+            //fall from the skies
+            flyingeyes: [
+                { x: 85, y: 22, guard: true },
+                { x: 80, y: 22, guard: true },
+                { x: 82, y: 22, guard: true },
+            ],
+
+        },
+    ]
 }
 
 var treasureroom = {
@@ -2660,7 +2769,7 @@ var treasureroom = {
 
 var levelBoss1 = {
     ID: 100,
-    label: "Final Room",
+    label: "The Final Room",
     width: 120, height: 20,
     player: { x: 3, y: 1 },
     music: MUSIC.COUNTERATTACK,
@@ -2956,14 +3065,14 @@ var level_extra = {
                 { x: 122, y: 31, height: 6, type: 2 },
                 { x: 107, y: 20, height: 1, type: 2 },
             ],
-            
+
             skeletons: [
                 { x: 109, y: 36, guard: false },
                 { x: 112, y: 36, guard: false },
                 { x: 114, y: 36, guard: false },
                 { x: 116, y: 36, guard: false },
                 { x: 118, y: 36, guard: false },
-        
+
             ],
 
         }

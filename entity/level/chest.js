@@ -75,6 +75,7 @@ class Chest extends AbstractInteractable {
             let playerNextToChest = entity.BB && that.BB.collide(entity.BB) && entity instanceof AbstractPlayer && that.state != 1;
             let playerHitChest = entity.HB && that.BB.collide(entity.HB) && entity instanceof AbstractPlayer && that.state != 1;
             if (playerNextToChest && that.game.up || playerHitChest) {
+                that.game.myReportCard.myChestsOpened++;
                 that.state = 1;
                 that.opened = true;
                 ASSET_MANAGER.playAsset(SFX.CHEST_OPEN);
