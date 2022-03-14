@@ -1241,6 +1241,7 @@ var level1_3 = {
         { x: 28, y: 27, width: 3, height: 1 },
         //obelisk to treasure room
 
+        { x: 38, y: 6, width: 3, height: 1 },
         //{ x: 50, y: 34, width: 3, height: 1 },
         { x: 64, y: 35, width: 5, height: 1 }, //chest on top
 

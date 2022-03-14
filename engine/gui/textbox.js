@@ -413,7 +413,7 @@ class SceneTextBox {
 
     centerBottomMulti() {
         this.x = (this.game.surfaceWidth / 2) - ((this.fontSize * this.maxLength) / 2);
-        this.y = (this.game.surfaceHeight - (this.text.length * (this.fontSize + this.lineBuffer)) - (this.fontSize * 3));
+        this.y = (this.game.surfaceHeight - (this.text.length * (this.fontSize + this.lineBuffer)) - (this.fontSize * 3)) + 30;
     }
 
     drawDebug() {

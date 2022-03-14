@@ -194,8 +194,9 @@ class SceneManager {
         ]
 
         let endScene4 = [
-            "But even so, such obstacles",
-            "are no match for me!",
+            "But even so,",
+            "such obstacles are no match for me!",
+            "",
             "The evil Wizard knew I could handle it,",
             "So he tried to use me to do his dirty work.",
         ]

@@ -4,15 +4,9 @@
  class ReportCard {
     constructor(game) {
         this.game = game;
-
         this.reset();
-
         this.elapsed = 0;
-
-        //not sure how to do this in terms of the canvas so I hard coded in the spot
-        let boxX = 865;
-        let boxY = 1270;
-        this.myReportBox = new SceneTextBox(this.game, boxX, boxY, "");
+        this.myReportBox = new SceneTextBox(this.game, 0, 0, "");
     }
 
     reset() {
@@ -28,9 +22,8 @@
 
     drawReportCard(ctx) {
         if(!this.myTotalChests) this.myTotalChests = this.countChests();
-        let fontSize = 40;
-
-        let theLevelTime = this.game.camera.levelTimer;
+        // let fontSize = 40;
+        // let theLevelTime = this.game.camera.levelTimer;
 
         let labels = [
             "[REPORT CARD]",
@@ -42,8 +35,8 @@
             this.myDiamondsEarned + " diamonds earned",
             this.myDiamondsSpent + " diamonds spent",
             this.mySecretsFound + " secrets found",
-            this.myChestsOpened + "/" + this.myTotalChests + " chests found",
             this.myDeathes + " times died",
+            this.myChestsOpened + "/" + this.myTotalChests + " chests found",
         ];
 
         this.myReportBox.setMessage(labels, true);

@@ -46,7 +46,7 @@ class Shop {
         // this.armorCost = [60, 90, 120, "MAX"];
         //economy inflation
         this.health = [];
-        this.healthCost = [25, 50, 75, 100, "MAX"];
+        this.healthCost = [25, 50, 100, 150, "MAX"];
         this.attack = [];
         this.attackCost = [75, 125, 175, 325, "MAX"];
         this.arrow = [];
@@ -147,7 +147,7 @@ class Shop {
                         self.highlightB2 = true;
 
                         if (self.game.click) {
-                            let cost = 10;
+                            let cost = 25;
                             self.doTransaction(cost);
 
                             entity.myInventory.potions += 1;
