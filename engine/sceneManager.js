@@ -165,6 +165,7 @@ class SceneManager {
         this.cutScene2 = true;
         this.game.click = false;
         let hidden_end = this.game.myReportCard.myDiamondsSpent <= 0;
+        let maxed_end = this.player.myInventory.maxxed;
         let endScene1 =
             [
                 "This was the story all about",
@@ -230,7 +231,7 @@ class SceneManager {
 
         //hidden ending 2 is fully upgraded
         let endScene6;
-        if(this.player.myInventory.maxxed) {
+        if(maxed_end) {
             endScene6 =
             [
                 "Both our power levels were over 9000...",
@@ -260,6 +261,16 @@ class SceneManager {
             [
                 "The End.",
             ];
+
+        if(maxed_end) {
+            endScene9.push("[Ending #3: Peak Potential!]")
+            endScene9.push("[True Ending]")
+        }else if (hidden_end) {
+            endScene9.push("[Ending #2: No Upgrades]");
+            endScene9.push("[Epic Gamer Ending]");
+         } else {
+             endScene9.push("[Ending #1: Betrayal]");
+         } 
 
         let endScene10 =
             [

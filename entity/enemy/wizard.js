@@ -127,7 +127,8 @@ class Wizard extends AbstractBoss {
         // hp buff: 2000
         // fireball buff: 10
         // beam buff: 10
-        this.maxStats = inventory.healthUpgrade >= 4 && inventory.attackUpgrade >= 4 && inventory.arrowUpgrade >= 4 && inventory.armorUpgrade >= 3;
+        //this.maxStats = inventory.healthUpgrade >= 4 && inventory.attackUpgrade >= 4 && inventory.arrowUpgrade >= 4 && inventory.armorUpgrade >= 3;
+        this.maxStats = this.player.myInventory.maxxed;
         if (this.maxStats) {
             this.max_hp = 2000;
             this.fireballDmg = 15;
@@ -313,7 +314,9 @@ class Wizard extends AbstractBoss {
             this.myInitialDialouge.set(5, ["Now I will take over the universe...", 2]);
             //easter egg message if maxxed
             if (this.player.myInventory.maxxed) {
-                console.log("player fighting at max potential!");
+                //console.log("player fighting at max potential!");
+                this.myInitialDialouge.set(4, [["Now my power is rising...",
+                                                 "IT'S OVERFLOWING!!"], 2]);
                 this.myInitialDialouge.set(6, [["This is the ideal male body."], 2])
                 this.myInitialDialouge.set(7, [["You may not like it,",
                     "but this is what",
@@ -381,6 +384,12 @@ class Wizard extends AbstractBoss {
                         }
                     })
                     this.changeAction(this.actions.fire_ring);
+                    //if maxxed transform to ascended state
+                    if(this.maxStats) {
+                        ASSET_MANAGER.playAsset(SFX.SUPER_SAIYAN);
+                        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/ascended_wizard.png");
+                        this.loadAnimations();
+                    }
                 } else if (this.dialougeCount == this.myInitialDialouge.size) {
                     ASSET_MANAGER.playAsset(SFX.EVIL_LAUGH); //lol at em
                 }
