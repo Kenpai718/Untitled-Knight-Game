@@ -1900,7 +1900,7 @@ var level1_5 = {
     moveable: [
         { x: 58, y: 4, width: 4, height: 1, directionList: [2], distanceList: [10], velocity: 2 },
         { x: 73, y: 49, width: 2, height: 1, directionList: [2], distanceList: [5], velocity: 1 },
-        { x: 82, y: 3, width: 4, height: 1, directionList: [2], distanceList: [18], velocity: 1 }, //elevator of death
+        { x: 82, y: 3, width: 4, height: 1, directionList: [2], distanceList: [18], velocity: 1.2 }, //elevator of death
     ],
 
     chests: [
@@ -1998,7 +1998,8 @@ var level1_5 = {
                 // "YES, At last! The Aether is fina.. err.. I mean dinner time.. ",
                 // "I must leave soon.. lucifer has sent his biddings..",
                 // "~ Give the goblins afar my falling regards ~",
-                "“Doesn’t matter what you did, or what you were.",
+                "“Doesn’t matter what you did,",
+                "or what you were.",
                 "If you go out there, you fight,",
                 "and you fight to kill."
             ]
