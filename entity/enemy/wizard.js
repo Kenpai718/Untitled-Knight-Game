@@ -642,26 +642,25 @@ class Wizard extends AbstractBoss {
             let heal = 4;
             //console.log("wizard healing phase");
 
+            //doesn't need healing
             if (this.hp > this.max_hp * (.15 + .1 * inventory.armorUpgrade)) {
                 //done healing
                 heal = 0;
+            } else {
+                //wizard is starting to heal 
+                if (!this.potionSFX) { //wizard can drink potions too you know!
+                    this.potionSFX = true;
+                    ASSET_MANAGER.playAsset(SFX.DRINK);
+                    ASSET_MANAGER.playAsset(SFX.HEAL);
+                }
             }
 
             this.hp += heal; //set hp
-
             if (this.maxStats && this.hp > this.max_hp * .5) { //healing
                 this.hp = this.max_hp * .5;
-                if (!this.potionSFX) { //wizard can drink potions too you know!
-                    this.potionSFX = true;
-                    ASSET_MANAGER.playAsset(SFX.DRINK);
-                }
             }
             else if (!this.maxStats && this.hp > this.max_hp * (.25 + .05 * inventory.armorUpgrade) && heal > 0) {
                 this.hp = this.max_hp * (.25 + .05 * inventory.armorUpgrade);
-                if (!this.potionSFX) { //wizard can drink potions too you know!
-                    this.potionSFX = true;
-                    ASSET_MANAGER.playAsset(SFX.DRINK);
-                }
             }
         }
         // appear where disappear determined
