@@ -677,8 +677,9 @@ var level1_1 = {
         { x: 115, y: 12 }
     ],
     shrooms: [
+        { x: 26, y: 4, guard: true },
         { x: 62, y: 1, guard: false },
-        { x: 72, y: 5, guard: false }
+        { x: 72, y: 5, guard: false },
     ],
     goblins: [
         { x: 76, y: 8, guard: true },
@@ -1725,7 +1726,8 @@ var level1_5 = {
         { x: 23, y: 4, width: 29, height: 5, type: 0 }, // Floor fill
         { x: 37, y: 16, width: 7, height: 9, type: 0 }, // Right
         { x: 39, y: 20, width: 5, height: 4, type: 0 }, // Right
-        { x: 32, y: 11, width: 3, height: 3, type: 0 }, // mini cave
+        //{ x: 32, y: 11, width: 3, height: 3, type: 0 }, // mini cave bricks
+
         { x: 22, y: 17, width: 2, height: 4, type: 0 },
         { x: 28, y: 17, width: 1, height: 5, type: 0 },
         { x: 29, y: 16, width: 8, height: 2, type: 0 },
@@ -1829,6 +1831,10 @@ var level1_5 = {
         { x: 22, y: 11, height: 4, type: 2 }, // Left
         { x: 27, y: 17, height: 5, type: 0 }, // mini cave
         { x: 24, y: 17, height: 7, type: 0 },
+        { x: 33, y: 9, height: 1, type: 0 }, // mini cave bricks l
+        { x: 34, y: 10, height: 2, type: 0 }, // mini cave bricks m
+        { x: 35, y: 11, height: 4, type: 0 }, // mini cave bricks r
+
         // 1:3
         { x: 52, y: 4, height: 3, type: 0 }, // Left
         // 1:4
@@ -1957,7 +1963,7 @@ var level1_5 = {
     ],
     skeletons: [
         { x: 23, y: 10, guard: true },
-        { x: 60, y: 50, guard: true },
+        { x: 60, y: 50, guard: false },
         { x: 41, y: 50, guard: true },
     ],
     flyingeyes: [
