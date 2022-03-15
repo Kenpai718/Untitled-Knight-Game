@@ -18,6 +18,7 @@ class GameEngine {
         this.events = [];
         this.projectiles = [];
         this.information = [];
+        this.shop = null;
 
         // Information on the input
         this.click = null;
@@ -73,7 +74,7 @@ class GameEngine {
         this.surfaceWidth = this.ctx.canvas.width;
         this.surfaceHeight = this.ctx.canvas.height;
         document.getElementById("gameWorld").style.cursor = "none"; //disable cursor by default
-
+        this.shop = new Shop(this, null);
         this.startInput();
         this.timer = new Timer();
     };
@@ -195,9 +196,10 @@ class GameEngine {
 
         //keyboard press control logic
         this.ctx.canvas.addEventListener("keydown", function (e) {
-            e.preventDefault(); //prevent scrolling from pressing a key
+            //e.preventDefault(); //prevent scrolling from pressing a key
             switch (e.code) {
                 case "Escape":
+                    e.preventDefault();
                     if (!that.camera.title && !that.camera.cutScene1 && !that.camera.transition && !that.camera.cutScene2) {
                         PAUSED = !PAUSED;
                         ASSET_MANAGER.playAsset(SFX.CLICK);
@@ -205,18 +207,22 @@ class GameEngine {
                     break;
                 case "KeyD":
                 case "ArrowRight":
+                    e.preventDefault();
                     that.right = true;
                     break;
                 case "KeyA":
                 case "ArrowLeft":
+                    e.preventDefault();
                     that.left = true;
                     break;
                 case "KeyS":
                 case "ArrowDown":
+                    e.preventDefault();
                     that.down = true;
                     break;
                 case "KeyW":
                 case "ArrowUp":
+                    e.preventDefault();
                     that.up = true;
                     break;
                 case "KeyP":
@@ -228,9 +234,12 @@ class GameEngine {
                     that.shootButton = true;
                     break;
                 case "ShiftLeft":
+                case "ShiftRight":
+                    e.preventDefault();
                     that.roll = true;
                     break;
                 case "Space":
+                    e.preventDefault();
                     that.jump = true;
                     break;
                 case "KeyE":
@@ -238,6 +247,7 @@ class GameEngine {
                     break;
                 case "ControlLeft":
                 case "ControlRight":
+                    e.preventDefault();
                     that.debug = true;
                     break;
             }
@@ -355,6 +365,8 @@ class GameEngine {
         this.drawHealth();
         this.drawLayer(this.information);
 
+        if (SHOP_ACTIVE) 
+            this.shop.draw(this.ctx);
 
         if (PARAMS.DEBUG) {
             this.drawDebug(this.foreground1);
@@ -365,7 +377,7 @@ class GameEngine {
             this.drawDebug(this.projectiles);
             this.drawDebug(this.events);
             this.drawDebug(this.information);
-
+            if (SHOP_ACTIVE) this.shop.drawDebug(this.ctx);
         }
 
         //update the camera (scene manager)
@@ -422,6 +434,9 @@ class GameEngine {
             this.updateLayer(this.foreground2);
             this.updateLayer(this.information);
             this.updateLayer(this.events);
+
+            if (SHOP_ACTIVE)
+                this.shop.update();
 
             this.removeFromLayer(this.background1);
             this.removeFromLayer(this.background2);

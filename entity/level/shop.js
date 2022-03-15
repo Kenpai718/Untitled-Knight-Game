@@ -25,14 +25,11 @@ class Shop {
         this.exitButtonColor = 'rgba(190, 0, 0, 0.8)';
         this.distract;
 
-        // Button highlight
-        this.highlightB1 = false;
-        this.highlightB2 = false;
-        this.highlightB3 = false;
-        this.highlightB4 = false;
-        this.highlightB5 = false;
-        this.highlightB6 = false;
-        this.highlighted = false;
+        // create buttons
+        this.buttons = [];
+        for (var i = 0; i < 7; i++) {
+            this.buttons[i] = null;
+        }
 
         // GUI icons and cost
         // this.health = [];
@@ -81,18 +78,188 @@ class Shop {
         this.maxTimer = 6.5;
         this.defaultMsg = "Wizard: So, what would you like?";
         this.currentMessage = this.defaultMsg;
+        this.selectionTimer = 0;
 
         // Load Items
         this.loadAnimations();
         this.updateBoxes();
+
+        
+        this.createShop();
     };
 
+    createShop() {
+        this.selection = 0;
+        this.up = false;
+        this.down = false;
+        this.buy = false;
+        let that = this;
+        this.game.ctx.canvas.addEventListener("keydown", function (e) {
+            if (SHOP_ACTIVE && !PAUSED) {
+                switch (e.code) {
+                    case "KeyS":
+                    case "ArrowDown":
+                        if (!that.down) {
+                            that.down = true;
+                            that.selection++;
+                            if (that.selection >= 7)
+                                that.selection = 0;
+                            that.selectionTimer = .5;
+                            e.preventDefault();
+                        }
+                        else if (that.selectionTimer <= 0) {
+                            that.selection++;
+                            if (that.selection >= 7)
+                                that.selection = 0;
+                                that.selectionTimer = .125;
+                        }
+                        break;
+                    case "KeyW":
+                    case "ArrowUp":
+                        if (!that.up) {
+                            that.up = true;
+                            that.selection--;
+                            if (that.selection < 0) 
+                                that.selection = 6;
+                            that.selectionTimer = .5;
+                            e.preventDefault();
+                        }
+                        else if (that.selectionTimer <= 0) {
+                            that.selection--;
+                            if (that.selection < 0) 
+                                that.selection = 6;
+                            that.selectionTimer = .125;
+                        }
+                        break;
+                    case "KeyP":
+                        if (!that.buy) {
+                            that.buy = true;
+                            ASSET_MANAGER.playAsset(SFX.CLICK);
+                            that.purchaseSelection();
+                        }
+                        break;
+                    case "KeyX":
+                        if (SHOP_ACTIVE = true) {
+                            SHOP_ACTIVE = false;
+                        }
+                        break;
+                }
+            }
+        }, false);
 
+        this.game.ctx.canvas.addEventListener("keyup", function (e) {
+            switch (e.code) {
+                case "KeyS":
+                case "ArrowDown":
+                    that.down = false;
+                    break;
+                case "KeyW":
+                case "ArrowUp":
+                    that.up = false;
+                    break;
+                case "KeyP":
+                    that.buy = false;
+                    break;
+            }
+        }, false);
+    }
+
+    purchaseSelection() {
+        let player = this.game.camera.player;
+        let cost = 0;
+        switch (this.selection) {
+            case 1:
+                cost = this.arrowPackCost[player.myInventory.arrowUpgrade];
+                if (player.myInventory.arrows < player.myInventory.maxStack && this.doTransaction(cost)) {
+                    player.myInventory.arrows += 10;
+                    ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
+                    this.currentMessage = this.purchases.arrow_pack;
+                    this.messageTimer = 0;
+                    this.purchased = true;
+                }
+                break;
+            case 2:
+                cost = this.potionCost;
+                if (player.myInventory.potions < player.myInventory.maxStack && this.doTransaction(cost)) {
+                    player.myInventory.potions += 1;
+                    ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
+                    this.currentMessage = this.purchases.potion;
+                    this.messageTimer = 0;
+                    this.purchased = true;
+                }
+                break;
+            case 3:
+                cost = this.healthCost[player.myInventory.healthUpgrade];
+                if (this.doTransaction(cost)) {
+                    player.myInventory.healthUpgrade += 1;
+
+                    //add hearts to heartbar and player
+                    let player_hearts = this.game.camera.heartsbar;
+                    player_hearts.addHeart();
+                    ASSET_MANAGER.playAsset(SFX.NEW_HEART);
+                    this.currentMessage = this.purchases.heart_upgrade;
+                    this.messageTimer = 0;
+
+                    this.purchased = true;
+                }
+                break;
+            case 4:
+                cost = this.attackCost[player.myInventory.attackUpgrade];
+                if (this.doTransaction(cost)) {
+                    player.myInventory.attackUpgrade += 1;
+                    ASSET_MANAGER.playAsset(SFX.ENCHANTMENT);
+                    this.currentMessage = this.purchases.attack_upgrade;
+                    this.messageTimer = 0;
+
+                    this.purchased = true;
+                }
+                break;
+            case 5:
+                cost = this.arrowCost[player.myInventory.arrowUpgrade];
+                if (this.doTransaction(cost)) {
+                    player.myInventory.arrowUpgrade += 1;
+                    player.myInventory.arrows += 10;
+                    //entity.myInventory.arrows = Math.floor(entity.myInventory.arrows/2);
+                    ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
+                    this.currentMessage = this.purchases.arrow_upgrade;
+                    this.messageTimer = 0;
+
+                    this.purchased = true;
+                }
+                break;
+            case 6:
+                cost = this.armorCost[player.myInventory.armorUpgrade];
+                if (this.doTransaction(cost)) {
+                    player.myInventory.armorUpgrade += 1;
+                    ASSET_MANAGER.playAsset(SFX.ANVIL);
+                    this.currentMessage = this.purchases.armor_upgrade;
+                    this.messageTimer = 0;
+
+                    this.purchased = true;
+                }
+                break;
+            default:
+                SHOP_ACTIVE = false;
+        }
+        if (player.myInventory.healthUpgrade >= 4 &&
+            player.myInventory.attackUpgrade >= 4 &&
+            player.myInventory.arrowUpgrade >= 4 &&
+            player.myInventory.armorUpgrade >= 3 &&
+            this.maxed == false && player.myInventory.maxxed == false) {
+            this.maxed = true;
+            player.myInventory.maxxed = true;
+            ASSET_MANAGER.playAsset(SFX.DISTRACT);
+        }
+
+    }
 
     update() {
-
+        let TICK = this.game.clockTick;
+        if (this.up || this.down) {
+            this.selectionTimer -= TICK;
+        }
         if (this.shop_keeper.showText && this.currentMessage == this.lastMessage && this.currentMessage != this.defaultMsg) {
-            this.messageTimer += this.game.clockTick;
+            this.messageTimer += TICK;
 
             if (this.messageTimer > this.maxTimer) {
                 this.messageTimer = 0;
@@ -103,164 +270,23 @@ class Shop {
 
         this.timer += this.game.clockTick * 1;
 
-
-
+        // Manage selection
+        let mouseBB = new BoundingBox(this.game.mouse.x, this.game.mouse.y, 1, 1);
+        let collide = false;
+        for (let i = 0; i < this.buttons.length; i++) {
+            if (this.buttons[i].collide(mouseBB)) {
+                this.selection = i;
+                collide = true;
+            }
+        }
 
         // Purchasing (clicked button in shop)
         let self = this;
-        this.game.entities.forEach(function (entity) {
-            let mouseBB = new BoundingBox(self.game.mouse.x, self.game.mouse.y, 1, 1);
-
-            if (self.game.click) ASSET_MANAGER.playAsset(SFX.CLICK);
-
-            // Exit button interaction
-            if (mouseBB.collide(self.ExitBB)) {
-                self.exitButtonColor = "Red"
-                if (self.game.click)
-                    SHOP_ACTIVE = false;
-            }
-            else self.exitButtonColor = 'rgba(190, 0, 0, 0.8)';
-
-            if (entity instanceof AbstractPlayer) {
-
-                if (mouseBB.collide(self.ButtonBB1)) {
-                    //console.log("Button 1 : Arrow Pack");
-
-                    if (entity.myInventory.diamonds >= self.arrowPackCost[entity.myInventory.arrowUpgrade]) {
-                        self.highlightB1 = true;
-
-                        if (self.game.click) {
-                            let cost = self.arrowPackCost[entity.myInventory.arrowUpgrade];
-                            self.doTransaction(cost);
-                            entity.myInventory.arrows += 10;
-                            ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
-                            self.currentMessage = self.purchases.arrow_pack;
-                            self.messageTimer = 0;
-
-                        }
-                    }
-
-                }
-                else if (mouseBB.collide(self.ButtonBB2)) {
-                    //console.log("Button 2 : Health Potion");
-
-                    if (entity.myInventory.diamonds >= self.potionCost) {
-                        self.highlightB2 = true;
-
-                        if (self.game.click) {
-                            let cost = self.potionCost;
-                            self.doTransaction(cost);
-
-                            entity.myInventory.potions += 1;
-                            ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
-                            self.currentMessage = self.purchases.potion;
-                            self.messageTimer = 0;
-
-                            self.purchased = true;
-                        }
-                    }
-                }
-                else if (mouseBB.collide(self.ButtonBB3)) {
-                    //console.log("Button 3 : Health Upgrade");
-
-                    if (entity.myInventory.diamonds >= self.healthCost[entity.myInventory.healthUpgrade]) {
-                        self.highlightB3 = true;
-
-                        if (self.game.click) {
-                            let cost = self.healthCost[entity.myInventory.healthUpgrade];
-                            self.doTransaction(cost);
-                            entity.myInventory.healthUpgrade += 1;
-
-                            //add hearts to heartbar and player
-                            let player_hearts = self.game.camera.heartsbar;
-                            player_hearts.addHeart();
-                            ASSET_MANAGER.playAsset(SFX.NEW_HEART);
-                            self.currentMessage = self.purchases.heart_upgrade;
-                            self.messageTimer = 0;
-
-                            self.purchased = true;
-                        }
-                    }
-                }
-                else if (mouseBB.collide(self.ButtonBB4)) {
-                    //console.log("Button 4 : Attack Upgrade");
-
-                    if (entity.myInventory.diamonds >= self.attackCost[entity.myInventory.attackUpgrade]) {
-                        self.highlightB4 = true;
-
-                        if (self.game.click) {
-                            let cost = self.attackCost[entity.myInventory.attackUpgrade];
-                            self.doTransaction(cost);
-                            entity.myInventory.attackUpgrade += 1;
-                            ASSET_MANAGER.playAsset(SFX.ENCHANTMENT);
-                            self.currentMessage = self.purchases.attack_upgrade;
-                            self.messageTimer = 0;
-
-                            self.purchased = true;
-                        }
-                    }
-                }
-                else if (mouseBB.collide(self.ButtonBB5)) {
-                    //console.log("Button 5 : Arrow Upgrade");
-
-                    if (entity.myInventory.diamonds >= self.arrowCost[entity.myInventory.arrowUpgrade]) {
-                        self.highlightB5 = true;
-
-                        if (self.game.click) {
-                            let cost = self.arrowCost[entity.myInventory.arrowUpgrade];
-                            self.doTransaction(cost);
-                            entity.myInventory.arrowUpgrade += 1;
-                            entity.myInventory.arrows += 10;
-                            //entity.myInventory.arrows = Math.floor(entity.myInventory.arrows/2);
-                            ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
-                            self.currentMessage = self.purchases.arrow_upgrade;
-                            self.messageTimer = 0;
-
-                            self.purchased = true;
-                        }
-                    }
-                }
-                else if (mouseBB.collide(self.ButtonBB6)) {
-                    //console.log("Button 6 : Armor Upgrade");
-
-                    if (entity.myInventory.diamonds >= self.armorCost[entity.myInventory.armorUpgrade]) {
-                        self.highlightB6 = true;
-
-                        if (self.game.click) {
-                            let cost = self.armorCost[entity.myInventory.armorUpgrade];
-                            self.doTransaction(cost);
-                            entity.myInventory.armorUpgrade += 1;
-                            ASSET_MANAGER.playAsset(SFX.ANVIL);
-                            self.currentMessage = self.purchases.armor_upgrade;
-                            self.messageTimer = 0;
-
-                            self.purchased = true;
-                        }
-                    }
-                }
-                else {
-                    self.highlightB1 = false;
-                    self.highlightB2 = false;
-                    self.highlightB3 = false;
-                    self.highlightB4 = false;
-                    self.highlightB5 = false;
-                    self.highlightB6 = false;
-                }
-
-                if (entity.myInventory.healthUpgrade >= 4 &&
-                    entity.myInventory.attackUpgrade >= 4 &&
-                    entity.myInventory.arrowUpgrade >= 4 &&
-                    entity.myInventory.armorUpgrade >= 3 &&
-                    self.maxed == false && entity.myInventory.maxxed == false) {
-                    self.maxed = true;
-                    entity.myInventory.maxxed = true;
-                    ASSET_MANAGER.playAsset(SFX.DISTRACT);
-                }
-
-            }
-
-            self.game.click = false;
-        });
+        if (this.game.click && collide) {
+            ASSET_MANAGER.playAsset(SFX.CLICK);
+            this.purchaseSelection();
+            this.game.click = false;
+        }
 
         this.updateAnimations();
 
@@ -272,10 +298,12 @@ class Shop {
     };
 
     doTransaction(cost) {
-        if (isInt(cost)) {
+        if (isInt(cost) && this.game.camera.player.myInventory.diamonds >= cost) {
             this.game.camera.player.myInventory.diamonds -= cost;
             this.game.myReportCard.myDiamondsSpent += cost;
+            return true;
         }
+        return false;
         //console.log(cost);
     }
 
@@ -294,28 +322,29 @@ class Shop {
             message = "Wizard: well uh... this is awkward.";
         } else {
             //highlighted buttons
-            if (this.isHighlighted() && !this.purchased) {
-                if (this.highlightB1) {
-                    message = ["Wizard: 10 of the finest arrows here", "to snipe your enemies from afar!"]; // Arrow Pack
+            if (!this.purchased) {
+                switch (this.selection) {
+                    case 1:
+                        message = ["Wizard: 10 of the finest arrows here", "to snipe your enemies from afar!"]; // Arrow Pack
+                        break;
+                    case 2:
+                        message = ["Wizard: You want a potion?", "It'll heal you for 50HP."] // Health Potion
+                        break;
+                    case 3:
+                        message = "Wizard: You look tired. Want a massage?" // Max-Health Upgrade
+                        break;
+                    case 4:
+                        message = ["Wizard: You have a fine blade...", "but I can make it even stronger!"];
+                        break;
+                    case 5:
+                        message = ["Wizard: If you want to be the king of snipers", "then you'll need some stronger arrows!", "I'll even throw in 10 extra arrows if you upgrade now!"] // Arrow Upgrade
+                        break;
+                    case 6:
+                        message = ["Wizard: If you want more protection", "then I can improve your armor."] // Armor Upgrade
+                        break;
+                    default:
+                        message = "...";
                 }
-                else if (this.highlightB2) {
-                    message = ["Wizard: You want a potion?", "It'll heal you for 50HP."] // Health Potion
-                }
-                else if (this.highlightB3) {
-                    message = "Wizard: You look tired. Want a massage?" // Max-Health Upgrade
-                }
-                else if (this.highlightB4) {
-                    message = ["Wizard: You have a fine blade...", "but I can make it even stronger!"];
-                }
-                else if (this.highlightB5) {
-                    message = ["Wizard: If you want to be the king of snipers", "then you'll need some stronger arrows!", "I'll even throw in 10 extra arrows if you upgrade now!"] // Arrow Upgrade
-                }
-                else if (this.highlightB6) {
-                    message = ["Wizard: If you want more protection", "then I can improve your armor."] // Armor Upgrade
-                } else {
-                    message = "...";
-                }
-
             } else { //bought something
                 switch (this.currentMessage) {
                     case this.purchases.heart_upgrade:
@@ -371,10 +400,6 @@ class Shop {
         if (message instanceof Array) this.myTextBox.centerBottomMulti();
         else this.myTextBox.centerBottomSingle();
 
-    }
-
-    isHighlighted() {
-        return (this.highlightB1 || this.highlightB2 || this.highlightB3 || this.highlightB4 || this.highlightB5 || this.highlightB6);
     }
 
     updateAnimations() {
@@ -500,7 +525,7 @@ class Shop {
             this.distract.drawFrame(this.game.clockTick, ctx, 1220, 161, 1);
         }
 
-        this.buyButtonHighlight(ctx);
+        this.buyButtonHighlight(ctx, this.buttons[this.selection]);
         this.manageButtons(ctx);
         this.manageProgress(ctx);
         this.manageExitButton(ctx);
@@ -512,7 +537,7 @@ class Shop {
         this.myTextBox.draw(ctx);
     };
 
-    buyButtonHighlight(ctx) {
+    buyButtonHighlight(ctx, button) {
 
         /*  Style 2
             ctx.fillRect(this.x + this.width /6 * 5 - 25, this.y + this.height / 7 * 2.23 - 5, 330 * this.buttonscale - 10, 130 * this.buttonscale  + 10);
@@ -529,26 +554,11 @@ class Shop {
         let timerFill = ctx.fillStyle;
         ctx.fillStyle = "white";
 
+        let s = this.buttonscale * 10;
 
-        if (this.highlightB1) {
-            ctx.fillRect(this.ButtonBB1.x, this.ButtonBB1.y, this.ButtonBB1.width, this.ButtonBB1.height - 1); // Arrow Pack
-        }
-        else if (this.highlightB2) {
-            ctx.fillRect(this.ButtonBB2.x, this.ButtonBB2.y, this.ButtonBB1.width, this.ButtonBB1.height - 1); // Health Potion
-        }
-        else if (this.highlightB3) {
-            ctx.fillRect(this.ButtonBB3.x, this.ButtonBB3.y + 1, this.ButtonBB1.width, this.ButtonBB1.height - 1); // Max-Health Upgrade
-        }
-        else if (this.highlightB4) {
-            ctx.fillRect(this.ButtonBB4.x, this.ButtonBB4.y + 1, this.ButtonBB1.width, this.ButtonBB1.height - 1); // Attack Upgrade
-        }
-        else if (this.highlightB5) {
-            ctx.fillRect(this.ButtonBB5.x, this.ButtonBB5.y, this.ButtonBB1.width, this.ButtonBB1.height - 1); // Arrow Upgrade
-        }
-        else if (this.highlightB6) {
-            ctx.fillRect(this.ButtonBB6.x, this.ButtonBB6.y, this.ButtonBB1.width, this.ButtonBB1.height); // Armor Upgrade
-        }
-
+        ctx.fillRect(button.x - s, button.y + s, button.width + s * 2, button.height - s * 2);
+        ctx.fillRect(button.x, button.y, button.width, button.height);
+        ctx.fillRect(button.x + s, button.y - s, button.width - s * 2, button.height + s * 2);
         ctx.fillStyle = timerFill;
 
     };
@@ -557,14 +567,15 @@ class Shop {
 
         let timerFill = ctx.fillStyle;
         ctx.fillStyle = this.exitButtonColor;
-        ctx.fillRect(this.x + this.width - 60, this.y + 20, 40, 40);
+        ctx.fillRect(this.x + this.width - 60, this.y + 25, 40, 30);
+        ctx.fillRect(this.x + this.width - 55, this.y + 20, 30, 40);
         ctx.fillStyle = "white";
         ctx.fillText("󠀠󠀠󠀠x", this.x + this.width - 60 + 8.8, this.y + 51);
         ctx.fillStyle = "black";
-        ctx.fillRect(this.x + this.width - 60, this.y + 20, 5, 5);
+        /*ctx.fillRect(this.x + this.width - 60, this.y + 20, 5, 5);
         ctx.fillRect(this.x + this.width - 60 + 35, this.y + 20, 5, 5);
         ctx.fillRect(this.x + this.width - 60, this.y + 20 + 35, 5, 5);
-        ctx.fillRect(this.x + this.width - 60 + 35, this.y + 20 + 35, 5, 5);
+        ctx.fillRect(this.x + this.width - 60 + 35, this.y + 20 + 35, 5, 5);*/
 
         ctx.fillStyle = timerFill;
     };
@@ -718,6 +729,14 @@ class Shop {
         this.ButtonBB5 = new BoundingBox(this.x + this.width / 6 * 5 - 30, this.y + this.height / 7 * 5.23 + this.customPurchaseHeight, this.buttonwidth * this.buttonscale, this.buttonheight * this.buttonscale);
         this.ButtonBB6 = new BoundingBox(this.x + this.width / 6 * 5 - 30, this.y + this.height / 7 * 6.23 + this.customPurchaseHeight, this.buttonwidth * this.buttonscale, this.buttonheight * this.buttonscale);
         this.ExitBB = new BoundingBox(this.x + this.width - 60, this.y + 20, 40, 40);
+        this.buttons[0] = this.ExitBB;
+        this.buttons[1] = this.ButtonBB1;
+        this.buttons[2] = this.ButtonBB2;
+        this.buttons[3] = this.ButtonBB3;
+        this.buttons[4] = this.ButtonBB4;
+        this.buttons[5] = this.ButtonBB5;
+        this.buttons[6] = this.ButtonBB6;
+
 
     };
 

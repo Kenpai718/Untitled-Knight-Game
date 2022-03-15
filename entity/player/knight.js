@@ -837,14 +837,14 @@ class Knight extends AbstractPlayer {
             this.resetCombo();
             this.HB = null;
 
-            if (this.action == this.states.turn_around) {
-                if (this.facing == this.dir.left) this.facing = this.dir.right;
-                else this.facing = this.dir.left;
-            }
             //set roll behavior
             if (this.action != this.states.roll) {
                 this.resetAnimationTimers(this.action);
                 this.action = this.states.roll; //roll
+                if (this.game.left && !this.game.right)
+                    this.facing = this.dir.left;
+                if (this.game.right && !this.game.left)
+                    this.facing = this.dir.right;
             }
             this.velocity.x += (this.facing == this.dir.left) ? -1 * (PLAYER_PHYSICS.ROLL_SPD) : (PLAYER_PHYSICS.ROLL_SPD); //movement speed boost
             if (this.vulnerable) {

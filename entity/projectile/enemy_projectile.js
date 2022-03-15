@@ -302,6 +302,14 @@ class Fireball extends AbstractEntity {
                 }
             }
         });
+        this.game.projectiles.forEach(projectile => {
+            if (projectile instanceof Arrow) {
+                if (self.BB.collide(projectile.BB)) {
+                    projectile.removeFromWorld = true;
+                    self.removeFromWorld = true;
+                }
+            }
+        })
     }
 
     draw(ctx) {

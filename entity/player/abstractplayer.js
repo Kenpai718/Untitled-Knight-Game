@@ -16,7 +16,7 @@ class AbstractPlayer extends AbstractEntity {
         this.myInventory = new Inventory(this.game);
         this.respawn = false;
         this.myCheckpoint = null;
-
+        
     }
 
     /**
@@ -505,7 +505,7 @@ class AbstractPlayer extends AbstractEntity {
 
         //check entities other than the player or enemies
         this.game.entities.forEach(function (entity) {
-            if (entity instanceof NPC) { //shop keeper
+            if (entity instanceof NPC && entity.state == entity.states.active && !entity.enemiesNearby()) { //shop keeper
                 if (entity.BB && self.BB.collide(entity.BB)) {
                     //save a checkpoint and current player state
                     if (!entity.setCheckpoint) {
