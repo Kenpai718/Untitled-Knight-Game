@@ -263,14 +263,14 @@ class SceneManager {
             ];
 
         if(maxed_end) {
-            endScene9.push("[Ending #3: Peak Potential!]")
-            endScene9.push("[True Ending]")
+            endScene9.push("[Ending #3: True Ending- Unlimited Power!]")
+            endScene9.push("[Achievement: MAX Upgrades]")
         }else if (hidden_end) {
-            endScene9.push("[Ending #2: No Upgrades]");
-            endScene9.push("[Epic Gamer Ending]");
+            endScene9.push("[Ending #2: Cheapskate]");
+            endScene9.push("[Achievement: No Purchases]");
          } else {
              endScene9.push("[Ending #1: Betrayal]");
-             endScene9.push("[Default Ending]");
+             endScene9.push("[Achievement: Default Ending]");
          } 
 
         let endScene10 =
@@ -1292,7 +1292,14 @@ class SceneManager {
         this.levelH = scene.height;
         this.levelW = scene.width;
         let h = scene.height;
-        this.game.addEntity(new Background(this.game));
+
+        //assign the background of the level
+        if(this.level.background) {
+            this.game.addEntity(new Background(this.game, this.level.background.type));
+        } else { //default
+            this.game.addEntity(new Background(this.game, 0));
+        }
+        
         this.makePlayer(spawnX, h - spawnY);
 
         //turn off textbox and only set it up when needed

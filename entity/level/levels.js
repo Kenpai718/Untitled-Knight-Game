@@ -1041,6 +1041,20 @@ var level1_3 = {
                 " jump to quickly switch directions.",
             ]
         },
+
+        {
+            x: 39, y: 8,
+            title: "[TUTORIAL: MOVING PLATFORMS]",
+            text: [
+                "MOVING PLATFORMS:",
+                "-By some strange magic some platforms move on their own!",
+                "-You can jump on these platforms and ride them to some destination.",
+                "-Be careful when getting onto them they can be a bit cheeky.",
+                "-Use [SPACE] to jump up after grabbing a ledge",
+                " or [W] to getup ontop."
+            ]
+        },
+
         {
             x: 37, y: 34,
             title: "[????????????????????]",
@@ -1264,7 +1278,7 @@ var level1_3 = {
 
         //obelisk to treasure room
         { x: 40, y: 7, width: 2, height: 1, directionList: [1, 3], distanceList: [9, 3], velocity: 1.5 },
-        { x: 47, y: 12, width: 2, height: 1, directionList: [1], distanceList: [7], velocity: 1 },
+        { x: 47, y: 11, width: 2, height: 1, directionList: [1], distanceList: [7], velocity: 1 },
 
         { x: 50, y: 33, width: 3, height: 1, directionList: [1], distanceList: [7], velocity: 1.5 }, //travel to the top right obelisk
 
@@ -1658,6 +1672,7 @@ var level1_5 = {
     width: 88, height: 80,
     player: { x: 1, y: 6 },
     music: MUSIC.VEILED_IN_BLACK,
+    background: {type: 1},
 
     backgroundWalls: [
         { x: 0, y: 20, width: 100, height: 21 },
@@ -2004,7 +2019,7 @@ var level1_5 = {
                 // "YES, At last! The Aether is fina.. err.. I mean dinner time.. ",
                 // "I must leave soon.. lucifer has sent his biddings..",
                 // "~ Give the goblins afar my falling regards ~",
-                "“Doesn’t matter what you did,",
+                "Doesn’t matter what you did,",
                 "or what you were.",
                 "If you go out there, you fight,",
                 "and you fight to kill."
