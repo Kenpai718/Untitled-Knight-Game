@@ -316,7 +316,7 @@ class Wizard extends AbstractBoss {
             if (this.player.myInventory.maxxed) {
                 //console.log("player fighting at max potential!");
                 this.myInitialDialouge.set(4, [["Now my power is rising...",
-                                                 "IT'S OVERFLOWING!!"], 2]);
+                    "IT'S OVERFLOWING!!"], 2]);
                 this.myInitialDialouge.set(6, [["This is the ideal male body."], 2])
                 this.myInitialDialouge.set(7, [["You may not like it,",
                     "but this is what",
@@ -386,7 +386,7 @@ class Wizard extends AbstractBoss {
                     })
                     this.changeAction(this.actions.fire_ring);
                     //if maxxed transform to ascended state
-                    if(this.maxStats) {
+                    if (this.maxStats) {
                         ASSET_MANAGER.playAsset(SFX.SUPER_SAIYAN);
                         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/ascended_wizard.png");
                         this.loadAnimations();
@@ -592,6 +592,9 @@ class Wizard extends AbstractBoss {
         this.teleportLocation.y = ey;
         this.disappearTime = .75;
         if (randomInt(100) < this.skeletonChance) this.loadEvent(randomInt(this.skeletonVar) + this.skeletonBase);
+
+        let randSFX = randomInt(2);
+        (randSFX == 0) ? ASSET_MANAGER.playAsset(SFX.TELEPORT) : ASSET_MANAGER.playAsset(SFX.TELEPORT2);
     }
 
     /**
@@ -639,19 +642,22 @@ class Wizard extends AbstractBoss {
             let heal = 4;
             //console.log("wizard healing phase");
 
+            //doesn't need healing
             if (this.hp > this.max_hp * (.15 + .1 * inventory.armorUpgrade)) {
                 //done healing
                 heal = 0;
-            }
-
-            this.hp += heal; //set hp
-
-            if (this.maxStats && this.hp > this.max_hp * .5) { //healing
-                this.hp = this.max_hp * .5;
+            } else {
+                //wizard is starting to heal 
                 if (!this.potionSFX) { //wizard can drink potions too you know!
                     this.potionSFX = true;
                     ASSET_MANAGER.playAsset(SFX.DRINK);
+                    ASSET_MANAGER.playAsset(SFX.HEAL);
                 }
+            }
+
+            this.hp += heal; //set hp
+            if (this.maxStats && this.hp > this.max_hp * .5) { //healing
+                this.hp = this.max_hp * .5;
             }
             else if (!this.maxStats && this.hp > this.max_hp * (.25 + .05 * inventory.armorUpgrade) && heal > 0) {
                 this.hp = this.max_hp * (.25 + .05 * inventory.armorUpgrade);
@@ -706,7 +712,9 @@ class Wizard extends AbstractBoss {
                         this.fireball.blue = true;
                     this.fireball.state = this.fireball.states.ignite1;
                     this.game.addEntityToFront(this.fireball);
+                    //summon all at once
                     if (this.phase == this.phases.final) {
+                        ASSET_MANAGER.playAsset(SFX.SNAP);
                         let angle = 0;
                         for (var i = 0; i < max; i++) {
                             this.fireCircle.push(new FireballCircular(this.game, this,
@@ -766,16 +774,19 @@ class Wizard extends AbstractBoss {
                         if (this.fireball)
                             this.fireball.removeFromWorld = true;
                     }
-                    if (this.direction == this.directions.left)
+                    if (this.direction == this.directions.left) {
                         fireball = new FireballCircular(this.game, this,
                             this.center.x - 10 * this.scale,
                             this.center.y - 4 * this.scale,
                             this.scale, this.direction, false, this.fireballDmg);
-                    else
+                        ASSET_MANAGER.playAsset(SFX.SNAP);
+                    } else {
                         fireball = new FireballCircular(this.game, this,
                             this.center.x + 10 * this.scale,
                             this.center.y - 4 * this.scale,
                             this.scale, this.direction, false, this.fireballDmg);
+                        ASSET_MANAGER.playAsset(SFX.SNAP);
+                    }
                     if (this.phase >= this.phases.desperate)
                         fireball.blue = true;
                     this.fireCircle.push(fireball);
@@ -804,6 +815,7 @@ class Wizard extends AbstractBoss {
                 break;
             case states.casting:
                 if (this.ringWait <= 0) {
+                    ASSET_MANAGER.playAsset(SFX.FIREBALL_RELEASE);
                     this.fireCircle.forEach(fireball => fireball.release = true);
                     this.fireCircle = [];
                     this.state = states.lower;
@@ -967,6 +979,10 @@ class Wizard extends AbstractBoss {
 
                     if (frame == 6) {
                         //shoot main projectile
+                        if(this.playBeamSFX) {
+                            this.playBeamSFX = false;
+                            ASSET_MANAGER.playAsset(SFX.KIBLAST);
+                        }
                         this.shootWindblast();
                     } else if (frame == 8) {
                         //chance to follow up with an extra trailing blast at the end
@@ -977,6 +993,7 @@ class Wizard extends AbstractBoss {
                         let rand = randomInt(11);
                         if (rand <= 6) this.state = states.atoidle;
                         this.resetAnimationTimers(this.state);
+                        this.playBeamSFX = true;
                     }
                 }
                 break;
@@ -1167,6 +1184,7 @@ class Wizard extends AbstractBoss {
         this.velocity.x = 0;
         this.velocity.y = 0;
         this.HB = null;
+        this.playBeamSFX = true;
     }
 
     draw(ctx) {

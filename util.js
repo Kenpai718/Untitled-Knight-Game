@@ -237,6 +237,11 @@ const SFX = {
     EVIL_LAUGH: "./sound/sfx/evil_laugh.mp3",
     SUPER_SAIYAN: "./sound/sfx/super_saiyan.mp3",
     COMPLETION: "./sound/sfx/zelda-botw-first-contact.mp3",
+    SNAP: "./sound/sfx/snap.mp3",
+    FIREBALL_RELEASE: "./sound/sfx/fireball_release.mp3",
+    TELEPORT: "./sound/sfx/teleport.mp3",
+    TELEPORT2: "./sound/sfx/teleport2.mp3",
+    KIBLAST: "./sound/sfx/kiblast.mp3",
 
 
 };
