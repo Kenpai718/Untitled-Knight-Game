@@ -709,8 +709,9 @@ var level1_2 = {
         text: [
             "ADVANCED COMBAT TIPS:",
             "-Cancel your attack animations with a roll [SHIFT].",
-            " This lets you do damage while staying evasive.",
-            "-Each hit has a base 10% chance to CRIT and do x2 damage!",
+            "-Utilize rolls with attacks to stay evasive while doing damage!",
+            "-[Shift] + [A]/[D] direction to roll in that direction.",
+            "-Each hit has a base 10% chance to CRIT and do x2 damage.",
             "-If you shoot an arrow and it got stuck then you can retrieve it.",
             "-After an enemy spots you they will chase you down for a",
             " certain amount of time.",
@@ -2152,6 +2153,11 @@ var level1_5 = {
         { x: 45, y: 16, width: 4, height: 5 },
         // 2:4
         //{ x: 83, y: 41, width: 3, height: 3 },
+    ],
+
+    signs: [
+        {x: 62, y: 50, title: "    Hey listen.", text: ["There's no turning back from this point.",
+                                            "Have you done everything you needed to?"]}
     ],
 
 
