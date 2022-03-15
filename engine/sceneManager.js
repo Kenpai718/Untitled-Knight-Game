@@ -231,19 +231,19 @@ class SceneManager {
 
         //hidden ending 2 is fully upgraded
         let endScene6;
-        if(maxed_end) {
+        if (maxed_end) {
             endScene6 =
-            [
-                "Both our power levels were over 9000...",
-                "But, I was simply built different,",
-                "and defeated him with ease.",
-            ];
+                [
+                    "Both our power levels were over 9000...",
+                    "But, I was simply built different,",
+                    "and defeated him with ease.",
+                ];
         } else {
             endScene6 =
-            [
-                "It was a tough battle. However,",
-                "I stopped him before it was too late!",
-            ];
+                [
+                    "It was a tough battle. However,",
+                    "I stopped him before it was too late!",
+                ];
         }
 
         let endScene7 =
@@ -262,16 +262,16 @@ class SceneManager {
                 "The End.",
             ];
 
-        if(maxed_end) {
+        if (maxed_end) {
             endScene9.push("[Ending #3: True Ending- Unlimited Power!]")
             endScene9.push("[Achievement: MAX Upgrades]")
-        }else if (hidden_end) {
+        } else if (hidden_end) {
             endScene9.push("[Ending #2: Cheapskate]");
             endScene9.push("[Achievement: No Purchases]");
-         } else {
-             endScene9.push("[Ending #1: Betrayal]");
-             endScene9.push("[Achievement: Default Ending]");
-         } 
+        } else {
+            endScene9.push("[Ending #1: Betrayal]");
+            endScene9.push("[Achievement: Default Ending]");
+        }
 
         let endScene10 =
             [
@@ -435,10 +435,21 @@ class SceneManager {
                 this.player.updateBB();
             }
 
-            //mercy rule: after dying the player is healed a bit
-            if (this.player.hp < (this.player.max_hp / 2)) {
-                this.player.heal((this.player.max_hp / 2) - this.player.hp);
+            //mercy rule
+            if (this.player.hp <= (this.player.max_hp / 2)) {
+                //heal to half hp if died under 3 times
+                if (this.game.myReportCard.myDeathes <= 4) {
+                    this.player.heal((this.player.max_hp / 2) - this.player.hp);
+                } else {
+                    //died a lot give them mercy and heal to full
+                    this.player.heal(this.player.max_hp);
+                }
             }
+
+            //since respawned reset the count of chests and secrets in report card to what it was at checkpoint
+            this.game.myReportCard.rollbackToLastReport();
+
+            //
         }
     }
 
@@ -511,6 +522,10 @@ class SceneManager {
             enemies: this.saveEnemies(this.game.enemies), interactables: this.saveInteractables(this.game.interactables),
             events: this.saveEvents(this.game.events), killCount: this.killCount
         };
+
+        //save found secrets and chests counter
+        this.game.myReportCard.saveLastReport();
+
     }
 
     /**
@@ -1294,12 +1309,12 @@ class SceneManager {
         let h = scene.height;
 
         //assign the background of the level
-        if(this.level.background) {
+        if (this.level.background) {
             this.game.addEntity(new Background(this.game, this.level.background.type));
         } else { //default
             this.game.addEntity(new Background(this.game, 0));
         }
-        
+
         this.makePlayer(spawnX, h - spawnY);
 
         //turn off textbox and only set it up when needed

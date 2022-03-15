@@ -16,8 +16,12 @@
         this.myDeathes = 0;
         this.myDiamondsEarned = 0;
         this.myDiamondsSpent = 0;
+
+        //special stuff that needs to be reset on death
         this.mySecretsFound = 0;
+        this.myLastSecretsFound = 0;
         this.myChestsOpened = 0;
+        this.myLastChestsOpened = 0;
     }
 
     drawReportCard(ctx) {
@@ -44,6 +48,25 @@
         this.myReportBox.centerBottomMulti();
         this.myReportBox.draw(ctx);
 
+    }
+
+    /**
+     * Save state of important report card info
+     * These stuff need to be reset on death since
+     * you can open chests and die, but they would still be counted
+     * again since u have to reopen them.
+     */
+    saveLastReport() {
+        this.myLastSecretsFound = this.mySecretsFound;
+        this.myLastChestsOpened = this.myChestsOpened;
+    }
+
+    /**
+     * When respawning rollback to last report card info
+     */
+    rollbackToLastReport() {
+        this.mySecretsFound = this.myLastSecretsFound;
+        this.myChestsOpened = this.myLastChestsOpened;
     }
 
     countChests() {
