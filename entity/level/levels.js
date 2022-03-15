@@ -489,8 +489,8 @@ var level1_1 = {
                 " *Recommend to disable sticky keys!",
                 "-[ESC] to pause/unpause the game",
                 "",
-                "KEYBOARD + MOUSE CONTROLS:",
-                "*NOTE: Keep mouse cursor within game screen!",
+                "KEYBOARD + MOUSE CONTROLS [RECOMMENDED]:",
+                "*Keep mouse cursor within game screen and move with keyboard.",
                 "-[LEFT-CLICK]: Melee attack",
                 "-[MOUSE-MOVE]: Aim an arrow with cursor in game screen",
                 "-[RIGHT-CLICK]: Shoot arrow in cursor direction",
@@ -511,18 +511,21 @@ var level1_1 = {
 
         {
             x: 49, y: 6,
-            title: "[TUTORIAL: HEALING/SHOP]",
+            title: "[TUTORIAL: SHOP/HEALING]",
             text: [
-                "HOW TO HEAL:",
-                "-[E] to use a potion in your inventory.",
-                "-Potions will heal you for a set 50 HP",
-                "-Potions are limited so use them sparingly.",
-                "",
                 "HOW TO SHOP:",
                 "-Stand next to the shopkeeper and tap [W] to shop",
                 "-The friendly shopkeeper will be your supporter on",
                 " this journey. Give him DIAMONDS to upgrade your tools.",
-                "-Use your mouse cursor to click the buttons in the shop."]
+                "-Use your mouse cursor to click the buttons in the shop.",
+                "-Alternatively, you can navigate the shop GUI with keyboard",
+                " [W] Up, [S] Down, [X] Exit, [P] Purchase",
+                "",
+                "HOW TO HEAL:",
+                "-[E] to use a potion in your inventory.",
+                "-Potions will heal you for a set 50 HP",
+                "-Potions are limited so use them sparingly.",
+                "",]
         },
 
         {
@@ -713,8 +716,6 @@ var level1_2 = {
             "-[Shift] + [A]/[D] direction to roll in that direction.",
             "-Each hit has a base 10% chance to CRIT and do x2 damage.",
             "-If you shoot an arrow and it got stuck then you can retrieve it.",
-            "-After an enemy spots you they will chase you down for a",
-            " certain amount of time.",
         ],
     },
     {

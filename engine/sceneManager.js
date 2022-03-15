@@ -63,16 +63,16 @@ class SceneManager {
 
         //text boxes for the title screen
         let controlInfo =
-            ["Controls:",
-                "A: Left",
-                "D: Right",
-                "S: Crouch",
-                "W: Interact",
-                "E: Heal/Use-Potion",
-                "SPACE: Jump",
-                "P/Left-Click: Melee Attack",
-                "O/Right-Click: Shoot Arrow",
-                "ESC: Pause/Unpause Game",
+            ["[Controls]:",
+                "[A]: Left",
+                "[D]: Right",
+                "[S]: Crouch/Down",
+                "[W]: Interact/Up",
+                "[E]: Heal/Use-Potion",
+                "[SPACE]: Jump/Double-Jump/Wall-Jump",
+                "[P]/[Left-Click]: Melee-Attack/Purchase",
+                "[O]/[Right-Click]: Shoot-Arrow",
+                "[ESC]: Pause/Unpause Game, [X]: Exit-Shop",
             ];
         let creditInfo =
             ["Developed by:",
@@ -87,9 +87,9 @@ class SceneManager {
             ]
 
         let creditX = (this.game.surfaceWidth / 2) - ((20 * 32) / 2);
-        let creditY = (this.game.surfaceHeight / 2) + 40 * 3.5;
-        let controlX = (this.game.surfaceWidth / 2) - ((20 * 26) / 2);
-        let controlY = (this.game.surfaceHeight / 2) + 40 * 3.5;
+        let creditY = (this.game.surfaceHeight / 2) + 40 * 6;
+        let controlX = (this.game.surfaceWidth / 2) - ((20 * 42) / 2);
+        let controlY = (this.game.surfaceHeight / 2) + 40 * 6;
         this.myControlBox = new SceneTextBox(this.game, controlX, controlY, controlInfo);
         this.myCreditBox = new SceneTextBox(this.game, creditX, creditY, creditInfo);
 
