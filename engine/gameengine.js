@@ -18,6 +18,7 @@ class GameEngine {
         this.events = [];
         this.projectiles = [];
         this.information = [];
+        this.shop = null;
 
         // Information on the input
         this.click = null;
@@ -73,7 +74,7 @@ class GameEngine {
         this.surfaceWidth = this.ctx.canvas.width;
         this.surfaceHeight = this.ctx.canvas.height;
         document.getElementById("gameWorld").style.cursor = "none"; //disable cursor by default
-
+        this.shop = new Shop(this, null);
         this.startInput();
         this.timer = new Timer();
     };
@@ -355,6 +356,9 @@ class GameEngine {
         this.drawHealth();
         this.drawLayer(this.information);
 
+        if (SHOP_ACTIVE) {
+            this.shop.draw(this.ctx);
+        }
 
         if (PARAMS.DEBUG) {
             this.drawDebug(this.foreground1);
@@ -365,7 +369,7 @@ class GameEngine {
             this.drawDebug(this.projectiles);
             this.drawDebug(this.events);
             this.drawDebug(this.information);
-
+            this.shop.drawDebug(this.ctx);
         }
 
         //update the camera (scene manager)
@@ -422,6 +426,9 @@ class GameEngine {
             this.updateLayer(this.foreground2);
             this.updateLayer(this.information);
             this.updateLayer(this.events);
+
+            if (SHOP_ACTIVE)
+                this.shop.update();
 
             this.removeFromLayer(this.background1);
             this.removeFromLayer(this.background2);
