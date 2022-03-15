@@ -71,7 +71,7 @@ class FlyingEyeProjectile extends AbstractEntity {
             this.height *= 2;
             this.updateBB();
         }
-        else if(this.state == this.states.destroy) {
+        else if (this.state == this.states.destroy) {
             if (this.animations[this.state][this.dir].isDone())
                 this.removeFromWorld = true;
         }
@@ -181,7 +181,7 @@ class WindBall extends FlyingEyeProjectile {
         this.width = this.width * newScale;
         this.height = this.height * newScale;
         this.damage = newDmg;
-        if(!speedMultiplier) this.speedMultiplier = 1;
+        if (!speedMultiplier) this.speedMultiplier = 1;
         else this.speedMultiplier = speedMultiplier;
         this.velocity = 550;
         if (dir == this.directions.left)
@@ -217,9 +217,9 @@ class Fireball extends AbstractEntity {
         this.height = 10;
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/wizard.png");
         this.animations = [];
-        this.directions =  {right: 0, left: 1};
+        this.directions = { right: 0, left: 1 };
         this.dir = direction;
-        this.states = {ignite1: 0, ignite2: 1, still1: 2, still2: 3, move: 4};
+        this.states = { ignite1: 0, ignite2: 1, still1: 2, still2: 3, move: 4 };
         this.state = this.states.move;
         this.loadAnimations();
         this.stay = true;
@@ -253,7 +253,7 @@ class Fireball extends AbstractEntity {
         // still2
         this.animations[3][0] = new Animator(this.spritesheet, 750, 20, 10, 20, 3, 0.15, 0, false, true, false);
         this.animations[3][1] = new Animator(this.spritesheet, 660, 40, 10, 20, 3, 0.15, 0, true, true, false);
-        
+
         // move
         this.animations[4][0] = new Animator(this.spritesheet, 760, 20, 10, 20, 4, 0.15, 0, false, true, false);
         this.animations[4][1] = new Animator(this.spritesheet, 640, 40, 10, 20, 4, 0.15, 0, true, true, false);
@@ -288,7 +288,7 @@ class Fireball extends AbstractEntity {
                     this.state = this.states.still2;
                 else this.state = this.states.move;
             }
-        } 
+        }
     }
 
     hit() {
@@ -298,15 +298,18 @@ class Fireball extends AbstractEntity {
             if (entity instanceof AbstractPlayer) {
                 let hitPlayer = self.BB.collide(entity.BB);
                 if (hitPlayer) {
-                    if(entity.vulnerable) entity.takeDamage(self.getDamageValue(), self.critical);
+                    if (entity.vulnerable) entity.takeDamage(self.getDamageValue(), self.critical);
                 }
             }
         });
         this.game.projectiles.forEach(projectile => {
             if (projectile instanceof Arrow) {
-                if (self.BB.collide(projectile.BB)) {
-                    projectile.removeFromWorld = true;
-                    self.removeFromWorld = true;
+                //if player shoots an arrow at a fireball it should destroy both
+                if (self.source instanceof AbstractEnemy) {
+                    if (projectile.playerTeam && self.BB.collide(projectile.BB)) {
+                        projectile.removeFromWorld = true;
+                        self.removeFromWorld = true;
+                    }
                 }
             }
         })
@@ -329,14 +332,14 @@ class FireballCircular extends Fireball {
     constructor(game, source, x, y, scale, direction, blue, dmg) {
         super(game, source, x, y, scale, direction, blue, dmg);
         this.angle = 0;
-        if (this.dir == this.directions.right) 
+        if (this.dir == this.directions.right)
             this.angle = Math.PI;
         let distx = x - source.center.x;
         distx *= distx;
         let disty = y - source.center.y;
         disty *= disty;
         this.r = Math.sqrt(distx + disty);
-        this.velocity = {x: 600, r: 3};
+        this.velocity = { x: 600, r: 3 };
         this.initialDir = direction;
         this.width = 10;
         this.height = 10;
@@ -344,7 +347,7 @@ class FireballCircular extends Fireball {
         this.release = false;
         this.destroy = 3;
         this.stay = false;
-        this.location = {x: this.source.BB.left + this.source.BB.width / 2, y: this.source.BB.top + this.source.BB.height / 2};
+        this.location = { x: this.source.BB.left + this.source.BB.width / 2, y: this.source.BB.top + this.source.BB.height / 2 };
     }
 
 
@@ -354,7 +357,7 @@ class FireballCircular extends Fireball {
 
         // deal with movement stuff
         if (this.r < 50 * this.scale) {
-            this.x += (bool? 1 : -1) * this.velocity.x * TICK;
+            this.x += (bool ? 1 : -1) * this.velocity.x * TICK;
             let distx = this.x - this.source.center.x;
             let distxx = distx * distx;
             let disty = this.y - this.source.center.y;
@@ -368,8 +371,8 @@ class FireballCircular extends Fireball {
         }
         else {
             if (!this.stay) {
-                this.angle += (bool? 1: -1) * this.velocity.r * TICK;
-                this.location = {x: this.source.BB.left + this.source.BB.width / 2, y: this.source.BB.top + this.source.BB.height / 2};
+                this.angle += (bool ? 1 : -1) * this.velocity.r * TICK;
+                this.location = { x: this.source.BB.left + this.source.BB.width / 2, y: this.source.BB.top + this.source.BB.height / 2 };
             }
             if (this.release) {
                 this.r += this.velocity.x * 2 * TICK;
@@ -383,6 +386,6 @@ class FireballCircular extends Fireball {
         super.update();
     }
 
-    
-    
+
+
 }
