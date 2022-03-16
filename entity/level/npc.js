@@ -52,6 +52,7 @@ class NPC extends AbstractEntity {
         this.game.shop.shop_keeper = this;
         this.game.shop.selection = 1;
         this.showText = true;
+        this.game.click = false;
         //console.log("a shop is here");
     };
 
@@ -98,7 +99,7 @@ class NPC extends AbstractEntity {
 
         let self = this;
         let enemiesNearby = this.enemiesNearby();
-        
+
         //interactions with entities like player
         this.game.entities.forEach(function (entity) {
 
@@ -127,7 +128,7 @@ class NPC extends AbstractEntity {
                         else self.direction = self.directions.right;
                     }
                     if (self.state == self.states.inactive && !enemiesNearby) { // If inactive (idle) and player is in vision range, awake
-                        
+
                         self.state = self.states.awaking;
                     }
                     if (self.state == self.states.active && !SHOP_ACTIVE) { // Activates shop once player in range, NPC is active and player click w key
@@ -152,7 +153,7 @@ class NPC extends AbstractEntity {
                 }
             }
         });
-        
+
 
         //constant falling velocity
         this.velocity.y += this.fallAcc * TICK;
@@ -213,7 +214,7 @@ class NPC extends AbstractEntity {
         this.animations[0][1] = new Animator(this.spritesheet, 640, 720, 80, 80, 2, 10, 0, true, true, true);
 
 
-        // awaking // 
+        // awaking //
         this.animations[1][0] = new Animator(this.spritesheet, 0, 720, 80, 80, 10, 0.15, 0, true, false, false);
         this.animations[1][1] = new Animator(this.spritesheet, 0, 640, 80, 80, 10, 0.15, 0, false, false, false);
 
