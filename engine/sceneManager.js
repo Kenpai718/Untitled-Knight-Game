@@ -809,12 +809,14 @@ class SceneManager {
                     this.player.myCheckpoint = null//this.spawnCheckpoint;
                     this.loadLevel(this.currentLevel);
                     this.player.myInventory.copyInventory(this.lastInventoryPerm);
+                    SHOP_ACTIVE = false;
                 } else if (this.returnMenuPauseBB.collideMouse(this.game.click.x, this.game.click.y)) {
                     ASSET_MANAGER.playAsset(SFX.SELECT);
                     PAUSED = false;
                     this.spawnCheckpoint = null;
                     this.game.myReportCard.reset();
                     this.returnToMenu();
+                    SHOP_ACTIVE = false;
                 } else if ((this.unpauseBB.collideMouse(this.game.click.x, this.game.click.y))) {
                     PAUSED = false;
                 }
