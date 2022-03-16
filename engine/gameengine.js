@@ -200,6 +200,7 @@ class GameEngine {
             switch (e.code) {
                 case "Escape":
                     e.preventDefault();
+                    that.click = false;
                     if (!that.camera.title && !that.camera.cutScene1 && !that.camera.transition && !that.camera.cutScene2) {
                         PAUSED = !PAUSED;
                         ASSET_MANAGER.playAsset(SFX.CLICK);
@@ -365,7 +366,7 @@ class GameEngine {
         this.drawHealth();
         this.drawLayer(this.information);
 
-        if (SHOP_ACTIVE) 
+        if (SHOP_ACTIVE)
             this.shop.draw(this.ctx);
 
         if (PARAMS.DEBUG) {
