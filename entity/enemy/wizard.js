@@ -961,6 +961,12 @@ class Wizard extends AbstractBoss {
             startX = this.player.BB.right + 600;
             startY = this.player.BB.top - (this.BB.height / 2);
         }
+        if (startX < this.left * PARAMS.BLOCKDIM) {
+            startX += this.left * PARAMS.BLOCKDIM + 32 - startX;
+        }
+        if (startX > this.right * PARAMS.BLOCKDIM) {
+            startX += this.right * PARAMS.BLOCKDIM - 32 - startX;
+        }
 
         for (let i = 0; i < theAmount; i++) {
             let arrow = new Arrow(this.game, startX + (i * spaceX), startY - (i * spaceY), target, arrow_type, false);
