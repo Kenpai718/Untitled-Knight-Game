@@ -718,7 +718,7 @@ class Knight extends AbstractPlayer {
                 this.action = (this.combo) ? this.states.attack2 : this.states.attack1; //if comboing switch to the second animation
 
                 //play the second attack sound if the first sword swing is done
-                if (this.action == this.states.attack2 && this.combo && !this.playAttackSFX1 && this.playAttackSFX2) {
+                if (this.action == this.states.attack2 && this.combo && !this.playAttackSFX1 && this.playAttackSFX2 && action != this.states.roll) {
                     this.playAttackSFX2 = false;
                     ASSET_MANAGER.playAsset(SFX.SLASH2)
                 }
@@ -733,7 +733,7 @@ class Knight extends AbstractPlayer {
             }
 
             //play
-            if (this.playAttackSFX1) {
+            if (this.playAttackSFX1 && action != this.states.roll) {
                 this.playAttackSFX1 = false;
                 if (this.action == this.states.attack1 || this.action == this.states.crouch_atk) ASSET_MANAGER.playAsset(SFX.SLASH1);
             }
