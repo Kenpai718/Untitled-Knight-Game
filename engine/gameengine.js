@@ -328,7 +328,7 @@ class GameEngine {
 
     addEntityToFront(entity) {
         const e = entity;
-        if (e instanceof Arrow || e instanceof FlyingEyeProjectile)
+        if (e instanceof Arrow || e instanceof FlyingEyeProjectile || e instanceof BladeBeam)
             this.projectiles.unshift(e);
         else if (e instanceof AbstractEnemy)
             this.enemies.unshift(e);
