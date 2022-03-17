@@ -785,6 +785,10 @@ class Knight extends AbstractPlayer {
                     this.facing = this.dir.left;
                 if (x > this.x + this.width / 2)
                     this.facing = this.dir.right;
+            } else {
+                //adjust direction based on keyboard press
+                if(this.facing == this.dir.left && this.game.right) this.facing = this.dir.right;
+                if(this.facing == this.dir.right && this.game.left) this.facing = this.dir.left;
             }
             this.animations[this.facing][this.action][this.myInventory.armorUpgrade].elapsedTime = time;
 
