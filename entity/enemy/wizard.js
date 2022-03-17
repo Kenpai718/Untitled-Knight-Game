@@ -1057,6 +1057,7 @@ class Wizard extends AbstractBoss {
                     this.resetAnimationTimers(states.stoptofly);
                     this.resetAnimationTimers(states.flytostop);
                     this.resetAnimationTimers(states.fly);
+                    ASSET_MANAGER.playAsset(SFX.SWOOP);
                 }
                 break;
 
