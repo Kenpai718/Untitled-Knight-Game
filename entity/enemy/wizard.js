@@ -355,56 +355,67 @@ class Wizard extends AbstractBoss {
      * You cant hit him until he is done talking because plot
      */
     playInitialCutscene() {
-        if (!this.myInitialDialouge) this.setupDialouge();
-        this.checkDirection();
         const TICK = this.game.clockTick;
-        const animation = this.animations[this.state][this.direction];
-        const isDone = animation.isDone();
-        this.vulnerable = false;
-
-        this.dialougeTimer += TICK;
-        if (this.dialougeTimer >= this.dialougeSwitchTime) {
-            //switch the dialouge
-            if (this.dialougeCount != this.myInitialDialouge.size) {
-                let dialougeInfo = this.myInitialDialouge.get(this.dialougeCount);
-                let text = dialougeInfo[0];
-                let duration = dialougeInfo[1];
-
-                //update textbox with new info
-                this.myTextBox.updateMessage(text, duration + 0.5);
-                this.dialougeCount++;
-                this.dialougeSwitchTime = duration;
-                this.dialougeTimer = 0;
-
-                //prepare for fire ring cutscene
-                if (this.dialougeCount == this.myInitialDialouge.size - 4) {
-                    this.buffWizard();
-                    this.game.entities.forEach(entity => {
-                        if (entity instanceof NPC) {
-                            entity.removeFromWorld = true;
-                        }
-                    })
-                    this.changeAction(this.actions.fire_ring);
-                    //if maxxed transform to ascended state
-                    if (this.maxStats) {
-                        ASSET_MANAGER.playAsset(SFX.SUPER_SAIYAN);
-                        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/ascended_wizard.png");
-                        this.loadAnimations();
-                    }
-                } else if (this.dialougeCount == this.myInitialDialouge.size) {
-                    ASSET_MANAGER.playAsset(SFX.EVIL_LAUGH); //lol at em
-                }
-            } else {
-                //He's done talking for the whole anime season, start the fight!
-                this.ringWait = -1; //this triggers the wait is done shoot the fireball
-                this.activeBoss = true; //triggers the healthbar and starts the fight
-                this.vulnerable = true; //you can hit him now
+        if (!this.myInitialDialouge) this.setupDialouge();
+        if (this.game.skipCutscene) { //for the impatient
+            this.activeBoss = true;
+            this.buffWizard();
+            if (this.maxStats) {
+                ASSET_MANAGER.playAsset(SFX.SUPER_SAIYAN);
+                this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/ascended_wizard.png");
+                this.loadAnimations();
             }
-        }
+        } else {
+            this.checkDirection();
+            const animation = this.animations[this.state][this.direction];
+            const isDone = animation.isDone();
+            this.vulnerable = false;
 
-        //when he is almost done talking he taunts u with the fire ring
-        if (this.dialougeCount >= this.myInitialDialouge.size - 4) {
-            this.fireRing(10);
+            this.dialougeTimer += TICK;
+            if (this.dialougeTimer >= this.dialougeSwitchTime) {
+                //switch the dialouge
+                if (this.dialougeCount != this.myInitialDialouge.size) {
+                    let dialougeInfo = this.myInitialDialouge.get(this.dialougeCount);
+                    let text = dialougeInfo[0];
+                    let duration = dialougeInfo[1];
+
+                    //update textbox with new info
+                    this.myTextBox.updateMessage(text, duration + 0.5);
+                    this.dialougeCount++;
+                    this.dialougeSwitchTime = duration;
+                    this.dialougeTimer = 0;
+
+                    //prepare for fire ring cutscene
+                    if (this.dialougeCount == this.myInitialDialouge.size - 4) {
+                        this.buffWizard();
+                        this.game.entities.forEach(entity => {
+                            if (entity instanceof NPC) {
+                                entity.removeFromWorld = true;
+                            }
+                        })
+                        this.changeAction(this.actions.fire_ring);
+                        //if maxxed transform to ascended state
+                        if (this.maxStats) {
+                            ASSET_MANAGER.playAsset(SFX.SUPER_SAIYAN);
+                            this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/ascended_wizard.png");
+                            this.loadAnimations();
+                        }
+                    } else if (this.dialougeCount == this.myInitialDialouge.size) {
+                        ASSET_MANAGER.playAsset(SFX.EVIL_LAUGH); //lol at em
+                    }
+                } else {
+                    //He's done talking for the whole anime season, start the fight!
+                    this.ringWait = -1; //this triggers the wait is done shoot the fireball
+                    this.activeBoss = true; //triggers the healthbar and starts the fight
+                    this.vulnerable = true; //you can hit him now
+                    this.game.skipCutscene = true; //boolean set once u meet the FB for the firsttime in the run. This is so you can skip the dialouge.
+                }
+            }
+
+            //when he is almost done talking he taunts u with the fire ring
+            if (this.dialougeCount >= this.myInitialDialouge.size - 4) {
+                this.fireRing(10);
+            }
         }
 
         //update animation and textbox
@@ -433,8 +444,10 @@ class Wizard extends AbstractBoss {
                 if (this.fireball)
                     this.fireball.removeFromWorld = true;
                 this.game.enemies.forEach(enemy => enemy.dead = true);
+                //finally dead
                 if (this.animations[this.state][this.direction].isDone()) {
                     this.playEndMusic();
+                    this.game.skipCutscene = false;
                 }
             }
             else if (this.state == this.states.stun) {
@@ -979,7 +992,7 @@ class Wizard extends AbstractBoss {
 
                     if (frame == 6) {
                         //shoot main projectile
-                        if(this.playBeamSFX) {
+                        if (this.playBeamSFX) {
                             this.playBeamSFX = false;
                             ASSET_MANAGER.playAsset(SFX.KIBLAST);
                         }

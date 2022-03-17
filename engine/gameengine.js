@@ -30,6 +30,7 @@ class GameEngine {
         this.inCanvas = true; //check if focused
         this.myReportCard = new ReportCard(this);
         this.completed = false; //if player beat the game yet
+        this.skipCutscene = false;
 
         //controls
         this.left = null;   //A

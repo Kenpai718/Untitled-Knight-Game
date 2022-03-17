@@ -905,6 +905,7 @@ class SceneManager {
         this.credits = false;
         this.myControlBox.show = false;
         this.myCreditBox.show = false;
+        this.game.skipCutscene = false;
         this.resetCamera();
         this.loadTitle();
     }
