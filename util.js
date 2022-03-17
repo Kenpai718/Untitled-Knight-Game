@@ -242,6 +242,7 @@ const SFX = {
     TELEPORT: "./sound/sfx/teleport.mp3",
     TELEPORT2: "./sound/sfx/teleport2.mp3",
     KIBLAST: "./sound/sfx/kiblast.mp3",
+    SWOOP: "./sound/sfx/swoop.mp3",
 
 
 };

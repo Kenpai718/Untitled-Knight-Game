@@ -16,12 +16,14 @@
         this.myDeathes = 0;
         this.myDiamondsEarned = 0;
         this.myDiamondsSpent = 0;
+        this.myChestsOpened = 0;
+        this.mySecretsFound = 0;
 
         //special stuff that needs to be reset on death
-        this.mySecretsFound = 0;
         this.myLastSecretsFound = 0;
-        this.myChestsOpened = 0;
         this.myLastChestsOpened = 0;
+        this.myLastDiamondsEarned = 0;
+        this.myLastDiamondsSpent = 0;
     }
 
     drawReportCard(ctx) {
@@ -37,9 +39,9 @@
             this.myEnemiesDefeated + " enemies defeated",
             Math.round(this.myDamageTaken) + " damage taken",
             Math.round(this.myDamageDealt) + " damage dealt",
+            this.myDeathes + " times died",
             this.myDiamondsEarned + " diamonds earned",
             this.myDiamondsSpent + " diamonds spent",
-            this.myDeathes + " times died",
             this.myChestsOpened + "/" + this.myTotalChests + " chests found",
             this.mySecretsFound + "/" + this.myTotalSecrets + "  secrets found",
         ];
@@ -57,6 +59,8 @@
      * again since u have to reopen them.
      */
     saveLastReport() {
+        this.myLastDiamondsEarned = this.myDiamondsEarned;
+        this.myLastDiamondsSpent = this.myDiamondsSpent;
         this.myLastSecretsFound = this.mySecretsFound;
         this.myLastChestsOpened = this.myChestsOpened;
     }
@@ -65,6 +69,8 @@
      * When respawning rollback to last report card info
      */
     rollbackToLastReport() {
+        this.myDiamondsEarned = this.myLastDiamondsEarned;
+        this.myDiamondsSpent = this.myLastDiamondsSpent;
         this.mySecretsFound = this.myLastSecretsFound;
         this.myChestsOpened = this.myLastChestsOpened;
     }

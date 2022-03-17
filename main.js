@@ -107,6 +107,7 @@ ASSET_MANAGER.queueDownload(SFX.FIREBALL_RELEASE);
 ASSET_MANAGER.queueDownload(SFX.TELEPORT);
 ASSET_MANAGER.queueDownload(SFX.TELEPORT2);
 ASSET_MANAGER.queueDownload(SFX.KIBLAST);
+ASSET_MANAGER.queueDownload(SFX.SWOOP);
 //ASSET_MANAGER.queueDownload(SFX.CHECKPOINT);
 
 // Leave this SFX to suffer at the bottom >:D
