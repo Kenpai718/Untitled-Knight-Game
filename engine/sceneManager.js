@@ -527,7 +527,6 @@ class SceneManager {
             events: this.saveEvents(this.game.events), killCount: this.killCount
         };
 
-        //save found secrets and chests counter
         this.game.myReportCard.saveLastReport();
 
     }
@@ -540,6 +539,8 @@ class SceneManager {
             enemies: this.saveEnemies(this.game.enemies), interactables: this.saveInteractables(this.game.interactables),
             events: this.saveEvents(this.game.events), killCount: this.killCount
         };
+
+        this.game.myReportCard.saveLastReport();
     }
 
     /**
