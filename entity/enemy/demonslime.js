@@ -36,6 +36,7 @@ class DemonSlime extends AbstractBoss {
 
         this.myLevelMusic = this.game.camera.myMusic; //save current level music once the boss music stars
         this.myBossMusic = MUSIC.SIGNORA;
+        this.playAtkSFX = true;
     };
 
 
@@ -256,6 +257,7 @@ class DemonSlime extends AbstractBoss {
         if (this.phase == this.phases.legendary) {
             //transition hue to the blue phase
             if (this.hue > this.legendary_hue && !this.dead) {
+                ASSET_MANAGER.playAudioOnce(SFX.ROAR);
                 this.hue--;
                 //regenerate hp to half while transforming
                 if (this.hp < (this.max_hp / 2)) this.regen();
@@ -310,25 +312,45 @@ class DemonSlime extends AbstractBoss {
                 if (this.attackFrame >= 3 && this.attackFrame <= 5) this.updateHB();
                 else this.HB = null;
             } else if (this.state == this.states.demonJump) {
-                if (this.attackFrame >= 12 && this.attackFrame <= 15) this.updateHB();
+                if (this.attackFrame >= 12 && this.attackFrame <= 15) {
+                    if(this.playAtkSFX) {
+                        this.playAtkSFX = false;
+                        ASSET_MANAGER.playAsset(SFX.SLAM);
+                    }
+                    this.updateHB();
+                }
                 else this.HB = null;
 
                 //will switch directions if crossedup before the jump
-                if(this.attackFrame < 4) this.checkDirection(this.game.camera.player);
+                if (this.attackFrame < 4) this.checkDirection(this.game.camera.player);
             } else if (this.state == this.states.demonSlash) {
-                if (this.attackFrame >= 9 && this.attackFrame <= 12) this.updateHB();
+                if(this.attackFrame == 7) {
+                    if (this.playAtkSFX) {
+                        this.playAtkSFX = false;
+                        ASSET_MANAGER.playAsset(SFX.SWING);
+                    }
+                }
+                if (this.attackFrame >= 8 && this.attackFrame <= 12) {
+                    this.updateHB();
+                }
                 else this.HB = null;
 
                 //if player crosses up before the blade is fully up then the demon
                 //will switch directions to maintain the attack
-                if(this.attackFrame < 7) this.checkDirection(this.game.camera.player);
+                if (this.attackFrame < 7) this.checkDirection(this.game.camera.player);
             } else if (this.state == this.states.demonBreath) {
-                if (this.attackFrame >= 6 && this.attackFrame <= 16) this.updateHB();
+                if (this.attackFrame >= 6 && this.attackFrame <= 16) {
+                    if(this.playAtkSFX) {
+                        this.playAtkSFX = false;
+                        ASSET_MANAGER.playAsset(SFX.FIREBREATH);
+                    }
+                    this.updateHB(); 
+                }
                 else this.HB = null;
 
                 //if player crosses up before the breath is out then it
                 //will switch directions to maintain the attack
-                if(this.attackFrame < 5) this.checkDirection(this.game.camera.player);
+                if (this.attackFrame < 5) this.checkDirection(this.game.camera.player);
             } else if (this.state == this.states.demonRebirth) {
                 if (this.attackFrame >= 9 && this.attackFrame <= 20) this.updateHB();
                 else this.HB = null;
@@ -515,6 +537,7 @@ class DemonSlime extends AbstractBoss {
         this.projectileTick += TICK;
 
         if (this.projectileTick > this.projectileSpawnTime) { //shoot a projectile every few seconds
+            ASSET_MANAGER.playAsset(SFX.FIREBALL_RELEASE);
             this.projectileTick = 0;
             this.projectileSpawnTime = 0.5 + randomInt(2); //randomize the shooting interval from 0.5 to 1.5
             if (this.direction == this.directions.right) this.game.addEntity(new SlimeProjectile(this.game, this.BB.left + (this.width), this.BB.top - 10, this.direction, this.projectileScale, STATS.DEMON_SLIME.PROJECTILE));
@@ -569,6 +592,9 @@ class DemonSlime extends AbstractBoss {
                         this.velocity.x = this.direction == this.directions.right ? this.myMaxSpeed / 3 : -this.myMaxSpeed / 3;
                     }
                 }
+
+                //reset attack sfx
+                this.playAtkSFX = true;
             }
             // handles behavior after rebirth run away
             if (this.checkAnimationDone(this.states.demonRebirth)) {
@@ -756,6 +782,7 @@ class Slime extends DemonSlime {
 
         if (this.projectileTick > this.projectileSpawnTime) { //shoot a projectile every few seconds
             //console.log("slime projectile fired");
+            ASSET_MANAGER.playAsset(SFX.SMALL_FIREBALL);
             this.projectileTick = 0;
             this.projectileSpawnTime = 2 + randomInt(4); //randomize the shooting interval from 2 to 5s
             if (this.direction == this.directions.right)
