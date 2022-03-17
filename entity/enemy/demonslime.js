@@ -312,8 +312,8 @@ class DemonSlime extends AbstractBoss {
                 if (this.attackFrame >= 3 && this.attackFrame <= 5) this.updateHB();
                 else this.HB = null;
             } else if (this.state == this.states.demonJump) {
-                if (this.attackFrame >= 12 && this.attackFrame <= 15) {
-                    if(this.playAtkSFX) {
+                if (this.attackFrame >= 10 && this.attackFrame <= 15) {
+                    if (this.playAtkSFX) {
                         this.playAtkSFX = false;
                         ASSET_MANAGER.playAsset(SFX.SLAM);
                     }
@@ -324,13 +324,13 @@ class DemonSlime extends AbstractBoss {
                 //will switch directions if crossedup before the jump
                 if (this.attackFrame < 4) this.checkDirection(this.game.camera.player);
             } else if (this.state == this.states.demonSlash) {
-                if(this.attackFrame == 7) {
+                if (this.attackFrame == 7) {
                     if (this.playAtkSFX) {
                         this.playAtkSFX = false;
                         ASSET_MANAGER.playAsset(SFX.SWING);
                     }
                 }
-                if (this.attackFrame >= 8 && this.attackFrame <= 12) {
+                if (this.attackFrame >= 9 && this.attackFrame <= 12) {
                     this.updateHB();
                 }
                 else this.HB = null;
@@ -340,11 +340,11 @@ class DemonSlime extends AbstractBoss {
                 if (this.attackFrame < 7) this.checkDirection(this.game.camera.player);
             } else if (this.state == this.states.demonBreath) {
                 if (this.attackFrame >= 6 && this.attackFrame <= 16) {
-                    if(this.playAtkSFX) {
+                    if (this.playAtkSFX) {
                         this.playAtkSFX = false;
                         ASSET_MANAGER.playAsset(SFX.FIREBREATH);
                     }
-                    this.updateHB(); 
+                    this.updateHB();
                 }
                 else this.HB = null;
 
@@ -382,8 +382,14 @@ class DemonSlime extends AbstractBoss {
                 this.HB = new BoundingBox(this.BB.left, this.BB.top, this.BB.width, this.BB.height);
             }
             else if (this.state == this.states.demonJump) {
-                if (this.direction == this.directions.left) this.HB = new BoundingBox(this.BB.left - (this.BB.width / 2), this.BB.top + this.BB.height / 2, this.BB.width * 2, this.BB.height / 2);
-                else this.HB = new BoundingBox(this.BB.left - (this.BB.width / 4), this.BB.top + this.BB.height / 2, this.BB.width * 2, this.BB.height / 2);
+
+                if (frame < 12) { //initial hit ground
+                    if (this.direction == this.directions.left) this.HB = new BoundingBox(this.BB.left, this.BB.top + this.BB.height / 2, this.BB.width, this.BB.height / 2);
+                    else this.HB = new BoundingBox(this.BB.left, this.BB.top + this.BB.height / 2, this.BB.width, this.BB.height / 2);
+                } else { //shockwave
+                    if (this.direction == this.directions.left) this.HB = new BoundingBox(this.BB.left - (this.BB.width / 2), this.BB.top + this.BB.height / 2, this.BB.width * 2, this.BB.height / 2);
+                    else this.HB = new BoundingBox(this.BB.left - (this.BB.width / 4), this.BB.top + this.BB.height / 2, this.BB.width * 2, this.BB.height / 2);
+                }
             }
             else if (this.state == this.states.demonBreath) {
                 let x = this.BB.left;
@@ -502,7 +508,9 @@ class DemonSlime extends AbstractBoss {
 
                             //prevent it from becoming a smooth criminal
                             //switch to walking state after the rebirth dash has finished
-                            if (self.checkAnimationDone(self.state)) self.state = self.states.demonMove;
+                            if (self.checkAnimationDone(self.states.demonRebirth)) {
+                                self.state = self.states.demonMove;
+                            }
                         }
                     }
                 }
