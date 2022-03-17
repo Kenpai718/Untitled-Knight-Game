@@ -244,7 +244,11 @@ const SFX = {
     TELEPORT2: "./sound/sfx/teleport2.mp3",
     KIBLAST: "./sound/sfx/kiblast.mp3",
     SWOOP: "./sound/sfx/swoop.mp3",
-
+    SLAM: "./sound/sfx/hard_slam.wav",
+    SWING: "./sound/sfx/hard_swing.wav",
+    FIREBREATH: "./sound/sfx/demon_breath.wav",
+    ROAR: "./sound/sfx/demon_roar.mp3",
+    SMALL_FIREBALL: "./sound/sfx/small_fireball.mp3",
 
 };
 

@@ -211,7 +211,7 @@ class Knight extends AbstractPlayer {
                         this.facing = 0;
                     }
                 }
-                
+
                 /*
                 let time = this.animations[this.facing][this.action][this.myInventory.armorUpgrade].currentFrame();
                 if (this.action == this.states.attack1 || this.action == this.states.attack2) {
@@ -224,7 +224,7 @@ class Knight extends AbstractPlayer {
                 //...
                 */
 
-                
+
                 let time = this.animations[this.facing][this.action][this.myInventory.armorUpgrade].elapsedTime;
                 if (this.action == this.states.attack1 || this.action == this.states.attack2) {
                     let x = this.game.mouse.x + this.game.camera.x;
@@ -234,7 +234,7 @@ class Knight extends AbstractPlayer {
                         this.facing = this.dir.right;
                 }
                 this.animations[this.facing][this.action][this.myInventory.armorUpgrade].elapsedTime = time;
-                
+
             }
 
 
@@ -718,7 +718,7 @@ class Knight extends AbstractPlayer {
                 this.action = (this.combo) ? this.states.attack2 : this.states.attack1; //if comboing switch to the second animation
 
                 //play the second attack sound if the first sword swing is done
-                if (this.action == this.states.attack2 && this.combo && !this.playAttackSFX1 && this.playAttackSFX2) {
+                if (this.action == this.states.attack2 && this.combo && !this.playAttackSFX1 && this.playAttackSFX2 && action != this.states.roll) {
                     this.playAttackSFX2 = false;
                     ASSET_MANAGER.playAsset(SFX.SLASH2)
                 }
@@ -733,7 +733,7 @@ class Knight extends AbstractPlayer {
             }
 
             //play
-            if (this.playAttackSFX1) {
+            if (this.playAttackSFX1 && action != this.states.roll) {
                 this.playAttackSFX1 = false;
                 if (this.action == this.states.attack1 || this.action == this.states.crouch_atk) ASSET_MANAGER.playAsset(SFX.SLASH1);
             }
@@ -777,20 +777,23 @@ class Knight extends AbstractPlayer {
                 super.shootArrow();
             }
 
-            //only adjust the direction if using the mouse to shoot
-            let time = this.animations[this.facing][this.action][this.myInventory.armorUpgrade].elapsedTime;
-            if (!this.game.shootButton) {
-                let x = this.game.mouse.x + this.game.camera.x;
-                if (x < this.x + this.width / 2)
-                    this.facing = this.dir.left;
-                if (x > this.x + this.width / 2)
-                    this.facing = this.dir.right;
-            } else {
-                //adjust direction based on keyboard press
-                if(this.facing == this.dir.left && this.game.right) this.facing = this.dir.right;
-                if(this.facing == this.dir.right && this.game.left) this.facing = this.dir.left;
+            //adjust the direction if the arrow has not been fired yet based on input
+            if (this.animations[this.facing][this.action][this.myInventory.armorUpgrade].currentFrame() < 2) {
+                let time = this.animations[this.facing][this.action][this.myInventory.armorUpgrade].elapsedTime;
+                //switch based on mouse
+                if (!this.game.shootButton) {
+                    let x = this.game.mouse.x + this.game.camera.x;
+                    if (x < this.x + this.width / 2)
+                        this.facing = this.dir.left;
+                    if (x > this.x + this.width / 2)
+                        this.facing = this.dir.right;
+                } else {
+                    //adjust direction based on keyboard press
+                    if (this.facing == this.dir.left && this.game.right) this.facing = this.dir.right;
+                    if (this.facing == this.dir.right && this.game.left) this.facing = this.dir.left;
+                }
+                this.animations[this.facing][this.action][this.myInventory.armorUpgrade].elapsedTime = time;
             }
-            this.animations[this.facing][this.action][this.myInventory.armorUpgrade].elapsedTime = time;
 
             if (done) {
                 this.action = this.game.down || this.touchHole() ? this.states.crouch : this.DEFAULT_ACTION; //back to idle; added case for crouch attacks

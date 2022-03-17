@@ -108,6 +108,11 @@ ASSET_MANAGER.queueDownload(SFX.TELEPORT);
 ASSET_MANAGER.queueDownload(SFX.TELEPORT2);
 ASSET_MANAGER.queueDownload(SFX.KIBLAST);
 ASSET_MANAGER.queueDownload(SFX.SWOOP);
+ASSET_MANAGER.queueDownload(SFX.SWING);
+ASSET_MANAGER.queueDownload(SFX.SLAM);
+ASSET_MANAGER.queueDownload(SFX.FIREBREATH);
+ASSET_MANAGER.queueDownload(SFX.ROAR);
+ASSET_MANAGER.queueDownload(SFX.SMALL_FIREBALL);
 //ASSET_MANAGER.queueDownload(SFX.CHECKPOINT);
 
 // Leave this SFX to suffer at the bottom >:D
