@@ -306,7 +306,7 @@ class Fireball extends AbstractEntity {
             if (projectile instanceof Arrow) {
                 //if player shoots an arrow at a fireball it should destroy both
                 if (self.source instanceof AbstractEnemy) {
-                    if (projectile.playerTeam && self.BB.collide(projectile.BB)) {
+                    if (projectile.playerTeam && !projectile.stuck && self.BB.collide(projectile.BB)) {
                         projectile.removeFromWorld = true;
                         self.removeFromWorld = true;
                     }
