@@ -348,9 +348,8 @@ class DemonSlime extends AbstractBoss {
                 }
                 else this.HB = null;
 
-                //if player crosses up before the breath is out then it
-                //will switch directions to maintain the attack
-                if (this.attackFrame < 5) this.checkDirection(this.game.camera.player);
+                //fire breath can switch directions mid attack (before the bottom hitbox comes out)
+                if (this.attackFrame <= 10) this.checkDirection(this.game.camera.player);
             } else if (this.state == this.states.demonRebirth) {
                 if (this.attackFrame >= 9 && this.attackFrame <= 20) this.updateHB();
                 else this.HB = null;
@@ -509,6 +508,8 @@ class DemonSlime extends AbstractBoss {
                             //prevent it from becoming a smooth criminal
                             //switch to walking state after the rebirth dash has finished
                             if (self.checkAnimationDone(self.states.demonRebirth)) {
+                                self.vulnerable = true;
+                                self.canBeHit = true;
                                 self.state = self.states.demonMove;
                             }
                         }
