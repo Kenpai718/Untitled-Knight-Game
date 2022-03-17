@@ -442,12 +442,15 @@ class SceneManager {
                     //heal to half hp if died under 3 times
                     this.player.heal((this.player.max_hp / 2) - this.player.hp);
                 }
-            } else { //player has died a lot give them some mercy
+            } else if (this.game.myReportCard.myDeathes > PARAMS.DEATH_PITY) { //player has died a lot give them some mercy
                 if(this.player.hp < this.player.max_hp) {
                     //heal to full
                     this.player.heal(this.player.max_hp);
-                    this.player.myInventory.potions += (this.game.myReportCard.myDeathes) - PARAMS.DEATH_PITY;
                 }
+
+                //extra potions based on times died
+                let pity_potions = this.game.myReportCard.myDeathes - PARAMS.DEATH_PITY;
+                this.player.myInventory.potions += pity_potions;
             }
 
             //since respawned reset the count of chests and secrets in report card to what it was at checkpoint
