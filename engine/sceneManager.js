@@ -436,13 +436,17 @@ class SceneManager {
             }
 
             //mercy rule
-            if (this.player.hp <= (this.player.max_hp / 2)) {
-                //heal to half hp if died under 3 times
-                if (this.game.myReportCard.myDeathes <= 4) {
+            if (this.game.myReportCard.myDeathes <= PARAMS.DEATH_PITY) {
+                //heal to half
+                if (this.player.hp <= (this.player.max_hp / 2)) {
+                    //heal to half hp if died under 3 times
                     this.player.heal((this.player.max_hp / 2) - this.player.hp);
-                } else {
-                    //died a lot give them mercy and heal to full
+                }
+            } else { //player has died a lot give them some mercy
+                if(this.player.hp < this.player.max_hp) {
+                    //heal to full
                     this.player.heal(this.player.max_hp);
+                    this.player.myInventory.potions += (this.game.myReportCard.myDeathes) - PARAMS.DEATH_PITY;
                 }
             }
 

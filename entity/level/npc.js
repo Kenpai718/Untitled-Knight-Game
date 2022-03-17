@@ -118,6 +118,13 @@ class NPC extends AbstractEntity {
                         let deathMsg = [
                             "Hey you. You're finally awake.",
                         ]
+                        if(self.game.myReportCard.myDeathes > PARAMS.DEATH_PITY) {
+                            deathMsg = [
+                                "Hey, you don't look too hot buddy.",
+                                "Here's a health potion.",
+                                "It's on the house ;)"
+                            ];
+                        }
                         self.myTextBox.updateMessage(deathMsg, 0);
                     }
 
