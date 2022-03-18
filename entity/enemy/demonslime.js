@@ -355,7 +355,7 @@ class DemonSlime extends AbstractBoss {
                 else this.HB = null;
 
                 //fire breath can switch directions mid attack (before the bottom hitbox comes out)
-                if (this.attackFrame <= 9) this.checkDirection(this.game.camera.player);
+                if (this.attackFrame <= 8) this.checkDirection(this.game.camera.player);
             } else if (this.state == this.states.demonRebirth) {
                 if (this.attackFrame >= 9 && this.attackFrame <= 20) this.updateHB();
                 else this.HB = null;
