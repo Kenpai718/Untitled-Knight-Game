@@ -124,9 +124,9 @@ class FlyingEyeProjectile extends AbstractEntity {
 
         this.game.projectiles.forEach(function (entity) {
             if (entity instanceof Arrow || entity instanceof BladeBeam) {
+                let hit = entity.BB && entity.BB.collide(self.BB);
                 if (self.canDestroy) {
                     //allow arrow to destroy it
-                    let hit = entity.BB && entity.BB.collide(self.BB);
                     if (hit) {
                         //console.log("destroyed projectile");
                         if (self.state == self.states.move) {
@@ -136,7 +136,10 @@ class FlyingEyeProjectile extends AbstractEntity {
                             self.width *= 2;
                             self.height *= 2;
                         }
-
+                    }
+                } else { //it is too powerful so it destroys the arrow
+                    if (hit && entity instanceof Arrow) {
+                        entity.removeFromWorld = true;
                     }
                 }
             }
@@ -157,17 +160,18 @@ class FlyingEyeProjectile extends AbstractEntity {
 }
 
 class SlimeProjectile extends FlyingEyeProjectile {
-    constructor(game, x, y, dir, newScale, newDmg) {
+    constructor(game, x, y, dir, newScale, newDmg, canDestroy) {
         super(game, x, y, dir, newScale);
 
         this.scale = this.scale * newScale;
         this.width = this.width * newScale;
         this.height = this.height * newScale;
         this.damage = newDmg;
+        this.canDestroy = canDestroy;
     }
 
     draw(ctx) {
-        ctx.filter = "saturate(1000%) hue-rotate(-20deg)"; //turn it red
+        ctx.filter = (this.canDestroy) ? "saturate(1000%) hue-rotate(-20deg)" : "saturate(1000%) hue-rotate(-130deg)"; //turn it red (destroyable) opr blue (undestroyable)
         super.draw(ctx);
         ctx.filter = "none";
     }

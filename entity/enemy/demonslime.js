@@ -23,6 +23,7 @@ class DemonSlime extends AbstractBoss {
         this.stopBugFromHappening = false;
 
         this.hue = 0; //changed during legendary phase
+        //this.legendary_hue = -160; //super saiyan blue
         this.legendary_hue = -160; //super saiyan blue
         this.legendaryMultiplier = 1.5; //bonus damage
 
@@ -48,8 +49,9 @@ class DemonSlime extends AbstractBoss {
         let x = randomInt(5) + 1; //spawn up to 5 slimes
         let spawnx = this.direction == this.directions.right ? this.AR2.right : this.AR2.left;
         let spawny = this.BB.top - (this.BB.top / 1.5);
+        let xOffset = this.direction == this.directions.right ? 50 : -50; //vary the spawns
         for (var i = 0; i < x; i++) {
-            let enemy = new Slime(this.game, spawnx, spawny, false);
+            let enemy = new Slime(this.game, spawnx + (i * xOffset), spawny, false);
             enemy.aggro = true;
             enemies.push(enemy);
         }
@@ -255,28 +257,32 @@ class DemonSlime extends AbstractBoss {
         * change the hue over time note; -180 = blue and -22 = hot red
         */
         if (this.phase == this.phases.legendary) {
-            //transition hue to the blue phase
-            if (this.hue > this.legendary_hue && !this.dead) {
-                ASSET_MANAGER.playAudioOnce(SFX.ROAR);
-                this.hue--;
-                //regenerate hp to half while transforming
-                if (this.hp < (this.max_hp / 2)) this.regen();
-            }
-
-            //once in blue phase show the healing score
-            if (this.hue == this.legendary_hue && !this.legendary_healed) {
-                if (this.hp < (this.max_hp / 2)) this.hp = Math.round((this.max_hp / 2));
-                this.legendary_healed = true;
-                ASSET_MANAGER.playAsset(SFX.HEAL);
-                this.game.addEntityToFront(new Score(this.game, this, (this.max_hp / 2) - this.legend_hp_start, PARAMS.HEAL_ID, false));
-            }
-
-            //dead revert to previous hue over time
-            if (this.hue < 0 && this.dead) {
-                if (this.hue < 0) this.hue++;
-            }
+            this.doTransform();
         }
     };
+
+    doTransform() {
+        //transition hue to the blue phase
+        if (this.hue > this.legendary_hue && !this.dead) {
+            ASSET_MANAGER.playAudioOnce(SFX.ROAR);
+            this.hue--;
+            //regenerate hp to half while transforming
+            if (this.hp < (this.max_hp / 2)) this.regen();
+        }
+
+        //once in blue phase show the healing score
+        if (this.hue == this.legendary_hue && !this.legendary_healed) {
+            if (this.hp < (this.max_hp / 2)) this.hp = Math.round((this.max_hp / 2));
+            this.legendary_healed = true;
+            ASSET_MANAGER.playAsset(SFX.HEAL);
+            this.game.addEntityToFront(new Score(this.game, this, (this.max_hp / 2) - this.legend_hp_start, PARAMS.HEAL_ID, false));
+        }
+
+        //dead revert to previous hue over time
+        if (this.hue < 0 && this.dead) {
+            if (this.hue < 0) this.hue++;
+        }
+    }
 
     draw(ctx) {
         if (this.dead) {
@@ -349,7 +355,7 @@ class DemonSlime extends AbstractBoss {
                 else this.HB = null;
 
                 //fire breath can switch directions mid attack (before the bottom hitbox comes out)
-                if (this.attackFrame <= 10) this.checkDirection(this.game.camera.player);
+                if (this.attackFrame <= 9) this.checkDirection(this.game.camera.player);
             } else if (this.state == this.states.demonRebirth) {
                 if (this.attackFrame >= 9 && this.attackFrame <= 20) this.updateHB();
                 else this.HB = null;
@@ -460,7 +466,7 @@ class DemonSlime extends AbstractBoss {
                             if (self.canAttack == true) self.resetAnimationTimers(self.states.demonRebirth);
                             self.canAttack = false;
                             self.runAway = true;
-                            self.state = self.currentAttack ? self.currentAttack : self.states.demonSlash;
+                            self.state = self.currentAttack ? self.currentAttack : randomInt(2) == 0 ? self.states.demonSlash : self.states.demonBreath;
                             self.currentAttack = self.state;
                         }
                     } else if (self.phase == self.phases.legendary) {
@@ -471,7 +477,7 @@ class DemonSlime extends AbstractBoss {
                                 if (self.canAttack == true) self.resetAnimationTimers(self.states.demonRebirth);
                                 self.canAttack = false;
                                 self.runAway = true;
-                                self.state = self.currentAttack ? self.currentAttack : randomInt(11) <= 6 ? self.states.demonJump : self.states.demonShoot;
+                                self.state = self.currentAttack ? self.currentAttack : randomInt((11) <= 6) ? self.states.demonJump : self.states.demonShoot;
                                 self.currentAttack = self.state;
                             }
                         } else if (self.AR1.collide(entity.BB) && self.legendaryAttackRange == 1) {
@@ -549,8 +555,13 @@ class DemonSlime extends AbstractBoss {
             ASSET_MANAGER.playAsset(SFX.FIREBALL_RELEASE);
             this.projectileTick = 0;
             this.projectileSpawnTime = 0.5 + randomInt(2); //randomize the shooting interval from 0.5 to 1.5
-            if (this.direction == this.directions.right) this.game.addEntity(new SlimeProjectile(this.game, this.BB.left + (this.width), this.BB.top - 10, this.direction, this.projectileScale, STATS.DEMON_SLIME.PROJECTILE));
-            else this.game.addEntity(new SlimeProjectile(this.game, this.BB.left - (this.width), this.BB.top - 10, this.direction, this.projectileScale, STATS.DEMON_SLIME.PROJECTILE));
+            let isDestroyable = true;
+            if(this.phase == this.phases.legendary) {
+                isDestroyable = randomInt(11) <= 7; // 7 out of 10 chance it is destroyable in legendary phase
+            }
+            
+            if (this.direction == this.directions.right) this.game.addEntity(new SlimeProjectile(this.game, this.BB.left + (this.width), this.BB.top - 10, this.direction, this.projectileScale, STATS.DEMON_SLIME.PROJECTILE, isDestroyable));
+            else this.game.addEntity(new SlimeProjectile(this.game, this.BB.left - (this.width), this.BB.top - 10, this.direction, this.projectileScale, STATS.DEMON_SLIME.PROJECTILE, isDestroyable));
         }
     }
 
@@ -795,9 +806,9 @@ class Slime extends DemonSlime {
             this.projectileTick = 0;
             this.projectileSpawnTime = 2 + randomInt(4); //randomize the shooting interval from 2 to 5s
             if (this.direction == this.directions.right)
-                this.game.addEntity(new SlimeProjectile(this.game, this.BB.left + (this.width), this.BB.top - 10, this.direction, this.projectileScale, STATS.SLIME.PROJECTILE));
+                this.game.addEntity(new SlimeProjectile(this.game, this.BB.left + (this.width), this.BB.top - 10, this.direction, this.projectileScale, STATS.SLIME.PROJECTILE, true));
             else
-                this.game.addEntity(new SlimeProjectile(this.game, this.BB.left - (this.width), this.BB.top - 10, this.direction, this.projectileScale, STATS.SLIME.PROJECTILE));
+                this.game.addEntity(new SlimeProjectile(this.game, this.BB.left - (this.width), this.BB.top - 10, this.direction, this.projectileScale, STATS.SLIME.PROJECTILE, true));
         }
     }
 
