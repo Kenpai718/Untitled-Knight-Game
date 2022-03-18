@@ -111,8 +111,11 @@ class Inventory {
                 // Commented out code that has health display right aside the heart bar
                 //ctx.fillText("(" + entity.hp + "/" + (100 + (10 * entity.myInventory.healthUpgrade )) + ")", 525 + PARAMS.HEART_DIM * PARAMS.GUI_SCALE * entity.myInventory.healthUpgrade, 40);
 
+                let health = entity.hp
+                if(health < 0) health = 0;
+
                 self.health[Math.floor(self.timer / .35) % 5].drawFrame(self.game.clockTick, ctx, 8 + 5, 350, 1.65);
-                ctx.fillText("(" + entity.hp + "/" + (100 + (10 * self.healthUpgrade )) + ")", 8 + 50, 350 + 22);
+                ctx.fillText("(" + health + "/" + (100 + (10 * self.healthUpgrade )) + ")", 8 + 50, 350 + 22);
             }
         });
         
