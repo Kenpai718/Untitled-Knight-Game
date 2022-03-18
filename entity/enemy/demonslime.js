@@ -559,7 +559,7 @@ class DemonSlime extends AbstractBoss {
             if(this.phase == this.phases.legendary) {
                 isDestroyable = randomInt(11) <= 7; // 7 out of 10 chance it is destroyable in legendary phase
             }
-            
+
             if (this.direction == this.directions.right) this.game.addEntity(new SlimeProjectile(this.game, this.BB.left + (this.width), this.BB.top - 10, this.direction, this.projectileScale, STATS.DEMON_SLIME.PROJECTILE, isDestroyable));
             else this.game.addEntity(new SlimeProjectile(this.game, this.BB.left - (this.width), this.BB.top - 10, this.direction, this.projectileScale, STATS.DEMON_SLIME.PROJECTILE, isDestroyable));
         }
@@ -618,6 +618,11 @@ class DemonSlime extends AbstractBoss {
             }
             // handles behavior after rebirth run away
             if (this.checkAnimationDone(this.states.demonRebirth)) {
+                if (!this.stopBugFromHappening2) {
+                    this.stopBugFromHappening2 = true;
+                    this.vulnerable = true;
+                    this.canBeHit = true;
+                }
                 this.state = this.states.demonIdle;
                 this.direction = this.direction == this.directions.right ? this.directions.left : this.directions.right;
                 this.velocity.x = 0;
@@ -634,6 +639,7 @@ class DemonSlime extends AbstractBoss {
                 this.vulnerable = true;
                 this.canBeHit = true;
                 this.stopBugFromHappening = false;
+                this.stopBugFromHappening2 = false;
                 this.legendaryAttackRange = null;
                 if (this.event) {
                     this.event = null;

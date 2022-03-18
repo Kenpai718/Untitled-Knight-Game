@@ -1924,7 +1924,7 @@ var level1_5 = {
     moveable: [
         { x: 58, y: 4, width: 4, height: 1, directionList: [2], distanceList: [10], velocity: 2 },
         { x: 73, y: 49, width: 2, height: 1, directionList: [2], distanceList: [5], velocity: 1 },
-        { x: 82, y: 3, width: 4, height: 1, directionList: [2], distanceList: [18], velocity: 1.2 }, //elevator of death
+        { x: 82, y: 3, width: 4, height: 1, directionList: [2], distanceList: [18], velocity: 1.4 }, //elevator of death
     ],
 
     chests: [
@@ -2027,10 +2027,16 @@ var level1_5 = {
                 // "YES, At last! The Aether is fina.. err.. I mean dinner time.. ",
                 // "I must leave soon.. lucifer has sent his biddings..",
                 // "~ Give the goblins afar my falling regards ~",
-                "Doesn’t matter what you did,",
-                "or what you were.",
-                "If you go out there, you fight,",
-                "and you fight to kill."
+                // "Doesn’t matter what you did,",
+                // "or what you were.",
+                // "If you go out there, you fight,",
+                // "and you fight to kill."
+                "You know,",
+                "I have come to realize that",
+                "elevator jokes aren't always that funny.",
+                "After all they always have their,",
+                "ups and downs.",
+                "~hehehe"
             ]
         },
     ],
@@ -2065,11 +2071,11 @@ var level1_5 = {
         //evil torches that spawn events
         { x: 81, y: 6 },
         { x: 86, y: 6 },
-        { x: 81, y: 10 },
-        { x: 86, y: 10 },
-        { x: 81, y: 14 }, //wave two
-        { x: 86, y: 14 },
-        { x: 81, y: 18 }, //wave two
+        { x: 81, y: 10 }, //wave one
+        { x: 86, y: 10 }, 
+        { x: 81, y: 14 }, 
+        { x: 86, y: 14 }, //wave two
+        { x: 81, y: 18 }, 
         { x: 86, y: 18 },
         { x: 81, y: 22 }, //wave three
         { x: 86, y: 22 },
@@ -2184,23 +2190,19 @@ var level1_5 = {
         //wave 1
         {
             space: [
-                { x: 81, y: 14, width: 6, height: 1 }, //wave one
+                { x: 81, y: 10, width: 6, height: 1 }, //wave one
             ],
             bricks:
                 [
                     //block path
                     { x: 81, y: 24, width: 7, height: 2, type: 2 },
-                    { x: 81, y: 6, width: 7, height: 1, type: 2 },
+                    //{ x: 81, y: 6, width: 7, height: 1, type: 2 },
                 ],
 
             //fall from the skies
             goblins: [
-                { x: 85, y: 20, guard: true },
-                { x: 82, y: 20, guard: true },
-            ],
-            skeletons: [
-                { x: 82, y: 20, guard: true },
-                //{ x: 83, y: 22, guard: true }
+                { x: 85, y: 15, guard: true },
+                { x: 82, y: 15, guard: true },
             ],
 
         },
@@ -2208,35 +2210,34 @@ var level1_5 = {
         //wave 2
         {
             space: [
-                { x: 81, y: 18, width: 6, height: 1 }, //wave one
+                { x: 81, y: 14, width: 6, height: 1 }, //wave one
             ],
             bricks:
                 [
                     { x: 81, y: 24, width: 7, height: 1, type: 2 },
-                    { x: 81, y: 6, width: 7, height: 1, type: 2 },
+                    //{ x: 81, y: 6, width: 7, height: 1, type: 2 },
 
                 ],
 
             //fall from the skies
             slimes: [
-                { x: 82, y: 20, guard: true },
-                { x: 83, y: 20, guard: true },
+                { x: 83, y: 18, guard: true },
             ],
-            goblins: [
-                { x: 84, y: 21, guard: true },
-                //{ x: 85, y: 22, guard: true },
+            skeletons: [
+                { x: 82, y: 20, guard: true },
+                { x: 84, y: 20, guard: true },
             ],
 
         },
         // wave 3
         {
             space: [
-                { x: 81, y: 21, width: 6, height: 1 }, //wave one
+                { x: 81, y: 22, width: 6, height: 1 }, //wave one
             ],
             bricks:
                 [
                     { x: 81, y: 24, width: 7, height: 1, type: 2 },
-                    { x: 81, y: 6, width: 7, height: 1, type: 2 },
+                    //{ x: 81, y: 6, width: 7, height: 1, type: 2 },
                 ],
 
             //fall from the skies
