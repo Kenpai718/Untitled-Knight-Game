@@ -51,6 +51,8 @@ const PARAMS = {
 
     POTION_HEAL: 50,
     DEATH_PITY: 3, //give the player some pity after dying more than this many times
+
+    VERSION_NUM: 1.3
 };
 
 /**Physics of the player
