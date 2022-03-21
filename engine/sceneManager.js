@@ -14,6 +14,11 @@ class SceneManager {
         this.myMusic = this.defaultMusic;
 
         this.game_over = ASSET_MANAGER.getAsset("./sprites/GUI/game_over.png");
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/environment/dark_castle_tileset.png");
+        this.attack_sheet = ASSET_MANAGER.getAsset("./sprites/GUI/attack.png");
+        this.arrow_sheet = ASSET_MANAGER.getAsset("./sprites/projectile/arrows.png");
+        this.armor_sheet = ASSET_MANAGER.getAsset("./sprites/GUI/armor.png");
+        this.heart_sheet = ASSET_MANAGER.getAsset("./sprites/GUI/Hearts.png");
 
         this.myCursor = new Cursor(this.game);
 
@@ -41,7 +46,16 @@ class SceneManager {
         this.loadTitle();
         this.loadPaused();
 
+        // animations
+        this.diamond = [];
+        this.attack = [];
+        this.arrow = [];
+        this.armor = [];
+        this.health = [];
+        this.loadAnimations();
+
         this.newGame = false;
+        this.timer = 0;
     };
 
     loadTitle() {
@@ -111,7 +125,7 @@ class SceneManager {
         this.nextLevelBB = new BoundingBox(x, y, 40 * 10, -40);
         x = (this.game.surfaceWidth / 2) - ((40 * 13) / 2);
         y = (this.game.surfaceHeight / 2) + 40;
-        this.restartLevelBB = new BoundingBox(x, y, 40 * 13, -40);
+        this.restartLevelBB = new BoundingBox(x + 20, y, 40 * 13, -40);
         x = (this.game.surfaceWidth / 2) - ((40 * 14) / 2);
         y = (this.game.surfaceHeight / 2) + 40 * 3;
         this.returnToMenuBB = new BoundingBox(x, y, 40 * 14, -40);
@@ -696,6 +710,8 @@ class SceneManager {
      */
     update() {
 
+        this.timer += this.game.clockTick;
+
         this.updateSettings();
         //update game camera in terms of ints
         if (!this.title && !this.transition && !PAUSED) {
@@ -1239,15 +1255,39 @@ class SceneManager {
             ctx.font = fontSize + 'px "Press Start 2P"';
             ctx.fillStyle = "Orchid";
             let resultMsg = "You Saved The Castle!";
-            ctx.fillText(resultMsg, (this.game.surfaceWidth / 2) - ((fontSize * resultMsg.length) / 2) + 5, fontSize * 3 + 5);
+            ctx.fillText(resultMsg, (this.game.surfaceWidth / 2) - ((fontSize * resultMsg.length) / 2) + 10, fontSize * 3 + 5);
             ctx.fillStyle = "White";
-            ctx.fillText(resultMsg, (this.game.surfaceWidth / 2) - ((fontSize * resultMsg.length) / 2), fontSize * 3);
+            ctx.fillText(resultMsg, (this.game.surfaceWidth / 2) - ((fontSize * resultMsg.length) / 2) + 5, fontSize * 3);
             ctx.font = '40px "Press Start 2P"';
             ctx.fillStyle = "Orchid";
             resultMsg = "Thanks for playing!";
-            ctx.fillText(resultMsg, (this.game.surfaceWidth / 2) - ((fontSize * resultMsg.length) / 3) + 5, fontSize * 4 + 5);
+            ctx.fillText(resultMsg, (this.game.surfaceWidth / 2) - ((fontSize * resultMsg.length) / 3) + 7, fontSize * 4 + 5);
             ctx.fillStyle = "White";
-            ctx.fillText(resultMsg, (this.game.surfaceWidth / 2) - ((fontSize * resultMsg.length) / 3), fontSize * 4);
+            ctx.fillText(resultMsg, (this.game.surfaceWidth / 2) - ((fontSize * resultMsg.length) / 3) + 2, fontSize * 4);
+
+            // Inventory GUI
+
+            let DeltaX = -280;
+            let DeltaY = 60;
+            ctx.font = ctx.font.replace(/\d+px/, "14px");
+            this.attack[Math.floor(this.timer / .35) % 5].drawFrame(this.game.clockTick, ctx, this.game.surfaceWidth / 2 + DeltaX, 200 + DeltaY, 1);
+            ctx.fillText("(" + (this.inventory.attackUpgrade+1) + "/" + (this.inventory.maxUpgrade + 1) + ")", this.game.surfaceWidth / 2 + 50 + DeltaX, 200 + 35 + DeltaY);
+    
+            this.arrow[this.inventory.arrowUpgrade].drawFrame(this.game.clockTick, ctx, this.game.surfaceWidth / 2 + 2 + DeltaX + 130, 200 + DeltaY + 5, 1.2);
+            ctx.fillText("(" + (this.inventory.arrowUpgrade+1) + "/" + (this.inventory.maxUpgrade + 1) + ")", this.game.surfaceWidth / 2 + 50 + DeltaX + 130, 200 + 30 + DeltaY + 5);
+    
+            this.armor[this.inventory.armorUpgrade].drawFrame(this.game.clockTick, ctx, this.game.surfaceWidth / 2 + DeltaX + 260, 200 + DeltaY + 11, .6);
+            ctx.fillText("(" + (this.inventory.armorUpgrade+1) + "/" + 4 + ")", this.game.surfaceWidth / 2 + 50 + DeltaX + 260, 200 + 24 + DeltaY + 11);
+    
+            this.health[Math.floor(this.timer / .35) % 5].drawFrame(this.game.clockTick, ctx, this.game.surfaceWidth / 2 + 5 + DeltaX + 390, 200 + DeltaY + 11 +2, 1.65);
+            ctx.fillText("(" + (this.player.hp) + "/" + (100 + (10 * this.inventory.healthUpgrade )) + ")", this.game.surfaceWidth / 2 + 50 + DeltaX + 390, 200 + 24 + DeltaY + 11);
+            
+            ctx.fillText("( Version: " + PARAMS.VERSION_NUM + " )", 5 , this.game.surfaceHeight - 10);
+            
+            ctx.font = ctx.font.replace(/\d+px/, "40px");
+            
+
+
 
             //buildTextButton(ctx, "Next Level", this.nextLevelBB, false, "gray"); //set this once there is another level
             buildTextButton(ctx, "Restart Game", this.restartLevelBB, this.textColor == 2 && this.bufferTimer > this.maxBufferTime, "DeepSkyBlue");
@@ -1468,7 +1508,7 @@ class SceneManager {
         if (dict.moveable) {
             for (var i = 0; i < dict.moveable.length; i++) {
                 let moveable = dict.moveable[i];
-                array.push(new MoveableBlocks(this.game, moveable.x, h - moveable.y - 1, moveable.width, moveable.height, moveable.directionList, moveable.distanceList, moveable.velocity,));
+                array.push(new MoveableBlocks(this.game, moveable.x, h - moveable.y - 1, moveable.width, moveable.height, moveable.directionList, moveable.distanceList, moveable.velocity, moveable.onTouch));
             }
         }
         if (dict.bricks) {
@@ -1759,6 +1799,41 @@ class SceneManager {
         this.minimap = new Minimap(this.game, x - 100, 40, this.level);
 
     }
+
+    loadAnimations(){
+
+        this.diamond[0] = new Animator(this.spritesheet, 19, 84, 10, 8, 1, 0, 0, false, false, false);
+        this.diamond[1] = new Animator(this.spritesheet, 35, 84, 10, 8, 1, 0, 0, false, false, false);
+        this.diamond[2] = new Animator(this.spritesheet, 51, 84, 10, 8, 1, 0, 0, false, false, false);
+        this.diamond[3] = new Animator(this.spritesheet, 67, 84, 10, 8, 1, 0, 0, false, false, false);
+        this.diamond[4] = new Animator(this.spritesheet, 83, 84, 10, 8, 1, 0, 0, false, false, false);
+        this.diamond[5] = new Animator(this.spritesheet, 99, 84, 10, 8, 1, 0, 0, false, false, false);
+
+        this.attack[0] = new Animator(this.attack_sheet, 0, 0, 45, 45, 1, 0, 0, false, false, false);
+        this.attack[1] = new Animator(this.attack_sheet, 45, 0, 45, 45, 1, 0, 0, false, false, false);
+        this.attack[2] = new Animator(this.attack_sheet, 90, 0, 45, 45, 1, 0, 0, false, false, false);
+        this.attack[3] = new Animator(this.attack_sheet, 135, 0, 45, 45, 1, 0, 0, false, false, false);
+        this.attack[4] = new Animator(this.attack_sheet, 180, 0, 45, 45, 1, 0, 0, false, false, false);
+
+        this.arrow[0] = new Animator(this.arrow_sheet, 38, -4, 36, 30, 1, 0, 0, false, false, false);
+        this.arrow[2] = new Animator(this.arrow_sheet, 36, 34, 36, 30, 1, 0, 0, false, false, false);
+        this.arrow[3] = new Animator(this.arrow_sheet, 38, 73, 36, 30, 1, 0, 0, false, false, false);
+        this.arrow[4] = new Animator(this.arrow_sheet, 34, 115, 36, 30, 1, 0, 0, false, false, false);
+        this.arrow[1] = new Animator(this.arrow_sheet, 36, 153, 36, 30, 1, 0, 0, false, false, false);
+
+        this.armor[0] = new Animator(this.armor_sheet, 60, 0,    64, 64, 1, 0, 0, false, false, false);
+        this.armor[1] = new Animator(this.armor_sheet, 60, 64,   64, 64, 1, 0, 0, false, false, false);
+        this.armor[2] = new Animator(this.armor_sheet, 60, 128,  64, 64, 1, 0, 0, false, false, false);
+        this.armor[3] = new Animator(this.armor_sheet, 60, 192,  64, 64, 1, 0, 0, false, false, false);
+
+        this.health[0] = new Animator(this.heart_sheet, PARAMS.HEART_DIM * 4, 0, PARAMS.HEART_DIM, PARAMS.HEART_DIM, 1, 1, 0, false, false, false);
+        this.health[1] = new Animator(this.heart_sheet, PARAMS.HEART_DIM * 3, 0, PARAMS.HEART_DIM, PARAMS.HEART_DIM, 1, 1, 0, false, false, false);
+        this.health[2] = new Animator(this.heart_sheet, PARAMS.HEART_DIM * 2, 0, PARAMS.HEART_DIM, PARAMS.HEART_DIM, 1, 1, 0, false, false, false);
+        this.health[3] = new Animator(this.heart_sheet, PARAMS.HEART_DIM, 0, PARAMS.HEART_DIM, PARAMS.HEART_DIM, 1, 1, 0, false, false, false);
+        this.health[4] = new Animator(this.heart_sheet, 0, 0, PARAMS.HEART_DIM, PARAMS.HEART_DIM, 1, 1, 0, false, false, false);
+
+    };
+
 };
 
 /**
@@ -2079,6 +2154,7 @@ class Minimap {
         });
 
     }
+
 
     /**
      * Build a minimap
