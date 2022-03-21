@@ -452,9 +452,10 @@ class Platform extends AbstractBarrier {
 
 class MoveableBlocks extends Platform {
 
-    constructor(game, x, y, w, h, directionList = [1], distanceList = [5], velocity = 0.1){
+    constructor(game, x, y, w, h, directionList = [1], distanceList = [5], velocity = 0.1, onTouch = false){
     super(game, x, y, w, h);
-    this.directionList = directionList;
+
+    this.directionList = this.translateList(directionList);
     this.distanceList = distanceList;
     this.velocity = velocity;
 
@@ -464,6 +465,12 @@ class MoveableBlocks extends Platform {
     this.targetY = this.y;
     this.index = 0;
 
+    // Lets platform move collision with player is detected 
+    this.onTouch = onTouch;
+    this.movePlatform = false;
+
+    if(!this.onTouch) this.movePlatform = true; 
+
     this.reverseLists = false;
 
     this.setTarget();
@@ -471,109 +478,104 @@ class MoveableBlocks extends Platform {
 
     update(){
 
+        if(this.onTouch && !this.movePlatform) this.detectPlayer();
+
         const TICK = this.game.clockTick;
 
-        if(!this.reverseLists){     // moves in forward order
-            if(this.directionList[this.index] == this.directions.right) {
-                if(this.targetX > this.x) {
-                    this.x += this.velocity * TICK;
-                    /*
-                    let self = this;
-                    this.game.entities.forEach(function (entity) {
-                        if (entity instanceof AbstractPlayer) { // touchFloor()
-                            if (entity.BB && self.BB.collide(entity.BB) ) {
-                                entity.velocity.x -= self.velocity;
-                                console.log("true!");
-                            }
-                        }
-                    });
-                    */
-                    
-                }
-                else {
-                    this.index += 1;
-                    this.setTarget();
-                }
-            }
-            else if(this.directionList[this.index] == this.directions.left) {
-                if(this.targetX < this.x) {
-                    this.x -= this.velocity * TICK;
-                }
+        if(this.movePlatform) {
+
+            if(!this.reverseLists){     // moves in forward order
+                if(this.directionList[this.index] == this.directions.right) {
+                    if(this.targetX > this.x) {
+                        this.x += this.velocity * TICK;
+                    }
                     else {
                         this.index += 1;
                         this.setTarget();
                     }
-            }
-            else if(this.directionList[this.index] == this.directions.up) {
-                if(this.targetY < this.y) {
-                    this.y -= this.velocity * TICK;
                 }
-                else {
-                    this.index += 1;
-                    this.setTarget();
+                else if(this.directionList[this.index] == this.directions.left) {
+                    if(this.targetX < this.x) {
+                        this.x -= this.velocity * TICK;
+                    }
+                        else {
+                            this.index += 1;
+                            this.setTarget();
+                        }
                 }
-            }
-            else if(this.directionList[this.index] == this.directions.down) {
-                if(this.targetY > this.y) {
-                    this.y += this.velocity * TICK;
+                else if(this.directionList[this.index] == this.directions.up) {
+                    if(this.targetY < this.y) {
+                        this.y -= this.velocity * TICK;
+                    }
+                    else {
+                        this.index += 1;
+                        this.setTarget();
+                    }
                 }
-                else {
-                    this.index += 1;
-                    this.setTarget();
-                }
-            }
-        }
-        else if(this.reverseLists){ // moves in reverse order
-            if(this.directionList[this.index] == this.directions.left) {
-                if(this.targetX > this.x) {
-                    this.x += this.velocity * TICK;
-                }
-                else {
-                    this.index -= 1;
-                    this.setRevTarget();
-                }
-            }
-            else if(this.directionList[this.index] == this.directions.right) {
-                if(this.targetX < this.x) {
-                    this.x -= this.velocity * TICK;
-                }
-                else {
-                    this.index -= 1;
-                    this.setRevTarget();
+                else if(this.directionList[this.index] == this.directions.down) {
+                    if(this.targetY > this.y) {
+                        this.y += this.velocity * TICK;
+                    }
+                    else {
+                        this.index += 1;
+                        this.setTarget();
+                    }
                 }
             }
-            else if(this.directionList[this.index] == this.directions.down) {
-                if(this.targetY < this.y) {
-                    this.y -= this.velocity * TICK;
+            else if(this.reverseLists){ // moves in reverse order
+                if(this.directionList[this.index] == this.directions.left) {
+                    if(this.targetX > this.x) {
+                        this.x += this.velocity * TICK;
+                    }
+                    else {
+                        this.index -= 1;
+                        this.setRevTarget();
+                    }
                 }
-                else {
-                    this.index -= 1;
-                    this.setRevTarget();
+                else if(this.directionList[this.index] == this.directions.right) {
+                    if(this.targetX < this.x) {
+                        this.x -= this.velocity * TICK;
+                    }
+                    else {
+                        this.index -= 1;
+                        this.setRevTarget();
+                    }
+                }
+                else if(this.directionList[this.index] == this.directions.down) {
+                    if(this.targetY < this.y) {
+                        this.y -= this.velocity * TICK;
+                    }
+                    else {
+                        this.index -= 1;
+                        this.setRevTarget();
+                    }
+                }
+                else if(this.directionList[this.index] == this.directions.up) {
+                    if(this.targetY > this.y) {
+                        this.y += this.velocity * TICK;
+                    }
+                    else {
+                        this.index -= 1;
+                        this.setRevTarget();
+                    }
                 }
             }
-            else if(this.directionList[this.index] == this.directions.up) {
-                if(this.targetY > this.y) {
-                    this.y += this.velocity * TICK;
-                }
-                else {
-                    this.index -= 1;
-                    this.setRevTarget();
-                }
+
+            if(this.index > this.directionList.length -1){ // Detects when Platform as finish the array of inputs, then reverses flow
+                //console.log("Reversing");
+                this.index -= 1;
+                this.setRevTarget();
+                this.reverseLists = true;
             }
+            else if(this.index < 0) {
+                //console.log("Starting over");
+                this.index += 1;
+                this.setTarget();
+                this.reverseLists = false;
+            }
+
         }
 
-        if(this.index > this.directionList.length -1){ // Detects when Platform as finish the array of inputs, then reverses flow
-            //console.log("Reversing");
-            this.index -= 1;
-            this.setRevTarget();
-            this.reverseLists = true;
-        }
-        else if(this.index < 0) {
-            //console.log("Starting over");
-            this.index += 1;
-            this.setTarget();
-            this.reverseLists = false;
-        }
         this.direction = this.directionList[this.index];
         this.updateBB();
 
@@ -591,6 +593,34 @@ class MoveableBlocks extends Platform {
         else if(this.directionList[this.index] == this.directions.left) this.targetX = this.x + this.distanceList[this.index]; 
         else if(this.directionList[this.index] == this.directions.up) this.targetY = this.y + this.distanceList[this.index];
         else if(this.directionList[this.index] == this.directions.down) this.targetY = this.y - this.distanceList[this.index];
+    }
+
+    detectPlayer(){
+
+        let self = this;
+        this.game.entities.forEach(function (entity) {
+            if (entity instanceof AbstractPlayer && entity.BB && self.BB.collide(entity.BB)) {
+                self.movePlatform = !self.movePlatform;
+            }
+        });
+
+    }
+
+    translateList(List){
+
+        for(let i = 0; i < List.length; i++){
+
+            console.log(">>"+List[i]);
+
+            if(isNaN(List[i])){
+                if(List[i].toLowerCase() == "left") List[i] = 0;
+                else if(List[i].toLowerCase() == "right") List[i] = 1;
+                else if(List[i].toLowerCase() == "up") List[i] = 2;
+                else if(List[i].toLowerCase() == "down") List[i] = 3;
+            }
+        }
+    
+        return List;
     }
 
 };

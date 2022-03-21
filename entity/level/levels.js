@@ -187,7 +187,7 @@ var testLevel = {
         { x: 4.5, y: 1, brickX: 7, brickY: 12, brickWidth: 1, brickHeight: 3, initial: false, repeat: true }
     ],
     moveable: [
-        { x: 1, y: 10, width: 3, height: 1, directionList: [3, 1], distanceList: [6, 2], velocity: 1 },
+        { x: 1, y: 10, width: 3, height: 1, directionList: ["down", "right"], distanceList: [7, 2], velocity: 1, onTouch: true},
     ],
 
     shrooms: [
@@ -802,6 +802,7 @@ var level1_2 = {
     ],
 
     bricks: [
+        { x: -1, y: 3, width: 1, height: 3 },
         { x: 45, y: 0, width: 16, height: 1 },
         { x: 46, y: 5, width: 12, height: 4 }, //secret
         { x: 46, y: 1, width: 6, height: 1 }, //secret 2
@@ -1274,18 +1275,18 @@ var level1_3 = {
     moveable: [
 
         //{ x: 23, y: 4, width: 1, height: 1, directionList: [2], distanceList: [6], velocity: 1  },
-        { x: 16, y: 2, width: 2, height: 1, directionList: [1], distanceList: [10], velocity: 1 },
+        { x: 16, y: 2, width: 2, height: 1, directionList: ["right"], distanceList: [10], velocity: 1 },
 
         //middle parkour right
         //{ x: 29, y: 7, width: 2, height: 1, directionList: [1], distanceList: [7], velocity: 1  },
 
         //obelisk to treasure room
-        { x: 40, y: 7, width: 2, height: 1, directionList: [1, 3], distanceList: [9, 3], velocity: 1.5 },
-        { x: 47, y: 11, width: 2, height: 1, directionList: [1], distanceList: [7], velocity: 1 },
+        { x: 40, y: 7, width: 2, height: 1, directionList: ["right", "down"], distanceList: [9, 3], velocity: 1.5 },
+        { x: 47, y: 11, width: 2, height: 1, directionList: ["right"], distanceList: [7], velocity: 1 },
 
-        { x: 50, y: 33, width: 3, height: 1, directionList: [1], distanceList: [7], velocity: 1.5 }, //travel to the top right obelisk
+        { x: 50, y: 33, width: 3, height: 1, directionList: ["right"], distanceList: [7], velocity: 1.5 }, //travel to the top right obelisk
 
-        { x: 60, y: 8, width: 3, height: 1, directionList: [2], distanceList: [2], velocity: 0.5 }
+        { x: 60, y: 8, width: 3, height: 1, directionList: ["up"], distanceList: [2], velocity: 0.5 }
     ],
 
     walls: [
@@ -1713,6 +1714,7 @@ var level1_5 = {
     ],
 
     bricks: [
+        { x: -1, y: 59, width: 1, height: 60, type: 0 },
         // 1:1
         { x: 0, y: 4, width: 9, height: 5, type: 0 }, // Fill floor
         { x: 9, y: 0, width: 14, height: 1, type: 0 }, // spike floor
@@ -1896,10 +1898,11 @@ var level1_5 = {
 
         { x: 70, y: 49, brickX: 66, brickY: 51, brickWidth: 3, brickHeight: 3, initial: true, repeat: true },
         { x: 70, y: 49, brickX: 44, brickY: 48, brickWidth: 15, brickHeight: 2, initial: true, repeat: true },
-        { x: 34, y: 35, brickX: 20, brickY: 39, brickWidth: 2, brickHeight: 2, initial: false, repeat: true },
-        { x: 34, y: 35, brickX: 16, brickY: 43, brickWidth: 2, brickHeight: 2, initial: false, repeat: true },
-        { x: 34, y: 35, brickX: 21, brickY: 53, brickWidth: 2, brickHeight: 1, initial: false, repeat: true },
-        { x: 34, y: 35, brickX: 22, brickY: 54, brickWidth: 2, brickHeight: 1, initial: false, repeat: true },
+
+        { x: 34, y: 35, brickX: 20, brickY: 39, brickWidth: 2, brickHeight: 2, initial: false, repeat: false },
+        { x: 34, y: 35, brickX: 16, brickY: 43, brickWidth: 2, brickHeight: 2, initial: false, repeat: false },
+        { x: 34, y: 35, brickX: 21, brickY: 53, brickWidth: 2, brickHeight: 1, initial: false, repeat: false },
+        { x: 34, y: 35, brickX: 22, brickY: 54, brickWidth: 2, brickHeight: 1, initial: false, repeat: false },
     ],
 
     trap: [
@@ -1922,9 +1925,9 @@ var level1_5 = {
         //{ x: 58, y: 10, width: 4, height: 1 },
     ],
     moveable: [
-        { x: 58, y: 4, width: 4, height: 1, directionList: [2], distanceList: [10], velocity: 2 },
-        { x: 73, y: 49, width: 2, height: 1, directionList: [2], distanceList: [5], velocity: 1 },
-        { x: 82, y: 3, width: 4, height: 1, directionList: [2], distanceList: [18], velocity: 1.4 }, //elevator of death
+        { x: 58, y: 4, width: 4, height: 1, directionList: ["up"], distanceList: [10], velocity: 2},
+        { x: 73, y: 49, width: 2, height: 1, directionList: ["up"], distanceList: [5], velocity: 1 },
+        { x: 82, y: 3, width: 4, height: 1, directionList: ["up"], distanceList: [18], velocity: 1.4, onTouch: true}, //elevator of death
     ],
 
     chests: [
