@@ -13,6 +13,11 @@ const rgb = (r, g, b) => `rgba(${r}, ${g}, ${b})`;
 
 /** Global Parameters Objects */
 const PARAMS = {
+    //version for public releases
+    VERSION_NUM: 1.4,
+    UPDATE_DATE: "3/21/22",
+
+    //game-control
     DEBUG: false,      //for showing debug settings on canvas when ticked,
     CURSOR: true,
     AUTO_FOCUS: false,
@@ -49,10 +54,9 @@ const PARAMS = {
     MID_HP: .5,
     HIGH_HP: .8,
 
+    //MISC
     POTION_HEAL: 50,
     DEATH_PITY: 3, //give the player some pity after dying more than this many times
-
-    VERSION_NUM: 1.3
 };
 
 /**Physics of the player
