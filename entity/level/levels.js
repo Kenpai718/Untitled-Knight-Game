@@ -22,7 +22,14 @@
  */
 
 //version of up to date info. Make sure to update with each public push!
-const SIGN_VERSION = { x: 20, y: 3, title: "    VERSION " + PARAMS.VERSION_NUM, text: ["Last updated: 03/17/2022", "Removed Herobrine!"] }
+const SIGN_VERSION = { x: 20, y: 3, title: "    VERSION " + PARAMS.VERSION_NUM, text: ["Last updated:" + PARAMS.UPDATE_DATE, 
+                                                                                       "Patch Notes:",
+                                                                                       "-Better platforms/elevator",
+                                                                                       "-Small level adjustments",
+                                                                                       "-Upgrades added to results",
+                                                                                       "-Tapping opposite direction",
+                                                                                       " mid-atk will switch dir.",
+                                                                                       "-Removed Herobrine!"] }
 
 //spawn locations for using a door
 const DOOR_SPAWNS = {
@@ -32,7 +39,7 @@ const DOOR_SPAWNS = {
     enter_to_level2: { x: 1, y: 1, levelNum: 2 },
     enter_to_level3: { x: 1, y: 1, levelNum: 3 },
     enter_to_level4: { x: 3, y: 5, levelNum: 4 },
-    enter_to_level5: { x: 1, y: 6, levelNum: 5 }, 
+    enter_to_level5: { x: 1, y: 6, levelNum: 5 },
     //enter_to_level5: { x: 83, y: 4, levelNum: 5 },//to elevator of death
     enter_to_treasure: { x: 41, y: 26, levelNum: 6 },
     enter_to_final: { x: 4, y: 1, levelNum: 7 },
@@ -52,7 +59,7 @@ const DOOR_SPAWNS = {
 /**TEST LEVEL = Debugging/testing rom aka LEVEL 0 */
 var testLevel = {
     ID: 0,
-    label: "Testing Room",
+    label: "Developer Room",
     width: 48, height: 14,
     player: { x: 1, y: 1 },
     music: MUSIC.FODLAN_WINDS,
@@ -187,7 +194,7 @@ var testLevel = {
         { x: 4.5, y: 1, brickX: 7, brickY: 12, brickWidth: 1, brickHeight: 3, initial: false, repeat: true }
     ],
     moveable: [
-        { x: 1, y: 10, width: 3, height: 1, directionList: ["down", "right"], distanceList: [7, 2], velocity: 1, onTouch: true},
+        { x: 1, y: 10, width: 3, height: 1, directionList: ["down", "right"], distanceList: [7, 2], velocity: 1, onTouch: true },
     ],
 
     shrooms: [
@@ -1055,7 +1062,7 @@ var level1_3 = {
                 "-You can jump on these platforms and ride them to some destination.",
                 "-Be careful when getting onto them they can be a bit cheeky.",
                 "-Use [SPACE] to jump up after grabbing a ledge",
-                " or [W] to getup ontop."
+                " or [W] to getup ontop. Jumps are recommended here."
             ]
         },
 
@@ -1127,7 +1134,7 @@ var level1_3 = {
     shrooms: [
         { x: 107, y: 32, guard: false },
         //{ x: 36, y: 35, guard: false },
-        { x: 61, y: 9, guard: false }
+        { x: 61, y: 10, guard: false }
     ],
     goblins: [
         { x: 110, y: 32, guard: true },
@@ -1177,13 +1184,15 @@ var level1_3 = {
         { x: 18, y: 14 },
         { x: 23, y: 5 },
         { x: 34, y: 5 },
-        { x: 41, y: 10 },
+        { x: 39, y: 10 },
         { x: 53, y: 7 },
         { x: 68, y: 25 },
+        { x: 56, y: 17 },
         { x: 52.5, y: 27 }, //subtle hint to go left to find the treasure room                                                                                                        :c
         { x: 49, y: 30 },
-        { x: 49, y: 14 },
+        { x: 46, y: 14 },
         { x: 50, y: 35 },
+        { x: 61, y: 25 },
 
         { x: 116, y: 24 },
         { x: 119, y: 24 },
@@ -1257,6 +1266,14 @@ var level1_3 = {
         { x: 33, y: 18, width: 1, height: 1 },
         { x: 31, y: 23, width: 1, height: 1 },
         { x: 28, y: 27, width: 3, height: 1 },
+
+
+        //true middle parkour
+        { x: 46, y: 11, width: 1, height: 1 },
+        { x: 56, y: 15, width: 1, height: 1 },
+        { x: 56, y: 15, width: 1, height: 1 },
+        { x: 58, y: 7, width: 1, height: 1 },
+
         //obelisk to treasure room
 
         { x: 38, y: 6, width: 3, height: 1 },
@@ -1281,12 +1298,12 @@ var level1_3 = {
         //{ x: 29, y: 7, width: 2, height: 1, directionList: [1], distanceList: [7], velocity: 1  },
 
         //obelisk to treasure room
-        { x: 40, y: 7, width: 2, height: 1, directionList: ["right", "down"], distanceList: [9, 3], velocity: 1.5 },
+        { x: 41, y: 6, width: 2, height: 1, directionList: ["right", "down"], distanceList: [8, 2], velocity: 1.5 },
         { x: 47, y: 11, width: 2, height: 1, directionList: ["right"], distanceList: [7], velocity: 1 },
 
         { x: 50, y: 33, width: 3, height: 1, directionList: ["right"], distanceList: [7], velocity: 1.5 }, //travel to the top right obelisk
 
-        { x: 60, y: 8, width: 3, height: 1, directionList: ["up"], distanceList: [2], velocity: 0.5 }
+        { x: 60, y: 9, width: 3, height: 1, directionList: ["up"], distanceList: [5], velocity: 1 }
     ],
 
     walls: [
@@ -1433,7 +1450,7 @@ var level1_4 = {
         { x: 35, y: 37, width: 1, height: 7, type: 0 }, //top floor spikes left (TOP) 3
         { x: 26, y: 38, width: 1, height: 5, type: 0 }, //closing top wall right in top left
 
-        { x: 70, y: 45, width: 1, height: 7, type: 2 }, //right most obelisk wall
+        { x: 70, y: 43, width: 1, height: 5, type: 2 }, //right most obelisk wall
 
     ],
 
@@ -1583,7 +1600,7 @@ var level1_4 = {
         //top floor
         { x: 71, y: 25, width: 2, height: 2 },
         { x: 71, y: 32, width: 2, height: 2 },
-        { x: 71, y: 39, width: 2, height: 2 },
+        { x: 71, y: 40, width: 2, height: 2 },
 
         { x: 40, y: 38, width: 2, height: 3 },
 
@@ -1676,7 +1693,7 @@ var level1_5 = {
     width: 88, height: 80,
     player: { x: 1, y: 6 },
     music: MUSIC.VEILED_IN_BLACK,
-    background: {type: 1},
+    background: { type: 1 },
 
     backgroundWalls: [
         { x: 0, y: 20, width: 100, height: 21 },
@@ -1925,9 +1942,9 @@ var level1_5 = {
         //{ x: 58, y: 10, width: 4, height: 1 },
     ],
     moveable: [
-        { x: 58, y: 4, width: 4, height: 1, directionList: ["up"], distanceList: [10], velocity: 2},
+        { x: 58, y: 4, width: 4, height: 1, directionList: ["up"], distanceList: [10], velocity: 3 },
         { x: 73, y: 49, width: 2, height: 1, directionList: ["up"], distanceList: [5], velocity: 1 },
-        { x: 82, y: 3, width: 4, height: 1, directionList: ["up"], distanceList: [18], velocity: 1.4, onTouch: true}, //elevator of death
+        { x: 82, y: 3, width: 4, height: 1, directionList: ["up"], distanceList: [18], velocity: 1.4, onTouch: true }, //elevator of death
     ],
 
     chests: [
@@ -2075,10 +2092,10 @@ var level1_5 = {
         { x: 81, y: 6 },
         { x: 86, y: 6 },
         { x: 81, y: 10 }, //wave one
-        { x: 86, y: 10 }, 
-        { x: 81, y: 14 }, 
+        { x: 86, y: 10 },
+        { x: 81, y: 14 },
         { x: 86, y: 14 }, //wave two
-        { x: 81, y: 18 }, 
+        { x: 81, y: 18 },
         { x: 86, y: 18 },
         { x: 81, y: 22 }, //wave three
         { x: 86, y: 22 },
@@ -2172,8 +2189,10 @@ var level1_5 = {
     ],
 
     signs: [
-        {x: 62, y: 50, title: "    Hey listen.", text: ["There's no turning back from this point.",
-                                            "Have you done everything you needed to?"]}
+        {
+            x: 62, y: 50, title: "    Hey listen.", text: ["There's no turning back from this point.",
+                "Have you done everything you needed to?"]
+        }
     ],
 
 
@@ -2197,9 +2216,11 @@ var level1_5 = {
             ],
             bricks:
                 [
-                    //block path
+                    //block path top
                     { x: 81, y: 24, width: 7, height: 2, type: 2 },
                     //{ x: 81, y: 6, width: 7, height: 1, type: 2 },
+                    //block path left
+                    { x: 76, y: 5, width: 1, height: 2, type: 2 },
                 ],
 
             //fall from the skies
@@ -2219,6 +2240,8 @@ var level1_5 = {
                 [
                     { x: 81, y: 24, width: 7, height: 1, type: 2 },
                     //{ x: 81, y: 6, width: 7, height: 1, type: 2 },
+                    //block path left
+                    { x: 76, y: 5, width: 1, height: 2, type: 2 },
 
                 ],
 
@@ -2241,6 +2264,8 @@ var level1_5 = {
                 [
                     { x: 81, y: 24, width: 7, height: 1, type: 2 },
                     //{ x: 81, y: 6, width: 7, height: 1, type: 2 },
+                    //block path left
+                    { x: 76, y: 5, width: 1, height: 2, type: 2 },
                 ],
 
             //fall from the skies
@@ -2315,6 +2340,13 @@ var treasureroom = {
         { x: 39, y: 35, width: 6, height: 1, type: 0 },
 
         { x: 53, y: 40, width: 11, height: 1, type: 0 },
+    ],
+
+    moveable: [
+
+        //{ x: 23, y: 4, width: 1, height: 1, directionList: [2], distanceList: [6], velocity: 1  },
+        //secret room right lift
+        { x: 78, y: 8, width: 1, height: 1, directionList: ["up"], distanceList: [29], velocity: 5, onTouch: true },
     ],
 
     ground: [
@@ -2738,13 +2770,14 @@ var treasureroom = {
                 "but let not your heart corrupt lest you lose your freedom,",
                 "for the pits of hell shall surely open and swallow the greedy,",
                 "thus, seize the moment to go above and beyond",
-                "the fools that came before you.",
+                "and profit from the fools beneath you.",
             ],
 
         },
     ],
 
     secrets: [
+        //main secret
         {
             indicate: true,
             bricks: [
@@ -2759,6 +2792,8 @@ var treasureroom = {
 
             ]
         },
+
+        //hide ceiling jump to treasure room
         {
             indicate: true,
             bricks: [
@@ -2767,7 +2802,7 @@ var treasureroom = {
                 { x: 62, y: 13, width: 1, height: 1 },
 
             ]
-        }
+        },
     ],
 
     events: [
@@ -2852,7 +2887,7 @@ var levelBoss1 = {
     signs: [
         {
             x: 112, y: 2, title: "    The End", text: [
-                "Hero, this is the end of the game.", 
+                "Hero, this is the end of the game.",
                 "Your job here is finally done.",
                 "Enter this portal with [W] and return to your homeworld!",
                 "",

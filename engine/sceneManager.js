@@ -153,19 +153,19 @@ class SceneManager {
     loadBeginSequence() {
         let beginScene1 =
             [
-                "This is the story all about",
-                "that one time I got reincarnated",
-                "as a knight and had to save the",
-                "castle that was overrun by evil."
+                "This is my incredibly original story of,",
+                "\"That One Time I Got Reincarnated",
+                "As a Knight and Had to Save The",
+                "Castle That Was Overrun by Evil.\""
             ];
         let beginScene2 =
             [
-                "All I had to do was take down",
-                "the mastermind behind the operation."
+                "My mission?",
+                "Take down the Demon Lord."
             ];
         let beginScene3 =
             [
-                "Little did I know..."
+                "However, little did I know..."
             ];
 
         let beginScene1TB = this.buildSequenceBox(beginScene1);
@@ -1858,7 +1858,7 @@ class Minimap {
         this.colors = {
             ground: "dimgray",
             trap: "orange",
-            moveable: "purple",
+            moveable: "magenta",
             brick: "silver",
             wall: "maroon",
             platform: "purple",

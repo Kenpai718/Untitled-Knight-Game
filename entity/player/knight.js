@@ -203,7 +203,7 @@ class Knight extends AbstractPlayer {
 
             //when idling set player direction according to mouse
             if (PARAMS.AUTO_FOCUS) {
-                if (this.action == this.states.idle || this.action == this.states.attack1 || this.action == this.states.attack2) {
+                if (this.action == this.states.idle) {
                     if (this.game.mouse.x > (this.BB.x + this.BB.width / 2) - this.game.camera.x && this.facing == 0) {
                         this.facing = 1;
                     }
@@ -732,13 +732,29 @@ class Knight extends AbstractPlayer {
                 super.bladeBeam();
             }
 
-            //play
+            //play sfx
             if (this.playAttackSFX1 && action != this.states.roll) {
                 this.playAttackSFX1 = false;
                 if (this.action == this.states.attack1 || this.action == this.states.crouch_atk) ASSET_MANAGER.playAsset(SFX.SLASH1);
             }
-            let done = this.animations[this.facing][this.action][this.myInventory.armorUpgrade].isDone();
 
+            //adjust direction attack depending on frame
+            let time = this.animations[this.facing][this.action][this.myInventory.armorUpgrade].elapsedTime;
+            //switch based on mouse
+            if (PARAMS.AUTO_FOCUS) {
+                let x = this.game.mouse.x + this.game.camera.x;
+                if (x < this.x + this.width / 2)
+                    this.facing = this.dir.left;
+                if (x > this.x + this.width / 2)
+                    this.facing = this.dir.right;
+            } else { //adjust direction based on keyboard press
+                if (this.facing == this.dir.left && this.game.right) this.facing = this.dir.right;
+                if (this.facing == this.dir.right && this.game.left) this.facing = this.dir.left;
+            }
+            this.animations[this.facing][this.action][this.myInventory.armorUpgrade].elapsedTime = time;
+
+            //check if the animation is finished so the states and actions can be reset
+            let done = this.animations[this.facing][this.action][this.myInventory.armorUpgrade].isDone();
             if (done) {
                 if (this.combo && this.action == this.states.attack1) { //continue combo after first attack
                     this.action = this.states.attack2;
