@@ -27,6 +27,8 @@ const SIGN_VERSION = { x: 20, y: 3, title: "    VERSION " + PARAMS.VERSION_NUM, 
                                                                                        "-Better platforms/elevator",
                                                                                        "-Small level adjustments",
                                                                                        "-Upgrades added to results",
+                                                                                       "-Tapping opposite direction",
+                                                                                       " mid-atk will switch dir.",
                                                                                        "-Removed Herobrine!"] }
 
 //spawn locations for using a door
