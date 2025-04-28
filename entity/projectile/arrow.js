@@ -163,14 +163,20 @@ class Arrow extends AbstractEntity {
             ASSET_MANAGER.playAsset(SFX.ARROW_HIT);
             this.removeFromWorld = true;
             this.hit = true;
-            //arrow bonus damage against flying enemies
-            if(entity instanceof FlyingEye) {
+
+            if(this.isWeakToArrow(entity)) {
                 entity.takeDamage(this.getDamageValue() * PARAMS.CRITICAL_BONUS, true);
             } else {
                 entity.takeDamage(this.getDamageValue(), this.critical);
             }
+
             entity.setDamagedState();
         }
+    }
+
+    isWeakToArrow(entity) {
+        //arrow bonus damage against flying enemies
+        return entity instanceof FlyingEye;
     }
 
     updateBB() {

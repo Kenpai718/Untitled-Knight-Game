@@ -494,6 +494,29 @@ class GameEngine {
         this.draw();
     };
 
+    getPlayerCords() {
+        /* Entity Interactions */
+        let cords = {x : 0, y: 0};
+        this.entities.forEach(function (entity) {
+            // knight interactions
+            if (entity instanceof AbstractPlayer) {
+                cords.x = entity.x;
+                cords.y = entity.y;
+            }});
+        return cords;
+    }
+
+    getPlayerBoundingBox() {
+        /* Entity Interactions */
+        let BB = new BoundingBox(0,0,0,0);
+        this.entities.forEach(function (entity) {
+            // knight interactions
+            if (entity instanceof AbstractPlayer) {
+                BB = entity.BB;
+            }});
+        return BB;
+    }
+
 };
 
 // KV Le was here :)

@@ -165,7 +165,7 @@ class AbstractPlayer extends AbstractEntity {
         let dmg = 0
         if (this.canTakeDamage()) {
             isCritical ? ASSET_MANAGER.playAsset(SFX.CRITICAL) : ASSET_MANAGER.playAsset(SFX.DAMAGED);
-            this.takeKnockback();
+            this.takeKnockback(damage);
             dmg = Math.round(damage * this.getDefenseBonus());
             this.hp -= dmg;
             this.vulnerable = false;
@@ -185,6 +185,8 @@ class AbstractPlayer extends AbstractEntity {
         }
         return dmg;
     }
+
+
 
     /**
      * In dead state animation
@@ -540,6 +542,16 @@ class AbstractPlayer extends AbstractEntity {
                 }
             }
         });
+    }
+
+    takeKnockback(damage) {
+        if(this.facing === this.dir.right) {
+            this.velocity.x = -(BASE_KNOCKBACK + ((damage / 100) * 1000));
+            this.x -= 50;
+        } else {
+            this.velocity.x = BASE_KNOCKBACK  + ((damage / 100) * 1000);
+            this.x += 50;
+        }
     }
 
     /**Collision helper methods */

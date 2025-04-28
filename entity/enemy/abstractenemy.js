@@ -159,7 +159,10 @@ class AbstractEnemy extends AbstractEntity {
      */
     takeKnockback(dmg) {
         if(this.canKnockback()) {
-            if(this.direction == this.directions.right) {
+            let playerBB = this.game.getPlayerBoundingBox();
+            let diffToPlayer = this.BB.mid - playerBB.mid;
+            //was attacked from the right side
+            if(diffToPlayer <= 0) {
                 this.velocity.x = -(BASE_KNOCKBACK + ((dmg / 100) * 1000));
             } else {
                 this.velocity.x = BASE_KNOCKBACK  + ((dmg / 100) * 1000);

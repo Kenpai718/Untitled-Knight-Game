@@ -118,9 +118,9 @@ class AbstractEntity {
     }
 
     /**
-     * Entity will be knockbacked after taking damage
-     * distance is dependent on how much damage was taken
-     * @param {*} damage 
+     * Set knockback for entitiy based on damage
+     * Handle this in your entity class
+     * @param damage
      */
     takeKnockback(damage) {
 
