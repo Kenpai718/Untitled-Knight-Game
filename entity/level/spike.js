@@ -21,7 +21,7 @@ class Spike extends AbstractBackFeature {
         });
         this.game.enemies.forEach(function (entity) {
             if (entity.BB && self.BB.collide(entity.BB) && entity instanceof AbstractEntity) {
-                entity.takeDamage(10, false);
+                entity.takeDamage(5, false);
                 entity.setDamagedState();
             }
         });
