@@ -148,6 +148,25 @@ class AbstractEnemy extends AbstractEntity {
         }
     }
 
+    canKnockback() {
+        return true;
+    }
+
+    /**
+     * based on direction force velocity change with extra velocity
+     * depending on damage taken
+     * @param dmg
+     */
+    takeKnockback(dmg) {
+        if(this.canKnockback()) {
+            if(this.direction == this.directions.right) {
+                this.velocity.x = -(BASE_KNOCKBACK + ((dmg / 100) * 1000));
+            } else {
+                this.velocity.x = BASE_KNOCKBACK  + ((dmg / 100) * 1000);
+            }
+        }
+    }
+
     /**
      * Do random roaming options every so often
      * Like walking in certain directions or idling/switching facing
@@ -265,6 +284,11 @@ class AbstractEnemy extends AbstractEntity {
     drawHealth(ctx) {
         if (!this.dead)
             this.healthbar.draw(ctx);
+    }
+
+    takeDamage(damage, isCritical) {
+        super.takeDamage(damage, isCritical);
+        this.takeKnockback(damage);
     }
 
 

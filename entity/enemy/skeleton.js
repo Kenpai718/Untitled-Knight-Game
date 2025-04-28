@@ -356,6 +356,10 @@ class Skeleton extends AbstractEnemy {
         this.state = this.states.damaged;
     };
 
+    canKnockback() {
+        return this.state == this.states.block ? false : true;
+    }
+
 
     resetAnimationTimers(action) {
         this.animations[action][0].elapsedTime = 0;

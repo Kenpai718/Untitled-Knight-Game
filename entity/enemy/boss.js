@@ -41,4 +41,12 @@ class AbstractBoss extends AbstractEnemy {
             this.game.addEntityToFront(new Score(this.game, this, healed, PARAMS.HEAL_ID, false));
         }
     }
+
+    /**
+     * Bosses cannot take knockback
+     * @returns {boolean}
+     */
+    canKnockback() {
+        return false;
+    }
 }
