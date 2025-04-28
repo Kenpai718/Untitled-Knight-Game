@@ -168,7 +168,7 @@ class AbstractEnemy extends AbstractEntity {
                 this.velocity.x = BASE_KNOCKBACK  + ((dmg / 100) * 1000);
             }
 
-            this.velocity.y = -100;
+            this.velocity.y = -(BASE_KNOCKBACK * 2) - ((dmg / 100) * 1000);
         }
     }
 
