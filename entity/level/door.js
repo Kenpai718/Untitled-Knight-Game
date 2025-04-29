@@ -3,6 +3,7 @@ class Door extends AbstractInteractable {
         super(game, x, y);
         this.killQuota = killQuota;
         this.canEnter = false;
+        this.visited = false;
         this.exitLocation = exitLocation;
         this.transition = transition;
         if (!this.exitLocation) throw "Exit location not defined for door! Needs {x: , y:, levelNum: }"
@@ -39,6 +40,11 @@ class Door extends AbstractInteractable {
             if (entity.BB && that.BB.collide(entity.BB)) {
                 if (entity instanceof AbstractPlayer && that.canEnter) {
                     if (that.game.up) {
+                        //heal player a bit
+                        if(!that.visited) {
+                            entity.heal(entity.max_hp / 4);
+                        }
+                        that.visited = true;
                         let scene = that.game.camera;
                         let spawnX = that.exitLocation.x;
                         let spawnY = that.exitLocation.y;
