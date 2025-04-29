@@ -433,6 +433,14 @@ class DemonSlime extends AbstractBoss {
         return (this.state == this.states.slimeMove || this.state == this.states.demonSpawn || this.state == this.states.demonSlash || this.state == this.states.demonBreath || this.state == this.states.demonShoot || this.state == this.states.demonJump || this.state == this.states.demonRebirth);
     };
 
+    canKnockback() {
+        if(this.phase === this.phases.slime) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     checkEntityInteractions() {
         this.playerInSight = false;
         let self = this;
