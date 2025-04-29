@@ -315,7 +315,7 @@ class DemonSlime extends AbstractBoss {
         if (this.isAttacking()) {
             this.attackFrame = this.animations[this.state][this.direction].currentFrame();
             if (this.state == this.states.slimeMove) {
-                if (this.attackFrame >= 3 && this.attackFrame <= 5) this.updateHB();
+                if (this.attackFrame >= 3 && this.attackFrame <= 4) this.updateHB();
                 else this.HB = null;
             } else if (this.state == this.states.demonJump) {
                 if (this.attackFrame >= 10 && this.attackFrame <= 15) {
@@ -336,32 +336,34 @@ class DemonSlime extends AbstractBoss {
                         ASSET_MANAGER.playAsset(SFX.SWING);
                     }
                 }
-                if (this.attackFrame >= 9 && this.attackFrame <= 12) {
+                if (this.attackFrame == 10) {
                     this.updateHB();
                 }
                 else this.HB = null;
 
                 //if player crosses up before the blade is fully up then the demon
                 //will switch directions to maintain the attack
-                if (this.attackFrame < 7) this.checkDirection(this.game.camera.player);
+                if (this.attackFrame < 6) this.checkDirection(this.game.camera.player);
             } else if (this.state == this.states.demonBreath) {
                 if (this.attackFrame >= 6 && this.attackFrame <= 16) {
                     if (this.playAtkSFX) {
                         this.playAtkSFX = false;
                         ASSET_MANAGER.playAsset(SFX.FIREBREATH);
                     }
-                    this.updateHB();
+                    //alternate to not blast hitboxes
+                    if(this.attackFrame % 2 == 0) this.updateHB();
+                    else this.HB = null;
                 }
                 else this.HB = null;
 
                 //fire breath can switch directions mid attack (before the bottom hitbox comes out)
-                if (this.attackFrame < 8) this.checkDirection(this.game.camera.player);
+                if (this.attackFrame < 7) this.checkDirection(this.game.camera.player);
             } else if (this.state == this.states.demonRebirth) {
-                if (this.attackFrame >= 9 && this.attackFrame <= 20) this.updateHB();
+                if (this.attackFrame >= 9 && this.attackFrame <= 20 && this.attackFrame % 2) this.updateHB();
                 else this.HB = null;
             } else if (this.state == this.states.demonShoot) {
                 //hit every other frame
-                if (this.attackFrame >= 8) this.updateHB();
+                if (this.attackFrame >= 8 && this.attackFrame % 5 == 0) this.updateHB();
                 else this.HB = null;
             } else if (this.state == this.states.demonSpawn) {
                 this.updateHB();
@@ -392,8 +394,13 @@ class DemonSlime extends AbstractBoss {
                     if (this.direction == this.directions.left) this.HB = new BoundingBox(this.BB.left, this.BB.top + this.BB.height / 2, this.BB.width, this.BB.height / 2);
                     else this.HB = new BoundingBox(this.BB.left, this.BB.top + this.BB.height / 2, this.BB.width, this.BB.height / 2);
                 } else { //shockwave
-                    if (this.direction == this.directions.left) this.HB = new BoundingBox(this.BB.left - (this.BB.width / 2), this.BB.top + this.BB.height / 2, this.BB.width * 2, this.BB.height / 2);
-                    else this.HB = new BoundingBox(this.BB.left - (this.BB.width / 4), this.BB.top + this.BB.height / 2, this.BB.width * 2, this.BB.height / 2);
+                    if(frame % 2 == 0) {
+                        if (this.direction == this.directions.left) this.HB = new BoundingBox(this.BB.left - (this.BB.width / 2), this.BB.top + this.BB.height / 2, this.BB.width * 2, this.BB.height / 2);
+                        else this.HB = new BoundingBox(this.BB.left - (this.BB.width / 4), this.BB.top + this.BB.height / 2, this.BB.width * 2, this.BB.height / 2);
+                    } else {
+                        this.HB = null;
+                    }
+
                 }
             }
             else if (this.state == this.states.demonBreath) {
