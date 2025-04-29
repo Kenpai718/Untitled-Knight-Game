@@ -27,7 +27,7 @@ class Diamond extends AbstractInteractable {
         let self = this;
         this.game.entities.forEach(function (entity) {
             if (entity.BB && self.BB.collide(entity.BB) && entity instanceof AbstractPlayer && self.amount > 0) {
-                self.giveDiamonds(entity);
+                self.awardDiamonds(entity);
             }
         });
         // If collides with ground, stop
@@ -45,7 +45,7 @@ class Diamond extends AbstractInteractable {
                         self.collision = true;
                         self.game.entities.forEach(function (ent2) {
                             if (ent2 instanceof AbstractPlayer) {
-                                self.giveDiamonds(ent2);
+                                self.awardDiamonds(ent2);
                             }
                         });
                     }
@@ -62,7 +62,7 @@ class Diamond extends AbstractInteractable {
         this.animations.update(this.game.clockTick);
     };
 
-    giveDiamonds(entity) {
+    awardDiamonds(entity) {
         this.game.addEntityToFront(new Score(this.game, entity, this.amount, PARAMS.DIAMOND_ID, false));
         entity.myInventory.diamonds += this.amount;
         this.game.myReportCard.myDiamondsEarned += this.amount;
