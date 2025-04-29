@@ -141,12 +141,13 @@ class HealthBar {
         ctx.fillStyle = ratio < PARAMS.LOW_HP ? "Red" : ratio < PARAMS.MID_HP ? "Yellow" : "SpringGreen";
 
         //print info specific to the agent object above the healthbar for debugging
-        ctx.fillText(this.agent.name, newX - offsetX, newY - (yBuffer * 6) - offsetY);
-        ctx.fillText("HP:" + this.agent.hp + "/" + this.agent.max_hp, newX - offsetX, newY - (yBuffer * 5) - offsetY);
-        ctx.fillText("Canvas Cords:[x:" + cordX + ",y:" + cordY + "]", newX - offsetX, newY - (yBuffer * 4) - offsetY);
-        ctx.fillText("Game Cords:  [x:" + blockX + ",y:" + blockY + "]", newX - offsetX, newY - (yBuffer * 3) - offsetY);
-        ctx.fillText("Velocity:    {x:" + velX + ",y:" + velY + "}", newX - offsetX, newY - (yBuffer * 2) - offsetY);
-
+        ctx.fillText(this.agent.name, newX - offsetX, newY - (yBuffer * 7) - offsetY);
+        ctx.fillText("HP:" + this.agent.hp + "/" + this.agent.max_hp, newX - offsetX, newY - (yBuffer * 6) - offsetY);
+        ctx.fillText("Canvas Cords:[x:" + cordX + ",y:" + cordY + "]", newX - offsetX, newY - (yBuffer * 5) - offsetY);
+        ctx.fillText("Game Cords:  [x:" + blockX + ",y:" + blockY + "]", newX - offsetX, newY - (yBuffer * 4) - offsetY);
+        ctx.fillText("Velocity:    {x:" + velX + ",y:" + velY + "}", newX - offsetX, newY - (yBuffer * 3) - offsetY);
+        ctx.fillText("State: " + this.isPlayer ? this.agent.action : this.agent.state
+            , newX - offsetX, newY - (yBuffer * 2) - offsetY);
 
         (this.agent.vulnerable) ? ctx.fillStyle = "GhostWhite" : ctx.fillStyle = "DimGray";
         ctx.font = PARAMS.DEFAULT_FONT;
