@@ -20,6 +20,12 @@ class GameEngine {
         this.information = [];
         this.shop = null;
 
+        //player class should update this
+        this.playerCords = {
+            cords: {x: 0, y: 0},
+            BB: new BoundingBox(0, 0, 0, 0)
+        }
+
         // Information on the input
         this.click = null;
         this.mouse = null;
@@ -247,11 +253,6 @@ class GameEngine {
                 case "KeyE":
                     that.heal = true;
                     break;
-                // case "ControlLeft":
-                // case "ControlRight":
-                //     e.preventDefault();
-                //     that.minimap = true;
-                //     break;
             }
         }, false);
 
@@ -277,10 +278,15 @@ class GameEngine {
                 case "Space":
                     break;
                 case "ControlLeft":
-                case "ControlRight":
                     //toggle minimap
                     e.preventDefault();
                     that.minimap = !that.minimap;
+                    break;
+                case "ControlRight":
+                    //toggle debug mode
+                    e.preventDefault();
+                    PARAMS.DEBUG = !PARAMS.DEBUG;
+                    document.getElementById("debug").checked = !document.getElementById("debug").checked;
                     break;
             }
         }, false);
@@ -501,28 +507,14 @@ class GameEngine {
     };
 
     getPlayerCords() {
-        /* Entity Interactions */
-        let cords = {x : 0, y: 0};
-        this.entities.forEach(function (entity) {
-            // knight interactions
-            if (entity instanceof AbstractPlayer) {
-                cords.x = entity.x;
-                cords.y = entity.y;
-            }});
-        return cords;
+        return this.playerCords.cords;
     }
 
     getPlayerBoundingBox() {
-        /* Entity Interactions */
-        let BB = new BoundingBox(0,0,0,0);
-        this.entities.forEach(function (entity) {
-            // knight interactions
-            if (entity instanceof AbstractPlayer) {
-                BB = entity.BB;
-            }});
-        return BB;
+        return this.playerCords.BB;
     }
 
 };
 
 // KV Le was here :)
+// Ken Ahrens was here >:)

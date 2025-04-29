@@ -752,10 +752,6 @@ class SceneManager {
         PARAMS.AUTO_FOCUS = document.getElementById("mouse-focus").checked;
         PARAMS.DEBUG = document.getElementById("debug").checked;
         PARAMS.CURSOR = document.getElementById("show-cursor").checked;
-        // if (this.game.debug) {
-        //     this.game.debug = false;
-        //     document.getElementById("debug").checked = !document.getElementById("debug").checked;
-        // }
     }
 
     updateTitleScreen() {
