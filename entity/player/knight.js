@@ -724,10 +724,16 @@ class Knight extends AbstractPlayer {
                 }
             }
             this.updateHB();
+
+            //bladebeam logic: 1st hit only if berserk, second only at full hp
             if (this.bladeBeam1 && this.berserk) {
                 this.bladeBeam1 = false;
                 super.bladeBeam();
-            } else if (this.bladeBeam2 && this.animations[this.facing][this.states.attack1][this.myInventory.armorUpgrade].isDone() && this.berserk) {
+            }
+            //shoot a blade beam on charge attack 2
+            if (this.bladeBeam2 &&
+                this.animations[this.facing][this.states.attack2][this.myInventory.armorUpgrade].isHalfwayDone()
+                 && this.canBladeBeam()) {
                 this.bladeBeam2 = false;
                 super.bladeBeam();
             }
@@ -997,6 +1003,10 @@ class Knight extends AbstractPlayer {
         dmg = Math.round(100 * dmg) / 100;
         return dmg;
 
+    }
+
+    canBladeBeam() {
+        return this.berserk || this.hp == this.max_hp;
     }
 
     setDamagedState() {
