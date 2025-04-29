@@ -885,10 +885,10 @@ class Knight extends AbstractPlayer {
                 this.vulnerable = false;
             }
 
-            //vulnerable early
-            if (this.animations[this.facing][this.states.roll][this.myInventory.armorUpgrade].isThreeForthDone()) {
-                this.vulnerable = true;
-            }
+            // //vulnerable early
+            // if (this.animations[this.facing][this.states.roll][this.myInventory.armorUpgrade].isThreeForthDone()) {
+            //     this.vulnerable = true;
+            // }
             
             //roll done
             if (this.animations[this.facing][this.states.roll][this.myInventory.armorUpgrade].isDone()) {
