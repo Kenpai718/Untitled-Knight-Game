@@ -171,6 +171,9 @@ class AbstractEntity {
     checkInDeathZone() {
         if (this.isDeathZone()) {
             this.takeDamage(this.max_hp, false);
+            if(this instanceof AbstractEnemy) {
+                this.dropLootAtPlayer();
+            }
         }
     }
 

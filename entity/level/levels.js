@@ -721,7 +721,7 @@ var level1_2 = {
         text: [
             "ADVANCED COMBAT TIPS:",
             "-Cancel your attack animations with a roll [SHIFT].",
-            "-Utilize rolls with attacks to stay evasive while doing damage!",
+            "-Attack and roll to stay safe",
             "-[Shift] + [A]/[D] direction to roll in that direction.",
             "-Each hit has a base 10% chance to CRIT and do x2 damage.",
             "-If you shoot an arrow and it got stuck then you can retrieve it.",
@@ -740,6 +740,14 @@ var level1_2 = {
         ],
     },
     {
+        x: 62, y: 2,
+        title: "[TUTORIAL: BLADE BEAM]",
+        text: [
+            "At full hp, your second sword attack",
+            "will shoot a blade beam at your enemies!"
+        ]
+    },
+    {
         x: 64, y: 2,
         title: "[TUTORIAL: RAGE BOOST]",
         text: [
@@ -747,9 +755,7 @@ var level1_2 = {
             "-At low-hp you will tap into a secret power",
             " called BESERKER MODE! Indicated by a red aura.",
             "-This is a powerful state that deals extra damage",
-            " and shoots a blade beam projectile with each swing!",
-            "-However it only lasts for a short time and you can",
-            " easily die in one hit!"
+            " and shoots a blade beam projectile with each swing!"
         ]
     },
 
