@@ -1368,6 +1368,7 @@ var level1_4 = {
                 "...and stairs."]
         },
         { x: 67, y: 35, text: ["I sense danger ahead..."] },
+        { x: 30, y: 35, text: ["Yeowch! Hot!!"] },
     ],
     chests: [
         { x: 29, y: 1, direction: 0 },    //bottom floor
@@ -1955,6 +1956,9 @@ var level1_5 = {
     ],
 
     chests: [
+        { x: 4, y: 6, direction: 0 },
+        { x: 18, y: 22, direction: 1}, 
+        { x: 23, y: 9, direction: 1 },
         // 1:2
         { x: 29, y: 17, direction: 1 },
         { x: 37.5, y: 17, direction: 0 },
