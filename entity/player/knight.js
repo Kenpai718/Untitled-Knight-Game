@@ -137,7 +137,7 @@ class Knight extends AbstractPlayer {
     update() {
         const TICK = this.game.clockTick;
         //to prevent playing the same roll sound
-        if (this.action != this.states.roll) super.checkDamageCooldown(TICK); //check if can be hit
+        if (this.action !== this.states.roll) super.checkDamageCooldown(TICK); //check if can be hit
         super.checkInDeathZone(); //check if outside of canvas
 
         //NOTE: this.dead is set when the knight hp drops to 0.
@@ -429,13 +429,7 @@ class Knight extends AbstractPlayer {
         } else { //player is in an uninteruptible action
             //if player was attacking slow down that momentum on the ground so there is a bit of a skid
             if ((this.game.attack || this.game.shoot) && !this.inAir) {
-                if (this.velocity.x > 0) { //right momentum
-                    this.velocity.x -= PLAYER_PHYSICS.ATTACK_SKID * TICK;
-                    if (this.velocity.x < 0) this.velocity.x = 0;
-                } else { //left momentum
-                    this.velocity.x += PLAYER_PHYSICS.ATTACK_SKID * TICK;
-                    if (this.velocity.x > 0) this.velocity.x = 0;
-                }
+                this.addSkid(PLAYER_PHYSICS.ATTACK_SKID, TICK);
             }
             if (this.action == this.states.wall_climb) {
                 if (this.BB.left > this.climbWidth - PARAMS.BLOCKDIM && this.BB.right < this.climbWidth + PARAMS.BLOCKDIM)
@@ -451,6 +445,16 @@ class Knight extends AbstractPlayer {
                     this.action = this.states.crouch;
                 }
             }
+        }
+    }
+
+    addSkid(skidAmount, tick) {
+        if (this.velocity.x > 0) { //right momentum
+            this.velocity.x -= skidAmount * tick;
+            if (this.velocity.x < 0) this.velocity.x = 0;
+        } else { //left momentum
+            this.velocity.x += skidAmount * tick;
+            if (this.velocity.x > 0) this.velocity.x = 0;
         }
     }
 
@@ -476,18 +480,7 @@ class Knight extends AbstractPlayer {
                 this.velocity.x -= PLAYER_PHYSICS.CROUCH_SPD;
             }
             else {
-                if (this.facing == this.dir.left) {
-                    if (this.velocity.x < 0) {
-                        this.velocity.x += PLAYER_PHYSICS.SKID * TICK;
-                    }
-                    else this.velocity.x = 0;
-                }
-                else if (this.facing == this.dir.right) {
-                    if (this.velocity.x > 0) {
-                        this.velocity.x -= PLAYER_PHYSICS.SKID * TICK;
-                    }
-                    else this.velocity.x = 0;
-                }
+                this.addSkid(PLAYER_PHYSICS.SKID, TICK);
             }
         } else if (this.game.right && !this.game.attack && !this.game.shoot) { //run right
             if (this.facing == this.dir.left && this.velocity.x < 0) {
@@ -711,9 +704,10 @@ class Knight extends AbstractPlayer {
         let action = this.action;
         //attack logic (melee/ranged)
         if (this.game.attack && !(action == this.states.roll)) {
-            if (this.crouch && !this.inAir) { //crouch attack
+            if (this.crouch && !this.inAir && this.action != this.states.slide) {
+                //crouch attack
                 this.action = this.states.crouch_atk;
-            } else { //standing or jumping attack
+            } else { //standing, jumping, or slide attack
                 //set action based on combo counter.
                 //If attack button was pressed more than once change action to the second attack after the animation is complete
                 this.combo = (this.game.comboCounter > 1 && this.animations[this.facing][this.states.attack1][this.myInventory.armorUpgrade].isDone()) ? true : false;
@@ -861,48 +855,97 @@ class Knight extends AbstractPlayer {
      */
     checkAndDoRoll() {
         if (this.game.roll) {
-            //disable attack so the player isn't buffered into an attack during the roll
-            this.game.attack = false;
-            this.game.shoot = false;
-            this.arrow = false;
-            this.resetCombo();
-            this.HB = null;
-
-            //set roll behavior
-            if (this.action != this.states.roll) {
-                this.resetAnimationTimers(this.action);
-                this.action = this.states.roll; //roll
-                if (this.game.left && !this.game.right)
-                    this.facing = this.dir.left;
-                if (this.game.right && !this.game.left)
-                    this.facing = this.dir.right;
+            if (this.crouch && this.action != this.states.roll) {
+                this.doSlide()
+            } else {
+                this.doRoll();
             }
-            this.velocity.x += (this.facing == this.dir.left) ? -1 * (PLAYER_PHYSICS.ROLL_SPD) : (PLAYER_PHYSICS.ROLL_SPD); //movement speed boost
+        }
+    }
 
-            let animationDone = this.animations[this.facing][this.states.roll][this.myInventory.armorUpgrade].isDone();
-            //animation not done play a sound and set invulnerable
-            if (!animationDone) {
-                //play sound on 1 frame to prevent looping
-                if(this.animations[this.facing][this.states.roll][this.myInventory.armorUpgrade].currentFrame() == 1) ASSET_MANAGER.playAsset(SFX.DODGE);
-                this.vulnerable = false;
-            }
+    doRoll() {
+        //disable attack so the player isn't buffered into an attack during the roll
+        this.game.attack = false;
+        this.game.shoot = false;
+        this.arrow = false;
+        this.resetCombo();
+        this.HB = null;
 
-            // //vulnerable early
-            // if (this.animations[this.facing][this.states.roll][this.myInventory.armorUpgrade].isThreeForthDone()) {
-            //     this.vulnerable = true;
-            // }
-            
-            //roll done
-            if (this.animations[this.facing][this.states.roll][this.myInventory.armorUpgrade].isDone()) {
-                this.action = this.states.idle;
-                this.game.roll = false;
-                this.vulnerable = true;
-            }
-        } else {
-            //roll
+        //set roll behavior
+        if (this.action !== this.states.roll) {
+            this.resetAnimationTimers(this.states.roll);
+            this.action = this.states.roll; //roll
+            if (this.game.left && !this.game.right)
+                this.facing = this.dir.left;
+            if (this.game.right && !this.game.left)
+                this.facing = this.dir.right;
+        }
+        this.velocity.x += (this.facing == this.dir.left) ? -1 * (PLAYER_PHYSICS.ROLL_SPD) : (PLAYER_PHYSICS.ROLL_SPD); //movement speed boost
+
+        let animationDone = this.animations[this.facing][this.states.roll][this.myInventory.armorUpgrade].isDone();
+        //animation not done play a sound and set invulnerable
+        if (!animationDone) {
+            //play sound on 1 frame to prevent looping
+            if(this.animations[this.facing][this.states.roll][this.myInventory.armorUpgrade].currentFrame() == 1) ASSET_MANAGER.playAsset(SFX.DODGE);
+            this.vulnerable = false;
+        }
+
+        //roll done
+        if (this.animations[this.facing][this.states.roll][this.myInventory.armorUpgrade].isDone()) {
+            this.action = this.states.idle;
+            this.game.roll = false;
+            this.vulnerable = true;
             this.resetAnimationTimers(this.states.roll);
         }
     }
+
+    /**
+     * Slide dodge/attack when pressing dodge while crouching
+     */
+    doSlide() {
+        this.game.attack = true;
+        this.game.shoot = false;
+        this.arrow = false;
+        //this.resetCombo();
+
+        //set roll behavior
+        if (this.action != this.states.slide) {
+            this.resetAnimationTimers(this.states.slide);
+            this.action = this.states.slide; //roll
+            if (this.game.left && !this.game.right)
+                this.facing = this.dir.left;
+            if (this.game.right && !this.game.left)
+                this.facing = this.dir.right;
+        }
+
+        //movement speed boost
+        this.velocity.x +=
+            (this.facing == this.dir.left) ? -1 * (PLAYER_PHYSICS.SLIDE_SPD * 0.4)
+                : (PLAYER_PHYSICS.SLIDE_SPD * 0.4);
+
+        let animationDone = this.animations[this.facing][this.states.slide][this.myInventory.armorUpgrade].isDone();
+        //animation not done play a sound and set invulnerable
+        if (!animationDone) {
+            //play sound on 1 frame to prevent looping
+            if(this.animations[this.facing][this.states.roll][this.myInventory.armorUpgrade].currentFrame() == 1) ASSET_MANAGER.playAsset(SFX.DODGE);
+            this.vulnerable = false;
+        }
+
+        if (this.animations[this.facing][this.states.roll][this.myInventory.armorUpgrade].isThreeForthDone()) {
+            this.game.attack = false;
+            this.vulnerable = true;
+        }
+
+        //slide done
+        if (this.animations[this.facing][this.states.slide][this.myInventory.armorUpgrade].isDone()) {
+            this.action = this.states.idle;
+            this.game.roll = false;
+            this.vulnerable = true;
+            this.resetAnimationTimers(this.state.slide)
+        }
+    }
+
+
 
     /**
      * Adjusts the position of player based on current velocity
@@ -1001,6 +1044,8 @@ class Knight extends AbstractPlayer {
             dmg = STATS.PLAYER.DMG_SLASH1 * super.getAttackBonus();
         } else if (this.action == this.states.attack2) {
             dmg = STATS.PLAYER.DMG_SLASH2 * super.getAttackBonus();
+        } else if (this.action == this.states.slide) {
+            dmg = STATS.PLAYER.DMG_SLIDEATK * super.getAttackBonus();
         } else if (this.action == this.states.crouch_atk) {
             dmg = STATS.PLAYER.DMG_CROUCHATK * super.getAttackBonus();
         }
@@ -1131,6 +1176,21 @@ class Knight extends AbstractPlayer {
                 this.offsetxBB = 50 * this.scale;
                 this.offsetyBB = 53 * this.scale;
                 this.heightBB = 27 * this.scale;
+                break;
+            case this.states.slide:
+                this.offsetxBB = this.facing == 1 ? 50 * this.scale : 35 * this.scale;
+                this.offsetyBB = 53 * this.scale;
+                this.heightBB = 27 * this.scale;
+                this.widthBB = 35 * this.scale;
+
+                this.widthHB = 50 * this.scale;
+                this.offsetyHB = 53 * this.scale;
+                this.heightHB = 27 * this.scale;
+                if (frame < 4) {
+                    this.offsetxHB = this.facing == 1 ? this.width - 25 * this.scale - this.widthHB: 25 * this.scale ;
+                } else {
+                    this.HB = null;
+                }
                 break;
             // roll BB offsets
             case this.states.roll:
