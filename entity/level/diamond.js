@@ -27,12 +27,7 @@ class Diamond extends AbstractInteractable {
         let self = this;
         this.game.entities.forEach(function (entity) {
             if (entity.BB && self.BB.collide(entity.BB) && entity instanceof AbstractPlayer && self.amount > 0) {
-                self.game.addEntityToFront(new Score(self.game, entity, self.amount, PARAMS.DIAMOND_ID, false));
-                entity.myInventory.diamonds += self.amount;
-                self.game.myReportCard.myDiamondsEarned += self.amount;
-                self.amount -= self.amount;
-                self.removeFromWorld = true;
-                ASSET_MANAGER.playAsset(SFX.ITEM_PICKUP);
+                self.giveDiamonds(entity);
             }
         });
         // If collides with ground, stop
@@ -40,6 +35,20 @@ class Diamond extends AbstractInteractable {
             this.game.foreground2.forEach(function (entity) {
                 if(entity.BB && self.BB.collide(entity.BB) && entity instanceof AbstractBarrier){ // A poor attempt in collision detection
                     self.collision = true;
+                }
+            });
+
+            this.game.foreground1.forEach(function (entity) {
+                //if diamonds touch spikes spawn them on the player for convience
+                if(entity instanceof Spike) {
+                    if(entity.BB && self.BB.collide(entity.BB)){ 
+                        self.collision = true;
+                        self.game.entities.forEach(function (ent2) {
+                            if (ent2 instanceof AbstractPlayer) {
+                                self.giveDiamonds(ent2);
+                            }
+                        });
+                    }
                 }
             });
         }
@@ -52,6 +61,15 @@ class Diamond extends AbstractInteractable {
         }
         this.animations.update(this.game.clockTick);
     };
+
+    giveDiamonds(entity) {
+        this.game.addEntityToFront(new Score(this.game, entity, this.amount, PARAMS.DIAMOND_ID, false));
+        entity.myInventory.diamonds += this.amount;
+        this.game.myReportCard.myDiamondsEarned += this.amount;
+        this.amount -= this.amount;
+        this.removeFromWorld = true;
+        ASSET_MANAGER.playAsset(SFX.ITEM_PICKUP);
+    }
 
 
     updatePositionAndVelocity(dist) {
