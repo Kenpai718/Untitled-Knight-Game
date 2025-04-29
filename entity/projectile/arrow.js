@@ -164,13 +164,25 @@ class Arrow extends AbstractEntity {
             this.removeFromWorld = true;
             this.hit = true;
 
-            if(this.isWeakToArrow(entity)) {
-                entity.takeDamage(this.getDamageValue() * PARAMS.CRITICAL_BONUS, true);
+            if(this.isImmuneToArrow(entity)) {
+                entity.takeDamage(0, false);
             } else {
-                entity.takeDamage(this.getDamageValue(), this.critical);
+                if(this.isWeakToArrow(entity)) {
+                    entity.takeDamage(this.getDamageValue() * PARAMS.CRITICAL_BONUS, true);
+                } else {
+                    entity.takeDamage(this.getDamageValue(), this.critical);
+                }
+                
+                 entity.setDamagedState();
             }
+        }
+    }
 
-            entity.setDamagedState();
+    isImmuneToArrow(entity) {
+        if(entity instanceof Skeleton) {
+            return entity.isBlocking();
+        } else {
+            return false;
         }
     }
 

@@ -357,7 +357,11 @@ class Skeleton extends AbstractEnemy {
     };
 
     canKnockback() {
-        return this.state == this.states.block ? false : true;
+        return this.isBlocking;
+    }
+
+    isBlocking() {
+        return this.state === this.states.block;
     }
 
 
