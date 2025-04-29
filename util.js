@@ -95,8 +95,12 @@ const STATS = {
         WIDTH: 120,
         HEIGHT: 80,
         DMG_SLASH1: 10,
-        DMG_SLASH2: 15,
+        DMG_SLASH2: 20,
         DMG_CROUCHATK: 7
+    },
+
+    SPIKE: {
+        DMG: 2
     },
 
     ARROW: {
