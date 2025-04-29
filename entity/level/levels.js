@@ -2237,7 +2237,7 @@ var level1_5 = {
             //fall from the skies
             goblins: [
                 { x: 85, y: 15, guard: true },
-                { x: 82, y: 15, guard: true },
+                //{ x: 82, y: 15, guard: true },
             ],
 
         },
@@ -2261,7 +2261,7 @@ var level1_5 = {
                 { x: 83, y: 18, guard: true },
             ],
             skeletons: [
-                { x: 82, y: 20, guard: true },
+                //{ x: 82, y: 20, guard: true },
                 { x: 84, y: 20, guard: true },
             ],
 
