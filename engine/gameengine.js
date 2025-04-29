@@ -43,7 +43,7 @@ class GameEngine {
         this.shoot = null;  //right click
         this.shootButton = null; //O: shooting with keyboard
         this.heal = null;   //E
-        this.debug = null;  //ctrl left
+        this.minimap = false;  //ctrl left
 
         //counter for an attack chain corresponding to attack presses
         this.comboCounter = 0;
@@ -247,11 +247,11 @@ class GameEngine {
                 case "KeyE":
                     that.heal = true;
                     break;
-                case "ControlLeft":
-                case "ControlRight":
-                    e.preventDefault();
-                    that.debug = true;
-                    break;
+                // case "ControlLeft":
+                // case "ControlRight":
+                //     e.preventDefault();
+                //     that.minimap = true;
+                //     break;
             }
         }, false);
 
@@ -275,6 +275,12 @@ class GameEngine {
                     that.up = false;
                     break;
                 case "Space":
+                    break;
+                case "ControlLeft":
+                case "ControlRight":
+                    //toggle minimap
+                    e.preventDefault();
+                    that.minimap = !that.minimap;
                     break;
             }
         }, false);
