@@ -30,7 +30,7 @@ class Knight extends AbstractPlayer {
 
         //animation speed stats
         this.animRunSpd = 0.075; //speed of the dashing animation
-        this.animRollSpd = 0.06; //speed of the dashing animation
+        this.animRollSpd = 0.03; //speed of the dashing animation
         this.atkSpd = 0.08;        //slash1
         this.atkSpd2 = this.atkSpd + .01; //slash 2 must be slightly slower than atkspd1
         this.bowSpd = .1;
@@ -858,7 +858,7 @@ class Knight extends AbstractPlayer {
      * Checks and executes roll input
      */
     checkAndDoRoll() {
-        if (this.game.roll && !this.inAir) {
+        if (this.game.roll) {
             //disable attack so the player isn't buffered into an attack during the roll
             this.game.attack = false;
             this.game.shoot = false;
@@ -876,11 +876,21 @@ class Knight extends AbstractPlayer {
                     this.facing = this.dir.right;
             }
             this.velocity.x += (this.facing == this.dir.left) ? -1 * (PLAYER_PHYSICS.ROLL_SPD) : (PLAYER_PHYSICS.ROLL_SPD); //movement speed boost
-            if (this.vulnerable) {
-                ASSET_MANAGER.playAsset(SFX.DODGE);
+
+            let animationDone = this.animations[this.facing][this.states.roll][this.myInventory.armorUpgrade].isDone();
+            //animation not done play a sound and set invulnerable
+            if (!animationDone) {
+                //play sound on 1 frame to prevent looping
+                if(this.animations[this.facing][this.states.roll][this.myInventory.armorUpgrade].currentFrame() == 1) ASSET_MANAGER.playAsset(SFX.DODGE);
                 this.vulnerable = false;
             }
 
+            //vulnerable early
+            if (this.animations[this.facing][this.states.roll][this.myInventory.armorUpgrade].isThreeForthDone()) {
+                this.vulnerable = true;
+            }
+            
+            //roll done
             if (this.animations[this.facing][this.states.roll][this.myInventory.armorUpgrade].isDone()) {
                 this.action = this.states.idle;
                 this.game.roll = false;

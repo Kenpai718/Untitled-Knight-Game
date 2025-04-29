@@ -80,4 +80,9 @@ class Animator {
     isHalfwayDone() {
         return (this.elapsedTime >= this.totalTime / 2);
     }
+
+    isThreeForthDone() {
+        console.log(this.elapsedTime, this.totalTime / (4/3))
+        return (this.elapsedTime >= this.totalTime / (4/3));
+    }
 };
