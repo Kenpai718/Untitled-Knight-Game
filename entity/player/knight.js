@@ -39,7 +39,7 @@ class Knight extends AbstractPlayer {
         this.jumpBuffer = 0;
         this.rollBuffer = 0;
         this.atkBuffer = 0;
-        this.bufferTime = 0.5;
+        this.bufferTime = 0.35;
 
 
         //default starting values
