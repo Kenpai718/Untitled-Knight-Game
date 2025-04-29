@@ -302,7 +302,7 @@ class FlyingEye extends AbstractEnemy {
             } else if (this.state == this.states.attack2) {
                 if (frame >= 5) {
                     this.updateHB();
-                    this.vulnerable = false;
+                    //this.vulnerable = false;
                 }
                 else this.HB = null;
             } else {
