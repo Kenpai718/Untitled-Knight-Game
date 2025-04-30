@@ -551,11 +551,7 @@ class AbstractPlayer extends AbstractEntity {
     }
 
     takeKnockback(damage) {
-        if(this.facing === this.dir.right) {
-            this.velocity.x = -(BASE_KNOCKBACK + ((damage / 100) * 1000));
-        } else {
-            this.velocity.x = BASE_KNOCKBACK  + ((damage / 100) * 1000);
-        }
+        //leaving empty because I think knockback for player would be annoying
     }
 
     /**Collision helper methods */
