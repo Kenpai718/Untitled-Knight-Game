@@ -30,6 +30,7 @@ const SIGN_VERSION = { x: 20, y: 3, title: "    VERSION " + PARAMS.VERSION_NUM,
         "-Knockback to enemies",
         "-Slide Attack [S] + [Shift]",
         "-Air Dodge added",
+        "-Max HP -> Blade Beam [ATK2]",
         "-QOL changes"
     ]
 }

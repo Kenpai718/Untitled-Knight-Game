@@ -8,10 +8,10 @@ Play it here: https://kenpai718.github.io/Untitled-Knight-Game/
 Game Trailer: https://www.youtube.com/watch?v=vRtesQZ4C-o
 
 
-![alt text](https://cdn.discordapp.com/attachments/765640374647521370/948407578482847844/unknown.png)
-![alt text](https://cdn.discordapp.com/attachments/765640374647521370/948409278610423808/unknown.png)
-![alt text](https://cdn.discordapp.com/attachments/765640374647521370/948409387989483600/unknown.png)
-![alt text](https://cdn.discordapp.com/attachments/765640374647521370/948409714356662312/unknown.png)
+![alt text](screenshots/ss0.png)
+![alt text](screenshots/ss1.png)
+![alt text](screenshots/ss2.png)
+![alt text](screenshots/ss3.png)
 
 
 This is a project for TCSS 491: Computational Worlds and developed in Winter 2022
