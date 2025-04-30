@@ -31,8 +31,8 @@ class Knight extends AbstractPlayer {
         //animation speed stats
         this.animRunSpd = 0.075; //speed of the dashing animation
         this.animRollSpd = 0.03; //speed of the dashing animation
-        this.atkSpd = 0.08;        //slash1
-        this.atkSpd2 = this.atkSpd + .005; //slash 2 must be slightly slower than atkspd1
+        this.atkSpd = 0.06;        //slash1
+        this.atkSpd2 = this.atkSpd + .01; //slash 2 must be slightly slower than atkspd1
         this.bowSpd = .1;
         this.slideSpd = 0.05; //speed of slide attack
 
