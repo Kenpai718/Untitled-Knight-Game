@@ -282,6 +282,116 @@ const MUSIC = {
     VEILED_IN_BLACK: "./sound/music/FFXV_Veiled_In_Black_Arrangement.mp3",
 }
 
+/**
+ * blurb read by sign
+ */
+const CONTROLS_BLURB = 
+    [
+        "MOUSE CONTROLS [RECOMMENDED]:",,
+        "-[LEFT-CLICK]: Melee sword-attacks",
+        "-[MOUSE-MOVE]: Aim arrow",
+        "-[RIGHT-CLICK]: Shoot arrow at cursor",
+
+        "KEYBOARD CONTROLS:",
+        "-[A] left, [D]  right", 
+        "-[S] crouch, [W] interact/up",
+        "-[SPACE] jump, [SPACE]x2 double jump",
+        "-[P] swing sword, [P]x2 sword combo",
+        "     *+ [A]/[D] switch attack the other way",
+        "-[O] shoot an arrow forward",,
+        "     *+ [W] or [S] shoot up/down",
+        "-[SHIFT] dodge/roll/slide",
+        "-[ESC] pause/unpause",
+        "-[L-CTRL] minimap"
+    ];
+
+const CONTROLS_INFO = 
+    ["[Controls]:",
+        "[A]: Left, [D]: Right",
+        "[S]: Crouch/Down",
+        "[W]: Interact/Up",
+        "[E]: Heal/Use-Potion",
+        "[SHIFT]: Dodge/Slide/Roll",
+        "[SPACE]: Jump/Double-Jump/Wall-Jump",
+        "[P]/[Left-Click]: Melee-Attack/Purchase",
+        "[O]/[Right-Click]: Shoot-Arrow",
+        "[ESC]: Pause/Unpause Game, [X]: Exit-Shop",
+    ];
+
+const CROUCHING_BLURB =
+[
+    "CROUCHING OPTIONS:",
+    "-Hold [S] to crouch.",
+    "-[S]+[Attack] = Crouch Attack",
+    "-[S]+[Roll] = Slide Attack",
+    "-Use to go through small spaces or attack quickly.",
+    "-Can still roll or shoot an arrow while crouching."
+];
+
+const SHOP_HEAL_BLURB =
+[
+    "HOW TO SHOP:",
+    "-Next to shopkeeper tap [W] to shop",
+    "-The friendly shopkeeper will be your supporter on",
+    " this journey. Give him DIAMONDS to upgrade your tools.",
+    "-Use your mouse cursor to click the buttons in the shop.",
+    "-Or, navigate with keyboard",
+    " [W] Up, [S] Down, [X] Exit, [P] Purchase",
+    "",
+    "HOW TO HEAL:",
+    "-[E] to use a potion in your inventory.",
+    "-Entering a new floor will heal you some"
+    ];
+
+    const WALLJUMP_BLURB =
+    [
+        "HOW TO SCALE WALLS:",
+        "-While touching a wall in air,",
+        " [SPACE] to walljump in the other direction.",
+        " Chain walljumps to scale heights!",
+        "LEDGE OPTIONS:",
+        "-[W] get up",
+        " [S] slide down",
+        "[SPACE] jump"
+    ];
+
+    const CHEST_BLURB =
+    [
+        "OPENING CHESTS:",
+        "-Press W to open a chest!",
+        "-Chests are hidden throughout the map",
+        " and sometimes where you least expect it...",
+        "-Chests provide the most amount of diamonds",
+        " in the whole game!",
+        "-Explore each level for chests ",
+        " to buy upgrades in the shop!"
+    ];
+const DODGING_BLURB =
+    [
+        "DODGING:",
+        "-Cancel any attack with a dodge [SHIFT]",
+        "-[Attack] + [SHIFT] to deal damage safely",
+        "-[Shift] + [A]/[D] change dodge direction",
+        "-[S] + [SHIFT] slide dodge attack"
+    ];
+
+    const SECRETS_BLURB =
+    [
+        "-You may find secrets in unexpected places!",
+        "-Secret room blocks will slightly blink.",
+        "-There is a secret room on every floor!",
+        "-So keep a look out!"
+    ];
+
+    const DOORS_BLURB = [
+        "PROGRESSING IN LEVEL:",
+        "-Use W to interact with game objects.",
+        "-To progress to next level press [W] at door.",
+        "-A KILL QUOTA must be met to progress to next level!"
+
+    ];
+
+
 /** HELPER FUNCTIONS */
 
 function getFacing(velocity) {

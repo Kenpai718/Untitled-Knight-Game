@@ -106,7 +106,7 @@ var testLevel = {
             text: ["console.log(\'here\'):",
                 "-This room is for developers to test mechanics",
                 "-If you are not a developer then... 🔫😬",
-                "-Press [CTRL] in this room to instantly get",
+                "-Press [RIGHT-CTRL] in this room to instantly get",
                 " MAX DIAMONDS. This is to test the shop.",
                 "",
                 "-The left most door are entrances to the levels",
@@ -483,110 +483,43 @@ var level1_1 = {
         {
             x: 16, y: 3,
             title: "[TUTORIAL: BASIC COMBAT/MOVEMENT]",
-            text: [
-                "KEYBOARD CONTROLS:",
-                " *Recommend to DISABLE \"sticky keys\"!",
-                "-[A] to move left, [D] to move right",
-                "-[SPACE] to jump and press again to double jump",
-                "-[P] to swing your sword. Double tap to attack twice.",
-                "     The second hit is slower, but deals more damage.",
-                "     *Tap opposite direction-key to switch attack the other way",
-                "-[O] to shoot an arrow forward in your direction",
-                "     if you have any in your inventory.",
-                "     *Hold [W] to shoot diagonally up or [S] down.",
-                "-[SHIFT] to roll and dodge attacks.",
-                "-[ESC] to pause/unpause the game",
-                "",
-                "KEYBOARD + MOUSE CONTROLS [RECOMMENDED]:",
-                " *Keep mouse cursor within game screen and move with keyboard.",
-                "-[LEFT-CLICK]: Melee sword-attack",
-                "-[MOUSE-MOVE]: Aim an arrow with cursor in game screen",
-                "-[RIGHT-CLICK]: Shoot arrow in cursor direction",
-            ]
+            text: CONTROLS_BLURB
         },
         {
             x: 36, y: 6,
             title: "[TUTORIAL: CROUCHING]",
-            text: [
-                "CROUCHING OPTIONS:",
-                "-Hold [S] to crouch.",
-                "-While crouching you can move left or right.",
-                "-You are still able to attack while crouching!",
-                "-Use crouches to get through small spaces or attack quickly.",
-                "-You can still roll or shoot an arrow while crouching."
-            ]
+            text: CROUCHING_BLURB
         },
 
         {
             x: 49, y: 6,
             title: "[TUTORIAL: SHOP/HEALING]",
-            text: [
-                "HOW TO SHOP:",
-                "-Stand next to the shopkeeper and tap [W] to shop",
-                "-The friendly shopkeeper will be your supporter on",
-                " this journey. Give him DIAMONDS to upgrade your tools.",
-                "-Use your mouse cursor to click the buttons in the shop.",
-                "-Alternatively, you can navigate the shop GUI with keyboard",
-                " [W] Up, [S] Down, [X] Exit, [P] Purchase",
-                "",
-                "HOW TO HEAL:",
-                "-[E] to use a potion in your inventory.",
-                "-Potions will heal you for a set 50 HP",
-                "-Potions are limited so use them sparingly.",
-                "",]
+            text: SHOP_HEAL_BLURB
         },
 
         {
             x: 69, y: 6,
             title: "[TUTORIAL: CHESTS]",
-            text: [
-                "OPENING CHESTS:",
-                "-Press W to open a chest!",
-                "-Chests are hidden throughout the map",
-                " and sometimes where you least expect it...",
-                "-Chests provide the most amount of diamonds",
-                " in the whole game!",
-                "-Make sure to explore each level for chests ",
-                " so you can afford upgrades from the shop!"
-            ]
+            text: CHEST_BLURB
         },
 
 
         {
             x: 92, y: 2,
             title: "[TUTORIAL: WALLJUMP]",
-            text: [
-                "HOW TO SCALE WALLS:",
-                "-While falling next to a wall you will wallslide",
-                "-While wallsliding or next to a wall",
-                " tap [SPACE] to walljump in the other direction.",
-                " Chain together walljumps to scale vertical heights!",
-                "-If hanging on a ledge press [W] to get up",
-                " or [S] to slide down or [SPACE] to jump from ledge",
-            ]
+            text: WALLJUMP_BLURB
         },
 
         {
             x: 102, y: 2,
             title: "    Secrets!!!",
-            text: [
-                "-You may find secrets in unexpected places!",
-                "-Secret room blocks will slightly blink.",
-                "-There is a secret room on every floor!",
-                "-So keep a look out!"
-            ]
+            text: SECRETS_BLURB
         },
 
         {
             x: 110, y: 11,
             title: "[TUTORIAL: DOORS]",
-            text: [
-                "PROGRESSING IN LEVEL:",
-                "-In general use W to interact with game objects.",
-                "-To progress to the next level press [W] next to door.",
-                "-A KILL QUOTA must be met to progress to next level!"
-
-            ]
+            text: DOORS_BLURB
         },
     ],
 
@@ -717,15 +650,8 @@ var level1_2 = {
 
     signs: [{
         x: 4, y: 2,
-        title: "[TUTORIAL: MORE COMBAT TIPS]",
-        text: [
-            "ADVANCED COMBAT TIPS:",
-            "-Cancel your attack animations with a roll [SHIFT].",
-            "-Attack and roll to stay safe",
-            "-[Shift] + [A]/[D] direction to roll in that direction.",
-            "-Each hit has a base 10% chance to CRIT and do x2 damage.",
-            "-If you shoot an arrow and it got stuck then you can retrieve it.",
-        ],
+        title: "[TUTORIAL: DODGING]",
+        text: DODGING_BLURB
     },
     {
         x: 4, y: 26,

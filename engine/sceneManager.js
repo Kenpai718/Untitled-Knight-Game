@@ -76,18 +76,7 @@ class SceneManager {
         this.levelSelectBB = new BoundingBox(x, y, 40 * 12, -40);
 
         //text boxes for the title screen
-        let controlInfo =
-            ["[Controls]:",
-                "[A]: Left",
-                "[D]: Right",
-                "[S]: Crouch/Down",
-                "[W]: Interact/Up",
-                "[E]: Heal/Use-Potion",
-                "[SPACE]: Jump/Double-Jump/Wall-Jump",
-                "[P]/[Left-Click]: Melee-Attack/Purchase",
-                "[O]/[Right-Click]: Shoot-Arrow",
-                "[ESC]: Pause/Unpause Game, [X]: Exit-Shop",
-            ];
+        let controlInfo = CONTROLS_INFO;
         let creditInfo =
             ["Developed by:",
                 "Kenneth Ahrens",
@@ -153,19 +142,17 @@ class SceneManager {
     loadBeginSequence() {
         let beginScene1 =
             [
-                "This is my incredibly original story of,",
                 "\"That One Time I Got Reincarnated",
                 "As a Knight and Had to Save The",
                 "Castle That Was Overrun by Evil.\""
             ];
         let beginScene2 =
             [
-                "My mission?",
-                "Take down the Demon Lord."
+                "Objective: Take down the Demon Lord."
             ];
         let beginScene3 =
             [
-                "However, little did I know..."
+                "Let's rock."
             ];
 
         let beginScene1TB = this.buildSequenceBox(beginScene1);
