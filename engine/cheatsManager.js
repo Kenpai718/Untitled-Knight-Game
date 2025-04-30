@@ -13,14 +13,36 @@ class CheatsManager {
         }
 
         giveDiamonds(amount) {
-                console.log("not implemented yet");
+                console.log("added " + amount + " diamonds");
+                this.game.getPlayer().myInventory.addDiamonds(amount);
         }
 
-        changeMap(idNumber) {
-                console.log("not implemented yet");
+        givePotions(amount) {
+                console.log("added " + amount + " diamonds");
+                this.game.getPlayer().myInventory.addPotions(amount)
+        }
+
+        giveArrows(amount) {
+                console.log("added " + amount + " arrows");
+                this.game.getPlayer().myInventory.addArrows(amount)
         }
 
         allUpgrades() {
+                console.log("Inventory upgraded to max");
+                let player = this.game.getPlayer();
+                let inventory = player.myInventory;
+                inventory.healthUpgrade = 4;
+                inventory.attackUpgrade = 4;
+                inventory.arrowUpgrade = 4;
+                inventory.armorUpgrade = 3;
+
+                this.game.heartsbar.addHeart();
+                this.game.heartsbar.addHeart();
+                this.game.heartsbar.addHeart();
+                this.game.heartsbar.addHeart();
+        }
+
+        changeMap(idNumber) {
                 console.log("not implemented yet");
         }
 

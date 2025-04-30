@@ -171,7 +171,7 @@ class Shop {
             case 1:
                 cost = this.arrowPackCost[player.myInventory.arrowUpgrade];
                 if (player.myInventory.arrows < player.myInventory.maxStack && this.doTransaction(cost)) {
-                    player.myInventory.arrows += 10;
+                    player.myInventory.addArrows(10);
                     ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
                     this.currentMessage = this.purchases.arrow_pack;
                     this.messageTimer = 0;
@@ -181,7 +181,7 @@ class Shop {
             case 2:
                 cost = this.potionCost;
                 if (player.myInventory.potions < player.myInventory.maxStack && this.doTransaction(cost)) {
-                    player.myInventory.potions += 1;
+                    player.myInventory.addPotions(1)
                     ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
                     this.currentMessage = this.purchases.potion;
                     this.messageTimer = 0;
@@ -218,7 +218,7 @@ class Shop {
                 cost = this.arrowCost[player.myInventory.arrowUpgrade];
                 if (this.doTransaction(cost)) {
                     player.myInventory.arrowUpgrade += 1;
-                    player.myInventory.arrows += 10;
+                    player.myInventory.addArrows(10);
                     //entity.myInventory.arrows = Math.floor(entity.myInventory.arrows/2);
                     ASSET_MANAGER.playAsset(SFX.NEW_ITEM);
                     this.currentMessage = this.purchases.arrow_upgrade;

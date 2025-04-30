@@ -41,6 +41,19 @@ class Inventory {
         this.seconds = 0;
     };
 
+    addPotions(amount) {
+        this.potions += amount;
+    }
+
+    addArrows(amount) {
+        this.arrow += amount;
+    }
+
+    addDiamonds(amount) {
+        this.diamonds += amount;
+    }
+
+
     copyInventory(inventory) {
         this.maxxed = inventory.maxxed;
         this.maxStack = inventory.maxStack;
