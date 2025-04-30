@@ -146,8 +146,16 @@ class HealthBar {
         ctx.fillText("Canvas Cords:[x:" + cordX + ",y:" + cordY + "]", newX - offsetX, newY - (yBuffer * 5) - offsetY);
         ctx.fillText("Game Cords:  [x:" + blockX + ",y:" + blockY + "]", newX - offsetX, newY - (yBuffer * 4) - offsetY);
         ctx.fillText("Velocity:    {x:" + velX + ",y:" + velY + "}", newX - offsetX, newY - (yBuffer * 3) - offsetY);
-        ctx.fillText("State: " + this.isPlayer ? this.agent.action : this.agent.state
-            , newX - offsetX, newY - (yBuffer * 2) - offsetY);
+        //todo: this should really be refactored to have all entities have this.state 
+        let state = undefined;
+        if(this.isPlayer) {
+            if(this.agent.states !== undefined && this.agent.action !== undefined)
+                state = getJsonKeyFromValue(this.agent.states, this.agent.action);
+        } else {
+            if(this.agent.states !== undefined && this.agent.state !== undefined)
+            state = getJsonKeyFromValue(this.agent.states, this.agent.state);
+        }
+        ctx.fillText("State: " + state, newX - offsetX, newY - (yBuffer * 2) - offsetY);
 
         (this.agent.vulnerable) ? ctx.fillStyle = "GhostWhite" : ctx.fillStyle = "DimGray";
         ctx.font = PARAMS.DEFAULT_FONT;

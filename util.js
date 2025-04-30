@@ -462,3 +462,20 @@ function isInt(value) {
     var x;
     return isNaN(value) ? !1 : (x = parseFloat(value), (0 | x) === x);
   }
+
+  /**
+   * Takes a json pair array and gets the key from value
+   * @param {*} jsonObj 
+   * @param {*} value 
+   * @returns 
+   */
+function getJsonKeyFromValue(jsonObj, value) {
+    let decodedKey = "undefined";
+    for(var key in jsonObj) {
+        if(jsonObj[key] == value) {
+            decodedKey = key;
+            break;
+        }
+    }
+    return decodedKey;
+}
