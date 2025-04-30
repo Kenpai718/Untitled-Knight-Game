@@ -23,13 +23,15 @@
 
 // TODO: would be nice if this sign could update from a text file...
 /**version of up to date info. Make sure to update with each public push!*/
-const SIGN_VERSION = { x: 20, y: 3, title: "    VERSION " + PARAMS.VERSION_NUM,
+const SIGN_VERSION = { x: 20, y: 3,
+    title: "    VERSION " + PARAMS.VERSION_NUM,
     text: [
         "Last updated:" + PARAMS.UPDATE_DATE,
+        "",
         "COMBAT UPDATE:",
-        "-Knockback to enemies",
-        "-Slide Attack [S] + [Shift]",
-        "-Air Dodge added",
+        "-Knockback dealt to enemies",
+        "-Slide Attack:[S] + [Shift]",
+        "-Air Dodge: [Shift] in air",
         "-Max HP -> Blade Beam [ATK2]",
         "-QOL changes"
     ]

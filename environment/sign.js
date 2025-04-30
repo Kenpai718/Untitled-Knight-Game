@@ -55,20 +55,13 @@ class Sign extends AbstractInteractable {
                 let playerNearSign = entity.BB && self.BB.collide(entity.BB);
                 //player pressed up to read sign
                 if (playerNearSign && self.game.up) {
-                    //mark player has read this sign
-                    if (!self.read) {
-                        ASSET_MANAGER.playAsset(SFX.SELECT);
-                        self.read = true;
-                    }
-                    self.isReading = true;
-                    self.showText = true;
+                    self.toggleReadingSign(true);
                 } else {
                     //player is next to the sign and reading it
-                    if (playerNearSign && self.isReading) {
+                    if (playerNearSign || self.isReading) {
                         self.showText = true;
                     } else { //player no longer near sign and reading
-                        self.isReading = false;
-                        self.showText = false;
+                       self.toggleReadingSign(false);
                     }
 
                 }
@@ -79,6 +72,22 @@ class Sign extends AbstractInteractable {
         this.myTextBox.show = this.showText;
 
 
+    }
+
+    /**
+     * Set state of the isReading
+     * @param state On/Off to show sign gui
+     */
+    toggleReadingSign(state) {
+        if(state) {
+            //mark player has read this sign
+            if (!this.read) {
+                ASSET_MANAGER.playAsset(SFX.SELECT);
+                this.read = true;
+            }
+        }
+        this.isReading = state;
+        this.showText = state;
     }
 
 
