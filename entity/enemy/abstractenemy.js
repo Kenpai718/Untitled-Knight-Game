@@ -158,8 +158,9 @@ class AbstractEnemy extends AbstractEntity {
      * @param dmg
      */
     takeKnockback(dmg) {
-        if(this.canKnockback()) {
-            let playerBB = this.game.getPlayerBoundingBox();
+        if(dmg > 0 && this.canKnockback()) {
+            let player = this.game.camera.getPlayer();
+            let playerBB = player.BB;
             let diffToPlayer = this.BB.mid - playerBB.mid;
             //was attacked from the right side
             if(diffToPlayer <= 0) {
@@ -273,7 +274,8 @@ class AbstractEnemy extends AbstractEntity {
         // Drops random # of diamond upon death
         if (!this.dropDiamonds) {
             let amount = this.calcLoot();
-            let playerBB = this.game.getPlayerBoundingBox();
+            let player = this.game.camera;
+            let playerBB = player.BB;
             this.game.addEntityToFront(new Diamond(this.game, playerBB.mid, playerBB.top + 50, amount));
             this.dropDiamonds = true;
         }

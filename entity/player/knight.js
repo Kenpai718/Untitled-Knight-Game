@@ -130,7 +130,6 @@ class Knight extends AbstractPlayer {
     updateBB() {
         this.getOffsets();
         this.BB = new BoundingBox(this.x + this.offsetxBB, this.y + this.offsetyBB, this.widthBB, this.heightBB);
-        this.savePlayerPosToGame();
     };
 
 

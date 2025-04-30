@@ -6,6 +6,7 @@ class GameEngine {
         // What you will use to draw
         // Documentation: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
         this.ctx = null;
+        this.camera = null; //intantiate in scenemanager
 
         // Everything that will be updated and drawn each frame
         this.background1 = [];
@@ -19,12 +20,6 @@ class GameEngine {
         this.projectiles = [];
         this.information = [];
         this.shop = null;
-
-        //player class should update this
-        this.playerCords = {
-            cords: {x: 0, y: 0},
-            BB: new BoundingBox(0, 0, 0, 0)
-        }
 
         // Information on the input
         this.click = null;
@@ -506,15 +501,6 @@ class GameEngine {
         this.update();
         this.draw();
     };
-
-    getPlayerCords() {
-        return this.playerCords.cords;
-    }
-
-    getPlayerBoundingBox() {
-        return this.playerCords.BB;
-    }
-
 };
 
 // KV Le was here :)

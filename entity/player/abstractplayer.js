@@ -222,13 +222,6 @@ class AbstractPlayer extends AbstractEntity {
         }
     }
 
-    savePlayerPosToGame() {
-        this.game.playerCords.BB = this.BB;
-        this.game.playerCords.cords.x = this.x;
-        this.game.playerCords.cords.y = this.y;
-    }
-
-
     /**
      * Restarts the current level when called
      */
