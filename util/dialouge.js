@@ -146,9 +146,9 @@ const OBELISK_BLURB =
         "-Activate: hit with SWORD or ARROW!",
         "  or press [W] INTERACT",
         "-[OFF-STATE] = Blue, [ON STATE] = Orange",
-        "-Some obelisk puzzles can only be solved by hitting",
+        "-Some puzzles can only be solved by hitting",
         " from afar with your bow and arrow!",
-        "-Some obelisks can repeatedly toggled on and off"
+        "-Some can be repeatedly toggled on/off"
     ];
 
 const PLATFORMING_TIPS_BLURB =
