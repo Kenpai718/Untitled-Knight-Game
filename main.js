@@ -138,7 +138,7 @@ ASSET_MANAGER.downloadAll(() => {
 	//console message to frontend
 	console.log("Hello thanks for playing Untitled Knight!");
 	console.log("There's not really any way to stop you from messing around in console," +
-		" so if you'd like to know the common cheats.js, enter \'displayCheats()\' here.")
+		" so if you'd like to know the common cheats, enter \'displayCheats()\' here.")
 
 	gameEngine.init(ctx);
 	let gameManager = new SceneManager(gameEngine);
