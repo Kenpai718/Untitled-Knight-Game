@@ -1,5 +1,5 @@
 const gameEngine = new GameEngine();
-let gameManager; //set this later, gives access to console
+let cheats; //cheats for console
 
 const ASSET_MANAGER = new AssetManager(); //used for images and sfx
 const MUSIC_MANAGER = new AssetManager(); //used strictly for music tracks
@@ -141,7 +141,8 @@ ASSET_MANAGER.downloadAll(() => {
 		" so if you'd like to know the common cheats.js, enter \'displayCheats()\' here.")
 
 	gameEngine.init(ctx);
-	gameManager = new SceneManager(gameEngine);
+	let gameManager = new SceneManager(gameEngine);
+	cheats = new cheats(gameManager); //enable cheats
 	gameEngine.start();
 });
 

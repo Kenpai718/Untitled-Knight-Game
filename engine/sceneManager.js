@@ -6,7 +6,6 @@ class SceneManager {
     constructor(game) {
         this.game = game;
         this.game.camera = this; //add scene manager as an entity to game engine
-        this.cheats = new Cheats(this); //for console fun
         this.x = 0;
         this.y = 0;
         this.velocity = { x: 0, y: 0 };
@@ -528,7 +527,7 @@ class SceneManager {
         if (number < 0 || number > this.levels.length - 1) {
             throw "Invalid load level number";
         } else {
-            console.log("Loading level " + number);
+            if(PARAMS.LOG) console.log("Loading level " + number);
             this.killCount = !this.levelState[number] ? 0 : this.levelState[number].killCount;
             this.lastLevel = this.currentLevel;
             this.currentLevel = number;
@@ -1485,7 +1484,7 @@ class SceneManager {
             this.savePlayerInfo();
             if (!bool) { // save level upon loading, but not reloading. This is meant for restart.
                 this.saveLevelState();
-                console.log("Save level state");
+                if(PARAMS.LOG) console.log("Save level state");
                 this.lastInventoryPerm = new Inventory(this.game);
                 this.lastInventoryPerm.copyInventory(this.lastInventory);
                 this.spawnCheckpoint = { x: spawnX * PARAMS.BLOCKDIM, y: (h - spawnY) * PARAMS.BLOCKDIM };

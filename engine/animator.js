@@ -82,7 +82,7 @@ class Animator {
     }
 
     isThreeForthDone() {
-        console.log(this.elapsedTime, this.totalTime / (4/3))
+        if(PARAMS.LOG) console.log(this.elapsedTime, this.totalTime / (4/3))
         return (this.elapsedTime >= this.totalTime / (4/3));
     }
 };

@@ -108,7 +108,7 @@ class Arrow extends AbstractEntity {
                         }
                         self.x -= dist;
                         self.y -= dist;
-                        console.log(dist);
+                        if(PARAMS.LOG) console.log(dist);
                     }
                     self.velocity.x = 0;
                     self.velocity.y = 0;
