@@ -287,22 +287,24 @@ const MUSIC = {
  */
 const CONTROLS_BLURB = 
     [
-        "MOUSE CONTROLS [RECOMMENDED]:",,
+        "MOUSE CONTROLS [RECOMMENDED]:",
         "-[LEFT-CLICK]: Melee sword-attacks",
         "-[MOUSE-MOVE]: Aim arrow",
         "-[RIGHT-CLICK]: Shoot arrow at cursor",
-
+        "",
         "KEYBOARD CONTROLS:",
         "-[A] left, [D]  right", 
         "-[S] crouch, [W] interact/up",
         "-[SPACE] jump, [SPACE]x2 double jump",
-        "-[P] swing sword, [P]x2 sword combo",
-        "     *+ [A]/[D] switch attack the other way",
-        "-[O] shoot an arrow forward",,
-        "     *+ [W] or [S] shoot up/down",
         "-[SHIFT] dodge/roll/slide",
         "-[ESC] pause/unpause",
-        "-[L-CTRL] minimap"
+        "-[L-CTRL] minimap",
+        "",
+        "NO MOUSE CONTROLS:",
+        "-[P] swing sword, [P]x2 sword combo",
+        "     *+ [A]/[D] switch attack the other way",
+        "-[O] shoot an arrow forward",
+        "     *+ [W] or [S] shoot up/down",
     ];
 
 const CONTROLS_INFO = 
@@ -323,7 +325,7 @@ const CROUCHING_BLURB =
     "CROUCHING OPTIONS:",
     "-Hold [S] to crouch.",
     "-[S]+[Attack] = Crouch Attack",
-    "-[S]+[Roll] = Slide Attack",
+    "-[S]+[SHIFT] = Slide Attack (Dodge)",
     "-Use to go through small spaces or attack quickly.",
     "-Can still roll or shoot an arrow while crouching."
 ];
@@ -375,6 +377,14 @@ const DODGING_BLURB =
         "-[S] + [SHIFT] slide dodge attack"
     ];
 
+    const COMBAT_TIP_BLURB =
+    [
+        "-Use [SHIFT] Dodge for invulnerability and momentum",
+        "-Weeve dodges in with attacks to remain safe",
+        "-Combo your attacks and movement options",
+        " and send your enemies flying!"
+    ];
+
     const SECRETS_BLURB =
     [
         "-You may find secrets in unexpected places!",
@@ -389,6 +399,60 @@ const DODGING_BLURB =
         "-To progress to next level press [W] at door.",
         "-A KILL QUOTA must be met to progress to next level!"
 
+    ];
+
+    const TROLL_COMBO_BLURB = [
+        "Never gonna give you up",
+        "Never gonna let you down",
+        "Never gonna run around and desert you",
+        ";)",
+        "",
+        "Ok but try this attack combo (seriously): ",
+        "[S] Crouch + [Shift] Slide Atk + ",
+        "[Attack] Crouch Slash + Sword [Attack1-2]",
+    ];
+
+const BLADE_BEAM_BLURB =
+    [
+        "At full hp, your second sword attack",
+        "will shoot a blade beam at your enemies!",
+        "Low HP = Temp \'Berserk\' Mode",
+        " *infinite blade beam + damage buff (temp)"
+    ];
+
+    const OBELISK_BLURB = 
+    [
+        "OBELISK DEVICE:",
+        "-Devices unlocks inaccessible/secret areas!",
+        "-Activate: hit with SWORD or ARROW!",
+        "  or press [W] INTERACT",
+        "-[OFF-STATE] = Blue, [ON STATE] = Orange",
+        "-Some obelisk puzzles can only be solved by hitting",
+        " from afar with your bow and arrow!",
+        "-Some obelisks can repeatedly toggled on and off"
+    ];
+
+    const PLATFORMING_TIPS_BLURB = 
+    [
+        "PLATFORMING TIPS:",
+        "-Delay double jump for distance.",
+        "-Run + Jump will go farther",
+        "-Wait for peak jump before double jump",
+        "  for height.",
+        "-[SHIFT] Roll in air for dodge + extra velocity",
+        "-SWITCH DIRECTIONS (mid-air):",
+        "  *[Jump]/[Roll] + Opposite Direction key"
+    ];
+
+    const MOVING_PLATY_BLURB = 
+    [
+        "MOVING PLATFORMS:",
+        "-By magic some platforms move on their own!",
+        " Jump and ride them to the destination.",
+        "-Careful getting onto them they can be a bit cheeky.",
+        " *(Sorry from devs the math is hard...)",
+        "-[SPACE] jump up after grabbing a ledge (RECCOMENDED)",
+        " or [W] to getup ontop."
     ];
 
 

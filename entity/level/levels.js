@@ -498,6 +498,12 @@ var level1_1 = {
         },
 
         {
+            x: 59, y: 6,
+            title: "[TUTORIAL: DODGING]",
+            text: DODGING_BLURB
+        },
+
+        {
             x: 69, y: 6,
             title: "[TUTORIAL: CHESTS]",
             text: CHEST_BLURB
@@ -650,39 +656,18 @@ var level1_2 = {
 
     signs: [{
         x: 4, y: 2,
-        title: "[TUTORIAL: DODGING]",
-        text: DODGING_BLURB
+        title: "[TUTORIAL: MORE COMBAT TIPS]",
+        text: COMBAT_TIP_BLURB
     },
     {
         x: 4, y: 26,
         title: "[GET 1,000,0000 DIAMONDS WITH THIS ONE SIMPLE TRICK!]",
-        text: [
-            "Never gonna give you up",
-            "Never gonna let you down",
-            "Never gonna run around and desert you",
-            "Never gonna make you cry",
-            "Never gonna say goodbye",
-            "Never gonna tell a lie and hurt you"
-        ],
+        text: TROLL_COMBO_BLURB
     },
     {
         x: 62, y: 2,
         title: "[TUTORIAL: BLADE BEAM]",
-        text: [
-            "At full hp, your second sword attack",
-            "will shoot a blade beam at your enemies!"
-        ]
-    },
-    {
-        x: 64, y: 2,
-        title: "[TUTORIAL: RAGE BOOST]",
-        text: [
-            "When in a pinch:",
-            "-At low-hp you will tap into a secret power",
-            " called BESERKER MODE! Indicated by a red aura.",
-            "-This is a powerful state that deals extra damage",
-            " and shoots a blade beam projectile with each swing!"
-        ]
+        text: BLADE_BEAM_BLURB
     },
 
     ],
@@ -700,10 +685,7 @@ var level1_2 = {
 
     npcs: [
         { x: 7, y: 1, text: ["I would read this sign if I knew how to read."] },
-        {
-            x: 38, y: 21, text: ["Welcome to WizardMart.",
-                "May I take your order?"]
-        }
+        { x: 38, y: 21}
     ],
 
     ground: [
@@ -960,30 +942,12 @@ var level1_3 = {
         {
             x: 4, y: 2,
             title: "[TUTORIAL: OBELISK]",
-            text: [
-                "OBELISK DEVICE:",
-                "-These strange devices can unlock inaccessible/secret areas!",
-                "-To activate: hit them with your SWORD or ARROW!",
-                " ...or you could press \'W'\ next to it, but that's boring.",
-                "-[OFF-STATE] = Blue, [ON STATE] = Orange",
-                "-Some obelisk puzzles can only be solved by hitting them",
-                " from afar with your bow and arrow!",
-                "-Some obelisks can repeatedly toggled on and off",
-            ]
+            text: OBELISK_BLURB
         },
         {
             x: 34, y: 4,
             title: "[TUTORIAL: ADVANCED JUMPS]",
-            text: [
-                "PLATFORMING TIPS:",
-                "-Delay your second jump to cover more distance.",
-                "-If you are running and THEN jump your momentum",
-                " will be carried over so you will go farther.",
-                "-Wait until you're at the peak of your first jump",
-                " before doing your double jump to go higher.",
-                "-While in air, hold the opposite direction and double ",
-                " jump to quickly switch directions.",
-            ]
+            text: PLATFORMING_TIPS_BLURB
         },
 
         {
@@ -991,11 +955,12 @@ var level1_3 = {
             title: "[TUTORIAL: MOVING PLATFORMS]",
             text: [
                 "MOVING PLATFORMS:",
-                "-By some strange magic some platforms move on their own!",
-                "-You can jump on these platforms and ride them to some destination.",
-                "-Be careful when getting onto them they can be a bit cheeky.",
-                "-Use [SPACE] to jump up after grabbing a ledge",
-                " or [W] to getup ontop. Jumps are recommended here."
+                "-By magic some platforms move on their own!",
+                " Jump and ride them to the destination.",
+                "-Careful getting onto them they can be a bit cheeky.",
+                " *(Sorry from devs the math is hard...)",
+                "-[SPACE] jump up after grabbing a ledge (RECCOMENDED)",
+                " or [W] to getup ontop."
             ]
         },
 
@@ -1006,7 +971,7 @@ var level1_3 = {
                 ">-(•_•)-<",
                 "   ( )",
                 "   o o.",
-                "  wooper",
+                "wooper is the best",
             ]
         },
 
