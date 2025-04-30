@@ -33,7 +33,10 @@ const SIGN_VERSION = { x: 20, y: 3,
         "-Slide Attack:[S] + [Shift]",
         "-Air Dodge: [Shift] in air",
         "-Max HP -> Blade Beam [ATK2]",
-        "-QOL changes"
+        "-QOL changes",
+        "",
+        "Full notes in game directory:",
+        "/patch-notes/v1_X.txt "
     ]
 }
 
