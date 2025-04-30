@@ -65,6 +65,7 @@ class Knight extends AbstractPlayer {
         this.berserkBonus = 1.3;
         this.berserkTimer = 0;
         this.berserkFilter = 0.6;
+        this.maxBerserkTime = 10;
         //these two audio variables control which sound effect is playing during the attack combo
         this.playAttackSFX1 = true;
         this.playAttackSFX2 = true;
@@ -161,7 +162,7 @@ class Knight extends AbstractPlayer {
                     ASSET_MANAGER.playAsset(SFX.BERSERK_ACTIVATE);
                 }
                 this.berserkTimer += TICK;
-                if (this.berserkTimer >= 10) {
+                if (this.berserkTimer >= this.maxBerserkTime) {
                     this.berserk = false;
                 }
 

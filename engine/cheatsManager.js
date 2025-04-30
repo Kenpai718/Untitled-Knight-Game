@@ -47,8 +47,16 @@ class CheatsManager {
                 this.game.loadLevel(idNumber, false);
         }
 
-        activateBerserk() {
-                console.log("not implemented yet");
+        toggleBerserkMode(state) {
+                console.log("Berserk toggled: " + state);
+                this.game.player.berserk = state;
+        }
+
+        infiniteBerserkMode(state) {
+                console.log("Infinite Berserk toggled: " + state);
+                this.game.player.berserk = state;
+                if(state) this.game.player.maxBerserkTime = 9999999;
+                else this.game.player.maxBerserkTime = 10;
         }
 
         spawn(entity) {
@@ -66,7 +74,8 @@ function displayCheats() {
         console.log("Potions: cheats.givePotions(amount)");
         console.log("All Upgrades: cheats.allUpgrades()");
         console.log("Change Map: cheats.changeLevel(lvlID)");
-        console.log("Berserk: cheats.allUpgrades()");
+        console.log("Berserk Mode: cheats.activateBerserkMode()");
+        console.log("Infinite Berserk: cheats.infiniteBerserkMode()");
         console.log("Spawn: cheats.spawn(entity)")
 
 }
