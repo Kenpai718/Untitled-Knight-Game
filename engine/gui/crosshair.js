@@ -27,6 +27,7 @@ class Cursor {
                 }
             }
         });
+        if (!collided) this.myType = this.types.default;
 
         this.game.interactables.forEach(function (entity) {
             //interactions with sign
@@ -36,8 +37,6 @@ class Cursor {
                 entity.toggleReadingSign(isHovering);
             }
         });
-
-        if (!collided) this.myType = this.types.default;
 
 
     }
