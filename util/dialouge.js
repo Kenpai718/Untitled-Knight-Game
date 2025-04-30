@@ -65,7 +65,7 @@ const WALLJUMP_BLURB =
     [
         "HOW TO SCALE WALLS:",
         "-While touching a wall in air,",
-        "-[SPACE] to walljump in the other direction.",
+        " [SPACE] to walljump in the other direction.",
         "-Chain walljumps to scale heights!",
         "",
         "LEDGE OPTIONS:",
