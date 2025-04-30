@@ -65,12 +65,13 @@ const WALLJUMP_BLURB =
     [
         "HOW TO SCALE WALLS:",
         "-While touching a wall in air,",
-        " [SPACE] to walljump in the other direction.",
-        " Chain walljumps to scale heights!",
+        "-[SPACE] to walljump in the other direction.",
+        "-Chain walljumps to scale heights!",
+        "",
         "LEDGE OPTIONS:",
         "-[W] get up",
-        " [S] slide down",
-        "[SPACE] jump"
+        "-[S] slide down",
+        "-[SPACE] jump"
     ];
 
 const CHEST_BLURB =
@@ -87,8 +88,9 @@ const CHEST_BLURB =
 const DODGING_BLURB =
     [
         "DODGING:",
-        "-Cancel any attack with a dodge [SHIFT]",
-        "-[Attack] + [SHIFT] to deal damage safely",
+        "-[SHIFT] Dodge action",
+        "-[Attack] + [SHIFT] Dodge Attack",
+        " *Cancel any attack with a dodge!",
         "-[Shift] + [A]/[D] change dodge direction",
         "-[S] + [SHIFT] slide dodge attack"
     ];
