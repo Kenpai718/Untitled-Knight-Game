@@ -170,6 +170,6 @@ const MOVING_PLATY_BLURB =
         " Jump and ride them to the destination.",
         "-Careful getting onto them they can be a bit cheeky.",
         " *(Sorry from devs the math is hard...)",
-        "-[SPACE] jump up after grabbing a ledge (RECCOMENDED)",
+        "-[SPACE] jump up after grabbing a ledge (RECOMMENDED)",
         " or [W] to getup ontop."
     ];

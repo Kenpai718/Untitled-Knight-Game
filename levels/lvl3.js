@@ -19,15 +19,7 @@ const level1_3 = {
         {
             x: 39, y: 8,
             title: "[TUTORIAL: MOVING PLATFORMS]",
-            text: [
-                "MOVING PLATFORMS:",
-                "-By magic some platforms move on their own!",
-                " Jump and ride them to the destination.",
-                "-Careful getting onto them they can be a bit cheeky.",
-                " *(Sorry from devs the math is hard...)",
-                "-[SPACE] jump up after grabbing a ledge (RECCOMENDED)",
-                " or [W] to getup ontop."
-            ]
+            text: MOVING_PLATY_BLURB
         },
 
         {
