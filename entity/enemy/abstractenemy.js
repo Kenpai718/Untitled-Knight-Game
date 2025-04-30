@@ -163,12 +163,12 @@ class AbstractEnemy extends AbstractEntity {
             let diffToPlayer = this.BB.mid - playerBB.mid;
             //was attacked from the right side
             if(diffToPlayer <= 0) {
-                this.velocity.x = -(BASE_KNOCKBACK + ((dmg / 100) * 1000));
+                this.velocity.x = -(BASE_KNOCKBACK + ((dmg / 100) * KNOCKBACK_BONUS_X));
             } else {
-                this.velocity.x = BASE_KNOCKBACK  + ((dmg / 100) * 1000);
+                this.velocity.x = BASE_KNOCKBACK  + ((dmg / 100) * KNOCKBACK_BONUS_X);
             }
 
-            this.velocity.y = -(BASE_KNOCKBACK) - ((dmg / 100) * 1000);
+            this.velocity.y = -(BASE_KNOCKBACK) - ((dmg / 100) * KNOCKBACK_BONUS_Y);
         }
     }
 

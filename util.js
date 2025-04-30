@@ -67,6 +67,8 @@ const PHYSIC_SCALER = 3; //scalar for some physics
 const PLAYER_JUMP_HEIGHT = 1500; //players base jump height
 const FALL_GRAVITY = 1.2; //gravity put on player's fall acc
 const BASE_KNOCKBACK = 50;
+const KNOCKBACK_BONUS_X = 1000;
+const KNOCKBACK_BONUS_Y = 500;
 const PLAYER_PHYSICS = {
     MAX_WALK: 95 * PHYSIC_SCALER,
     MAX_RUN: 200 * PHYSIC_SCALER,
