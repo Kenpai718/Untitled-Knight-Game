@@ -278,7 +278,7 @@ class GameEngine {
                 case "Space":
                     break;
                 case "ControlLeft":
-                    //toggle minimap
+                    //toggle minimap.js
                     e.preventDefault();
                     that.minimap = !that.minimap;
                     break;

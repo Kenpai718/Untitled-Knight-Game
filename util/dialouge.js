@@ -14,7 +14,7 @@ const CONTROLS_BLURB =
         "-[SPACE] jump, [SPACE]x2 double jump",
         "-[SHIFT] dodge/roll/slide",
         "-[ESC] pause/unpause",
-        "-[L-CTRL] minimap",
+        "-[L-CTRL] minimap.js",
         "",
         "NO MOUSE CONTROLS:",
         "-[P] swing sword, [P]x2 sword combo",

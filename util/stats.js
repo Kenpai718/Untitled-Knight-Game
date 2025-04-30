@@ -21,7 +21,7 @@ const PARAMS = {
     AUTO_FOCUS: false,
     BLOCKDIM: 81,      //dimensions of blocks
     DMG_COOLDOWN: .5,  //how long the cooldown is for an entity to take damage,
-    SCALE: 10,          //dimensions used for minimap
+    SCALE: 10,          //dimensions used for minimap.js
 
 
     //GUI
