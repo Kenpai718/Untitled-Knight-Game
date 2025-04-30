@@ -97,7 +97,7 @@ const DODGING_BLURB =
 const COMBAT_TIP_BLURB =
     [
         "-Combo your attacks and movement options",
-        " and send your enemies flying!",
+        " to send enemies flying!",
         "",
         "Example Combo:",
         "[S] Crouch + [Shift] Slide Atk + ",
