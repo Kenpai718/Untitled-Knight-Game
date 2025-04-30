@@ -142,7 +142,7 @@ ASSET_MANAGER.downloadAll(() => {
 
 	gameEngine.init(ctx);
 	let gameManager = new SceneManager(gameEngine);
-	cheats = new cheats(gameManager); //enable cheats
+	cheats = new CheatsManager(gameManager); //enable cheats, access through console!
 	gameEngine.start();
 });
 
