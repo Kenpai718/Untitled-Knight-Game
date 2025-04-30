@@ -11,7 +11,7 @@ const level1_2 = {
 
     signs: [{
         x: 4, y: 2,
-        title: "[TUTORIAL: MORE COMBAT TIPS]",
+        title: "[TUTORIAL: COMBOS]",
         text: COMBAT_TIP_BLURB
     },
         {

@@ -80,8 +80,7 @@ const CHEST_BLURB =
         "-Press W to open a chest!",
         "-Chests are hidden throughout the map",
         " and sometimes where you least expect it...",
-        "-Chests provide the most amount of diamonds",
-        " in the whole game!",
+        "-Chests provide the most diamonds",
         "-Explore each level for chests ",
         " to buy upgrades in the shop!"
     ];
@@ -97,10 +96,14 @@ const DODGING_BLURB =
 
 const COMBAT_TIP_BLURB =
     [
-        "-Use [SHIFT] Dodge for invulnerability and momentum",
-        "-Weeve dodges in with attacks to remain safe",
         "-Combo your attacks and movement options",
-        " and send your enemies flying!"
+        " and send your enemies flying!",
+        "",
+        "Example Combo:",
+        "[S] Crouch + [Shift] Slide Atk + ",
+        "[Attack] Crouch Slash + Sword [Attack1-2]",
+        "",
+        "-Use [SHIFT] Dodge to cancel attacks/combos"
     ];
 
 const SECRETS_BLURB =
@@ -120,14 +123,12 @@ const DOORS_BLURB = [
 ];
 
 const TROLL_COMBO_BLURB = [
-    "Never gonna give you up",
+    "\'Never gonna give you up",
     "Never gonna let you down",
-    "Never gonna run around and desert you",
-    ";)",
+    "Never gonna run around and desert you\'",
+    "- Ken ;)",
     "",
-    "Ok but try this attack combo (seriously): ",
-    "[S] Crouch + [Shift] Slide Atk + ",
-    "[Attack] Crouch Slash + Sword [Attack1-2]",
+    "P.S. This game has endings based on diamonds spent"
 ];
 
 const BLADE_BEAM_BLURB =
