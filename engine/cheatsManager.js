@@ -42,8 +42,9 @@ class CheatsManager {
                 this.game.heartsbar.addHeart();
         }
 
-        changeMap(idNumber) {
-                console.log("not implemented yet");
+        changeLevel(levelNumber) {
+                console.log("Loading LVL " + levelNumber);
+                this.game.loadLevel(idNumber, false);
         }
 
         activateBerserk() {
@@ -61,8 +62,10 @@ class CheatsManager {
 function displayCheats() {
         console.log("Teleport: cheats.teleport(x,y)");
         console.log("Diamonds: cheats.giveDiamond(amount)");
-        console.log("Change Map: cheats.changeMap(idNum)");
+        console.log("Arrows: cheats.giveArrows(amount)");
+        console.log("Potions: cheats.givePotions(amount)");
         console.log("All Upgrades: cheats.allUpgrades()");
+        console.log("Change Map: cheats.changeLevel(lvlID)");
         console.log("Berserk: cheats.allUpgrades()");
         console.log("Spawn: cheats.spawn(entity)")
 
