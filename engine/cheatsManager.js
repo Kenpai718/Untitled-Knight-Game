@@ -1,7 +1,7 @@
 /**
  * Library of cheat codes
  */
-class Cheats {
+class CheatsManager {
         constructor(sceneManager) {
                 this.game = sceneManager;
         }
