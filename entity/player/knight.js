@@ -824,6 +824,14 @@ class Knight extends AbstractPlayer {
                 this.game.shootButton = false;
                 this.arrow = false;
             }
+        } else if(this.game.attack && this.action == this.states.slide) {
+            //cancel a slide attack into a crouch atk
+            this.resetAnimationTimers(this.states.crouch_atk);
+            this.resetAnimationTimers(this.states.slide);
+
+            this.resetSlideAtkState();
+            this.action = this.states.crouch_atk;
+            this.game.attack = true;
         } else {
             //crouch attack
             this.resetAnimationTimers(this.states.crouch_atk);
@@ -873,7 +881,7 @@ class Knight extends AbstractPlayer {
         this.game.attack = false;
         this.game.shoot = false;
         this.arrow = false;
-        this.resetCombo();
+        //this.resetCombo();
         this.HB = null;
 
         //set roll behavior
@@ -909,7 +917,6 @@ class Knight extends AbstractPlayer {
      */
     doSlide() {
         this.game.shoot = false;
-        this.game.attack = false;
         this.arrow = false;
         this.updateHB(); //makes this an attack
         //this.resetCombo();
@@ -940,17 +947,24 @@ class Knight extends AbstractPlayer {
 
         if (this.animations[this.facing][this.states.slide][this.myInventory.armorUpgrade].isHalfwayDone()) {
             this.vulnerable = true;
+        } else {
+            //so the player can cancel to combo after halfway point
+            this.game.attack = false;
         }
 
         //slide done
         if (animationDone) {
-            this.game.roll = false;
-            this.vulnerable = true;
-            this.game.attack = false;
-            this.resetAnimationTimers(this.states.slide)
-            this.action = this.states.idle;
-            this.HB = null;
+            this.resetSlideAtkState();
         }
+    }
+
+    resetSlideAtkState() {
+        this.game.roll = false;
+        this.vulnerable = true;
+        this.game.attack = false;
+        this.resetAnimationTimers(this.states.slide)
+        this.action = this.states.idle;
+        this.HB = null;
     }
 
 
