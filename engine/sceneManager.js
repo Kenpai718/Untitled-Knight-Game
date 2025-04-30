@@ -6,6 +6,7 @@ class SceneManager {
     constructor(game) {
         this.game = game;
         this.game.camera = this; //add scene manager as an entity to game engine
+        this.cheats = new Cheats(this); //for console fun
         this.x = 0;
         this.y = 0;
         this.velocity = { x: 0, y: 0 };
@@ -1816,8 +1817,4 @@ class SceneManager {
         this.health[4] = new Animator(this.heart_sheet, 0, 0, PARAMS.HEART_DIM, PARAMS.HEART_DIM, 1, 1, 0, false, false, false);
 
     };
-
-    hi() {
-        console.log("HI!")
-    }
 };

@@ -16,12 +16,12 @@ class Spike extends AbstractBackFeature {
         var self = this;
         this.game.entities.forEach(function (entity) {
             if (entity.BB && self.BB.collide(entity.BB) && entity instanceof AbstractEntity) {
-                entity.takeDamage(STATS.SPIKE.DMG, false);
+                entity.takeDamage(Params.SPIKE.DMG, false);
             }
         });
         this.game.enemies.forEach(function (entity) {
             if (entity.BB && self.BB.collide(entity.BB) && entity instanceof AbstractEntity) {
-                entity.takeDamage(STATS.SPIKE.DMG, false);
+                entity.takeDamage(Params.SPIKE.DMG, false);
                 entity.setDamagedState();
             }
         });

@@ -1,5 +1,5 @@
 const gameEngine = new GameEngine();
-let game; //set this later, gives access to console
+let gameManager; //set this later, gives access to console
 
 const ASSET_MANAGER = new AssetManager(); //used for images and sfx
 const MUSIC_MANAGER = new AssetManager(); //used strictly for music tracks
@@ -135,20 +135,15 @@ ASSET_MANAGER.downloadAll(() => {
 	 * sets the song to play on auto repeat
 	*/
 	//ASSET_MANAGER.forcePlayMusic(MUSIC.CHASING_DAYBREAK);
+	//console message to frontend
+	console.log("Hello thanks for playing Untitled Knight!");
+	console.log("There's not really any way to stop you from messing around in console," +
+		" so if you'd like to know the common cheats.js, enter \'displayCheats()\' here.")
 
 	gameEngine.init(ctx);
-	game = new SceneManager(gameEngine);
+	gameManager = new SceneManager(gameEngine);
 	gameEngine.start();
 });
 
-function displayCheats() {
-	console.log("game.teleport(x,y");
-	console.log("game.giveDiamond(x,y");
 
-}
-
-//game running show console message front end
-console.log("Hello thanks for playing Untitled Knight!");
-console.log("There's not really any way to stop you from messing around in console," +
-	" so if you'd like to know the common cheats, enter \'displayCheats()\' here.")
 

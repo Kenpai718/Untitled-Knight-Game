@@ -21,3 +21,4 @@ Patch Notes: v1.5 [Combat Update] - 4.30/2025 (Ken)
 devs:
 -open debug mode with right ctrl
 -open minimap by tapping left ctrl
+-cheats displayCheats() in front end console

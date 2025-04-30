@@ -100,6 +100,7 @@ class GameEngine {
         gameLoop();
     };
 
+
     startInput() {
         var that = this;
         const getXandY = e => ({

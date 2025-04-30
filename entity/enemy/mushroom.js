@@ -8,7 +8,7 @@
  */
 class Mushroom extends AbstractEnemy {
     constructor(game, x, y, onGuard) {
-        super(game, x, y, onGuard, STATS.MUSHROOM.NAME, STATS.MUSHROOM.MAX_HP, STATS.MUSHROOM.WIDTH, STATS.MUSHROOM.HEIGHT, STATS.MUSHROOM.SCALE, STATS.MUSHROOM.PHYSICS);
+        super(game, x, y, onGuard, Params.MUSHROOM.NAME, Params.MUSHROOM.MAX_HP, Params.MUSHROOM.WIDTH, Params.MUSHROOM.HEIGHT, Params.MUSHROOM.SCALE, Params.MUSHROOM.PHYSICS);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/mushroom.png");
         // seting up animation states
         this.animations = []; // [state][direction]
@@ -223,7 +223,7 @@ class Mushroom extends AbstractEnemy {
     };
 
     getDamageValue() {
-        return STATS.MUSHROOM.DAMAGE;
+        return Params.MUSHROOM.DAMAGE;
     };
 
 };

@@ -4,7 +4,7 @@
 class Knight extends AbstractPlayer {
     //game = engine, (x, y) = spawn cords
     constructor(game, x, y) {
-        super(game, x, y, STATS.PLAYER.NAME, STATS.PLAYER.MAX_HP, STATS.PLAYER.WIDTH, STATS.PLAYER.HEIGHT, STATS.PLAYER.SCALE);
+        super(game, x, y, Params.PLAYER.NAME, Params.PLAYER.MAX_HP, Params.PLAYER.WIDTH, Params.PLAYER.HEIGHT, Params.PLAYER.SCALE);
 
         // get spritesheets
         this.spritesheetRight = ASSET_MANAGER.getAsset("./sprites/knight/knightRight.png");
@@ -1061,13 +1061,13 @@ class Knight extends AbstractPlayer {
     getDamageValue() {
         let dmg = 0;
         if (this.action == this.states.attack1) {
-            dmg = STATS.PLAYER.DMG_SLASH1 * super.getAttackBonus();
+            dmg = Params.PLAYER.DMG_SLASH1 * super.getAttackBonus();
         } else if (this.action == this.states.attack2) {
-            dmg = STATS.PLAYER.DMG_SLASH2 * super.getAttackBonus();
+            dmg = Params.PLAYER.DMG_SLASH2 * super.getAttackBonus();
         } else if (this.action == this.states.slide) {
-            dmg = STATS.PLAYER.DMG_SLIDEATK * super.getAttackBonus();
+            dmg = Params.PLAYER.DMG_SLIDEATK * super.getAttackBonus();
         } else if (this.action == this.states.crouch_atk) {
-            dmg = STATS.PLAYER.DMG_CROUCHATK * super.getAttackBonus();
+            dmg = Params.PLAYER.DMG_CROUCHATK * super.getAttackBonus();
         }
 
         //beserker bonus

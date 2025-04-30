@@ -1,6 +1,6 @@
 class FlyingEye extends AbstractEnemy {
     constructor(game, x, y, onGuard) {
-        super(game, x, y, onGuard, STATS.FLYINGEYE.NAME, STATS.FLYINGEYE.MAX_HP, STATS.FLYINGEYE.WIDTH, STATS.FLYINGEYE.HEIGHT, STATS.FLYINGEYE.SCALE, STATS.FLYINGEYE.PHYSICS);
+        super(game, x, y, onGuard, Params.FLYINGEYE.NAME, Params.FLYINGEYE.MAX_HP, Params.FLYINGEYE.WIDTH, Params.FLYINGEYE.HEIGHT, Params.FLYINGEYE.SCALE, Params.FLYINGEYE.PHYSICS);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/flyingeye.png");
         this.animations = [];
         this.loadAnimations();
@@ -212,8 +212,8 @@ class FlyingEye extends AbstractEnemy {
 
     getDamageValue() {
         if (this.state == this.states.attack1)
-            return STATS.FLYINGEYE.DAMAGE * 1.5;
-        else return STATS.FLYINGEYE.DAMAGE;
+            return Params.FLYINGEYE.DAMAGE * 1.5;
+        else return Params.FLYINGEYE.DAMAGE;
     }
 
     setDamagedState() {
@@ -283,7 +283,7 @@ class FlyingEye extends AbstractEnemy {
                     if (this.direction == this.directions.right)
                         this.game.addEntity(new FlyingEyeProjectile(this.game, this.BB.right - 20 * this.scale, this.y + 53 * this.scale, this.direction));
                     else
-                        this.game.addEntity(new FlyingEyeProjectile(this.game, this.BB.left + (20 - STATS.EYE_PROJECTILE.WIDTH * this.scale) * this.scale, this.y + 53 * this.scale, this.direction));
+                        this.game.addEntity(new FlyingEyeProjectile(this.game, this.BB.left + (20 - Params.EYE_PROJECTILE.WIDTH * this.scale) * this.scale, this.y + 53 * this.scale, this.direction));
                     this.projectile = true;
                 }
             }

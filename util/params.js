@@ -55,6 +55,9 @@ const PARAMS = {
     //MISC
     POTION_HEAL: 50,
     DEATH_PITY: 3, //give the player some pity after dying more than this many times
+
+    //log messages
+    LOG: false
 };
 
 /**Physics of the player
@@ -87,7 +90,7 @@ const PLAYER_PHYSICS = {
 };
 
 /**Global stats that define an entity */
-const STATS = {
+const Params = {
     /*player stats*/
     PLAYER: {
         NAME: "Player (Knight)",

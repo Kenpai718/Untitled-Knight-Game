@@ -9,7 +9,7 @@
 class Goblin extends AbstractEnemy {
     constructor(game, x, y, onGuard) {
 
-        super(game, x, y, onGuard, STATS.GOBLIN.NAME, STATS.GOBLIN.MAX_HP, STATS.GOBLIN.WIDTH, STATS.GOBLIN.HEIGHT, STATS.GOBLIN.SCALE, STATS.GOBLIN.PHYSICS);
+        super(game, x, y, onGuard, Params.GOBLIN.NAME, Params.GOBLIN.MAX_HP, Params.GOBLIN.WIDTH, Params.GOBLIN.HEIGHT, Params.GOBLIN.SCALE, Params.GOBLIN.PHYSICS);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/goblin.png");
 
         // Update settings
@@ -31,7 +31,7 @@ class Goblin extends AbstractEnemy {
         this.attackCooldown = 0;
         this.visionwidth = 1400;
         this.attackwidth = 89 * this.scale;
-        this.damageValue = STATS.GOBLIN.DAMAGE;
+        this.damageValue = Params.GOBLIN.DAMAGE;
         this.myRoamRate = 5; //0-10 how often to move
 
         // Mapping animations and mob states

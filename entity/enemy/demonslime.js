@@ -1,6 +1,6 @@
 class DemonSlime extends AbstractBoss {
     constructor(game, x, y, guard) {
-        super(game, x, y, guard, STATS.DEMON_SLIME.NAME, STATS.DEMON_SLIME.MAX_HP, STATS.DEMON_SLIME.WIDTH, STATS.DEMON_SLIME.HEIGHT, STATS.DEMON_SLIME.SCALE, STATS.DEMON_SLIME.PHYSICS);
+        super(game, x, y, guard, Params.DEMON_SLIME.NAME, Params.DEMON_SLIME.MAX_HP, Params.DEMON_SLIME.WIDTH, Params.DEMON_SLIME.HEIGHT, Params.DEMON_SLIME.SCALE, Params.DEMON_SLIME.PHYSICS);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/demon_slime.png");
         // states, direcetions and phases
         this.states = { slimeIdle: 0, slimeMove: 1, slimeDamaged: 2, slimeDie1: 3, slimeDie2: 4, demonSpawn: 5, demonIdle: 6, demonMove: 7, demonDamaged: 8, demonSlash: 9, demonJump: 10, demonBreath: 11, demonShoot: 12, death: 13, demonRebirth: 14 };
@@ -63,8 +63,8 @@ class DemonSlime extends AbstractBoss {
         if (this.phase != this.phases.slime) {
             this.offsetX = 100 * this.scale;
             this.offsetY = 72 * this.scale;
-            this.width = (STATS.DEMON_SLIME.WIDTH * this.scale) / 3.7;
-            this.height = (STATS.DEMON_SLIME.HEIGHT * this.scale) / 1.845;
+            this.width = (Params.DEMON_SLIME.WIDTH * this.scale) / 3.7;
+            this.height = (Params.DEMON_SLIME.HEIGHT * this.scale) / 1.845;
         } else {
             this.offsetX = 135 * this.scale;
             this.offsetY = 135 * this.scale;
@@ -575,8 +575,8 @@ class DemonSlime extends AbstractBoss {
                 isDestroyable = randomInt(11) <= 7; // 7 out of 10 chance it is destroyable in legendary phase
             }
 
-            if (this.direction == this.directions.right) this.game.addEntity(new SlimeProjectile(this.game, this.BB.left + (this.width), this.BB.top - 10, this.direction, this.projectileScale, STATS.DEMON_SLIME.PROJECTILE, isDestroyable));
-            else this.game.addEntity(new SlimeProjectile(this.game, this.BB.left - (this.width), this.BB.top - 10, this.direction, this.projectileScale, STATS.DEMON_SLIME.PROJECTILE, isDestroyable));
+            if (this.direction == this.directions.right) this.game.addEntity(new SlimeProjectile(this.game, this.BB.left + (this.width), this.BB.top - 10, this.direction, this.projectileScale, Params.DEMON_SLIME.PROJECTILE, isDestroyable));
+            else this.game.addEntity(new SlimeProjectile(this.game, this.BB.left - (this.width), this.BB.top - 10, this.direction, this.projectileScale, Params.DEMON_SLIME.PROJECTILE, isDestroyable));
         }
     }
 
@@ -827,9 +827,9 @@ class Slime extends DemonSlime {
             this.projectileTick = 0;
             this.projectileSpawnTime = 2 + randomInt(4); //randomize the shooting interval from 2 to 5s
             if (this.direction == this.directions.right)
-                this.game.addEntity(new SlimeProjectile(this.game, this.BB.left + (this.width), this.BB.top - 10, this.direction, this.projectileScale, STATS.SLIME.PROJECTILE, true));
+                this.game.addEntity(new SlimeProjectile(this.game, this.BB.left + (this.width), this.BB.top - 10, this.direction, this.projectileScale, Params.SLIME.PROJECTILE, true));
             else
-                this.game.addEntity(new SlimeProjectile(this.game, this.BB.left - (this.width), this.BB.top - 10, this.direction, this.projectileScale, STATS.SLIME.PROJECTILE, true));
+                this.game.addEntity(new SlimeProjectile(this.game, this.BB.left - (this.width), this.BB.top - 10, this.direction, this.projectileScale, Params.SLIME.PROJECTILE, true));
         }
     }
 

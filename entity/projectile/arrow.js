@@ -1,6 +1,6 @@
 class Arrow extends AbstractEntity {
     constructor(game, x, y, target, type, playerTeam) {
-        super(game, x, y, STATS.ARROW.NAME, STATS.ARROW.MAX_HP, STATS.ARROW.WIDTH, STATS.ARROW.HEIGHT, STATS.ARROW.SCALE);
+        super(game, x, y, Params.ARROW.NAME, Params.ARROW.MAX_HP, Params.ARROW.WIDTH, Params.ARROW.HEIGHT, Params.ARROW.SCALE);
         Object.assign(this, { game, x, y, target, type, playerTeam });
 
         this.radius = 15;
@@ -28,7 +28,7 @@ class Arrow extends AbstractEntity {
         //specific game values
         this.stuck = false; //stuck = true, hit something like ground and cannot move. Can be picked up by player.
         this.hit = false; //false = not hit an enemy, true = hit enemy. This is needed so an arrow doesn't multi hit during collision.
-        this.damage = STATS.ARROW.DAMAGE; //how much hp this arrow will take away if it hits something
+        this.damage = Params.ARROW.DAMAGE; //how much hp this arrow will take away if it hits something
         this.upgradeDmg = 2; //upgrade multiplier
 
         this.updateBB();
