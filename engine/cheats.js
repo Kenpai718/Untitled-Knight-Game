@@ -5,6 +5,7 @@ class Cheats {
 
         teleportPlayer(x, y) {
                 console.log("teleport: ",x,y);
+                this.game.setPlayerLocation(x,y);
 
         }
 

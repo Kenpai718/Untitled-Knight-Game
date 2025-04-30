@@ -356,6 +356,16 @@ class SceneManager {
     }
 
     /**
+     * set player xy cords (scaled on block dim)
+     * @param x
+     * @param y
+     */
+    setPlayerLocation(x, y) {
+        this.player.x = x * PARAMS.BLOCKDIM;
+        this.player.y = y * PARAMS.BLOCKDIM;
+    }
+
+    /**
      * MAKE SURE THIS IS CALLED BEFORE LOADING IN A LEVELS COMPONENTS!!!
      * This instantiates a player and places them appropriately on a level.
      *
