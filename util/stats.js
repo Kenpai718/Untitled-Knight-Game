@@ -12,8 +12,8 @@ const rgb = (r, g, b) => `rgba(${r}, ${g}, ${b})`;
 /** Global Parameters Objects */
 const PARAMS = {
     //version for public releases
-    VERSION_NUM: 1.4,
-    UPDATE_DATE: "3/21/22",
+    VERSION_NUM: 1.5,
+    UPDATE_DATE: "4/30/2025",
 
     //game-control
     DEBUG: false,      //for showing debug settings on canvas when ticked,

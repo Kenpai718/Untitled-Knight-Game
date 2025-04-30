@@ -1,6 +1,6 @@
 /**
  * JSON file to store level data.
- * This file contains global vaiables that store objects data used to build
+ * This file contains global variables that store objects data used to build
  * environment or entities in a level. Used by scenemanager.
  *
  * IMPORTANT DEVELOPER NOTES:
@@ -21,8 +21,18 @@
  * doors must be in the format of door: { x : 1, y : 3 , killQuota : x,  exitLocation: {x: 1, y: 1, levelNum: 1}},
  */
 
-//version of up to date info. Make sure to update with each public push!
-const SIGN_VERSION = { x: 20, y: 3, title: "    VERSION " + PARAMS.VERSION_NUM, text: ["Last updated:" + PARAMS.UPDATE_DATE]}
+// TODO: would be nice if this sign could update from a text file...
+/**version of up to date info. Make sure to update with each public push!*/
+const SIGN_VERSION = { x: 20, y: 3, title: "    VERSION " + PARAMS.VERSION_NUM,
+    text: [
+        "Last updated:" + PARAMS.UPDATE_DATE,
+        "COMBAT UPDATE:",
+        "-Knockback to enemies",
+        "-Slide Attack [S] + [Shift]",
+        "-Air Dodge added",
+        "-QOL changes"
+    ]
+}
 
 //spawn locations for using a door
 const DOOR_SPAWNS = {

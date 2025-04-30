@@ -1,1 +1,19 @@
-"Patch Notes: v1.5",
+Patch Notes: v1.5 [Combat Update] - 4.30/2025 (Ken)
+-Enemies now take knockback based on damage
+-Crouch + Roll now does a slide attack
+-Can roll in air to dodge now
+-Blade Beams at full health on Attack2
+-increased attack speed
+-increased movement speed
+-Reduced spike damage to player
+-Arrows will always crit flying eyes
+-Skeletons take no damage from arrows when blocked
+-diamond auto pickup/spawn if in void or hit spikes
+-disable flying eye invulnerability (too annoying)
+-entering new room will heal a bit
+-updated signs
+-minor level adjustments
+-nerf demon slime boss
+-general code cleanup
+-removed Herobrine!
+
