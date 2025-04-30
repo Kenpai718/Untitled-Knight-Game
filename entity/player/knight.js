@@ -138,7 +138,7 @@ class Knight extends AbstractPlayer {
     update() {
         const TICK = this.game.clockTick;
         //to prevent playing the same roll sound
-        if (this.action !== this.states.roll) super.checkDamageCooldown(TICK); //check if can be hit
+        if (this.action !== this.isDodgeAction()) super.checkDamageCooldown(TICK); //check if can be hit
         super.checkInDeathZone(); //check if outside of canvas
 
         //NOTE: this.dead is set when the knight hp drops to 0.
@@ -336,7 +336,7 @@ class Knight extends AbstractPlayer {
          * ROLLING SHOULD ALWAYS BE LAST
          * This is so roll can cancel other animations
          */
-        this.checkAndDoRoll();
+        this.checkAndDoRoll(TICK);
 
         //vertical actions
         this.checkAndDoAerialActions(TICK);
@@ -866,17 +866,17 @@ class Knight extends AbstractPlayer {
     /**
      * Checks and executes roll input
      */
-    checkAndDoRoll() {
+    checkAndDoRoll(tick) {
         if (this.game.roll) {
             if (this.action == this.states.slide || (this.crouch && this.action != this.states.roll)) {
-                this.doSlide()
+                this.doSlide(tick)
             } else {
-                this.doRoll();
+                this.doRoll(tick);
             }
         }
     }
 
-    doRoll() {
+    doRoll(tick) {
         //disable attack so the player isn't buffered into an attack during the roll
         this.game.attack = false;
         this.game.shoot = false;
@@ -915,7 +915,7 @@ class Knight extends AbstractPlayer {
     /**
      * Slide dodge/attack when pressing dodge while crouching
      */
-    doSlide() {
+    doSlide(tick) {
         this.game.shoot = false;
         this.arrow = false;
         this.updateHB(); //makes this an attack
@@ -945,9 +945,7 @@ class Knight extends AbstractPlayer {
             this.vulnerable = false;
         }
 
-        if (this.animations[this.facing][this.states.slide][this.myInventory.armorUpgrade].isHalfwayDone()) {
-            this.vulnerable = true;
-        } else {
+        if (!this.animations[this.facing][this.states.slide][this.myInventory.armorUpgrade].isHalfwayDone()) {
             //so the player can cancel to combo after halfway point
             this.game.attack = false;
         }
