@@ -982,6 +982,10 @@ var level1_3 = {
                 "Hope you are enjoying the game!",
                 "Take these chests as your reward!",
                 "-Ken was here :)",
+                "",
+                "P.S: There's a super secret DOOR", 
+                " on this level to a bonus level!",
+                " Hint: Follow the torches ;)"
             ]
         },
 
@@ -1170,7 +1174,7 @@ var level1_3 = {
         { x: 46, y: 11, width: 1, height: 1 },
         { x: 56, y: 15, width: 1, height: 1 },
         { x: 56, y: 15, width: 1, height: 1 },
-        { x: 58, y: 7, width: 1, height: 1 },
+        { x: 58, y: 7, width: 2, height: 1 },
 
         //obelisk to treasure room
 
