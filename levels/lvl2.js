@@ -154,7 +154,7 @@ const level1_2 = {
         { x: 3, y: 26, guard: true },
         { x: 55, y: 9, guard: true },
         { x: 70, y: 3, guard: true },
-        { x: 75, y: 3, guard: true },
+        { x: 76, y: 3, guard: true },
         { x: 81, y: 22, guard: true },
         { x: 100, y: 3, guard: true },
     ],

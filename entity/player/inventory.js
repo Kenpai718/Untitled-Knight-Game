@@ -46,7 +46,7 @@ class Inventory {
     }
 
     addArrows(amount) {
-        if(Number.isInteger(amount)) this.arrow += amount;
+        if(Number.isInteger(amount)) this.arrows += amount;
     }
 
     addDiamonds(amount) {

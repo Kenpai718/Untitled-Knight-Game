@@ -110,6 +110,7 @@ const level1_4 = {
         { x: 74, y: 45, width: 1, height: 25, type: 0 }, //far most right wall
         { x: 0, y: 28, width: 1, height: 5, type: 0 }, //far left wall on top (exit)
         { x: 48, y: 36, width: 1, height: 6, type: 0 }, //top floor spikes right wall (bottom)
+        { x: 49, y: 36, width: 1, height: 1, type: 0 }, //top floor spikes right wall (bottom-small plat)
         { x: 48, y: 45, width: 1, height: 3, type: 0 }, //top floor spikes right wall (TOP)
         { x: 45, y: 43, width: 1, height: 13, type: 0 }, //top floor spikes left wall
         { x: 42, y: 45, width: 1, height: 7, type: 0 }, //top floor spikes right wall (TOP) 2
@@ -131,7 +132,7 @@ const level1_4 = {
         { x: 39, y: 41, width: 3, height: 1, type: 0 }, //holds obelisk top floor
         { x: 39, y: 34, width: 4, height: 1, type: 0 }, //middle floor plat
         { x: 30, y: 33, width: 3, height: 1, type: 0 }, //middle floor plat top left over spikes
-        { x: 53, y: 34, width: 1, height: 1, type: 0 }, //middle floor plat top left over spikes
+        { x: 52, y: 34, width: 3, height: 1, type: 0 }, //middle floor plat top left over spikes
         { x: 73, y: 42, width: 1, height: 1, type: 0 }, //above right most chest and obelisk
     ],
 
