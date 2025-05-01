@@ -21,7 +21,8 @@ class Spike extends AbstractBackFeature {
         });
         this.game.enemies.forEach(function (entity) {
             if (entity.BB && self.BB.collide(entity.BB) && entity instanceof AbstractEntity) {
-                entity.takeDamage(Params.SPIKE.DMG, false);
+                //enemies take more damage so they die faster on spikes
+                entity.takeDamage(Params.SPIKE.DMG * 5, false);
                 entity.setDamagedState();
             }
         });

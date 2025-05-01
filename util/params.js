@@ -105,7 +105,7 @@ const Params = {
     },
 
     SPIKE: {
-        DMG: 2
+        DMG: 5
     },
 
     ARROW: {
