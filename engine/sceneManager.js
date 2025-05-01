@@ -360,8 +360,10 @@ class SceneManager {
      * @param y
      */
     setPlayerLocation(x, y) {
-        this.player.x = x * PARAMS.BLOCKDIM;
-        this.player.y = y * PARAMS.BLOCKDIM;
+        if(Number.isInteger(x) && Number.isInteger(y)) {
+            this.player.x = x * PARAMS.BLOCKDIM;
+            this.player.y = y * PARAMS.BLOCKDIM;
+        }
     }
 
     /**

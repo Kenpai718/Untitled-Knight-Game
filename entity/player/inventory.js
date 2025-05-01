@@ -42,15 +42,15 @@ class Inventory {
     };
 
     addPotions(amount) {
-        this.potions += amount;
+        if(Number.isInteger(amount)) this.potions += amount;
     }
 
     addArrows(amount) {
-        this.arrow += amount;
+        if(Number.isInteger(amount)) this.arrow += amount;
     }
 
     addDiamonds(amount) {
-        this.diamonds += amount;
+        if(Number.isInteger(amount)) this.diamonds += amount;
     }
 
 
