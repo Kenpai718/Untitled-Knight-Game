@@ -106,6 +106,10 @@ function isString(e) {
     return isString;
 }
 
+function isBoolean(val) {
+    return val === false || val === true;
+ }
+
 function getMaxStrLength(theText) {
     let maxLen = 0
     let totalLines = theText.length;

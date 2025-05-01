@@ -73,6 +73,8 @@ class CheatsManager {
                 if(isBoolean(state)) {
                         console.log("Berserk toggled: " + state);
                         this.game.player.berserk = state;
+                } else {
+                        console.log("use true/false");
                 }
 
         }
@@ -83,6 +85,8 @@ class CheatsManager {
                         this.game.player.berserk = state;
                         if(state) this.game.player.maxBerserkTime = 9999999;
                         else this.game.player.maxBerserkTime = 10;  
+                } else {
+                        console.log("use true/false");
                 }
 
         }
