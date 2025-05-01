@@ -66,6 +66,7 @@ class Knight extends AbstractPlayer {
         this.berserkTimer = 0;
         this.berserkFilter = 0.6;
         this.maxBerserkTime = 10;
+        this.infiniteBerserk = false; //cheat code option
         //these two audio variables control which sound effect is playing during the attack combo
         this.playAttackSFX1 = true;
         this.playAttackSFX2 = true;
@@ -156,7 +157,7 @@ class Knight extends AbstractPlayer {
                 this.resetAnimationTimers(this.states.revive);
             }
         } else { //not dead listen for player controls and do them
-            if (this.berserk) { //NOTE: this is set by Vignette class!
+            if (this.berserk && !this.infiniteBerserk) { //NOTE: this is set by Vignette class!
                 if (this.playBerserkSFX) {
                     this.playBerserkSFX = false;
                     ASSET_MANAGER.playAsset(SFX.BERSERK_ACTIVATE);

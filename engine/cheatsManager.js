@@ -72,21 +72,25 @@ class CheatsManager {
         toggleBerserkMode(state) {
                 if(isBoolean(state)) {
                         console.log("Berserk toggled: " + state);
-                        this.game.player.berserk = state;
+                        this.game.getPlayer().resetBerserkState();
+                        this.game.getPlayer().berserk = state;
                 } else {
-                        console.log("use true/false");
+                        console.log("use true/false for state");
                 }
 
         }
 
         infiniteBerserkMode(state) {
                 if(isBoolean(state)) {
-                        console.log("Infinite Berserk toggled: " + state);
-                        this.game.player.berserk = state;
-                        if(state) this.game.player.maxBerserkTime = 9999999;
-                        else this.game.player.maxBerserkTime = 10;  
+                        this.toggleBerserkMode(state);
+                        if(state) {
+                                console.log("Infinite Berserk toggled: " + state);
+                                this.game.getPlayer().infiniteBerserk = true;
+                        } else  {
+                                this.game.getPlayer().infiniteBerserk = false;
+                        }
                 } else {
-                        console.log("use true/false");
+                        console.log("use true/false for state");
                 }
 
         }
