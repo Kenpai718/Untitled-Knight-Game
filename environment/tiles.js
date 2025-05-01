@@ -610,7 +610,7 @@ class MoveableBlocks extends Platform {
 
         for(let i = 0; i < List.length; i++){
 
-            console.log(">>"+List[i]);
+            if(PARAMS.LOG) console.log(">>"+List[i]);
 
             if(isNaN(List[i])){
                 if(List[i].toLowerCase() == "left") List[i] = 0;

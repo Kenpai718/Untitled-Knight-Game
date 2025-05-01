@@ -23,7 +23,7 @@ class Vignette {
     update() {
         if ((this.myPlayer.hp / this.myPlayer.max_hp) <= PARAMS.LOW_HP) {
             this.show = true;
-            if (this.myPlayer.berserkTimer < 10) this.myPlayer.berserk = true;
+            if (this.myPlayer.berserkTimer < this.myPlayer.maxBerserkTime) this.myPlayer.berserk = true;
         } else {
             this.reset();
         }
@@ -39,7 +39,7 @@ class Vignette {
 
     reset() {
         this.show = false;
-        this.myPlayer.resetBerserkState();
+        if(!this.myPlayer.infiniteBerserk) this.myPlayer.resetBerserkState();
     }
 
     /**

@@ -1,6 +1,6 @@
 class DemonSlime extends AbstractBoss {
     constructor(game, x, y, guard) {
-        super(game, x, y, guard, STATS.DEMON_SLIME.NAME, STATS.DEMON_SLIME.MAX_HP, STATS.DEMON_SLIME.WIDTH, STATS.DEMON_SLIME.HEIGHT, STATS.DEMON_SLIME.SCALE, STATS.DEMON_SLIME.PHYSICS);
+        super(game, x, y, guard, Params.DEMON_SLIME.NAME, Params.DEMON_SLIME.MAX_HP, Params.DEMON_SLIME.WIDTH, Params.DEMON_SLIME.HEIGHT, Params.DEMON_SLIME.SCALE, Params.DEMON_SLIME.PHYSICS);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/demon_slime.png");
         // states, direcetions and phases
         this.states = { slimeIdle: 0, slimeMove: 1, slimeDamaged: 2, slimeDie1: 3, slimeDie2: 4, demonSpawn: 5, demonIdle: 6, demonMove: 7, demonDamaged: 8, demonSlash: 9, demonJump: 10, demonBreath: 11, demonShoot: 12, death: 13, demonRebirth: 14 };
@@ -63,8 +63,8 @@ class DemonSlime extends AbstractBoss {
         if (this.phase != this.phases.slime) {
             this.offsetX = 100 * this.scale;
             this.offsetY = 72 * this.scale;
-            this.width = (STATS.DEMON_SLIME.WIDTH * this.scale) / 3.7;
-            this.height = (STATS.DEMON_SLIME.HEIGHT * this.scale) / 1.845;
+            this.width = (Params.DEMON_SLIME.WIDTH * this.scale) / 3.7;
+            this.height = (Params.DEMON_SLIME.HEIGHT * this.scale) / 1.845;
         } else {
             this.offsetX = 135 * this.scale;
             this.offsetY = 135 * this.scale;
@@ -315,7 +315,7 @@ class DemonSlime extends AbstractBoss {
         if (this.isAttacking()) {
             this.attackFrame = this.animations[this.state][this.direction].currentFrame();
             if (this.state == this.states.slimeMove) {
-                if (this.attackFrame >= 3 && this.attackFrame <= 5) this.updateHB();
+                if (this.attackFrame >= 3 && this.attackFrame <= 4) this.updateHB();
                 else this.HB = null;
             } else if (this.state == this.states.demonJump) {
                 if (this.attackFrame >= 10 && this.attackFrame <= 15) {
@@ -336,32 +336,34 @@ class DemonSlime extends AbstractBoss {
                         ASSET_MANAGER.playAsset(SFX.SWING);
                     }
                 }
-                if (this.attackFrame >= 9 && this.attackFrame <= 12) {
+                if (this.attackFrame == 10) {
                     this.updateHB();
                 }
                 else this.HB = null;
 
                 //if player crosses up before the blade is fully up then the demon
                 //will switch directions to maintain the attack
-                if (this.attackFrame < 7) this.checkDirection(this.game.camera.player);
+                if (this.attackFrame < 6) this.checkDirection(this.game.camera.player);
             } else if (this.state == this.states.demonBreath) {
                 if (this.attackFrame >= 6 && this.attackFrame <= 16) {
                     if (this.playAtkSFX) {
                         this.playAtkSFX = false;
                         ASSET_MANAGER.playAsset(SFX.FIREBREATH);
                     }
-                    this.updateHB();
+                    //alternate to not blast hitboxes
+                    if(this.attackFrame % 2 == 0) this.updateHB();
+                    else this.HB = null;
                 }
                 else this.HB = null;
 
                 //fire breath can switch directions mid attack (before the bottom hitbox comes out)
-                if (this.attackFrame < 8) this.checkDirection(this.game.camera.player);
+                if (this.attackFrame < 7) this.checkDirection(this.game.camera.player);
             } else if (this.state == this.states.demonRebirth) {
-                if (this.attackFrame >= 9 && this.attackFrame <= 20) this.updateHB();
+                if (this.attackFrame >= 9 && this.attackFrame <= 20 && this.attackFrame % 2) this.updateHB();
                 else this.HB = null;
             } else if (this.state == this.states.demonShoot) {
                 //hit every other frame
-                if (this.attackFrame >= 8) this.updateHB();
+                if (this.attackFrame >= 8 && this.attackFrame % 5 == 0) this.updateHB();
                 else this.HB = null;
             } else if (this.state == this.states.demonSpawn) {
                 this.updateHB();
@@ -392,8 +394,13 @@ class DemonSlime extends AbstractBoss {
                     if (this.direction == this.directions.left) this.HB = new BoundingBox(this.BB.left, this.BB.top + this.BB.height / 2, this.BB.width, this.BB.height / 2);
                     else this.HB = new BoundingBox(this.BB.left, this.BB.top + this.BB.height / 2, this.BB.width, this.BB.height / 2);
                 } else { //shockwave
-                    if (this.direction == this.directions.left) this.HB = new BoundingBox(this.BB.left - (this.BB.width / 2), this.BB.top + this.BB.height / 2, this.BB.width * 2, this.BB.height / 2);
-                    else this.HB = new BoundingBox(this.BB.left - (this.BB.width / 4), this.BB.top + this.BB.height / 2, this.BB.width * 2, this.BB.height / 2);
+                    if(frame % 2 == 0) {
+                        if (this.direction == this.directions.left) this.HB = new BoundingBox(this.BB.left - (this.BB.width / 2), this.BB.top + this.BB.height / 2, this.BB.width * 2, this.BB.height / 2);
+                        else this.HB = new BoundingBox(this.BB.left - (this.BB.width / 4), this.BB.top + this.BB.height / 2, this.BB.width * 2, this.BB.height / 2);
+                    } else {
+                        this.HB = null;
+                    }
+
                 }
             }
             else if (this.state == this.states.demonBreath) {
@@ -432,6 +439,14 @@ class DemonSlime extends AbstractBoss {
     isAttacking() {
         return (this.state == this.states.slimeMove || this.state == this.states.demonSpawn || this.state == this.states.demonSlash || this.state == this.states.demonBreath || this.state == this.states.demonShoot || this.state == this.states.demonJump || this.state == this.states.demonRebirth);
     };
+
+    canKnockback() {
+        if(this.phase === this.phases.slime) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     checkEntityInteractions() {
         this.playerInSight = false;
@@ -560,8 +575,8 @@ class DemonSlime extends AbstractBoss {
                 isDestroyable = randomInt(11) <= 7; // 7 out of 10 chance it is destroyable in legendary phase
             }
 
-            if (this.direction == this.directions.right) this.game.addEntity(new SlimeProjectile(this.game, this.BB.left + (this.width), this.BB.top - 10, this.direction, this.projectileScale, STATS.DEMON_SLIME.PROJECTILE, isDestroyable));
-            else this.game.addEntity(new SlimeProjectile(this.game, this.BB.left - (this.width), this.BB.top - 10, this.direction, this.projectileScale, STATS.DEMON_SLIME.PROJECTILE, isDestroyable));
+            if (this.direction == this.directions.right) this.game.addEntity(new SlimeProjectile(this.game, this.BB.left + (this.width), this.BB.top - 10, this.direction, this.projectileScale, Params.DEMON_SLIME.PROJECTILE, isDestroyable));
+            else this.game.addEntity(new SlimeProjectile(this.game, this.BB.left - (this.width), this.BB.top - 10, this.direction, this.projectileScale, Params.DEMON_SLIME.PROJECTILE, isDestroyable));
         }
     }
 
@@ -812,9 +827,9 @@ class Slime extends DemonSlime {
             this.projectileTick = 0;
             this.projectileSpawnTime = 2 + randomInt(4); //randomize the shooting interval from 2 to 5s
             if (this.direction == this.directions.right)
-                this.game.addEntity(new SlimeProjectile(this.game, this.BB.left + (this.width), this.BB.top - 10, this.direction, this.projectileScale, STATS.SLIME.PROJECTILE, true));
+                this.game.addEntity(new SlimeProjectile(this.game, this.BB.left + (this.width), this.BB.top - 10, this.direction, this.projectileScale, Params.SLIME.PROJECTILE, true));
             else
-                this.game.addEntity(new SlimeProjectile(this.game, this.BB.left - (this.width), this.BB.top - 10, this.direction, this.projectileScale, STATS.SLIME.PROJECTILE, true));
+                this.game.addEntity(new SlimeProjectile(this.game, this.BB.left - (this.width), this.BB.top - 10, this.direction, this.projectileScale, Params.SLIME.PROJECTILE, true));
         }
     }
 

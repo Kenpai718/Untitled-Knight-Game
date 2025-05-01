@@ -11,7 +11,7 @@ class Skeleton extends AbstractEnemy {
 
     constructor(game, x, y, onGuard, initialState = 0) {
 
-        super(game, x, y, onGuard, STATS.SKELETON.NAME, STATS.SKELETON.MAX_HP, STATS.SKELETON.WIDTH, STATS.SKELETON.HEIGHT, STATS.SKELETON.SCALE, STATS.SKELETON.PHYSICS);
+        super(game, x, y, onGuard, Params.SKELETON.NAME, Params.SKELETON.MAX_HP, Params.SKELETON.WIDTH, Params.SKELETON.HEIGHT, Params.SKELETON.SCALE, Params.SKELETON.PHYSICS);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/skeleton.png");
 
         // Update settings
@@ -44,7 +44,7 @@ class Skeleton extends AbstractEnemy {
         this.attackwidth = 200;
         this.visionwidth = 1200;
 
-        this.damageValue = STATS.SKELETON.DAMAGE;
+        this.damageValue = Params.SKELETON.DAMAGE;
 
         // Mapping animations and mob states
         this.animations = []; // [state][direction]
@@ -355,6 +355,14 @@ class Skeleton extends AbstractEnemy {
         this.vulnerable = false;
         this.state = this.states.damaged;
     };
+
+    canKnockback() {
+        return this.isBlocking;
+    }
+
+    isBlocking() {
+        return this.state === this.states.block;
+    }
 
 
     resetAnimationTimers(action) {

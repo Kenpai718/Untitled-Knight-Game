@@ -27,8 +27,16 @@ class Cursor {
                 }
             }
         });
-
         if (!collided) this.myType = this.types.default;
+
+        this.game.interactables.forEach(function (entity) {
+            //interactions with sign
+            //when cursor is hovering open the text
+            if (entity instanceof Sign) {
+                let isHovering = entity.BB && self.BB.collide(entity.BB);
+                entity.isHovered = isHovering;
+            }
+        });
 
 
     }

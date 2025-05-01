@@ -1,4 +1,5 @@
 const gameEngine = new GameEngine();
+let cheats; //cheats for console
 
 const ASSET_MANAGER = new AssetManager(); //used for images and sfx
 const MUSIC_MANAGER = new AssetManager(); //used strictly for music tracks
@@ -134,8 +135,16 @@ ASSET_MANAGER.downloadAll(() => {
 	 * sets the song to play on auto repeat
 	*/
 	//ASSET_MANAGER.forcePlayMusic(MUSIC.CHASING_DAYBREAK);
+	//console message to frontend
+	console.log("Hello thanks for playing Untitled Knight!");
+	console.log("There's not really any way to stop you from messing around in console," +
+		" so if you'd like to know the common cheats, enter \'displayCheats()\' here.")
 
 	gameEngine.init(ctx);
-	new SceneManager(gameEngine);
+	let gameManager = new SceneManager(gameEngine);
+	cheats = new CheatsManager(gameManager); //enable cheats, access through console!
 	gameEngine.start();
 });
+
+
+

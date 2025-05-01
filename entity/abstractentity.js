@@ -104,7 +104,7 @@ class AbstractEntity {
     takeDamage(damage, isCritical) {
         if (this.canTakeDamage()) {
             isCritical ? ASSET_MANAGER.playAsset(SFX.CRITICAL) : ASSET_MANAGER.playAsset(SFX.DAMAGED);
-            this.takeKnockback();
+            this.takeKnockback(damage);
             this.hp -= damage;
             this.vulnerable = false;
 
@@ -118,9 +118,9 @@ class AbstractEntity {
     }
 
     /**
-     * Entity will be knockbacked after taking damage
-     * distance is dependent on how much damage was taken
-     * @param {*} damage 
+     * Set knockback for entitiy based on damage
+     * Handle this in your entity class
+     * @param damage
      */
     takeKnockback(damage) {
 
@@ -171,6 +171,9 @@ class AbstractEntity {
     checkInDeathZone() {
         if (this.isDeathZone()) {
             this.takeDamage(this.max_hp, false);
+            if(this instanceof AbstractEnemy) {
+                this.dropLootAtPlayer();
+            }
         }
     }
 

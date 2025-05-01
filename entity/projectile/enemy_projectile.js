@@ -1,6 +1,6 @@
 class FlyingEyeProjectile extends AbstractEntity {
     constructor(game, x, y, dir, scale) {
-        super(game, x, y, STATS.EYE_PROJECTILE.NAME, STATS.EYE_PROJECTILE.MAX_HP, STATS.EYE_PROJECTILE.WIDTH, STATS.EYE_PROJECTILE.HEIGHT, STATS.EYE_PROJECTILE.SCALE);
+        super(game, x, y, Params.EYE_PROJECTILE.NAME, Params.EYE_PROJECTILE.MAX_HP, Params.EYE_PROJECTILE.WIDTH, Params.EYE_PROJECTILE.HEIGHT, Params.EYE_PROJECTILE.SCALE);
         this.dir = dir;
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/flyingeye.png");
         this.animations = [];
@@ -14,7 +14,7 @@ class FlyingEyeProjectile extends AbstractEntity {
         this.state = this.states.move;
         this.elapsedTime = 0;
         this.explodeTime = 2;
-        this.damage = STATS.EYE_PROJECTILE.DAMAGE
+        this.damage = Params.EYE_PROJECTILE.DAMAGE
         this.canDestroy = true;
         this.canDamage = true; //if player hits projectile it explodes. Set this to false so they dont take damage from it.
         this.updateBB();

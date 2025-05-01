@@ -148,6 +148,31 @@ class AbstractEnemy extends AbstractEntity {
         }
     }
 
+    canKnockback() {
+        return !this.dead;
+    }
+
+    /**
+     * based on direction force velocity change with extra velocity
+     * depending on damage taken
+     * @param dmg
+     */
+    takeKnockback(dmg) {
+        if(dmg > 0 && this.canKnockback()) {
+            let player = this.game.camera.getPlayer();
+            let playerBB = player.BB;
+            let diffToPlayer = this.BB.mid - playerBB.mid;
+            //was attacked from the right side
+            if(diffToPlayer <= 0) {
+                this.velocity.x = -(BASE_KNOCKBACK + ((dmg / 100) * KNOCKBACK_BONUS_X));
+            } else {
+                this.velocity.x = BASE_KNOCKBACK  + ((dmg / 100) * KNOCKBACK_BONUS_X);
+            }
+
+            this.velocity.y = -(BASE_KNOCKBACK) - ((dmg / 100) * KNOCKBACK_BONUS_Y);
+        }
+    }
+
     /**
      * Do random roaming options every so often
      * Like walking in certain directions or idling/switching facing
@@ -234,37 +259,62 @@ class AbstractEnemy extends AbstractEntity {
     dropLoot() {
         // Drops random # of diamond upon death
         if (!this.dropDiamonds) {
-            let amount;
-            let baseBonus = 1 + randomInt(5);
-            if(this instanceof Mushroom) { 
-                amount = 5 + baseBonus;
-            } else if(this instanceof Skeleton) { 
-                amount = 3 + baseBonus; 
-            } else if(this instanceof Goblin) { 
-                amount = 4 + baseBonus; 
-            } else if(this instanceof FlyingEye) {
-                amount = 5 + baseBonus; 
-            } else if (this instanceof Slime) {
-                amount = 5 + baseBonus;
-            } else if (this instanceof DemonSlime) {
-                amount = 100 + randomInt(50); 
-            } else if (this instanceof Wizard) {
-                //amount = 100 + randomInt(50);
-                amount = this.game.myReportCard.myDiamondsSpent + 1;
-            } else {
-                amount = 4 + baseBonus; 
-            }
-
+            let amount = this.calcLoot();
             this.game.addEntityToFront(new Diamond(this.game, this.BB.x, this.BB.y, amount));
             this.dropDiamonds = true;
             
         }
+    }
+
+    /**
+     * Spawns a diamond loot above the player
+     * used in case the loot drop is inaccesible like falling/spikes
+     */
+    dropLootAtPlayer() {
+        // Drops random # of diamond upon death
+        if (!this.dropDiamonds) {
+            let amount = this.calcLoot();
+            let player = this.game.camera.player;
+            let playerBB = player.BB;
+            this.game.addEntityToFront(new Diamond(this.game, playerBB.mid, playerBB.top + 50, amount));
+            this.dropDiamonds = true;
+        }
+    }
+
+    calcLoot() {
+         // Drops random # of diamond upon death
+        let amount;
+        let baseBonus = 1 + randomInt(5);
+        if(this instanceof Mushroom) { 
+            amount = 5 + baseBonus;
+        } else if(this instanceof Skeleton) { 
+            amount = 3 + baseBonus; 
+        } else if(this instanceof Goblin) { 
+            amount = 4 + baseBonus; 
+        } else if(this instanceof FlyingEye) {
+            amount = 5 + baseBonus; 
+        } else if (this instanceof Slime) {
+            amount = 5 + baseBonus;
+        } else if (this instanceof DemonSlime) {
+            amount = 100 + randomInt(50); 
+        } else if (this instanceof Wizard) {
+            //amount = 100 + randomInt(50);
+            amount = this.game.myReportCard.myDiamondsSpent + 1;
+        } else {
+            amount = 4 + baseBonus; 
+        }
+        return amount;
     }
     
 
     drawHealth(ctx) {
         if (!this.dead)
             this.healthbar.draw(ctx);
+    }
+
+    takeDamage(damage, isCritical) {
+        super.takeDamage(damage, isCritical);
+        this.takeKnockback(damage);
     }
 
 

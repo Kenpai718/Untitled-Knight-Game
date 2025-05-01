@@ -165,7 +165,7 @@ class AbstractPlayer extends AbstractEntity {
         let dmg = 0
         if (this.canTakeDamage()) {
             isCritical ? ASSET_MANAGER.playAsset(SFX.CRITICAL) : ASSET_MANAGER.playAsset(SFX.DAMAGED);
-            this.takeKnockback();
+            this.takeKnockback(damage);
             dmg = Math.round(damage * this.getDefenseBonus());
             this.hp -= dmg;
             this.vulnerable = false;
@@ -185,6 +185,8 @@ class AbstractPlayer extends AbstractEntity {
         }
         return dmg;
     }
+
+
 
     /**
      * In dead state animation
@@ -219,7 +221,6 @@ class AbstractPlayer extends AbstractEntity {
             this.respawnPlayer();
         }
     }
-
 
     /**
      * Restarts the current level when called
@@ -540,6 +541,10 @@ class AbstractPlayer extends AbstractEntity {
                 }
             }
         });
+    }
+
+    takeKnockback(damage) {
+        //leaving empty because I think knockback for player would be annoying
     }
 
     /**Collision helper methods */

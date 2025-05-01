@@ -1,0 +1,7 @@
+"Patch Notes: v1.4",
+"-Better platforms/elevator",
+"-Small level adjustments",
+"-Upgrades added to results",
+"-Tapping opposite direction",
+" mid-atk will switch dir.",
+"-Removed Herobrine!"

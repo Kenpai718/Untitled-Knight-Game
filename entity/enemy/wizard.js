@@ -1,7 +1,7 @@
 class Wizard extends AbstractBoss {
     constructor(game, x, y, left, right, top, bottom) {
         // basic boss setup
-        super(game, x, y, false, STATS.WIZARD.NAME, STATS.WIZARD.MAX_HP, STATS.WIZARD.WIDTH, STATS.WIZARD.HEIGHT, STATS.WIZARD.SCALE, STATS.WIZARD.PHYSICS);
+        super(game, x, y, false, Params.WIZARD.NAME, Params.WIZARD.MAX_HP, Params.WIZARD.WIDTH, Params.WIZARD.HEIGHT, Params.WIZARD.SCALE, Params.WIZARD.PHYSICS);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/enemy/wizard.png");
         this.activeBoss = false;
         this.animations = [];

@@ -12,6 +12,7 @@ class Sign extends AbstractInteractable {
         this.showText = false;  //check if draw textbox
         this.read = false;      //check if player has read this sign before
         this.isReading = false; //check if player currently reading this sign
+        this.isHovered = false; //check if mouse is hovering the sign
 
         this.updateBoxes();
 
@@ -45,40 +46,54 @@ class Sign extends AbstractInteractable {
                 this.animationTime = 0;
             }
         }
-        let self = this;
-        this.game.entities.forEach(function (entity) {
-            if (entity instanceof AbstractPlayer) {
-                /**
-                 * Add the textbox to the scene manager when it is needed
-                 * Set it to null when not needed
-                 */
-                let playerNearSign = entity.BB && self.BB.collide(entity.BB);
-                //player pressed up to read sign
-                if (playerNearSign && self.game.up) {
-                    //mark player has read this sign
-                    if (!self.read) {
-                        ASSET_MANAGER.playAsset(SFX.SELECT);
-                        self.read = true;
-                    }
-                    self.isReading = true;
-                    self.showText = true;
-                } else {
-                    //player is next to the sign and reading it
-                    if (playerNearSign && self.isReading) {
-                        self.showText = true;
-                    } else { //player no longer near sign and reading
-                        self.isReading = false;
-                        self.showText = false;
-                    }
 
+        if(!this.isHovered) {
+            let self = this;
+            this.game.entities.forEach(function (entity) {
+                if (entity instanceof AbstractPlayer) {
+                    /**
+                     * Add the textbox to the scene manager when it is needed
+                     * Set it to null when not needed
+                     */
+                    let playerNearSign = entity.BB && self.BB.collide(entity.BB);
+                    //player pressed up to read sign
+                    if (playerNearSign && self.game.up) {
+                        self.toggleReadingSign(true);
+                    } else {
+                        //player is next to the sign and reading it
+                        if (playerNearSign && self.isReading) {
+                            self.showText = true;
+                        } else { //player no longer near sign and reading
+                            self.toggleReadingSign(false);
+                        }
+
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            this.toggleReadingSign(true);
+        }
 
         //whether to draw the textbox or not
         this.myTextBox.show = this.showText;
 
 
+    }
+
+    /**
+     * Set state of the isReading
+     * @param state On/Off to show sign gui
+     */
+    toggleReadingSign(state) {
+        if(state) {
+            //mark player has read this sign
+            if (!this.read) {
+                ASSET_MANAGER.playAsset(SFX.SELECT);
+                this.read = true;
+            }
+        }
+        this.isReading = state;
+        this.showText = state;
     }
 
 

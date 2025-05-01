@@ -6,6 +6,7 @@ class GameEngine {
         // What you will use to draw
         // Documentation: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
         this.ctx = null;
+        this.camera = null; //intantiate in scenemanager
 
         // Everything that will be updated and drawn each frame
         this.background1 = [];
@@ -43,7 +44,7 @@ class GameEngine {
         this.shoot = null;  //right click
         this.shootButton = null; //O: shooting with keyboard
         this.heal = null;   //E
-        this.debug = null;  //ctrl left
+        this.minimap = false;  //ctrl left
 
         //counter for an attack chain corresponding to attack presses
         this.comboCounter = 0;
@@ -93,6 +94,7 @@ class GameEngine {
         };
         gameLoop();
     };
+
 
     startInput() {
         var that = this;
@@ -247,11 +249,6 @@ class GameEngine {
                 case "KeyE":
                     that.heal = true;
                     break;
-                case "ControlLeft":
-                case "ControlRight":
-                    e.preventDefault();
-                    that.debug = true;
-                    break;
             }
         }, false);
 
@@ -275,6 +272,17 @@ class GameEngine {
                     that.up = false;
                     break;
                 case "Space":
+                    break;
+                case "ControlLeft":
+                    //toggle minimap.js
+                    e.preventDefault();
+                    that.minimap = !that.minimap;
+                    break;
+                case "ControlRight":
+                    //toggle debug mode
+                    e.preventDefault();
+                    PARAMS.DEBUG = !PARAMS.DEBUG;
+                    document.getElementById("debug").checked = !document.getElementById("debug").checked;
                     break;
             }
         }, false);
@@ -493,7 +501,7 @@ class GameEngine {
         this.update();
         this.draw();
     };
-
 };
 
 // KV Le was here :)
+// Ken Ahrens was here >:)

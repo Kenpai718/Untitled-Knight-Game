@@ -1,8 +1,8 @@
 class BladeBeam extends AbstractEntity {
     constructor(game, x, y, direction) {
-        super(game, x, y, STATS.BLADE_BEAM.NAME, STATS.BLADE_BEAM.MAX_HP, STATS.BLADE_BEAM.WIDTH, STATS.BLADE_BEAM.HEIGHT, STATS.BLADE_BEAM.SCALE);
+        super(game, x, y, Params.BLADE_BEAM.NAME, Params.BLADE_BEAM.MAX_HP, Params.BLADE_BEAM.WIDTH, Params.BLADE_BEAM.HEIGHT, Params.BLADE_BEAM.SCALE);
         this.direction = direction;
-        this.damage = STATS.BLADE_BEAM.DAMAGE;
+        this.damage = Params.BLADE_BEAM.DAMAGE;
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/projectile/bladeBeam.png");
         this.scale = 5;
 

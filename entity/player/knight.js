@@ -4,7 +4,7 @@
 class Knight extends AbstractPlayer {
     //game = engine, (x, y) = spawn cords
     constructor(game, x, y) {
-        super(game, x, y, STATS.PLAYER.NAME, STATS.PLAYER.MAX_HP, STATS.PLAYER.WIDTH, STATS.PLAYER.HEIGHT, STATS.PLAYER.SCALE);
+        super(game, x, y, Params.PLAYER.NAME, Params.PLAYER.MAX_HP, Params.PLAYER.WIDTH, Params.PLAYER.HEIGHT, Params.PLAYER.SCALE);
 
         // get spritesheets
         this.spritesheetRight = ASSET_MANAGER.getAsset("./sprites/knight/knightRight.png");
@@ -30,16 +30,17 @@ class Knight extends AbstractPlayer {
 
         //animation speed stats
         this.animRunSpd = 0.075; //speed of the dashing animation
-        this.animRollSpd = 0.06; //speed of the dashing animation
-        this.atkSpd = 0.08;        //slash1
+        this.animRollSpd = 0.03; //speed of the dashing animation
+        this.atkSpd = 0.06;        //slash1
         this.atkSpd2 = this.atkSpd + .01; //slash 2 must be slightly slower than atkspd1
         this.bowSpd = .1;
+        this.slideSpd = 0.05; //speed of slide attack
 
         //how long a bufferable action input is held
         this.jumpBuffer = 0;
         this.rollBuffer = 0;
         this.atkBuffer = 0;
-        this.bufferTime = 0.5;
+        this.bufferTime = 0.35;
 
 
         //default starting values
@@ -64,6 +65,8 @@ class Knight extends AbstractPlayer {
         this.berserkBonus = 1.3;
         this.berserkTimer = 0;
         this.berserkFilter = 0.6;
+        this.maxBerserkTime = 10;
+        this.infiniteBerserk = false; //cheat code option
         //these two audio variables control which sound effect is playing during the attack combo
         this.playAttackSFX1 = true;
         this.playAttackSFX2 = true;
@@ -131,11 +134,12 @@ class Knight extends AbstractPlayer {
         this.BB = new BoundingBox(this.x + this.offsetxBB, this.y + this.offsetyBB, this.widthBB, this.heightBB);
     };
 
+
     //**Controls player animations and movement */
     update() {
         const TICK = this.game.clockTick;
         //to prevent playing the same roll sound
-        if (this.action != this.states.roll) super.checkDamageCooldown(TICK); //check if can be hit
+        if (this.action !== this.isDodgeAction()) super.checkDamageCooldown(TICK); //check if can be hit
         super.checkInDeathZone(); //check if outside of canvas
 
         //NOTE: this.dead is set when the knight hp drops to 0.
@@ -153,13 +157,13 @@ class Knight extends AbstractPlayer {
                 this.resetAnimationTimers(this.states.revive);
             }
         } else { //not dead listen for player controls and do them
-            if (this.berserk) { //NOTE: this is set by Vignette class!
+            if (this.berserk && !this.infiniteBerserk) { //NOTE: this is set by Vignette class!
                 if (this.playBerserkSFX) {
                     this.playBerserkSFX = false;
                     ASSET_MANAGER.playAsset(SFX.BERSERK_ACTIVATE);
                 }
                 this.berserkTimer += TICK;
-                if (this.berserkTimer >= 10) {
+                if (this.berserkTimer >= this.maxBerserkTime) {
                     this.berserk = false;
                 }
 
@@ -301,7 +305,7 @@ class Knight extends AbstractPlayer {
         }
 
         //roll
-        if ((this.game.roll && this.action != this.states.roll)) {
+        if ((this.game.roll && !this.isDodgeAction())) {
             this.rollBuffer += TICK;
             if (this.rollBuffer >= this.bufferTime) {
                 this.game.roll = false;
@@ -310,6 +314,10 @@ class Knight extends AbstractPlayer {
             this.rollBuffer = 0;
         }
 
+    }
+
+    isDodgeAction() {
+        return this.action == this.states.roll || this.action == this.states.slide;
     }
 
     /**
@@ -329,7 +337,7 @@ class Knight extends AbstractPlayer {
          * ROLLING SHOULD ALWAYS BE LAST
          * This is so roll can cancel other animations
          */
-        this.checkAndDoRoll();
+        this.checkAndDoRoll(TICK);
 
         //vertical actions
         this.checkAndDoAerialActions(TICK);
@@ -416,7 +424,7 @@ class Knight extends AbstractPlayer {
     checkAndDoMovement(TICK) {
         //choose animation based on keyboard input
         //this if statement is to make sure special states are not interrupted
-        let uninterruptibleAction = this.action == this.states.roll || this.game.attack || this.game.shoot || this.action == this.states.wall_climb ||
+        let uninterruptibleAction = this.isDodgeAction() || this.game.attack || this.game.shoot || this.action == this.states.wall_climb ||
             (this.action == this.states.attack1 || this.action == this.states.attack2);
         if (!uninterruptibleAction) {
             if (this.action != this.states.jump && !this.inAir) { //not in the air
@@ -427,13 +435,7 @@ class Knight extends AbstractPlayer {
         } else { //player is in an uninteruptible action
             //if player was attacking slow down that momentum on the ground so there is a bit of a skid
             if ((this.game.attack || this.game.shoot) && !this.inAir) {
-                if (this.velocity.x > 0) { //right momentum
-                    this.velocity.x -= PLAYER_PHYSICS.ATTACK_SKID * TICK;
-                    if (this.velocity.x < 0) this.velocity.x = 0;
-                } else { //left momentum
-                    this.velocity.x += PLAYER_PHYSICS.ATTACK_SKID * TICK;
-                    if (this.velocity.x > 0) this.velocity.x = 0;
-                }
+                this.addSkid(PLAYER_PHYSICS.ATTACK_SKID, TICK);
             }
             if (this.action == this.states.wall_climb) {
                 if (this.BB.left > this.climbWidth - PARAMS.BLOCKDIM && this.BB.right < this.climbWidth + PARAMS.BLOCKDIM)
@@ -449,6 +451,16 @@ class Knight extends AbstractPlayer {
                     this.action = this.states.crouch;
                 }
             }
+        }
+    }
+
+    addSkid(skidAmount, tick) {
+        if (this.velocity.x > 0) { //right momentum
+            this.velocity.x -= skidAmount * tick;
+            if (this.velocity.x < 0) this.velocity.x = 0;
+        } else { //left momentum
+            this.velocity.x += skidAmount * tick;
+            if (this.velocity.x > 0) this.velocity.x = 0;
         }
     }
 
@@ -474,18 +486,7 @@ class Knight extends AbstractPlayer {
                 this.velocity.x -= PLAYER_PHYSICS.CROUCH_SPD;
             }
             else {
-                if (this.facing == this.dir.left) {
-                    if (this.velocity.x < 0) {
-                        this.velocity.x += PLAYER_PHYSICS.SKID * TICK;
-                    }
-                    else this.velocity.x = 0;
-                }
-                else if (this.facing == this.dir.right) {
-                    if (this.velocity.x > 0) {
-                        this.velocity.x -= PLAYER_PHYSICS.SKID * TICK;
-                    }
-                    else this.velocity.x = 0;
-                }
+                this.addSkid(PLAYER_PHYSICS.SKID, TICK);
             }
         } else if (this.game.right && !this.game.attack && !this.game.shoot) { //run right
             if (this.facing == this.dir.left && this.velocity.x < 0) {
@@ -708,10 +709,11 @@ class Knight extends AbstractPlayer {
     checkAndDoAttack() {
         let action = this.action;
         //attack logic (melee/ranged)
-        if (this.game.attack && !(action == this.states.roll)) {
-            if (this.crouch && !this.inAir) { //crouch attack
+        if (this.game.attack && !(this.isDodgeAction())) {
+            if (this.crouch && !this.inAir) {
+                //crouch attack
                 this.action = this.states.crouch_atk;
-            } else { //standing or jumping attack
+            } else { //standing, jumping, or slide attack
                 //set action based on combo counter.
                 //If attack button was pressed more than once change action to the second attack after the animation is complete
                 this.combo = (this.game.comboCounter > 1 && this.animations[this.facing][this.states.attack1][this.myInventory.armorUpgrade].isDone()) ? true : false;
@@ -724,10 +726,16 @@ class Knight extends AbstractPlayer {
                 }
             }
             this.updateHB();
+
+            //bladebeam logic: 1st hit only if berserk, second only at full hp
             if (this.bladeBeam1 && this.berserk) {
                 this.bladeBeam1 = false;
                 super.bladeBeam();
-            } else if (this.bladeBeam2 && this.animations[this.facing][this.states.attack1][this.myInventory.armorUpgrade].isDone() && this.berserk) {
+            }
+            //shoot a blade beam on charge attack 2
+            if (this.bladeBeam2 &&
+                this.animations[this.facing][this.states.attack2][this.myInventory.armorUpgrade].isHalfwayDone()
+                 && this.canBladeBeam()) {
                 this.bladeBeam2 = false;
                 super.bladeBeam();
             }
@@ -817,6 +825,14 @@ class Knight extends AbstractPlayer {
                 this.game.shootButton = false;
                 this.arrow = false;
             }
+        } else if(this.game.attack && this.action == this.states.slide) {
+            //cancel a slide attack into a crouch atk
+            this.resetAnimationTimers(this.states.crouch_atk);
+            this.resetAnimationTimers(this.states.slide);
+
+            this.resetSlideAtkState();
+            this.action = this.states.crouch_atk;
+            this.game.attack = true;
         } else {
             //crouch attack
             this.resetAnimationTimers(this.states.crouch_atk);
@@ -851,40 +867,106 @@ class Knight extends AbstractPlayer {
     /**
      * Checks and executes roll input
      */
-    checkAndDoRoll() {
-        if (this.game.roll && !this.inAir) {
-            //disable attack so the player isn't buffered into an attack during the roll
-            this.game.attack = false;
-            this.game.shoot = false;
-            this.arrow = false;
-            this.resetCombo();
-            this.HB = null;
+    checkAndDoRoll(tick) {
+        if (this.game.roll) {
+            if (this.action == this.states.slide || (this.crouch && this.action != this.states.roll)) {
+                this.doSlide(tick)
+            } else {
+                this.doRoll(tick);
+            }
+        }
+    }
 
-            //set roll behavior
-            if (this.action != this.states.roll) {
-                this.resetAnimationTimers(this.action);
-                this.action = this.states.roll; //roll
-                if (this.game.left && !this.game.right)
-                    this.facing = this.dir.left;
-                if (this.game.right && !this.game.left)
-                    this.facing = this.dir.right;
-            }
-            this.velocity.x += (this.facing == this.dir.left) ? -1 * (PLAYER_PHYSICS.ROLL_SPD) : (PLAYER_PHYSICS.ROLL_SPD); //movement speed boost
-            if (this.vulnerable) {
-                ASSET_MANAGER.playAsset(SFX.DODGE);
-                this.vulnerable = false;
-            }
+    doRoll(tick) {
+        //disable attack so the player isn't buffered into an attack during the roll
+        this.game.attack = false;
+        this.game.shoot = false;
+        this.arrow = false;
+        //this.resetCombo();
+        this.HB = null;
 
-            if (this.animations[this.facing][this.states.roll][this.myInventory.armorUpgrade].isDone()) {
-                this.action = this.states.idle;
-                this.game.roll = false;
-                this.vulnerable = true;
-            }
-        } else {
-            //roll
+        //set roll behavior
+        if (this.action !== this.states.roll) {
+            this.resetAnimationTimers(this.states.roll);
+            this.action = this.states.roll; //roll
+            if (this.game.left && !this.game.right)
+                this.facing = this.dir.left;
+            if (this.game.right && !this.game.left)
+                this.facing = this.dir.right;
+        }
+        this.velocity.x += (this.facing == this.dir.left) ? -1 * (PLAYER_PHYSICS.ROLL_SPD) : (PLAYER_PHYSICS.ROLL_SPD); //movement speed boost
+
+        let animationDone = this.animations[this.facing][this.states.roll][this.myInventory.armorUpgrade].isDone();
+        //animation not done play a sound and set invulnerable
+        if (!animationDone) {
+            //play sound on 1 frame to prevent looping
+            if(this.animations[this.facing][this.states.roll][this.myInventory.armorUpgrade].currentFrame() == 1) ASSET_MANAGER.playAsset(SFX.DODGE);
+            this.vulnerable = false;
+        }
+
+        //roll done
+        if (this.animations[this.facing][this.states.roll][this.myInventory.armorUpgrade].isDone()) {
+            this.action = this.states.idle;
+            this.game.roll = false;
+            this.vulnerable = true;
             this.resetAnimationTimers(this.states.roll);
         }
     }
+
+    /**
+     * Slide dodge/attack when pressing dodge while crouching
+     */
+    doSlide(tick) {
+        this.game.shoot = false;
+        this.arrow = false;
+        this.updateHB(); //makes this an attack
+        //this.resetCombo();
+
+        //set roll behavior
+        if (this.action != this.states.slide) {
+            //this.resetAnimationTimers(this.states.slide);
+            this.action = this.states.slide; //roll
+            if (this.game.left && !this.game.right)
+                this.facing = this.dir.left;
+            if (this.game.right && !this.game.left)
+                this.facing = this.dir.right;
+        }
+
+        //movement speed boost
+        this.velocity.x +=
+            (this.facing == this.dir.left) ? -1 * (PLAYER_PHYSICS.SLIDE_SPD)
+                : (PLAYER_PHYSICS.SLIDE_SPD);
+
+        let animationDone = this.animations[this.facing][this.states.slide][this.myInventory.armorUpgrade].isDone();
+        //animation not done play a sound and set invulnerable
+        if (!animationDone) {
+            //play sound on 1 frame to prevent looping
+            // if(this.animations[this.facing][this.states.slide][this.myInventory.armorUpgrade].currentFrame() == 1)
+            //     ASSET_MANAGER.playAsset(SFX.DODGE);
+            this.vulnerable = false;
+        }
+
+        if (!this.animations[this.facing][this.states.slide][this.myInventory.armorUpgrade].isHalfwayDone()) {
+            //so the player can cancel to combo after halfway point
+            this.game.attack = false;
+        }
+
+        //slide done
+        if (animationDone) {
+            this.resetSlideAtkState();
+        }
+    }
+
+    resetSlideAtkState() {
+        this.game.roll = false;
+        this.vulnerable = true;
+        this.game.attack = false;
+        this.resetAnimationTimers(this.states.slide)
+        this.action = this.states.idle;
+        this.HB = null;
+    }
+
+
 
     /**
      * Adjusts the position of player based on current velocity
@@ -980,11 +1062,13 @@ class Knight extends AbstractPlayer {
     getDamageValue() {
         let dmg = 0;
         if (this.action == this.states.attack1) {
-            dmg = STATS.PLAYER.DMG_SLASH1 * super.getAttackBonus();
+            dmg = Params.PLAYER.DMG_SLASH1 * super.getAttackBonus();
         } else if (this.action == this.states.attack2) {
-            dmg = STATS.PLAYER.DMG_SLASH2 * super.getAttackBonus();
+            dmg = Params.PLAYER.DMG_SLASH2 * super.getAttackBonus();
+        } else if (this.action == this.states.slide) {
+            dmg = Params.PLAYER.DMG_SLIDEATK * super.getAttackBonus();
         } else if (this.action == this.states.crouch_atk) {
-            dmg = STATS.PLAYER.DMG_CROUCHATK * super.getAttackBonus();
+            dmg = Params.PLAYER.DMG_CROUCHATK * super.getAttackBonus();
         }
 
         //beserker bonus
@@ -997,6 +1081,10 @@ class Knight extends AbstractPlayer {
         dmg = Math.round(100 * dmg) / 100;
         return dmg;
 
+    }
+
+    canBladeBeam() {
+        return this.berserk || this.hp == this.max_hp;
     }
 
     setDamagedState() {
@@ -1110,6 +1198,20 @@ class Knight extends AbstractPlayer {
                 this.offsetyBB = 53 * this.scale;
                 this.heightBB = 27 * this.scale;
                 break;
+            case this.states.slide:
+                this.offsetxBB = this.facing == 1 ? 50 * this.scale : 35 * this.scale;
+                this.offsetyBB = 53 * this.scale;
+                this.heightBB = 27 * this.scale;
+                this.widthBB = 35 * this.scale;
+                if (frame < 4) {
+                    this.widthHB = 50 * this.scale;
+                    this.offsetyHB = 53 * this.scale;
+                    this.heightHB = 27 * this.scale;
+                    this.offsetxHB = this.facing == 1 ? this.width - 25 * this.scale - this.widthHB: 25 * this.scale ;
+                } else {
+                    this.HB = null;
+                }
+                break;
             // roll BB offsets
             case this.states.roll:
                 this.offsetxBB = this.facing == 1 ? 50 * this.scale : 35 * this.scale;
@@ -1216,8 +1318,8 @@ class Knight extends AbstractPlayer {
         this.animations[0][this.states.turn_around][0] = new Animator(this.spritesheetLeft, 1085, 1040, 120, 80, 3, 0.1, 0, true, false, false);
         this.animations[1][this.states.turn_around][0] = new Animator(this.spritesheetRight, -5, 1040, 120, 80, 3, 0.1, 0, false, false, false);
         // slide = 15
-        this.animations[0][this.states.slide][0] = new Animator(this.spritesheetLeft, 960, 960, 120, 80, 4, 0.1, 0, true, true, false);
-        this.animations[1][this.states.slide][0] = new Animator(this.spritesheetRight, 0, 960, 120, 80, 4, 0.1, 0, false, true, false);
+        this.animations[0][this.states.slide][0] = new Animator(this.spritesheetLeft, 960, 960, 120, 80, 4, this.slideSpd, 0, true, false, false);
+        this.animations[1][this.states.slide][0] = new Animator(this.spritesheetRight, 0, 960, 120, 80, 4, this.slideSpd, 0, false, false, false);
 
         //attack combo (on ground or in air)
         //Note: Slash 1 is a faster attack but less damage. Slash 2 is slower but more damage
@@ -1295,8 +1397,8 @@ class Knight extends AbstractPlayer {
         this.animations[0][this.states.turn_around][1] = new Animator(this.spritesheetLeft1, 1085, 1040, 120, 80, 3, 0.1, 0, true, false, false);
         this.animations[1][this.states.turn_around][1] = new Animator(this.spritesheetRight1, -5, 1040, 120, 80, 3, 0.1, 0, false, false, false);
         // slide = 15
-        this.animations[0][this.states.slide][1] = new Animator(this.spritesheetLeft1, 960, 960, 120, 80, 4, 0.1, 0, true, true, false);
-        this.animations[1][this.states.slide][1] = new Animator(this.spritesheetRight1, 0, 960, 120, 80, 4, 0.1, 0, false, true, false);
+        this.animations[0][this.states.slide][1] = new Animator(this.spritesheetLeft1, 960, 960, 120, 80, 4, this.slideSpd, 0, true, false, false);
+        this.animations[1][this.states.slide][1] = new Animator(this.spritesheetRight1, 0, 960, 120, 80, 4, this.slideSpd, 0, false, false, false);
 
         //attack combo (on ground or in air)
         //Note: Slash 1 is a faster attack but less damage. Slash 2 is slower but more damage
@@ -1372,8 +1474,8 @@ class Knight extends AbstractPlayer {
         this.animations[0][this.states.turn_around][2] = new Animator(this.spritesheetLeft2, 1085, 1040, 120, 80, 3, 0.1, 0, true, false, false);
         this.animations[1][this.states.turn_around][2] = new Animator(this.spritesheetRight2, -5, 1040, 120, 80, 3, 0.1, 0, false, false, false);
         // slide = 15
-        this.animations[0][this.states.slide][2] = new Animator(this.spritesheetLeft2, 960, 960, 120, 80, 4, 0.1, 0, true, true, false);
-        this.animations[1][this.states.slide][2] = new Animator(this.spritesheetRight2, 0, 960, 120, 80, 4, 0.1, 0, false, true, false);
+        this.animations[0][this.states.slide][2] = new Animator(this.spritesheetLeft2, 960, 960, 120, 80, 4, this.slideSpd, 0, true, false, false);
+        this.animations[1][this.states.slide][2] = new Animator(this.spritesheetRight2, 0, 960, 120, 80, 4, this.slideSpd, 0, false, false, false);
 
         //attack combo (on ground or in air)
         //Note: Slash 1 is a faster attack but less damage. Slash 2 is slower but more damage
@@ -1449,8 +1551,8 @@ class Knight extends AbstractPlayer {
         this.animations[0][this.states.turn_around][3] = new Animator(this.spritesheetLeft3, 1085, 1040, 120, 80, 3, 0.1, 0, true, false, false);
         this.animations[1][this.states.turn_around][3] = new Animator(this.spritesheetRight3, -5, 1040, 120, 80, 3, 0.1, 0, false, false, false);
         // slide = 15
-        this.animations[0][this.states.slide][3] = new Animator(this.spritesheetLeft3, 960, 960, 120, 80, 4, 0.1, 0, true, true, false);
-        this.animations[1][this.states.slide][3] = new Animator(this.spritesheetRight3, 0, 960, 120, 80, 4, 0.1, 0, false, true, false);
+        this.animations[0][this.states.slide][3] = new Animator(this.spritesheetLeft3, 960, 960, 120, 80, 4, this.slideSpd, 0, true, false, false);
+        this.animations[1][this.states.slide][3] = new Animator(this.spritesheetRight3, 0, 960, 120, 80, 4, this.slideSpd, 0, false, false, false);
 
         //attack combo (on ground or in air)
         //Note: Slash 1 is a faster attack but less damage. Slash 2 is slower but more damage
