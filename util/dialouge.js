@@ -1,5 +1,6 @@
 /**
  * Blurbs read by sign
+ * TODO: move all the dialouge into here
  */
 const CONTROLS_BLURB =
     [
@@ -18,9 +19,9 @@ const CONTROLS_BLURB =
         "",
         "NO MOUSE CONTROLS:",
         "-[P] swing sword, [P]x2 sword combo",
-        "     *+ [A]/[D] switch attack the other way",
+        "     + [A]/[D] switch attack the other way",
         "-[O] shoot an arrow forward",
-        "     *+ [W] or [S] shoot up/down",
+        "     + [W] or [S] shoot up/down",
     ];
 
 const CONTROLS_INFO =
@@ -50,9 +51,8 @@ const SHOP_HEAL_BLURB =
     [
         "HOW TO SHOP:",
         "-Next to shopkeeper tap [W] to shop",
-        "-The friendly shopkeeper will be your supporter on",
-        " this journey. Give him DIAMONDS to upgrade your tools.",
-        "-Use your mouse cursor to click the buttons in the shop.",
+        "-Give DIAMONDS to upgrade your tools.",
+        "-Use your cursor to click the shop buttons.",
         "-Or, navigate with keyboard",
         " [W] Up, [S] Down, [X] Exit, [P] Purchase",
         "",

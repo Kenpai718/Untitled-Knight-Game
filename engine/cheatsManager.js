@@ -63,7 +63,7 @@ class CheatsManager {
         
                 if(Number.isInteger(levelNumber)) {
                         console.log("Loading LVL " + levelNumber);   
-                        this.game.loadLevel(idNumber, false);
+                        this.game.loadLevel(levelNumber, false);
                 } else {
                         console.log("enter a valid level number, EX: 0,1,2,...,6")
                 }

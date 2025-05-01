@@ -149,7 +149,7 @@ class AbstractEnemy extends AbstractEntity {
     }
 
     canKnockback() {
-        return true;
+        return !this.dead;
     }
 
     /**
@@ -274,7 +274,7 @@ class AbstractEnemy extends AbstractEntity {
         // Drops random # of diamond upon death
         if (!this.dropDiamonds) {
             let amount = this.calcLoot();
-            let player = this.game.camera;
+            let player = this.game.camera.player;
             let playerBB = player.BB;
             this.game.addEntityToFront(new Diamond(this.game, playerBB.mid, playerBB.top + 50, amount));
             this.dropDiamonds = true;
