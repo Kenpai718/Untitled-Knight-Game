@@ -506,6 +506,10 @@ const level1_5 = {
         {
             x: 62, y: 50, title: "    Hey listen.", text: ["There's no turning back from this point.",
                 "Have you done everything you needed to?"]
+        },
+        {
+            x: 14, y: 32, title: "  Don't give up!", text: ["Success comes to those who are",
+                "too busy to be looking for it."]
         }
     ],
 
