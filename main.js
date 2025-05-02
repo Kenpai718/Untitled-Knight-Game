@@ -137,8 +137,8 @@ ASSET_MANAGER.downloadAll(() => {
 	//ASSET_MANAGER.forcePlayMusic(MUSIC.CHASING_DAYBREAK);
 	//console message to frontend
 	console.log("Hello thanks for playing Untitled Knight!");
-	console.log("There's not really any way to stop you from messing around in console," +
-		" so if you'd like to know the common cheats, enter \'displayCheats()\' here.")
+	console.log("I can't stop you from messing around in console lol");
+	console.log("If you want cheats, enter \'displayCheats()\' for options");
 
 	gameEngine.init(ctx);
 	let gameManager = new SceneManager(gameEngine);

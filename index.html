@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <html>
+    
+<script>
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+</script>
 
 <head>
     <link rel="icon" type="image/png" href="./sprites/icons/favicon-32x32.png" sizes="32x32" />
@@ -111,10 +115,11 @@
             <div class="jumbotron"
                 style="background-image:url('./sprites/gui/brick_dark.png');">
                 <div class="card text-white bg-primary mb-3">
-                    <p class="card-header" style="font-family:Press Start 2P;font-size: 40px;text-align:center">Untitled
-                        Knight Webgame
+                    <p class="card-header" style="font-family:Press Start 2P;font-size: 40px;text-align:center">
+                        Untitled Knight Webgame
                     <p>
-                    <p class="card-body" style="text-align:center"><i>Play as the Hero Knight and defend the castle from
+                    <p class="card-body" style="text-align:center"><i>
+                        Play as the Hero Knight and defend the castle from
                             dangerous monsters in
                             this
                             action-packed
@@ -123,10 +128,23 @@
                 </div>
 
                 <hr class="my-4">
+
+                <div class="mobileShow">
+                    <p id="mobileWarningMsg" class="alert alert-danger alert-secondary" style="font-family:Press Start 2P;font-size: 30px;text-align:center">
+                        Sorry, mobile devices are not supported for this game!</p>
+                    <style type="text/css">
+                        .mobileShow { display: none;}
+                        /* Smartphone Portrait and Landscape */
+                        @media only screen
+                        and (min-device-width : 320px)
+                        and (max-device-width : 480px){ .mobileShow { display: inline;}}
+                    </style>
+                </div>
+
                 <canvas id="gameWorld" width="1920" height="1040" style="background: black; border: 1px solid white"
                     tabindex="0" autofocus></canvas>
                 <hr class="my-4">
-                <p style="text-align:center;color:silver">This game is only meant to be played on PC! Use "CTRL -"
+                <p style="text-align:center;color:silver">Use "CTRL -"
                     or "CTRL +" to adjust zoom if the game does not fit in your browser.</p>
                 <p style="text-align:center;color:silver">v1.5 Last Updated: 5/2/2025</p>
 
