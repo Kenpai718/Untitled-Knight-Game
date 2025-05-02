@@ -760,6 +760,7 @@ class SceneManager {
         PARAMS.AUTO_FOCUS = document.getElementById("mouse-focus").checked;
         PARAMS.DEBUG = document.getElementById("debug").checked;
         PARAMS.CURSOR = document.getElementById("show-cursor").checked;
+        this.game.minimap = document.getElementById("minimap").checked;
     }
 
     updateTitleScreen() {

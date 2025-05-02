@@ -277,6 +277,7 @@ class GameEngine {
                     //toggle minimap.js
                     e.preventDefault();
                     that.minimap = !that.minimap;
+                    document.getElementById("minimap").checked = !document.getElementById("minimap").checked;
                     break;
                 case "ControlRight":
                     //toggle debug mode
